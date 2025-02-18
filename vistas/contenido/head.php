@@ -5,8 +5,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Javier Pineda">
-  <meta name="description" content="Sistema de administración de estudiantes y cursos de e-learning realizado en PHP ">
-  <title>e-learning </title>
+  <meta name="description" content="Sistema de gestión de trabajo de la empresa de seguridad S.P.E.C. perteneciente al grupo MARSAN S.A.">
+  <title>S.P.E.C. </title>
 
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">

@@ -13,7 +13,7 @@
   <div class="card-body">
     <!-- Small boxes (Stat box) -->
     <div class="row">
-      <!-- Cronograma -->
+      <!-- hombre vivo -->
       <div class="col-lg-3 col-md-6 col-sm-12">
         <div class="info-box shadow">
           <span class="info-box-icon bg-danger"><i class="far fa-life-ring"></i></span>
@@ -25,7 +25,7 @@
           <!-- /.info-box-content -->
         </div>
       </div>
-      <!-- ./cronograma-->
+      <!-- ./hombre vivo-->
 
       <!-- directivas -->
       <div class="col-lg-3 col-md-6 col-sm-12">
@@ -54,7 +54,7 @@
       </div>
       <!-- ./rondas -->
 
-      <!-- hombre vivo -->
+      <!-- cronograma -->
       <div class="col-lg-3 col-md-6 col-sm-12">
         <div class="info-box shadow">
           <span class="info-box-icon bg-primary"><i class="fas fa-calendar-alt"></i></span>
@@ -66,7 +66,7 @@
           <!-- /.info-box-content -->
         </div>
       </div>
-      <!-- ./hombre vivo -->
+      <!-- ./cronograma -->
 
       <!-- Novedades -->
       <div class="col-lg-3 col-md-6 col-sm-12">
