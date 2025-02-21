@@ -5,25 +5,19 @@
 
          $mapeo = [
             //usuario - perfil
-            "crear-usuario" => "usuario/crear-usuario.php",
-            "listado-usuarios" => "usuario/listado-usuarios.php",
-            "perfil-usuario" => "usuario/perfil-usuario.php",
-            "editar-usuario" => "usuario/editar-usuario.php",
-            //cursos
-            "crear-curso" => "cursos/crear-curso.php",
-            "listado-cursos" => "cursos/listado-cursos.php",
-            "editar-curso" => "cursos/editar-curso.php",
-            "detalle-curso" => "cursos/detalle-curso.php",
-            //materias
-            "listado-materias" => "materias/listado-materias.php",
-            "crear-materia" => "materias/crear-materia.php",
+            "crear-usuario"     => "usuario/crear-usuario.php",
+            "listado-usuarios"  => "usuario/listado-usuarios.php",
+            "perfil-usuario"    => "usuario/perfil-usuario.php",
+            "editar-usuario"    => "usuario/editar-usuario.php",
+            //hombre-vivo
+            "h-vivo"            => "h-vivo/registro.php",
             //Mensajes
-            "bandeja-entrada" => "mensajes/bandeja-entrada.php",
-            "nuevo-mensaje" => "mensajes/nuevo-mensaje.php",
+            "bandeja-entrada"   => "mensajes/bandeja-entrada.php",
+            "nuevo-mensaje"     => "mensajes/nuevo-mensaje.php",
             "mensajes-enviados" => "mensajes/mensajes-enviados.php",
             //web
-            "login"=>"web/login.php",
-            "forgot"=>"web/forgot-password.php"
+            "login"             =>"web/login.php",
+            "forgot"            =>"web/forgot-password.php"
 
         ];
 

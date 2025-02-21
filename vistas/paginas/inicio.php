@@ -20,7 +20,7 @@
 
           <div class="info-box-content">
 
-            <span class="info-box-number">Reporte de hombre vivo</span>
+            <span class="info-box-number"><a href="?r=h-vivo" class="text-dark">Reporte de hombre vivo</a> </span>
           </div>
           <!-- /.info-box-content -->
         </div>
