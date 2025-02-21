@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 17-02-2025 a las 22:29:53
+-- Tiempo de generación: 21-02-2025 a las 13:21:46
 -- Versión del servidor: 8.0.31
 -- Versión de PHP: 8.0.26
 
@@ -29,13 +29,13 @@ SET time_zone = "+00:00";
 
 DROP TABLE IF EXISTS `alertas`;
 CREATE TABLE IF NOT EXISTS `alertas` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `idAlerta` int NOT NULL AUTO_INCREMENT,
   `tipo_alerta` enum('recordatorio','retraso','emergencia','finalizacion') NOT NULL,
   `ronda_id` int DEFAULT NULL,
   `vigilador_id` int DEFAULT NULL,
   `estado` enum('pendiente','atendida') DEFAULT 'pendiente',
   `fecha_hora` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
+  PRIMARY KEY (`idAlerta`),
   KEY `ronda_id` (`ronda_id`),
   KEY `vigilador_id` (`vigilador_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -43,19 +43,32 @@ CREATE TABLE IF NOT EXISTS `alertas` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `asignaciones_puestos`
+-- Estructura de tabla para la tabla `asignaciones_objetivos`
 --
 
-DROP TABLE IF EXISTS `asignaciones_puestos`;
-CREATE TABLE IF NOT EXISTS `asignaciones_puestos` (
-  `id` int NOT NULL AUTO_INCREMENT,
+DROP TABLE IF EXISTS `asignaciones_objetivos`;
+CREATE TABLE IF NOT EXISTS `asignaciones_objetivos` (
+  `idAsigna` int NOT NULL AUTO_INCREMENT,
   `vigilador_id` int DEFAULT NULL,
-  `puesto_id` int DEFAULT NULL,
+  `objetivo_id` int DEFAULT NULL,
   `estado` enum('en_servicio','guardia_pasiva','franco') NOT NULL,
   `fecha_asignacion` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
+  PRIMARY KEY (`idAsigna`),
   KEY `vigilador_id` (`vigilador_id`),
-  KEY `puesto_id` (`puesto_id`)
+  KEY `puesto_id` (`objetivo_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `cronogramas`
+--
+
+DROP TABLE IF EXISTS `cronogramas`;
+CREATE TABLE IF NOT EXISTS `cronogramas` (
+  `idCrono` int NOT NULL,
+  `objetivo_id` int NOT NULL,
+  `fechaCarga` date NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -66,12 +79,12 @@ CREATE TABLE IF NOT EXISTS `asignaciones_puestos` (
 
 DROP TABLE IF EXISTS `escaneos`;
 CREATE TABLE IF NOT EXISTS `escaneos` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `idEscaneo` int NOT NULL AUTO_INCREMENT,
   `ronda_id` int DEFAULT NULL,
   `sector_id` int DEFAULT NULL,
   `vigilador_id` int DEFAULT NULL,
   `fecha_hora` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
+  PRIMARY KEY (`idEscaneo`),
   KEY `ronda_id` (`ronda_id`),
   KEY `sector_id` (`sector_id`),
   KEY `vigilador_id` (`vigilador_id`)
@@ -85,11 +98,11 @@ CREATE TABLE IF NOT EXISTS `escaneos` (
 
 DROP TABLE IF EXISTS `legajos`;
 CREATE TABLE IF NOT EXISTS `legajos` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `idLegajo` int NOT NULL AUTO_INCREMENT,
   `usuario_id` int DEFAULT NULL,
   `archivo` varchar(255) NOT NULL,
   `fecha_subida` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
+  PRIMARY KEY (`idLegajo`),
   KEY `usuario_id` (`usuario_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -101,12 +114,12 @@ CREATE TABLE IF NOT EXISTS `legajos` (
 
 DROP TABLE IF EXISTS `mensajes`;
 CREATE TABLE IF NOT EXISTS `mensajes` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `idMensaje` int NOT NULL AUTO_INCREMENT,
   `remitente_id` int DEFAULT NULL,
   `destinatario_id` int DEFAULT NULL,
   `contenido` text NOT NULL,
   `fecha_hora` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
+  PRIMARY KEY (`idMensaje`),
   KEY `remitente_id` (`remitente_id`),
   KEY `destinatario_id` (`destinatario_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -114,15 +127,17 @@ CREATE TABLE IF NOT EXISTS `mensajes` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `puestos`
+-- Estructura de tabla para la tabla `objetivos`
 --
 
-DROP TABLE IF EXISTS `puestos`;
-CREATE TABLE IF NOT EXISTS `puestos` (
-  `id` int NOT NULL AUTO_INCREMENT,
+DROP TABLE IF EXISTS `objetivos`;
+CREATE TABLE IF NOT EXISTS `objetivos` (
+  `idObejtivo` int NOT NULL AUTO_INCREMENT,
   `nombre` varchar(100) NOT NULL,
+  `localidad` varchar(100) NOT NULL,
+  `referente` varchar(100) NOT NULL,
   `tipo` enum('fijo','movil','eventual') NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`idObejtivo`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -133,12 +148,12 @@ CREATE TABLE IF NOT EXISTS `puestos` (
 
 DROP TABLE IF EXISTS `rondas`;
 CREATE TABLE IF NOT EXISTS `rondas` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `id_ronda` int NOT NULL AUTO_INCREMENT,
   `nombre` varchar(100) NOT NULL,
   `tipo` enum('fija','eventual') NOT NULL,
   `supervisor_id` int DEFAULT NULL,
   `fecha_creacion` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
+  PRIMARY KEY (`id_ronda`),
   KEY `supervisor_id` (`supervisor_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -167,11 +182,11 @@ CREATE TABLE IF NOT EXISTS `ronda_detalle` (
 
 DROP TABLE IF EXISTS `sectores`;
 CREATE TABLE IF NOT EXISTS `sectores` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `idSector` int NOT NULL AUTO_INCREMENT,
   `nombre` varchar(100) NOT NULL,
   `descripcion` text,
   `qr_code` varchar(250) NOT NULL,
-  PRIMARY KEY (`id`),
+  PRIMARY KEY (`idSector`),
   UNIQUE KEY `qr_code` (`qr_code`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -183,16 +198,21 @@ CREATE TABLE IF NOT EXISTS `sectores` (
 
 DROP TABLE IF EXISTS `usuarios`;
 CREATE TABLE IF NOT EXISTS `usuarios` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `idUsuario` int NOT NULL AUTO_INCREMENT,
   `nombre` varchar(100) NOT NULL,
   `apellido` varchar(100) NOT NULL,
   `dni` varchar(15) NOT NULL,
-  `telefono` varchar(20) DEFAULT NULL,
-  `direccion` varchar(255) DEFAULT NULL,
-  `telefono_emergencia` varchar(20) DEFAULT NULL,
+  `pass` varchar(150) NOT NULL,
+  `f_nac` date NOT NULL,
+  `telefono` varchar(20) NOT NULL,
+  `tel_emergencia` varchar(20) DEFAULT NULL,
+  `domicilio` varchar(100) DEFAULT NULL,
+  `provincia` varchar(30) DEFAULT NULL,
   `rol` enum('administrador','supervisor','vigilador') NOT NULL,
+  `imgPerfil` varchar(60) DEFAULT NULL,
+  `imgRepriv` varchar(60) DEFAULT NULL,
   `fecha_creacion` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
+  PRIMARY KEY (`idUsuario`),
   UNIQUE KEY `dni` (`dni`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -204,7 +224,7 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
 
 DROP TABLE IF EXISTS `visitas`;
 CREATE TABLE IF NOT EXISTS `visitas` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `idVisita` int NOT NULL AUTO_INCREMENT,
   `nombre` varchar(100) NOT NULL,
   `apellido` varchar(100) NOT NULL,
   `dni` varchar(15) NOT NULL,
@@ -215,7 +235,7 @@ CREATE TABLE IF NOT EXISTS `visitas` (
   `domicilio_id` int DEFAULT NULL,
   `vigilador_id` int DEFAULT NULL,
   `estado` enum('pendiente','aprobada','rechazada') NOT NULL,
-  PRIMARY KEY (`id`),
+  PRIMARY KEY (`idVisita`),
   KEY `domicilio_id` (`domicilio_id`),
   KEY `vigilador_id` (`vigilador_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
