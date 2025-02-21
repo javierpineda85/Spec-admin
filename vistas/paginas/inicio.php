@@ -3,12 +3,6 @@
   <div class="card-header bg-info">
     <h3 class="card-title">Panel de Control</h3>
 
-    <div class="card-tools">
-      <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-        <i class="fas fa-minus"></i>
-      </button>
-
-    </div>
   </div>
   <div class="card-body">
     <!-- Small boxes (Stat box) -->
@@ -17,12 +11,22 @@
       <div class="col-lg-3 col-md-6 col-sm-12">
         <div class="info-box shadow">
           <span class="info-box-icon bg-danger"><i class="far fa-life-ring"></i></span>
-
           <div class="info-box-content">
-
-            <span class="info-box-number"><a href="?r=h-vivo" class="text-dark">Reporte de hombre vivo</a> </span>
+            <!-- Fila para el título y botón de colapsar -->
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="info-box-number">Hombre Vivo</span>
+              <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapsHvivo" aria-expanded="false" aria-controls="collapsHvivo">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+            <!-- Sección colapsable para los botones -->
+            <div id="collapsHvivo" class="collapse">
+              <div class="mt-2">
+                <button class="btn btn-block btn-danger btn-sm"><a href="tel:911" class="text-white">Llamar 911</a></button>
+                <button class="btn btn-block btn-info btn-sm">Registrar</button>
+              </div>
+            </div>
           </div>
-          <!-- /.info-box-content -->
         </div>
       </div>
       <!-- ./hombre vivo-->
@@ -31,12 +35,23 @@
       <div class="col-lg-3 col-md-6 col-sm-12">
         <div class="info-box shadow">
           <span class="info-box-icon bg-warning"><i class="fas fa-list-ul"></i></span>
-
           <div class="info-box-content">
-            <span class="info-box-number">Directivas</span>
+            <!-- Fila para el título y botón de colapsar -->
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="info-box-number">Directivas</span>
+              <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapsDirectivas" aria-expanded="false" aria-controls="collapsDirectivas">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+            <!-- Sección colapsable para los botones -->
+            <div id="collapsDirectivas" class="collapse">
+              <div class="mt-2">
+                <button class="btn btn-block btn-warning btn-sm">Nueva</button>
+                <button class="btn btn-block btn-warning btn-sm">Mostrar todas</button>
+              </div>
+            </div>
           </div>
         </div>
-        <!-- ./col -->
       </div>
       <!-- ./directivas -->
 
@@ -44,13 +59,23 @@
       <div class="col-lg-3 col-md-6 col-sm-12">
         <div class="info-box shadow">
           <span class="info-box-icon bg-success"><i class="nav-icon fas fa-sync-alt"></i></span>
-
           <div class="info-box-content">
-            <span class="info-box-number">Rondas</span>
+            <!-- Fila para el título y botón de colapsar -->
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="info-box-number">Rondas</span>
+              <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapseRondas" aria-expanded="false" aria-controls="collapseRondas">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+            <!-- Sección colapsable para los botones -->
+            <div id="collapseRondas" class="collapse">
+              <div class="mt-2">
+                <button class="btn btn-block btn-success btn-sm">Nueva</button>
+                <button class="btn btn-block btn-success btn-sm">Mostrar todas</button>
+              </div>
+            </div>
           </div>
-          <!-- /.info-box-content -->
         </div>
-
       </div>
       <!-- ./rondas -->
 
@@ -58,12 +83,22 @@
       <div class="col-lg-3 col-md-6 col-sm-12">
         <div class="info-box shadow">
           <span class="info-box-icon bg-primary"><i class="fas fa-calendar-alt"></i></span>
-
           <div class="info-box-content">
-
-            <span class="info-box-number">Cronogramas</span>
+            <!-- Fila para el título y botón de colapsar -->
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="info-box-number">Cronogramas</span>
+              <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapseCronogramas" aria-expanded="false" aria-controls="collapseCronogramas">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+            <!-- Sección colapsable para los botones -->
+            <div id="collapseCronogramas" class="collapse">
+              <div class="mt-2">
+                <button class="btn btn-block btn-primary btn-sm">Nuevo</button>
+                <button class="btn btn-block btn-primary btn-sm">Mostrar todos</button>
+              </div>
+            </div>
           </div>
-          <!-- /.info-box-content -->
         </div>
       </div>
       <!-- ./cronograma -->
@@ -72,51 +107,97 @@
       <div class="col-lg-3 col-md-6 col-sm-12">
         <div class="info-box shadow">
           <span class="info-box-icon bg-info"><i class="far fa-newspaper"></i></span>
-
           <div class="info-box-content">
-            <span class="info-box-number">Novedades</span>
+            <!-- Fila para el título y botón de colapsar -->
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="info-box-number">Novedades</span>
+              <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapseNovedades" aria-expanded="false" aria-controls="collapseNovedades">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+            <!-- Sección colapsable para los botones -->
+            <div id="collapseNovedades" class="collapse">
+              <div class="mt-2">
+                <button class="btn btn-block btn-info btn-sm">Nueva</button>
+                <button class="btn btn-block btn-info btn-sm">Mostrar todos</button>
+              </div>
+            </div>
           </div>
         </div>
-        <!-- ./col -->
-
       </div>
+
       <!-- ./novedades -->
 
       <!-- Objetivos-->
       <div class="col-lg-3 col-md-6 col-sm-12">
         <div class="info-box shadow">
           <span class="info-box-icon bg-info"><i class="fas fa-map-marker-alt"></i></span>
-
           <div class="info-box-content">
-            <span class="info-box-number">Objetivos</span>
+            <!-- Fila para el título y botón de colapsar -->
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="info-box-number">Objetivos</span>
+              <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapseObjetivos" aria-expanded="false" aria-controls="collapseObjetivos">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+            <!-- Sección colapsable para los botones -->
+            <div id="collapseObjetivos" class="collapse">
+              <div class="mt-2">
+                <button class="btn btn-block btn-info btn-sm">Nuevo</button>
+                <button class="btn btn-block btn-info btn-sm">Mostrar todos</button>
+              </div>
+            </div>
           </div>
         </div>
-        <!-- ./col -->
       </div>
-      <!-- ./puestos de trabajo -->
+      <!-- ./objetivos -->
 
       <!-- Usuarios -->
       <div class="col-lg-3 col-md-6 col-sm-12">
         <div class="info-box shadow">
           <span class="info-box-icon bg-info"><i class="fas fa-users"></i></span>
-
           <div class="info-box-content">
-            <span class="info-box-number">Usuarios</span>
+            <!-- Fila para el título y botón de colapsar -->
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="info-box-number">Usuarios</span>
+              <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapseUsuarios" aria-expanded="false" aria-controls="collapseUsuarios">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+            <!-- Sección colapsable para los botones -->
+            <div id="collapseUsuarios" class="collapse">
+              <div class="mt-2">
+                <button class="btn btn-block btn-info btn-sm">Nuevo</button>
+                <button class="btn btn-block btn-info btn-sm">Mostrar todos</button>
+              </div>
+            </div>
           </div>
         </div>
-        <!-- ./col -->
-        <!-- /.card-body -->
-
       </div>
+
       <!-- ./usuarios -->
 
       <!-- Mensajeria -->
       <div class="col-lg-3 col-md-6 col-sm-12">
         <div class="info-box shadow">
-          <span class="info-box-icon bg-info"><i class="far fa-envelope"></i></span>
-
+          <span class="info-box-icon bg-info">
+            <i class="far fa-envelope"></i>
+          </span>
           <div class="info-box-content">
-            <span class="info-box-number">Mensajeria</span>
+            <!-- Fila para el título y botón de colapsar -->
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="info-box-number">Mensajería</span>
+              <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapseMensajeria" aria-expanded="false" aria-controls="collapseMensajeria">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+            <!-- Sección colapsable para los botones -->
+            <div id="collapseMensajeria" class="collapse">
+              <div class="mt-2">
+                <button class="btn btn-block btn-info btn-sm">Ver mensajes</button>
+                <button class="btn btn-block btn-info btn-sm">Enviar mensaje</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -131,3 +212,4 @@
       </section>
       <!-- /.content -->
     </div>
+  </div>
