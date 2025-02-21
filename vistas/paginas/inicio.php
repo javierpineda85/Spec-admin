@@ -82,13 +82,13 @@
       </div>
       <!-- ./novedades -->
 
-      <!-- Puestos de trabajo -->
+      <!-- Objetivos-->
       <div class="col-lg-3 col-md-6 col-sm-12">
         <div class="info-box shadow">
           <span class="info-box-icon bg-info"><i class="fas fa-map-marker-alt"></i></span>
 
           <div class="info-box-content">
-            <span class="info-box-number">Puestos de trabajo</span>
+            <span class="info-box-number">Objetivos</span>
           </div>
         </div>
         <!-- ./col -->

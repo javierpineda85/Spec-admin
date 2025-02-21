@@ -141,11 +141,11 @@
 
             </ul>
           </li>
-          <li class="nav-item"> <!-- puestos de trabajo -->
+          <li class="nav-item"> <!-- Objetivos -->
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-map-marker-alt text-info"></i>
               <p>
-              Puestos de trabajo
+              Objetivos
                 <i class="right fas fa-angle-left"></i>
               </p>
             </a>
