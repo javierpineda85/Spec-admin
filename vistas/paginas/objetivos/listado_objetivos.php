@@ -1,0 +1,80 @@
+<?php
+
+$db = new Conexion;
+$sql = "SELECT * FROM objetivos ORDER BY nombre";
+$objetivos = $db->consultas($sql);
+
+?>
+
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Listado de objetivos</h3>
+                    </div>
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <table id="example1" class="table table-bordered table-striped table-sm">
+                            <thead>
+                                <tr>
+                                    <th style="text-align: center;">Nombre</th>
+                                    <th style="text-align: center;">Localidad</th>
+                                    <th style="text-align: center;">referente</th>
+                                    <th style="text-align: center;">tipo</th>
+                                    <th style="text-align: center;">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($objetivos as $campo => $valor) : ?>
+                                    <tr>
+                                        <td> <?php echo $valor['nombre']; ?></td>
+                                        <td> <?php echo $valor['localidad']; ?></td>
+                                        <td> <?php echo $valor['referente']; ?></td>
+                                        <td> <?php echo $valor['tipo']; ?></td>
+                                        <td>
+                                            <div class="row d-flex justify-content-around">
+                                                <a href="?r=editar_objetivo&id=<?php echo $valor["idObjetivo"]; ?>" class="btn btn-success btn-sm"><i class="fas fa-edit"></i></a>
+                                                <form method="post">
+                                                    <input type="hidden" value="<?php echo $valor["idObjetivo"]; ?>" name="idEliminar">
+                                                    <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></button>
+                                                    <?php
+
+                                                    /* $eliminar = new ControladorFormularios();
+                                            $eliminar->ctrEliminarVisita();*/
+
+                                                    ?>
+
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php endforeach ?>
+
+
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th style="text-align: center;">Nombre</th>
+                                    <th style="text-align: center;">Localidad</th>
+                                    <th style="text-align: center;">referente</th>
+                                    <th style="text-align: center;">tipo</th>
+                                    <th style="text-align: center;">Acciones</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+</section>
+<!-- /.content -->
