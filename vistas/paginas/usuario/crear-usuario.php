@@ -39,19 +39,20 @@
                 <input type="date" class="form-control" name="fnacPerfil">
               </div>
 
-              <div class="form-group col-sm-12 col-md-4">
-                <label class="form-label">Email</label>
-                <input type="email" class="form-control" placeholder="usuario@correo.com" name="email">
-              </div>
               <div class="form-group col-sm-12 col-md-3">
                 <label class="form-label">Contraseña</label>
                 <input type="password" class="form-control" placeholder="Ingresá el DNI como contraseña" name="pass" id="inputPass" readonly>
                 
               </div>
 
-
               <div class="form-group col-sm-12 col-md-3">
                 <label class="form-label">Teléfono</label>
+                <input type="text" class="form-control" placeholder="2612223333" name="telefonoPerfil">
+              </div>
+
+
+              <div class="form-group col-sm-12 col-md-3 text">
+                <label class="form-label" >Teléfono de Emergencia</label>
                 <input type="text" class="form-control" placeholder="2612223333" name="telefonoPerfil">
               </div>
               <div class="form-group col-sm-12 col-md-5">
@@ -64,6 +65,21 @@
                   <option value="" disabled selected>Elige una provincia</option>
                 </select>
               </div>
+              <div class="mb-3">
+           <label for="inputGroupFile02" class="form-label">Foto de Perfil</label>
+               <div class="input-group">
+                  <input type="file" class="form-control" id="inputGroupFile02" />
+                  <label class="input-group-text" for="inputGroupFile02">Upload</label>
+                </div>
+              </div>
+              <div class="mb-3">
+           <label for="inputGroupFile02" class="form-label">Carnet de Repiv</label>
+               <div class="input-group">
+                  <input type="file" class="form-control" id="inputGroupFile02" />
+                  <label class="input-group-text" for="inputGroupFile02">Upload</label>
+                </div>
+              </div>
+
               <div class="form-group col-sm-12 col-md-3">
                 <label class="form-label">Rol de Usuario</label>
                 <select class="custom-select" name="rol">

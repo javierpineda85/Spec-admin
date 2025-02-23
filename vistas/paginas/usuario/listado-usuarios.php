@@ -23,9 +23,10 @@ $usuarios = $db->consultas($sql);
                 <tr>
                   <th style="text-align: center;">Apellido</th>
                   <th style="text-align: center;">Nombre</th>
-                  <th style="text-align: center;">Email</th>
+                  <th style="text-align: center;">Celular</th>
                   <th style="text-align: center;">Rol</th>
-                  <th style="text-align: center;">Acciones</th>
+                  <th style="text-align: center;">Objetivo</th>
+                  <th style="text-align: center;">Guardia</th>
                 </tr>
               </thead>
               <tbody>
@@ -60,9 +61,10 @@ $usuarios = $db->consultas($sql);
                 <tr>
                 <th style="text-align: center;">Apellido</th>
                   <th style="text-align: center;">Nombre</th>
-                  <th style="text-align: center;">Email</th>
+                  <th style="text-align: center;">Celular</th>
                   <th style="text-align: center;">Rol</th>
-                  <th style="text-align: center;">Acciones</th>
+                  <th style="text-align: center;">Objetivo</th>
+                  <th style="text-align: center;">Guardia</th>
                 </tr>
               </tfoot>
             </table>
