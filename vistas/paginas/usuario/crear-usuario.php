@@ -84,9 +84,10 @@
                 <label class="form-label">Rol de Usuario</label>
                 <select class="custom-select" name="rol">
                   <option value="" disabled selected> Rol de usuario</option>
-                  <option value="ADMINISTRADOR">ADMINISTRADOR</option>
-                  <option value="DOCENTE">DOCENTE</option>
-                  <option value="ESTUDIANTE">ESTUDIANTE</option>
+                  <option value="Vigilador">Vigilador</option>
+                  <option value="Referente">Referente</option>
+                  <option value="Supervisor">Supervisor</option>
+                  <option value="Administrador">Administrador</option>
                 </select>
               </div>
             </div>
