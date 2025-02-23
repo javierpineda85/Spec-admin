@@ -10,13 +10,17 @@
             "perfil-usuario"    => "usuario/perfil-usuario.php",
             "editar-usuario"    => "usuario/editar-usuario.php",
             //hombre-vivo
-            "h-vivo"            => "h-vivo/registro.php",
+            "reporte"            => "h-vivo/registro.php",
+            "listado_reportes"   => "h-vivo/listado_reportes.php",
             //Mensajes
             "bandeja-entrada"   => "mensajes/bandeja-entrada.php",
             "nuevo-mensaje"     => "mensajes/nuevo-mensaje.php",
             "mensajes-enviados" => "mensajes/mensajes-enviados.php",
             //objetivos
-            "objetivos"         => "objetivos/mapa.php",
+            "crear_objetivo"    => "objetivos/crear_objetivo.php",
+            "editar_objetivo"   => "objetivos/editar_objetivo.php",
+            "listado_objetivos"  => "objetivos/listado_objetivos.php",
+            
             //web
             "login"             =>"web/login.php",
             "forgot"            =>"web/forgot-password.php"

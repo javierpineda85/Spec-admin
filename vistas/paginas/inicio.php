@@ -143,8 +143,8 @@
             <!-- Sección colapsable para los botones -->
             <div id="collapseObjetivos" class="collapse">
               <div class="mt-2">
-                <button class="btn btn-block btn-info btn-sm">Nuevo</button>
-                <button class="btn btn-block btn-info btn-sm">Mostrar todos</button>
+                <button class="btn btn-block btn-info btn-sm"><a href="?r=crear_objetivo" class="text-white">Nuevo</a> </button>
+                <button class="btn btn-block btn-info btn-sm"><a href="?r=listado_objetivos" class="text-white">Mostrar todos</a></button>
               </div>
             </div>
           </div>
