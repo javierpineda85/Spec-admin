@@ -1,9 +1,11 @@
 <?php
-    // Defino la clase Rutas para mejor funcionamiento
-    class RutasController {
-        public static function cargarVista(){ // se crea el array de rutas para poder escalar el proyecto
+// Defino la clase Rutas para mejor funcionamiento
+class RutasController
+{
+    public static function cargarVista()
+    { // se crea el array de rutas para poder escalar el proyecto
 
-         $mapeo = [
+        $mapeo = [
             //usuario - perfil
             "crear-usuario"     => "usuario/crear-usuario.php",
             "listado-usuarios"  => "usuario/listado-usuarios.php",
@@ -19,11 +21,17 @@
             //objetivos
             "crear_objetivo"    => "objetivos/crear_objetivo.php",
             "editar_objetivo"   => "objetivos/editar_objetivo.php",
-            "listado_objetivos"  => "objetivos/listado_objetivos.php",
-            
+            "listado_objetivos" => "objetivos/listado_objetivos.php",
+            //rondas
+            "crear_rondas"    => "rondas/crear_rondas.php",
+            "generar_qr"      =>"rondas/generar_qr.php",
+            "imprimir_qr"     =>"rondas/imprimir_qr.php",
+            "editar_ronda"    => "rondas/editar_ronda.php",
+            "listado_rondas"  => "rondas/listado_rondas.php",
+
             //web
-            "login"             =>"web/login.php",
-            "forgot"            =>"web/forgot-password.php"
+            "login"             => "web/login.php",
+            "forgot"            => "web/forgot-password.php"
 
         ];
 
