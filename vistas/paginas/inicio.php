@@ -70,7 +70,7 @@
             <!-- Sección colapsable para los botones -->
             <div id="collapseRondas" class="collapse">
               <div class="mt-2">
-                <button class="btn btn-block btn-success btn-sm">Nueva</button>
+                <button class="btn btn-block btn-success btn-sm"><a href="?r=crear_rondas" class="text-white">Nueva</a></button>
                 <button class="btn btn-block btn-success btn-sm">Mostrar todas</button>
               </div>
             </div>
