@@ -1,6 +1,6 @@
 <?php
 ob_start(); //permite enviar los headers sin interferencias
-require_once('modelos/objetivos.php');
+require_once('modelos/objetivos.modelo.php');
 
 class ControladorObjetivos
 {

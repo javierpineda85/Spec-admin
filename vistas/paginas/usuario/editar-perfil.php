@@ -64,7 +64,7 @@
                                     <button type="button" class="btn btn-secondary">Cerrar</button>
                                     <button type="submit" class="btn btn-success">Guardar Cambios</button>
                                     <?php
-                                    $registro = ControladorPerfiles::crtEditarPerfil();
+                                   // $registro = ControladorPerfiles::crtEditarPerfil();
                                     ?>
 
                                 </div>

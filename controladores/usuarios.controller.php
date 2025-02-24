@@ -1,6 +1,6 @@
 <?php
 require_once('modelos/usuarios.modelo.php');
-require_once('modelos/perfiles.modelo.php');
+
 class ControladorUsuarios
 {
 
@@ -50,14 +50,14 @@ class ControladorUsuarios
                     "provinciaPerfil" => $_POST['provinciaPerfil']
                 );
 
-                $respuesta1 = ModeloPerfiles::mdlGuardarPerfil($datosPerfil);
+                //$respuesta1 = ModeloPerfiles::mdlGuardarPerfil($datosPerfil);
 
                 // Confirmar la transacción si no hay errores
                 Conexion::conectar()->commit();
 
                 $_SESSION['success_message'] = 'Usuario y perfil creados exitosamente';
 
-                return $respuesta1;
+                //return $respuesta1;
             } catch (Exception $e) {
                 // Revertir la transacción en caso de error
                 Conexion::conectar()->rollBack();
