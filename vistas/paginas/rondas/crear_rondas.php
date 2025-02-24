@@ -39,7 +39,7 @@ $objetivos = $db->consultas($sql);
                     </div>
                     <div class="form-group col-sm-12 col-md-3 mt-2">
                         <button type="submit" class="btn btn-success mt-4">Generar QR</button>
-                        
+
                     </div>
                 </div>
             </div>
@@ -63,7 +63,7 @@ $objetivos = $db->consultas($sql);
                 </div>
                 <br>
                 <button class="btn btn-success" id="save-all">Guardar Todo en BD</button>
-                <button class="btn btn-info" ><a href="?r=imprimir_qr" target="_blank" class="text-white">Vista de Impresión</a> </button>
+                <button class="btn btn-info"><a href="?r=imprimir_qr" target="_blank" class="text-white">Vista de Impresión</a> </button>
                 <!-- Aquí podrías mostrar mensajes de éxito u otros avisos -->
                 <?php
                 if (isset($_SESSION['success_message'])) {
@@ -89,7 +89,7 @@ $objetivos = $db->consultas($sql);
         var key = $(this).data('key');
         var newData = $(this).closest('.card').find('.qr-text').val();
         $.ajax({
-            url: '../../ajax_qr.php?action=update_qr',
+            url: 'libraries/ajax/ajax_qr.php?action=update_qr',
             type: 'POST',
             data: {
                 action: 'update',
@@ -116,7 +116,7 @@ $objetivos = $db->consultas($sql);
         e.preventDefault();
         var key = $(this).data('key');
         $.ajax({
-            url: '../../../ajax_qr.php?action=delete_qr',
+            url: 'libraries/ajax/ajax_qr.php?action=delete_qr',
             type: 'POST',
             data: {
                 action: 'delete',
@@ -149,10 +149,5 @@ $objetivos = $db->consultas($sql);
                 }
             }
         });
-    });
-
-    // Abrir vista de impresión personalizada
-    $('#print-view').click(function() {
-        window.open('print.php', '_blank');
     });
 </script>

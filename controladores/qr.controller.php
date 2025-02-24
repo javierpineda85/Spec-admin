@@ -1,99 +1,107 @@
 <?php
-require_once("modelos/qr.modelo.php");
-require_once('libraries/phpqrcode/qrlib.php');
+//require_once("modelos/qr.modelo.php");
+//require_once('libraries/phpqrcode/qrlib.php');
+// Usamos __DIR__ para construir rutas correctas
+require_once __DIR__ . '/../modelos/qr.modelo.php';
+require_once __DIR__ . '/../libraries/phpqrcode/qrlib.php';
 session_start();
-//require_once __DIR__ . '/../../libraries/phpqrcode/qrlib.php';
-//require_once __DIR__ . '/../models/QrModel.php';
 
-class QrController {
-
-    static public function generar() {
-        // Recupera datos enviados desde el formulario
+class QrController
+{
+    static public function generar()
+    {
         $nombreRonda = isset($_POST['nombreRonda']) ? trim($_POST['nombreRonda']) : '';
         $objetivo = isset($_POST['objetivo']) ? trim($_POST['objetivo']) : '';
         $orden = isset($_POST['orden']) ? trim($_POST['orden']) : '';
 
-        if(empty($nombreRonda)) {
-            // Redirige o muestra error si falta dato
+        if (empty($nombreRonda)) {
             header("Location: " . $_SERVER['HTTP_REFERER']);
             exit;
         }
-        
-        // Genera el contenido del QR 
-        $currentTime = date("YmdH:i:s");
+
+        $currentTime = date("YmdHis");
         $qrContent = $nombreRonda . " - " . $objetivo . " - " . $orden . " - " . $currentTime;
 
-        //Se guarda la img dentro de la carpeta de img
         $folder = 'img/qrcodes';
-        if(!is_dir($folder)){
+        if (!is_dir($folder)) {
             mkdir($folder, 0777, true);
         }
         $filename = $folder . '/qr_' . time() . '.png';
 
-        // Genera el código QR 
         QRcode::png($qrContent, $filename, QR_ECLEVEL_H, 8, 2);
 
-        // Prepara el array con datos del QR
         $qr = [
             'data' => $qrContent,
             'image' => 'img/qrcodes/' . basename($filename)
         ];
 
-        // Guarda en sesión utilizando el modelo
         $qrModel = new QrModel();
         $qrModel->guardarQrEnSesion($qr);
 
-        // Redirige de vuelta a la vista (o carga la vista con los datos actualizados)
         header("Location: " . $_SERVER['HTTP_REFERER']);
         exit;
     }
-    public function updateAction() {
-       
-        $nombreRonda = isset($_POST['nombreRonda']) ? trim($_POST['nombreRonda']) : '';
-        $objetivo = isset($_POST['objetivo']) ? trim($_POST['objetivo']) : '';
-        $orden = isset($_POST['orden']) ? trim($_POST['orden']) : '';
+
+    static public function updateAction()
+    {
         $response = ['success' => false];
-        
-        if(isset($_POST['action'], $_POST['key'], $_POST['newData'])) {
+
+        if (isset($_POST['action'], $_POST['key'], $_POST['newData'])) {
             $key = $_POST['key'];
-            if(!isset($_SESSION['qr_codes'][$key])){
+            if (!isset($_SESSION['qr_codes'][$key])) {
                 echo json_encode($response);
                 exit;
             }
 
-            $currentTime = date("H:i:s");
-            $newContent = $nombreRonda . " - " . $objetivo . " - " . $orden . " - " . $currentTime;
+            // Utiliza el nuevo dato ingresado
+            $newData = trim($_POST['newData']);
+            $currentTime = date("YmdHis");
+            $newContent = $newData . " - " . $currentTime;
 
-            $folder = 'img/qrcodes';
-            if(!is_dir($folder)){
-                mkdir($folder, 0777, true);
+            // Define rutas absolutas y relativas
+            //$folderAbsolute = $_SERVER['DOCUMENT_ROOT'] . '/spec-admin/img/qrcodes';
+            $folderAbsolute = $_SERVER['DOCUMENT_ROOT'] . '/img/qrcodes';
+            $folderRelative = 'img/qrcodes';
+            if (!is_dir($folderAbsolute)) {
+                mkdir($folderAbsolute, 0777, true);
             }
-            if(file_exists($_SESSION['qr_codes'][$key]['image'])){
-                unlink($_SESSION['qr_codes'][$key]['image']);
-            }
-            $newFilename = $folder . '/qr_' . time() . '.png';
-            QRcode::png($newContent, $newFilename, QR_ECLEVEL_H, 8, 2);
 
+            // Eliminar la imagen antigua (convertir la ruta relativa a absoluta)
+            $oldImageRelative = $_SESSION['qr_codes'][$key]['image'];
+            //$oldImageAbsolute = $_SERVER['DOCUMENT_ROOT'] . '/spec-admin/' . $oldImageRelative;
+            $oldImageAbsolute = $_SERVER['DOCUMENT_ROOT'] . $oldImageRelative;
+            if (file_exists($oldImageAbsolute)) {
+                unlink($oldImageAbsolute);
+            }
+
+            // Generar el nuevo QR
+            $newFilenameAbsolute = $folderAbsolute . '/qr_' . time() . '.png';
+            QRcode::png($newContent, $newFilenameAbsolute, QR_ECLEVEL_H, 8, 2);
+
+            // Actualizar la sesión: almacenar la ruta relativa para mostrar la imagen
             $_SESSION['qr_codes'][$key]['data'] = $newContent;
-            $_SESSION['qr_codes'][$key]['image'] = $newFilename;
+            $_SESSION['qr_codes'][$key]['image'] = $folderRelative . '/' . basename($newFilenameAbsolute);
 
             $response['success'] = true;
-            $response['newImage'] = $newFilename;
+            $response['newImage'] = $_SESSION['qr_codes'][$key]['image'];
         }
         echo json_encode($response);
     }
 
-    public function deleteAction() {
-        session_start();
+    public function deleteAction()
+    {
         $response = ['success' => false];
-        if(isset($_POST['action'], $_POST['key'])) {
+        if (isset($_POST['action'], $_POST['key'])) {
             $key = $_POST['key'];
-            if(!isset($_SESSION['qr_codes'][$key])){
+            if (!isset($_SESSION['qr_codes'][$key])) {
                 echo json_encode($response);
                 exit;
             }
-            if(file_exists($_SESSION['qr_codes'][$key]['image'])){
-                unlink($_SESSION['qr_codes'][$key]['image']);
+            // Obtener la ruta absoluta de la imagen a eliminar
+            $imageRelative = $_SESSION['qr_codes'][$key]['image'];
+            $imageAbsolute = $_SERVER['DOCUMENT_ROOT'] . '/spec-admin/' . $imageRelative;
+            if (file_exists($imageAbsolute)) {
+                unlink($imageAbsolute);
             }
             unset($_SESSION['qr_codes'][$key]);
             $_SESSION['qr_codes'] = array_values($_SESSION['qr_codes']);
