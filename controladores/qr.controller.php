@@ -11,17 +11,18 @@ class QrController
 {
     static public function generar()
     {
-        $nombreRonda = isset($_POST['nombreRonda']) ? trim($_POST['nombreRonda']) : '';
-        $objetivo = isset($_POST['objetivo']) ? trim($_POST['objetivo']) : '';
+        $puesto = isset($_POST['puesto']) ? trim($_POST['puesto']) : '';
+        $objetivo = isset($_POST['objetivo_id']) ? trim($_POST['objetivo_id']) : '';
+        $tipo = isset($_POST['tipo']) ? trim($_POST['tipo']) : '';
         $orden = isset($_POST['orden']) ? trim($_POST['orden']) : '';
 
-        if (empty($nombreRonda)) {
+        if (empty($puesto)) {
             header("Location: " . $_SERVER['HTTP_REFERER']);
             exit;
         }
 
         $currentTime = date("YmdHis");
-        $qrContent = "Sector: " . $nombreRonda . " - Objetivo: " . $objetivo . " - Orden: " . $orden . " - Idtemp:" . $currentTime;
+        $qrContent = "Sector: " . $puesto . " - Objetivo: " . $objetivo . "- Tipo: ". $tipo ." - Orden: " . $orden . " - Idtemp:" . $currentTime;
 
         $folder = 'img/qrcodes';
         if (!is_dir($folder)) {

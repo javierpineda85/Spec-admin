@@ -21,12 +21,12 @@ $objetivos = $db->consultas($sql);
             <div class="card-body">
                 <div class="row">
                     <div class="form-group col-sm-12 col-md-3">
-                        <label class="form-label">Puesto</label>
-                        <input type="text" class="form-control" placeholder="Ronda 1" name="nombreRonda">
+                        <label class="form-label">Sector</label>
+                        <input type="text" class="form-control" placeholder="Ronda 1" name="puesto">
                     </div>
                     <div class="form-group col-sm-12 col-md-3">
                         <label class="form-label">Objetivo</label>
-                        <select id="objetivo" name="objetivo" class="form-control">
+                        <select id="objetivo" name="objetivo_id" class="form-control">
                             <option value="" disabled selected>Selecciona un objetivo</option>
                             <?php foreach ($objetivos as $objetivo): ?>
                                 <option value="<?php echo $objetivo['idObjetivo'] ?>"><?php echo $objetivo['nombre'] ?></option>
@@ -34,10 +34,18 @@ $objetivos = $db->consultas($sql);
                         </select>
                     </div>
                     <div class="form-group col-sm-12 col-md-2">
+                        <label class="form-label">Tipo</label>
+                        <select name="tipo" id="" class="form-control">
+                            <option value=""selected disabled>Elige una opción</option>
+                            <option value="Fijo">Fijo</option>
+                            <option value="Eventual">Eventual</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-sm-12 col-md-2">
                         <label class="form-label">Orden de escaneo</label>
                         <input type="number" name="orden" id="orden" class="form-control">
                     </div>
-                    <div class="form-group col-sm-12 col-md-3 mt-2">
+                    <div class="form-group col-sm-12 col-md-2 mt-2">
                         <button type="submit" class="btn btn-success mt-4">Generar QR</button>
 
                     </div>
@@ -52,7 +60,7 @@ $objetivos = $db->consultas($sql);
                                 <img src="<?php echo htmlspecialchars($qr['image']); ?>" alt="Código QR">
                                 <label for="" class="form-label"><?php echo htmlspecialchars($qr['data']); ?></label>
                                 <div class="actions">
-                                    <!-- <button class="update-btn btn btn-info" data-key="<?php echo $key; ?>">Actualizar</button>-->
+                                    
                                     <button class="delete-btn btn btn-danger" data-key="<?php echo $key; ?>">Eliminar</button>
                                 </div>
                             </div>
@@ -62,7 +70,7 @@ $objetivos = $db->consultas($sql);
                     <?php endif; ?>
                 </div>
                 <br>
-                <button class="btn btn-success" id="save-all">Guardar Todo en BD</button>
+                
                 <button class="btn btn-info"><a href="?r=imprimir_qr" target="_blank" class="text-white">Vista de Impresión</a> </button>
                 <!-- Aquí podrías mostrar mensajes de éxito u otros avisos -->
                 <?php
@@ -107,7 +115,7 @@ $objetivos = $db->consultas($sql);
                     // 3️⃣ Recargar la lista de QR sin recargar la página completa
                     setTimeout(function() {
                         $("#qr-list").load(location.href + " #qr-list > *", function() {
-                            console.log("Lista de QR recargada");
+                            //console.log("Lista de QR recargada");
                         });
                     }, 500);
 

@@ -41,6 +41,49 @@
             <?php endif; ?>
         </div>
         <br>
-        <button onclick="window.print()" class="btn btn-info">Imprimir</button>
+        <button onclick="window.print()" class="btn btn-info" id="print-and-save">Imprimir y guardar</button>
     </div>
 </div>
+<script>
+$("#print-and-save").click(function () {
+    var qrData = [];
+
+    $(".card-qr").each(function () {
+        var data = $(this).find("p").text();
+        var image = $(this).find("img").attr("src");
+
+        var matches = data.match(/Sector:\s(.*?)\s-\sObjetivo:\s(.*?)\s-\sOrden:\s(.*?)\s-/);
+        if (matches) {
+            qrData.push({
+                puesto: matches[1],
+                objetivo_id: matches[2],
+                orden_escaneo: matches[3],
+                tipo: "Fija"
+            });
+        }
+    });
+
+    $.ajax({
+        url: 'libraries/ajax/ajax_rondas.php',
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            action: 'save',
+            qrData: JSON.stringify(qrData)
+        },
+        success: function (response) {
+            console.log("🚀 Respuesta del servidor:", response);
+
+            if (response.success) {
+                alert("✅ Rondas guardadas correctamente.");
+                window.print();
+            } else {
+                alert("❌ Error en la base de datos: " + response.error);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("❌ Error en AJAX:", xhr.responseText);
+        }
+    });
+});
+</script>
