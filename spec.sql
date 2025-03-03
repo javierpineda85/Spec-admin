@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 21-02-2025 a las 13:21:46
+-- Tiempo de generación: 03-03-2025 a las 23:03:31
 -- Versión del servidor: 8.0.31
 -- Versión de PHP: 8.0.26
 
@@ -132,12 +132,29 @@ CREATE TABLE IF NOT EXISTS `mensajes` (
 
 DROP TABLE IF EXISTS `objetivos`;
 CREATE TABLE IF NOT EXISTS `objetivos` (
-  `idObejtivo` int NOT NULL AUTO_INCREMENT,
+  `idObjetivo` int NOT NULL AUTO_INCREMENT,
   `nombre` varchar(100) NOT NULL,
   `localidad` varchar(100) NOT NULL,
   `referente` varchar(100) NOT NULL,
   `tipo` enum('fijo','movil','eventual') NOT NULL,
-  PRIMARY KEY (`idObejtivo`)
+  PRIMARY KEY (`idObjetivo`)
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `reporte_hombre_vivo`
+--
+
+DROP TABLE IF EXISTS `reporte_hombre_vivo`;
+CREATE TABLE IF NOT EXISTS `reporte_hombre_vivo` (
+  `idReporte` int NOT NULL AUTO_INCREMENT,
+  `id_usuario` int NOT NULL,
+  `fecha` date NOT NULL,
+  `hora` time NOT NULL,
+  PRIMARY KEY (`idReporte`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -148,49 +165,16 @@ CREATE TABLE IF NOT EXISTS `objetivos` (
 
 DROP TABLE IF EXISTS `rondas`;
 CREATE TABLE IF NOT EXISTS `rondas` (
-  `id_ronda` int NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(100) NOT NULL,
-  `tipo` enum('fija','eventual') NOT NULL,
-  `supervisor_id` int DEFAULT NULL,
+  `idRonda` int NOT NULL AUTO_INCREMENT,
+  `puesto` varchar(100) NOT NULL,
+  `objetivo_id` int NOT NULL,
+  `tipo` enum('Fija','Eventual') NOT NULL,
+  `orden_escaneo` int NOT NULL,
   `fecha_creacion` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id_ronda`),
-  KEY `supervisor_id` (`supervisor_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  PRIMARY KEY (`idRonda`)
+) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- --------------------------------------------------------
 
---
--- Estructura de tabla para la tabla `ronda_detalle`
---
-
-DROP TABLE IF EXISTS `ronda_detalle`;
-CREATE TABLE IF NOT EXISTS `ronda_detalle` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `ronda_id` int DEFAULT NULL,
-  `sector_id` int DEFAULT NULL,
-  `orden` int NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `ronda_id` (`ronda_id`),
-  KEY `sector_id` (`sector_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `sectores`
---
-
-DROP TABLE IF EXISTS `sectores`;
-CREATE TABLE IF NOT EXISTS `sectores` (
-  `idSector` int NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(100) NOT NULL,
-  `descripcion` text,
-  `qr_code` varchar(250) NOT NULL,
-  PRIMARY KEY (`idSector`),
-  UNIQUE KEY `qr_code` (`qr_code`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `usuarios`
