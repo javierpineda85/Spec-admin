@@ -27,7 +27,7 @@ class RutasController
             "generar_qr"      =>"rondas/generar_qr.php",
             "imprimir_qr"     =>"rondas/imprimir_qr.php",
             "editar_ronda"    => "rondas/editar_ronda.php",
-            "listado_rondas"  => "rondas/listado_rondas.php",
+            "listado_rondas"  => "rondas/listado_rondas.php",        
 
             //web
             "login"             => "web/login.php",

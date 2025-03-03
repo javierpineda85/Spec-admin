@@ -50,9 +50,9 @@ $objetivos = $db->consultas($sql);
                         <?php foreach ($_SESSION['qr_codes'] as $key => $qr): ?>
                             <div class="card col-3" data-key="<?php echo $key; ?>">
                                 <img src="<?php echo htmlspecialchars($qr['image']); ?>" alt="Código QR">
-                                <input type="text" value="<?php echo htmlspecialchars($qr['data']); ?>" class="qr-text">
+                                <label for="" class="form-label"><?php echo htmlspecialchars($qr['data']); ?></label>
                                 <div class="actions">
-                                    <button class="update-btn btn btn-info" data-key="<?php echo $key; ?>">Actualizar</button>
+                                    <!-- <button class="update-btn btn btn-info" data-key="<?php echo $key; ?>">Actualizar</button>-->
                                     <button class="delete-btn btn btn-danger" data-key="<?php echo $key; ?>">Eliminar</button>
                                 </div>
                             </div>
@@ -83,26 +83,36 @@ $objetivos = $db->consultas($sql);
 <!-- /.content -->
 <!-- Script ajax para editar los card creados con los QR -->
 <script>
-    // Actualizar un QR
-    $(document).on('click', '.update-btn', function(e) {
+    // Eliminar un QR
+    $(document).on('click', '.delete-btn', function(e) {
         e.preventDefault();
         var key = $(this).data('key');
-        var newData = $(this).closest('.card').find('.qr-text').val();
+
         $.ajax({
-            url: 'libraries/ajax/ajax_qr.php?action=update_qr',
+            url: 'libraries/ajax/ajax_qr.php',
             type: 'POST',
+            dataType: 'json',
             data: {
-                action: 'update',
-                key: key,
-                newData: newData
+                action: 'delete',
+                key: key
             },
             success: function(response) {
-                var res = JSON.parse(response);
-                if (res.success) {
-                    $('.card[data-key="' + key + '"] img').attr('src', res.newImage);
-                    $('#message').text('QR actualizado exitosamente').fadeIn().delay(2000).fadeOut();
+                if (response.success) {
+                    // 1️⃣ Eliminar el QR del DOM
+                    $('.card[data-key="' + key + '"]').remove();
+
+                    // 2️⃣ Mostrar mensaje de éxito
+                    $('#message').text('QR eliminado exitosamente').fadeIn().delay(2000).fadeOut();
+
+                    // 3️⃣ Recargar la lista de QR sin recargar la página completa
+                    setTimeout(function() {
+                        $("#qr-list").load(location.href + " #qr-list > *", function() {
+                            console.log("Lista de QR recargada");
+                        });
+                    }, 500);
+
                 } else {
-                    alert('Error al actualizar el QR');
+                    alert('Error al eliminar el QR');
                 }
             },
             error: function(xhr, status, error) {
@@ -111,28 +121,6 @@ $objetivos = $db->consultas($sql);
         });
     });
 
-    // Eliminar un QR
-    $(document).on('click', '.delete-btn', function(e) {
-        e.preventDefault();
-        var key = $(this).data('key');
-        $.ajax({
-            url: 'libraries/ajax/ajax_qr.php?action=delete_qr',
-            type: 'POST',
-            data: {
-                action: 'delete',
-                key: key
-            },
-            success: function(response) {
-                var res = JSON.parse(response);
-                if (res.success) {
-                    $('.card[data-key="' + key + '"]').remove();
-                    $('#message').text('QR eliminado exitosamente').fadeIn().delay(2000).fadeOut();
-                } else {
-                    alert('Error al eliminar el QR');
-                }
-            }
-        });
-    });
 
     // Guardar todos los QR en la base de datos
     $('#save-all').click(function() {
@@ -140,8 +128,8 @@ $objetivos = $db->consultas($sql);
             url: 'save_all.php',
             type: 'POST',
             success: function(response) {
-                var res = JSON.parse(response);
-                if (res.success) {
+                //var res = JSON.parse(response);
+                if (response.success) {
                     $('#message').text('Todos los QR se han guardado en la base de datos').fadeIn().delay(2000).fadeOut();
                     // Opcional: limpiar la lista o redirigir
                 } else {
