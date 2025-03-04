@@ -212,6 +212,28 @@
             </li>
 
           </ul>
+          <li class="nav-item"> <!-- mensajes -->
+          <a href="#" class="nav-link">
+            <i class="nav-icon far fa-envelope text-primary"></i>
+            <p>
+              Visitas
+              <i class="fas fa-angle-left right"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="?r=crear_visitas" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Crear Visitas </p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="?r=modificar_visitas" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Modificar Visitas</p>
+              </a>
+            </li>
+          </ul>
         </li>
 
 
