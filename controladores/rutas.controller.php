@@ -22,9 +22,9 @@ class RutasController
             "crear_objetivo"    => "objetivos/crear_objetivo.php",
             "editar_objetivo"   => "objetivos/editar_objetivo.php",
             "listado_objetivos" => "objetivos/listado_objetivos.php",
-            //visitas
-            "crear_visitas"    => "visitas/crear_visitas.php",
-            "modificar_visitas"    => "visitas/modificar_visitas.php",
+            //directivas
+            "crear_directivas"    => "directivas/crear_directivas.php",
+            "modificar_directivas"    => "directivas/modificar_directivas.php",
             //rondas
             "crear_rondas"    => "rondas/crear_rondas.php",
             "generar_qr"      =>"rondas/generar_qr.php",
