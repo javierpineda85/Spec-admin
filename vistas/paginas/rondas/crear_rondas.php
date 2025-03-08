@@ -19,6 +19,16 @@ $objetivos = $db->consultas($sql);
         <!-- Aquí definimos el action para invocar el método del controlador Qr -->
         <form action="index.php?r=generar_qr" method="POST" class="form-horizontal">
             <div class="card-body">
+                <?php
+                if (isset($_SESSION['success_message'])) {
+                    echo '<div class="alert alert-success alert-dismissible">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                            <p><i class="icon fas fa-check"></i>' . $_SESSION['success_message'] . '</p>
+                        </div>';
+                    // Elimina el mensaje después de mostrarlo
+                    unset($_SESSION['success_message']);
+                };
+                ?>
                 <div class="row">
                     <div class="form-group col-sm-12 col-md-3">
                         <label class="form-label">Sector</label>
@@ -36,7 +46,7 @@ $objetivos = $db->consultas($sql);
                     <div class="form-group col-sm-12 col-md-2">
                         <label class="form-label">Tipo</label>
                         <select name="tipo" id="" class="form-control">
-                            <option value=""selected disabled>Elige una opción</option>
+                            <option value="" selected disabled>Elige una opción</option>
                             <option value="Fijo">Fijo</option>
                             <option value="Eventual">Eventual</option>
                         </select>
@@ -60,7 +70,7 @@ $objetivos = $db->consultas($sql);
                                 <img src="<?php echo htmlspecialchars($qr['image']); ?>" alt="Código QR">
                                 <label for="" class="form-label"><?php echo htmlspecialchars($qr['data']); ?></label>
                                 <div class="actions">
-                                    
+
                                     <button class="delete-btn btn btn-danger" data-key="<?php echo $key; ?>">Eliminar</button>
                                 </div>
                             </div>
@@ -70,18 +80,10 @@ $objetivos = $db->consultas($sql);
                     <?php endif; ?>
                 </div>
                 <br>
-                
+
                 <button class="btn btn-info"><a href="?r=imprimir_qr" target="_blank" class="text-white">Vista de Impresión</a> </button>
                 <!-- Aquí podrías mostrar mensajes de éxito u otros avisos -->
-                <?php
-                if (isset($_SESSION['success_message'])) {
-                    echo '<div class="alert alert-success alert-dismissible">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                    <h5><i class="icon fas fa-check"></i></h5>' . $_SESSION['success_message'] .
-                        '</div>';
-                    unset($_SESSION['success_message']);
-                }
-                ?>
+
             </div>
         </form>
     </div>

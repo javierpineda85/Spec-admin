@@ -20,6 +20,16 @@
         <!-- form start -->
         <form class="form-horizontal" method="POST">
           <div class="card-body">
+            <?php
+            if (isset($_SESSION['success_message'])) {
+              echo '<div class="alert alert-success alert-dismissible">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        <p><i class="icon fas fa-check"></i>' . $_SESSION['success_message'] .
+                '</p></div>';
+              // Elimina el mensaje después de mostrarlo
+              unset($_SESSION['success_message']);
+            };
+            ?>
             <div class="row">
               <div class="form-group col-sm-12 col-md-3">
                 <label class="form-label">Nombre</label>
@@ -52,23 +62,10 @@
                 <button type="reset" class="btn btn-default float-right">Borrar campos</button>
                 <?php
 
-                  $registro =  ControladorObjetivos::crtGuardarObjetivo();
+                $registro =  ControladorObjetivos::crtGuardarObjetivo();
                 ?>
 
                 <input type="submit" class="btn btn-success" value="Registrar">
-
-
-                <?php
-                if (isset($_SESSION['success_message'])) {
-                  echo '<div class="alert alert-success alert-dismissible">
-                       <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                       <h5><i class="icon fas fa-check"></i></h5>' . $_SESSION['success_message'] .
-                    '</div>';
-                  // Elimina el mensaje después de mostrarlo
-                  unset($_SESSION['success_message']);
-                };
-                ?>
-
 
               </div>
               <!-- /.card-footer -->
@@ -86,18 +83,49 @@
 <!-- /.content -->
 
 <script>
-// Obtener el elemento select
+  // Obtener el elemento select
   var selectProvincia = document.getElementById("localidad");
 
-// JSON con los departamentos de Mendoza
+  // JSON con los departamentos de Mendoza
   var localidadJSON = {
-    "departamentos": [
-      { "nombre": "Capital" }, { "nombre": "Godoy Cruz" }, { "nombre": "Guaymallén" },
-      { "nombre": "Las Heras" }, { "nombre": "Luján de Cuyo" }, { "nombre": "Maipú" },
-      { "nombre": "San Martín" }, { "nombre": "Rivadavia" }, { "nombre": "Junín" },
-      { "nombre": "Santa Rosa" }, { "nombre": "La Paz" }, { "nombre": "Tunuyán" },
-      { "nombre": "Tupungato" }, { "nombre": "San Carlos" }, { "nombre": "General Alvear" },
-      { "nombre": "Malargüe" }
+    "departamentos": [{
+        "nombre": "Capital"
+      }, {
+        "nombre": "Godoy Cruz"
+      }, {
+        "nombre": "Guaymallén"
+      },
+      {
+        "nombre": "Las Heras"
+      }, {
+        "nombre": "Luján de Cuyo"
+      }, {
+        "nombre": "Maipú"
+      },
+      {
+        "nombre": "San Martín"
+      }, {
+        "nombre": "Rivadavia"
+      }, {
+        "nombre": "Junín"
+      },
+      {
+        "nombre": "Santa Rosa"
+      }, {
+        "nombre": "La Paz"
+      }, {
+        "nombre": "Tunuyán"
+      },
+      {
+        "nombre": "Tupungato"
+      }, {
+        "nombre": "San Carlos"
+      }, {
+        "nombre": "General Alvear"
+      },
+      {
+        "nombre": "Malargüe"
+      }
     ]
   };
 

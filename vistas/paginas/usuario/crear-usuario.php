@@ -20,6 +20,16 @@
         <!-- form start -->
         <form class="form-horizontal" method="POST">
           <div class="card-body">
+            <?php
+            if (isset($_SESSION['success_message'])) {
+              echo '<div class="alert alert-success alert-dismissible">
+                      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                      <p><i class="icon fas fa-check"></i>' . $_SESSION['success_message'] . '</p>
+                    </div>';
+              // Elimina el mensaje después de mostrarlo
+              unset($_SESSION['success_message']);
+            };
+            ?>
             <div class="row">
               <div class="form-group col-sm-12 col-md-5">
                 <label class="form-label">Nombre</label>
@@ -42,7 +52,7 @@
               <div class="form-group col-sm-12 col-md-3">
                 <label class="form-label">Contraseña</label>
                 <input type="password" class="form-control" placeholder="Ingresá el DNI como contraseña" name="pass" id="inputPass" readonly>
-                
+
               </div>
 
               <div class="form-group col-sm-12 col-md-3">
@@ -52,7 +62,7 @@
 
 
               <div class="form-group col-sm-12 col-md-3 text">
-                <label class="form-label" >Teléfono de Emergencia</label>
+                <label class="form-label">Teléfono de Emergencia</label>
                 <input type="text" class="form-control" placeholder="2612223333" name="telefonoPerfil">
               </div>
               <div class="form-group col-sm-12 col-md-5">
@@ -66,15 +76,15 @@
                 </select>
               </div>
               <div class="mb-3">
-           <label for="inputGroupFile02" class="form-label">Foto de Perfil</label>
-               <div class="input-group">
+                <label for="inputGroupFile02" class="form-label">Foto de Perfil</label>
+                <div class="input-group">
                   <input type="file" class="form-control" id="inputGroupFile02" />
                   <label class="input-group-text" for="inputGroupFile02">Upload</label>
                 </div>
               </div>
               <div class="mb-3">
-           <label for="inputGroupFile02" class="form-label">Carnet de Repiv</label>
-               <div class="input-group">
+                <label for="inputGroupFile02" class="form-label">Carnet de Repiv</label>
+                <div class="input-group">
                   <input type="file" class="form-control" id="inputGroupFile02" />
                   <label class="input-group-text" for="inputGroupFile02">Upload</label>
                 </div>
@@ -94,26 +104,13 @@
 
             <!-- /.card-body -->
             <div class="card-footer">
-            <button type="reset" class="btn btn-default float-right">Borrar campos</button>
+              <button type="reset" class="btn btn-default float-right">Borrar campos</button>
               <?php
 
               $registro =  ControladorUsuarios::crtGuardarUsuario();
               ?>
 
               <input type="submit" class="btn btn-success" value="Registrar">
-
-            
-              <?php
-              if (isset($_SESSION['success_message'])) {
-                echo '<div class="alert alert-success alert-dismissible">
-                       <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                       <h5><i class="icon fas fa-check"></i></h5>' . $_SESSION['success_message'] .
-                  '</div>';
-                // Elimina el mensaje después de mostrarlo
-                unset($_SESSION['success_message']);
-              };
-              ?>
-
 
             </div>
             <!-- /.card-footer -->
@@ -136,16 +133,63 @@
 
   // JSON con las provincias argentinas
   var provinciasJSON = {
-  "provincias": [
-    {"nombre": "Buenos Aires"},{"nombre": "Catamarca"},{"nombre": "Chaco"},{"nombre": "Chubut"},
-    {"nombre": "Ciudad Autónoma de Buenos Aires"},{"nombre": "Córdoba"},{"nombre": "Corrientes"},
-    {"nombre": "Entre Ríos"},{"nombre": "Formosa"},{"nombre": "Jujuy"},{"nombre": "La Pampa"},
-    {"nombre": "La Rioja"},{"nombre": "Mendoza"},{"nombre": "Misiones"},{"nombre": "Neuquén"},
-    {"nombre": "Río Negro"},{"nombre": "Salta"},{"nombre": "San Juan"},{"nombre": "San Luis"},
-    {"nombre": "Santa Cruz"},{"nombre": "Santa Fe"},{"nombre": "Santiago del Estero"},
-    {"nombre": "Tierra del Fuego, Antártida e Islas del Atlántico Sur"},{"nombre": "Tucumán"}
-  ]
-};
+    "provincias": [{
+        "nombre": "Buenos Aires"
+      }, {
+        "nombre": "Catamarca"
+      }, {
+        "nombre": "Chaco"
+      }, {
+        "nombre": "Chubut"
+      },
+      {
+        "nombre": "Ciudad Autónoma de Buenos Aires"
+      }, {
+        "nombre": "Córdoba"
+      }, {
+        "nombre": "Corrientes"
+      },
+      {
+        "nombre": "Entre Ríos"
+      }, {
+        "nombre": "Formosa"
+      }, {
+        "nombre": "Jujuy"
+      }, {
+        "nombre": "La Pampa"
+      },
+      {
+        "nombre": "La Rioja"
+      }, {
+        "nombre": "Mendoza"
+      }, {
+        "nombre": "Misiones"
+      }, {
+        "nombre": "Neuquén"
+      },
+      {
+        "nombre": "Río Negro"
+      }, {
+        "nombre": "Salta"
+      }, {
+        "nombre": "San Juan"
+      }, {
+        "nombre": "San Luis"
+      },
+      {
+        "nombre": "Santa Cruz"
+      }, {
+        "nombre": "Santa Fe"
+      }, {
+        "nombre": "Santiago del Estero"
+      },
+      {
+        "nombre": "Tierra del Fuego, Antártida e Islas del Atlántico Sur"
+      }, {
+        "nombre": "Tucumán"
+      }
+    ]
+  };
 
 
   // Agregar opciones al select

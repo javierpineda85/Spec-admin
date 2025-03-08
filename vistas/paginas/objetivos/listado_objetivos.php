@@ -15,6 +15,16 @@ $objetivos = $db->consultas($sql);
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Listado de objetivos</h3>
+                        <?php
+                        if (isset($_SESSION['success_message'])) {
+                            echo '<div class="alert alert-success alert-dismissible">
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                    <p><i class="icon fas fa-check"></i>' . $_SESSION['success_message'] .'</p>
+                                </div>';
+                            // Elimina el mensaje después de mostrarlo
+                            unset($_SESSION['success_message']);
+                        };
+                        ?>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">

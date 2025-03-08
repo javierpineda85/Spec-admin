@@ -1,6 +1,6 @@
 <?php
 
-$db= new Conexion;
+$db = new Conexion;
 $sql = "SELECT * FROM usuarios ORDER BY rol ";
 $usuarios = $db->consultas($sql);
 
@@ -15,6 +15,16 @@ $usuarios = $db->consultas($sql);
         <div class="card">
           <div class="card-header">
             <h3 class="card-title">Listado de usuarios</h3>
+            <?php
+            if (isset($_SESSION['success_message'])) {
+              echo '<div class="alert alert-success alert-dismissible">
+                      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                      <p><i class="icon fas fa-check"></i>' . $_SESSION['success_message'] . '</p>
+                    </div>';
+              // Elimina el mensaje después de mostrarlo
+              unset($_SESSION['success_message']);
+            };
+            ?>
           </div>
           <!-- /.card-header -->
           <div class="card-body">
@@ -59,7 +69,7 @@ $usuarios = $db->consultas($sql);
               </tbody>
               <tfoot>
                 <tr>
-                <th style="text-align: center;">Apellido</th>
+                  <th style="text-align: center;">Apellido</th>
                   <th style="text-align: center;">Nombre</th>
                   <th style="text-align: center;">Celular</th>
                   <th style="text-align: center;">Rol</th>
@@ -80,5 +90,3 @@ $usuarios = $db->consultas($sql);
   <!-- /.container-fluid -->
 </section>
 <!-- /.content -->
-
-

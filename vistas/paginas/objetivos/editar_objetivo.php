@@ -27,6 +27,16 @@ $objetivo = $db->consultas($sql);
                 <!-- form start -->
                 <form class="form-horizontal" method="POST">
                     <div class="card-body">
+                    <?php
+                        if (isset($_SESSION['success_message'])) {
+                            echo '<div class="alert alert-success alert-dismissible">
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                    <p><i class="icon fas fa-check"></i>' . $_SESSION['success_message'] .'</p>
+                                </div>';
+                            // Elimina el mensaje después de mostrarlo
+                            unset($_SESSION['success_message']);
+                        };
+                        ?>
                         <div class="row">
                             <div class="form-group col-sm-12 col-md-3">
                                 <input type="text" name="idObjetivo" value="<?php echo $objetivo[0]['idObjetivo'] ?>" hidden>
