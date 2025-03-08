@@ -13,7 +13,7 @@ class ModeloDirectivas
         $detalleLimpio = str_replace("\r\n", "\n", $datos["detalle"]);
 
         $registro->bindParam(":detalle", $detalleLimpio, PDO::PARAM_STR);
-        $registro->bindParam(":id_objetivo", $datos["id_objetivo"], PDO::PARAM_STR);
+        $registro->bindParam(":id_objetivo", $datos["id_objetivo"], PDO::PARAM_INT);
        
         if ($registro->execute()) {
 
@@ -24,6 +24,31 @@ class ModeloDirectivas
 
         $registro->closeCursor();
         $registro = null;
+    }
+    
+    /*MODIFICAR DIRECTIVA */
+    static public function mdlModificarDirectiva($tabla, $datos)
+    {
+        try {
+           
+            $conexion = Conexion::conectar();
+            $sql = "UPDATE $tabla SET detalle = :detalle, id_objetivo = :id_objetivo 
+                            WHERE idDirectiva = :idDirectiva";
+    
+            $stmt = $conexion->prepare($sql);
+    
+            $stmt->bindParam(":idDirectiva", $datos["idDirectiva"], PDO::PARAM_INT);
+            $stmt->bindParam(":detalle", $datos["detalle"], PDO::PARAM_STR);
+            $stmt->bindParam(":id_objetivo", $datos["id_objetivo"], PDO::PARAM_STR);
+          
+            if ($stmt->execute()) {
+                return "ok";
+            } else {
+                return "error";
+            }
+        } catch (PDOException $e) {
+            return $e->getMessage();
+        }
     }
 }
 
