@@ -25,6 +25,7 @@ class RutasController
             //directivas
             "crear_directivas"    => "directivas/crear_directivas.php",
             "modificar_directivas"    => "directivas/modificar_directivas.php",
+            "listado_directivas" => "directivas/listado_directivas.php",
             //rondas
             "crear_rondas"    => "rondas/crear_rondas.php",
             "generar_qr"      =>"rondas/generar_qr.php",

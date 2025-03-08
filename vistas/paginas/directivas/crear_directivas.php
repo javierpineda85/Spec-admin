@@ -1,41 +1,82 @@
-<div class="container mt-4">
-        <h5 class="mb-3">Completa el formulario para crear una nueva directiva</h5>
+<?php
+$db = new Conexion;
+$sql = "SELECT * FROM objetivos ORDER BY nombre ";
+$objetivos = $db->consultas($sql);
 
-        <!-- Encabezado -->
-        <div class="bg-info text-white p-3 rounded">
-            <h4 class="m-0">Crear Directiva</h4>
-        </div>
+?>
 
-        <!-- Formulario -->
-        <div class="p-4 border rounded-bottom bg-light">
-            <form action="guardar_objetivo.php" method="POST">
-                
-                <div class="row g-3">
-                    <!-- Objetivo -->
-                    <div class="col-md-6">
-                        <label for="objetivo" class="form-label fw-bold">Objetivo</label>
-                        <select class="form-select" id="objetivo" name="objetivo" required>
-                            <option value="">Selecciona un objetivo</option>
-                            <option value="Objetivo 1">Objetivo 1</option>
-                            <option value="Objetivo 2">Objetivo 2</option>
-                            <option value="Objetivo 3">Objetivo 3</option>
-                        </select>
-                    </div>
-                </div>
+<!-- Default box -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Completa el formulario para crear una nueva directiva</h3>
 
-                <!-- Detalle -->
-                <div class="row mt-3">
-                    <div class="col-12">
-                        <label for="detalle" class="form-label fw-bold">Detalle</label>
-                        <textarea class="form-control" id="detalle" name="detalle" rows="4" placeholder="Escribe aquí los detalles..." required></textarea>
-                    </div>
-                </div>
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                <i class="fas fa-minus"></i>
+            </button>
 
-                <!-- Botones -->
-                <div class="mt-4 d-flex">
-                  <button type="submit" class="btn btn-success">Crear</button>
-                  <button type="reset" class="btn btn-light border ms-3">Borrar campos</button>
-                </div>
-            </form>
         </div>
     </div>
+    <div class="card-body">
+        <form action="" method="POST">
+            <div class="card card-info">
+                <div class="card-header">
+                    <h3 class="card-title">Crear Directiva</h3>
+                </div>
+                <!-- /.card-header -->
+                <!-- form start -->
+                <form class="form-horizontal" method="POST">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="form-group col-sm-12 col-md-6">
+                                <label for="objetivo" class="form-label fw-bold">Objetivo</label>
+                                <select class="form-control" id="id_objetivo" name="id_objetivo" required>
+                                <option value="" disabled selected>Selecciona un objetivo</option>
+                            <?php foreach ($objetivos as $objetivo): ?>
+                                <option value="<?php echo $objetivo['idObjetivo'] ?>"><?php echo $objetivo['nombre'] ?></option>
+                            <?php endforeach ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-sm-12 col-md-6">
+                                <label for="detalle" class="form-label fw-bold">Detalle</label>
+                                <textarea class="form-control" id="detalle" name="detalle" rows="4" placeholder="Escribe aquí los detalles..." required></textarea>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                    <div class="card-footer col-sm-12 col-md-6">
+                        <input type="submit" class="btn btn-success" value="Crear">
+                        <button type="reset" class="btn btn-default float-right">Borrar campos</button>
+                        <?php
+                            $registro = ControladorDirectivas::crtGuardarDirectiva();
+                        ?>
+
+                        <?php
+                        if (isset($_SESSION['success_message'])) {
+                            echo '<div class="alert alert-success alert-dismissible">
+                       <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                       <h5><i class="icon fas fa-check"></i></h5>' . $_SESSION['success_message'] .
+                                '</div>';
+                            // Elimina el mensaje después de mostrarlo
+                            unset($_SESSION['success_message']);
+                        };
+                        ?>
+
+
+                    </div>
+                    <!-- /.card-footer -->
+                </form>
+            </div>
+            <!-- /.card-info -->
+        </form>
+    </div>
+    <!-- /.card-body -->
+
+</div>
+<!-- /.card -->
+
+</section>
+<!-- /.content -->

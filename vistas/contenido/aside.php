@@ -64,13 +64,13 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="?r=listado_directivas" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Ver todos</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="?r=crear_directivas" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Crear</p>
               </a>
@@ -212,33 +212,7 @@
             </li>
 
           </ul>
-          <li class="nav-item"> <!-- mensajes -->
-          <a href="#" class="nav-link">
-            <i class="nav-icon far fa-envelope text-primary"></i>
-            <p>
-              Directivas
-              <i class="fas fa-angle-left right"></i>
-            </p>
-          </a>
-          <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a href="?r=crear_directivas" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Crear Directivas </p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="?r=modificar_directivas" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Modificar Directivas</p>
-              </a>
-            </li>
-          </ul>
         </li>
-
-
-
-
       </ul>
     </nav>
     <!-- /.sidebar-menu -->
