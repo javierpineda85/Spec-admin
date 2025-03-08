@@ -14,7 +14,7 @@
     <form action="" method="POST">
       <div class="card card-info">
         <div class="card-header">
-          <h3 class="card-title">Crear Obejtivo</h3>
+          <h3 class="card-title">Crear Objetivo</h3>
         </div>
         <!-- /.card-header -->
         <!-- form start -->

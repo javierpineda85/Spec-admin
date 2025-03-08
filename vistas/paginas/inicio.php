@@ -46,7 +46,7 @@
             <!-- Sección colapsable para los botones -->
             <div id="collapsDirectivas" class="collapse">
               <div class="mt-2">
-                <button class="btn btn-block btn-warning btn-sm">Nueva</button>
+                <button class="btn btn-block btn-warning btn-sm"><a href="?r=crear_directivas" class="text-dark">Crear</a></button>
                 <button class="btn btn-block btn-warning btn-sm">Mostrar todas</button>
               </div>
             </div>
