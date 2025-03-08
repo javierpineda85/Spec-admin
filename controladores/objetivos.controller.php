@@ -81,7 +81,7 @@ class ControladorObjetivos
                     // Si algo falla, hacer rollback
                     $conexion->rollBack();
                     $_SESSION['error_message'] = 'Error al modificar el objetivo';
-                    header("Location: ?r=editar_objetivo.php&id=" . $_POST["idObjetivo"]);
+                    header("Location: ?r=editar_objetivo&id=" . $_POST["idObjetivo"]);
                     exit;
                 }
             } catch (Exception $e) {
