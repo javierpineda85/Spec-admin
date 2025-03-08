@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 03-03-2025 a las 23:03:31
+-- Tiempo de generación: 08-03-2025 a las 23:42:26
 -- Versión del servidor: 8.0.31
 -- Versión de PHP: 8.0.26
 
@@ -74,6 +74,21 @@ CREATE TABLE IF NOT EXISTS `cronogramas` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `directivas`
+--
+
+DROP TABLE IF EXISTS `directivas`;
+CREATE TABLE IF NOT EXISTS `directivas` (
+  `idDirectiva` int NOT NULL AUTO_INCREMENT,
+  `detalle` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `id_objetivo` int NOT NULL,
+  PRIMARY KEY (`idDirectiva`)
+) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `escaneos`
 --
 
@@ -127,6 +142,23 @@ CREATE TABLE IF NOT EXISTS `mensajes` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `novedades`
+--
+
+DROP TABLE IF EXISTS `novedades`;
+CREATE TABLE IF NOT EXISTS `novedades` (
+  `idNovedad` int NOT NULL AUTO_INCREMENT,
+  `fecha` date NOT NULL,
+  `hora` time NOT NULL,
+  `vigilador_id` int NOT NULL,
+  `objetivo_id` int NOT NULL,
+  `detalle` text NOT NULL,
+  PRIMARY KEY (`idNovedad`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `objetivos`
 --
 
@@ -139,7 +171,6 @@ CREATE TABLE IF NOT EXISTS `objetivos` (
   `tipo` enum('fijo','movil','eventual') NOT NULL,
   PRIMARY KEY (`idObjetivo`)
 ) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 
 
 -- --------------------------------------------------------
@@ -175,6 +206,7 @@ CREATE TABLE IF NOT EXISTS `rondas` (
 ) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
+-- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `usuarios`
