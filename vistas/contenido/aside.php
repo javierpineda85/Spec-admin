@@ -45,7 +45,7 @@
             <li class="nav-item">
               <a href="?r=reporte" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Reporte</p>
+                <p>Reportar</p>
 
               </a>
             </li>

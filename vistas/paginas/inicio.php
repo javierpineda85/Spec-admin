@@ -5,6 +5,16 @@
 
   </div>
   <div class="card-body">
+    <?php
+      if (isset($_SESSION['success_message'])) {
+        echo '<div class="alert alert-success alert-dismissible">
+                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                  <p><i class="icon fas fa-check"></i>' . $_SESSION['success_message'] . '</p>
+              </div>';
+        // Elimina el mensaje después de mostrarlo
+        unset($_SESSION['success_message']);
+      };
+    ?>
     <!-- Small boxes (Stat box) -->
     <div class="row">
       <!-- hombre vivo -->
@@ -23,7 +33,7 @@
             <div id="collapsHvivo" class="collapse">
               <div class="mt-2">
                 <button class="btn btn-block btn-danger btn-sm"><a href="tel:911" class="text-white">Llamar 911</a></button>
-                <button class="btn btn-block btn-info btn-sm">Registrar</button>
+                <button class="btn btn-block btn-info btn-sm"><a href="?r=reporte" class="text-white">Registrar</a> </button>
               </div>
             </div>
           </div>
@@ -47,7 +57,7 @@
             <div id="collapsDirectivas" class="collapse">
               <div class="mt-2">
                 <button class="btn btn-block btn-warning btn-sm"><a href="?r=crear_directivas" class="text-dark">Crear</a></button>
-                <button class="btn btn-block btn-warning btn-sm">Mostrar todas</button>
+                <button class="btn btn-block btn-warning btn-sm"><a href="?r=listado_directivas" class="text-dark">Mostrar todas</a></button>
               </div>
             </div>
           </div>

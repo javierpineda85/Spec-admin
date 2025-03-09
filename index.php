@@ -8,6 +8,7 @@ require_once("controladores/mensajes.controller.php");
 require_once("controladores/rondas.controller.php");
 require_once("controladores/qr.controller.php");
 require_once("controladores/directivas.controller.php");
+require_once('controladores/hvivo.controller.php');
 
 
 $plantilla= new PlantillaController();
