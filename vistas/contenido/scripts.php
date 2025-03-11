@@ -27,8 +27,7 @@
 <!-- overlayScrollbars -->
 <script src="./plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
 <!-- AdminLTE App -->
-<script src="./js/adminlte.js"></script>
-
+<script src="/js/adminlte.js"></script>
 
 <!-- jQuery -->
 <script src="./plugins/jquery/jquery.min.js"></script>
@@ -47,8 +46,7 @@
 <script src="./plugins/datatables-buttons/js/buttons.html5.min.js"></script>
 <script src="./plugins/datatables-buttons/js/buttons.print.min.js"></script>
 <script src="./plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
-<!-- AdminLTE App -->
-<script src="./dist/js/adminlte.min.js"></script>
+
 <!-- Bootstrap4 Duallistbox -->
 <script src="./plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.js"></script>
 <script src="./plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
@@ -56,7 +54,7 @@
 
 <!-- Bootstrap Switch -->
 <script src="./plugins/bootstrap-switch/js/bootstrap-switch.min.js"></script>
-
+<script src="./plugins/bootstrap-switch/js/bootstrap-switch.js"></script>
 
 <script>
   $(function() {

@@ -21,7 +21,8 @@
   <link rel="stylesheet" href="./plugins/bootstrap4-duallistbox/bootstrap-duallistbox.css">
   <!-- BS Stepper -->
   <link rel="stylesheet" href="./plugins/bs-stepper/css/bs-stepper.min.css">
-
+ <!-- BS switch -->
+ <link rel="stylesheet" href="./plugins/bootstrap-switch/css/bootstrap3/bootstrap-switch.css">
   <!-- DataTables -->
   <link rel="stylesheet" href="./css/dataTables.bootstrap4.min.css">
   <link rel="stylesheet" href="./css/responsive.bootstrap4.min.css">
