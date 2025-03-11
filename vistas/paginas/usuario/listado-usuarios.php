@@ -34,21 +34,26 @@ $usuarios = $db->consultas($sql);
                   <th style="text-align: center;">Apellido</th>
                   <th style="text-align: center;">Nombre</th>
                   <th style="text-align: center;">Celular</th>
+                  <th style="text-align: center;">Celuar emergencia</th>
                   <th style="text-align: center;">Rol</th>
                   <th style="text-align: center;">Objetivo</th>
                   <th style="text-align: center;">Guardia</th>
+                  <th style="text-align: center;">Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 <?php foreach ($usuarios as $campo => $valor) : ?>
                   <tr>
-                    <td> <?php echo $valor['apellidoUsuario']; ?></td>
-                    <td> <?php echo $valor['nombreUsuario']; ?></td>
-                    <td> <?php echo $valor['email']; ?></td>
+                    <td> <?php echo $valor['apellido']; ?></td>
+                    <td> <?php echo $valor['nombre']; ?></td>
+                    <td> <?php echo $valor['telefono']; ?></td>
+                    <td> <?php echo $valor['tel_emergencia']; ?></td>
                     <td> <?php echo $valor['rol']; ?></td>
+                    <td>Objetivo</td>
+                    <td>Guardia</td>
                     <td>
                       <div class="row d-flex justify-content-around">
-                        <a href="index.php?r=editar-usuario&id=<?php echo $valor["idUsuario"]; ?>" class="btn btn-success btn-sm"><i class="fas fa-edit"></i></a>
+                        <a href="?r=perfil-usuario&id=<?php echo $valor["idUsuario"]; ?>" class="btn btn-success btn-sm"><i class="fas fa-eye"></i></a>
                         <form method="post">
                           <input type="hidden" value="<?php echo $valor["idUsuario"]; ?>" name="idEliminar">
                           <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></button>
@@ -72,9 +77,11 @@ $usuarios = $db->consultas($sql);
                   <th style="text-align: center;">Apellido</th>
                   <th style="text-align: center;">Nombre</th>
                   <th style="text-align: center;">Celular</th>
+                  <th style="text-align: center;">Celuar emergencia</th>
                   <th style="text-align: center;">Rol</th>
                   <th style="text-align: center;">Objetivo</th>
                   <th style="text-align: center;">Guardia</th>
+                  <th style="text-align: center;">Acciones</th>
                 </tr>
               </tfoot>
             </table>

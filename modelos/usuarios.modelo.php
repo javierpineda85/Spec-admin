@@ -31,16 +31,24 @@ class ModeloUsuarios
     /*INSERTAR USUARIO */
     static public function mdlGuardarUsuario($tabla, $datos)
     {
-        $registro = Conexion::conectar()->prepare("INSERT INTO $tabla (nombreUsuario, apellidoUsuario, email, pass, resetPass, imgUsuario, activo, rol) VALUES (:nombreUsuario, :apellidoUsuario, :email, :pass, :resetPass, :imgUsuario, :activo, :rol)");
 
-        $registro->bindParam(":nombreUsuario", $datos["nombreUsuario"], PDO::PARAM_STR);
-        $registro->bindParam(":apellidoUsuario", $datos["apellidoUsuario"], PDO::PARAM_STR);
-        $registro->bindParam(":email", $datos["email"], PDO::PARAM_STR);
+        $registro = Conexion::conectar()->prepare("INSERT INTO $tabla (nombre, apellido, dni, pass, f_nac, telefono, tel_emergencia, domicilio, provincia, rol, imgPerfil, imgRepriv, resetPass, activo) 
+        VALUES (:nombre, :apellido, :dni, :pass, :f_nac, :telefono, :tel_emergencia, :domicilio, :provincia, :rol, :imgPerfil, :imgRepriv,:resetPass, :activo)");
+
+        $registro->bindParam(":nombre", $datos["nombre"], PDO::PARAM_STR);
+        $registro->bindParam(":apellido", $datos["apellido"], PDO::PARAM_STR);
+        $registro->bindParam(":dni", $datos["dni"], PDO::PARAM_STR);
         $registro->bindParam(":pass", $datos["pass"], PDO::PARAM_STR);
-        $registro->bindParam(":resetPass", $datos["resetPass"], PDO::PARAM_INT);
-        $registro->bindParam(":imgUsuario", $datos["imgUsuario"], PDO::PARAM_STR);
-        $registro->bindParam(":activo", $datos["activo"], PDO::PARAM_INT);
+        $registro->bindParam(":f_nac", $datos["f_nac"], PDO::PARAM_STR);
+        $registro->bindParam(":telefono", $datos["telefono"], PDO::PARAM_STR);
+        $registro->bindParam(":tel_emergencia", $datos["tel_emergencia"], PDO::PARAM_STR);
+        $registro->bindParam(":domicilio", $datos["domicilio"], PDO::PARAM_STR);
+        $registro->bindParam(":provincia", $datos["provincia"], PDO::PARAM_STR);
         $registro->bindParam(":rol", $datos["rol"], PDO::PARAM_STR);
+        $registro->bindParam(":imgPerfil", $datos["imgPerfil"], PDO::PARAM_STR);
+        $registro->bindParam(":imgRepriv", $datos["imgRepriv"], PDO::PARAM_STR);
+        $registro->bindParam(":resetPass", $datos["resetPass"], PDO::PARAM_INT);      
+        $registro->bindParam(":activo", $datos["activo"], PDO::PARAM_INT);
 
         if ($registro->execute()) {
 

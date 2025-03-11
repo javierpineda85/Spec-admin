@@ -7,7 +7,7 @@ class ControladorUsuarios
     /*GUARDAR USUARIOS */
     static public function crtGuardarUsuario()
     {
-        if (isset($_POST["nombreUsuario"])) {
+        if (isset($_POST["nombre"])) {
 
             try {
                 $conexion = Conexion::conectar();
@@ -21,46 +21,57 @@ class ControladorUsuarios
                 // Guardar el usuario
                 $tabla = "usuarios";
 
-                $datosUsuario = array(
-                    "nombreUsuario" => $_POST["nombreUsuario"],
-                    "apellidoUsuario" => $_POST["apellidoUsuario"],
-                    "email" => $_POST["email"],
-                    "pass" => password_hash($_POST["pass"], PASSWORD_DEFAULT),
+                $nombre = trim($_POST["nombre"]);
+                $apellido = trim($_POST["apellido"]);
+                $dni = trim($_POST["dni"]);
+                $pass = password_hash($_POST["pass"], PASSWORD_DEFAULT);
+                $f_nac = $_POST["f_nac"];
+                $telefono = $_POST["telefono"];
+                $tel_emergencia = $_POST["tel_emergencia"];
+                $domicilio = $_POST["domicilio"];
+                $provincia = $_POST["provincia"];
+                $rol = $_POST["rol"];
+
+                // Normalizar nombre de archivos (Ej: "JuanPerez")
+                $nombreArchivo = preg_replace('/\s+/', '', $nombre . $apellido);
+
+                // Rutas de las imágenes
+                $imgPerfil = self::guardarImagen($_FILES["imgPerfil"], "img/perfil/", $nombreArchivo . "Perfil");
+                $imgRepriv = self::guardarImagen($_FILES["imgRepriv"], "img/repriv/", $nombreArchivo . "Repriv");
+
+
+                $datos = array(
+                    "nombre" => $nombre,
+                    "apellido" => $apellido,
+                    "dni" => $dni,
+                    "pass" => $pass,
+                    "f_nac" => $f_nac,
+                    "telefono" => $telefono,
+                    "tel_emergencia" => $tel_emergencia,
+                    "domicilio" => $domicilio,
+                    "provincia" => $provincia,
+                    "rol" => $rol,
+                    "imgPerfil" => $imgPerfil,
+                    "imgRepriv" => $imgRepriv,
                     "resetPass" => 1,
-                    "imgUsuario" => "",
-                    "activo" => 1,
-                    "rol" => $_POST["rol"]
+                    "activo" =>1
                 );
 
-                ModeloUsuarios::mdlGuardarUsuario($tabla, $datosUsuario);
-
-                // Obtener el ID del usuario dentro de la misma transacción
-
-                $idUsuario = Conexion::conectar()->prepare("SELECT MAX(idUsuario) as maxId FROM usuarios");
-                $idUsuario->execute();
-                $id = $idUsuario->fetch(PDO::FETCH_ASSOC);
-                // Guardar el perfil
-                $tabla = "perfiles";
-                $datosPerfil = array(
-                    "idUsuario" => $id['maxId'],
-                    "dniPerfil" => $_POST['dniPerfil'],
-                    "telefonoPerfil" => $_POST['telefonoPerfil'],
-                    "fnacPerfil" => $_POST['fnacPerfil'],
-                    "domicilioPerfil" => $_POST['domicilioPerfil'],
-                    "provinciaPerfil" => $_POST['provinciaPerfil']
-                );
-
-                //$respuesta1 = ModeloPerfiles::mdlGuardarPerfil($datosPerfil);
+                $respuesta = ModeloUsuarios::mdlGuardarUsuario($tabla, $datos);
 
                 // Confirmar la transacción si no hay errores
-                Conexion::conectar()->commit();
 
-                $_SESSION['success_message'] = 'Usuario y perfil creados exitosamente';
+                if ($respuesta == "ok") {
+                    $conexion->commit();
+                    $_SESSION['success_message'] = "Usuario registrado correctamente.";
+                   
+                } else {
+                    throw new Exception("Error al guardar en la base de datos.");
+                }
 
-                //return $respuesta1;
             } catch (Exception $e) {
                 // Revertir la transacción en caso de error
-                Conexion::conectar()->rollBack();
+                $conexion->rollBack();
 
                 // Manejar el error según sea necesario
                 $_SESSION['success_message'] =  $e->getMessage();
@@ -95,7 +106,32 @@ class ControladorUsuarios
             return $respuesta;
         }
     }
-    
+  /* FUNCIÓN PARA GUARDAR IMÁGENES */
+  static public function guardarImagen($archivo, $directorio, $nombreArchivo)
+  {
+      if ($archivo["error"] == UPLOAD_ERR_OK) {
+          $ext = pathinfo($archivo["name"], PATHINFO_EXTENSION);
+          $ext = strtolower($ext);
+
+          // Validar formato de imagen
+          $formatosPermitidos = array("jpg", "jpeg", "png", "webp", "avif");
+          if (!in_array($ext, $formatosPermitidos)) {
+              throw new Exception("Formato de imagen no permitido.");
+          }
+
+          // Ruta completa
+          $ruta = $directorio . $nombreArchivo . "." . $ext;
+
+          // Mover archivo al directorio
+          if (!move_uploaded_file($archivo["tmp_name"], $ruta)) {
+              throw new Exception("Error al subir la imagen.");
+          }
+
+          return $ruta; // Devuelve la ruta para guardarla en la base de datos
+      }
+
+      return null;
+  }   
 
 
 }

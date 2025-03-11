@@ -1,21 +1,34 @@
 <?php
 
-$_SESSION['id_usuario'] = "65";
+$idUsuario = $_GET['id'];
 
 $db = new Conexion;
-$sql = "SELECT * FROM usuarios WHERE idUsuario =" . $_SESSION['id_usuario'];
+$sql = "SELECT * FROM usuarios WHERE idUsuario =" . $idUsuario;
 $usuario = $db->consultas($sql);
 
-$deb = new Conexion;
-$sql = "SELECT *,DATE_FORMAT(fnacPerfil, '%d/%m/%Y') AS fnac FROM perfiles WHERE id_usuario =" . $_SESSION['id_usuario'];
-$perfil = $db->consultas($sql);
-
 ?>
+    <style>
+        /* Cambiar color cuando está activado */
+        .form-check-input:checked {
+            background-color: var(--bs-success) !important; /* Color verde de Bootstrap */
+            border-color: var(--bs-success) !important;
+        }
 
+        /* Alternativa para otros colores de Bootstrap */
+        .switch-danger:checked {
+            background-color: var(--bs-danger) !important; /* Rojo */
+            border-color: var(--bs-danger) !important;
+        }
+
+        .switch-warning:checked {
+            background-color: var(--bs-warning) !important; /* Amarillo */
+            border-color: var(--bs-warning) !important;
+        }
+    </style>
 <!-- Default box -->
 <div class="card">
     <div class="card-header bg-primary">
-        <h3 class="card-title">Mi perfil</h3>
+        <h3 class="card-title"><?php echo $usuario[0]['nombre'] . " " . $usuario[0]['apellido'] ?></h3>
 
         <div class="card-tools">
             <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
@@ -25,153 +38,226 @@ $perfil = $db->consultas($sql);
         </div>
     </div>
     <div class="card-body">
-
-
         <!-- Main content -->
-
-        <div class="row d-flex justify-content-around">
-            <div class="col-sm-12 col-md-5" id="about">
-                <div class="card card-primary">
-                    <div class="card-header">
-                        <h3 class="card-title">Sobre mi</h3>
-
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                                <i class="fas fa-minus"></i>
-                            </button>
+        <form class="form-horizontal" method="POST" enctype="multipart/form-data">
+            <div class="card-body">
+                <div class="row">
+                    <div class="form-group col-sm-12 col-md-2">
+                        <div class="text-center">
+                            <img class="profile-user-img img-fluid img-circle" src="<?php echo $usuario[0]['imgPerfil']; ?>" alt="Foto de perfil">
                         </div>
                     </div>
-                    <!-- Profile Image -->
-                    <div class="card card-primary col-12">
-                        <div class="card-body box-profile">
-                            <div class="text-center">
-                                <img class="profile-user-img img-fluid img-circle" src="./img/user2-160x160.jpg" alt="User profile picture">
-                            </div>
-
-                            <h3 class="profile-username text-center"><?php echo $usuario[0]['nombreUsuario'] . " " . $usuario[0]['apellidoUsuario'] ?></h3>
-                        </div>
-
-                        <div class="card card-primary">
-
-                            <!-- /.card-header -->
-                            <div class="card-body">
-                                <strong><i class="fas fa-birthday-cake"></i> Fecha de nacimiento</strong>
-
-                                <p class="text-muted">
-                                    <?php
-                                    if ($perfil != null) {
-                                        echo $perfil[0]['fnac'];
-                                    } else {
-                                        echo "Aun no completaste tu fecha de nacimiento.";
-                                    }
-                                    ?>
-                                </p>
-
-                                <hr>
-
-                                <strong><i class="fas fa-map-marker-alt mr-1"></i> Domicilio</strong>
-
-                                <p class="text-muted">
-                                    <?php
-                                    if ($perfil != null) {
-                                        echo $perfil[0]['domicilioPerfil'];
-                                    } else {
-                                        echo "Aun no completaste tu domicilio.";
-                                    }
-                                    ?>
-
-                                    <hr>
-
-                                    <strong><i class="far fa-file-alt mr-1"></i> Algo mas sobre mi</strong>
-
-                                <p class="text-muted">
-                                    <?php
-                                    if ($perfil != null) {
-                                        echo $perfil[0]['contenidoPerfil'];
-                                    } else {
-                                        echo "Todavia no has escrito nada interesante sobre vos";
-                                    }
-                                    ?>
-                            </div>
-                            <!-- /.card-body -->
-                        </div>
-                        <button type="button" class="btn btn-primary" onclick="ocultar()">Editar mi perfil </button>
-
+                    <div class="form-group col-sm-12 col-md-2">
+                        <label class="form-label">Nombre</label>
+                        <input type="text" class="form-control" placeholder="Juan Carlos" name="nombre" value="<?php echo $usuario[0]['nombre'] ?>" required>
                     </div>
-                    <!-- /.card-body -->
+                    <div class="form-group col-sm-12 col-md-2">
+                        <label class="form-label">Apellido</label>
+                        <input type="text" class="form-control" placeholder="Perez" name="apellido" value="<?php echo  $usuario[0]['apellido'] ?>" required>
+                    </div>
+                    <div class="form-group col-sm-12 col-md-2">
+                        <label class="form-label">DNI</label>
+                        <input type="text" class="form-control" placeholder="12345678" name="dni" id="inputDNI" maxlength="8" value="<?php echo  $usuario[0]['dni'] ?>" required>
+                        <small id="caracteresRestantes" class="form-text text-muted">Caracteres restantes: 8</small>
+                    </div>
+                    <div class="form-group col-sm-12 col-md-2">
+                        <label class="form-label">Fecha Nac</label>
+                        <input type="date" class="form-control" name="f_nac" value="<?php echo  $usuario[0]['f_nac'] ?>" required>
+                    </div>
+                    <div class="form-group col-sm-12 col-md-2">
+                        <label class="form-label">Rol de Usuario</label>
+                        <select class="custom-select" name="rol" required>
+                            <option value="<?php echo  $usuario[0]['rol'] ?>" selected><?php echo $usuario[0]['rol'] ?></option>
+                            <option value="Vigilador">Vigilador</option>
+                            <option value="Referente">Referente</option>
+                            <option value="Supervisor">Supervisor</option>
+                            <option value="Administrador">Administrador</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-sm-12 col-md-2">
+                        <label class="form-label">Teléfono</label>
+                        <input type="text" class="form-control" placeholder="2612223333" name="telefono" value="<?php echo  $usuario[0]['telefono'] ?>" required>
+                    </div>
+
+                    <div class="form-group col-sm-12 col-md-2 text">
+                        <label class="form-label">Teléfono de Emergencia</label>
+                        <input type="text" class="form-control" placeholder="2612223333" name="tel_emergencia" value="<?php echo  $usuario[0]['tel_emergencia'] ?>" required>
+                    </div>
+                    <div class="form-group col-sm-12 col-md-5">
+                        <label class="form-label">Domicilio</label>
+                        <input type="text" class="form-control" placeholder="Av San Martin 123 Ciudad" name="domicilio" value="<?php echo  $usuario[0]['domicilio'] ?>" required>
+                    </div>
+                    <div class="form-group col-sm-12 col-md-2">
+                        <label class="form-label">Provincia</label>
+                        <select id="provincia" name="provincia" class="form-control" required>
+                            <option value="<?php echo  $usuario[0]['provincia'] ?>" selected><?php echo  $usuario[0]['provincia'] ?></option>
+                        </select>
+                    </div>
                 </div>
-                <!-- /.card -->
+                <div class="row parent border-top border-secondary pt-3">
+                    <div class="form-group col-sm-12 col-md-6 parent1 border m-3">
+                        <label for="fotorepriv" class="form-label">Carnet de REPRIV</label>
+                        <img src="<?php echo  $usuario[0]['imgRepriv']; ?>"
+                            alt="Carnet de REPRIV"
+                            width="200"
+                            data-bs-toggle="modal"
+                            data-bs-target="#imagenModal"
+                            style="cursor:pointer;">
+                    </div>
+
+                    <div class="form-group col-sm-12 col-md-12 parent2">
+                        <label for="inputGroupFile01" class="form-label">Cambiar Foto de Perfil</label>
+                        <div class="input-group">
+                            <input type="file" class="form-control" id="inputGroupFile01" name="imgPerfil" required>
+                        </div>
+                        <small class="form-text text-muted">Solo formatos .png, .jpg o .jpeg</small>
+                    </div>
+                    <div class="form-group col-sm-12 col-md-12 parent3">
+                        <label for="inputGroupFile02" class="form-label">Cambiar Carnet de Repiv</label>
+                        <div class="input-group">
+                            <!--<label class="input-group-text" for="inputGroupFile02">cargar</label>-->
+                            <input type="file" class="form-control" id="inputGroupFile02" name="imgRepriv" required>
+                        </div>
+                        <small class="form-text text-muted">Solo formatos .png, .jpg o .jpeg</small>
+                    </div>
+
+                    <div class="form-group col-sm-12 col-md-12 parent4 p-3 border border-secondary">
+                        <label for=""class="form-label">Estado y seguridad</label>
+                        <div class="custom-control custom-switch my-1">
+                            <input type="checkbox" name="resetPass" class="custom-control-input switch-succss" id="customSwitch1">
+                            <label class="custom-control-label text-secondary" for="customSwitch1">Restaurar contraseña</label>
+                        </div>
+                        <div class="custom-control custom-switch ">
+                            <input type="checkbox" name="activo" class="custom-control-input switch-danger" id="customSwitch2">
+                            <label class="custom-control-label text-secondary" for="customSwitch2">Dar de baja</label>
+                        </div>
+                    </div>
+
+                </div>
+
                 <!-- /.card-body -->
-            </div>
-            <!-- /.card -->
+                <div class="card-footer">
+                    <button type="reset" class="btn btn-default float-right">Borrar campos</button>
+                    <?php
+                    //$registro =  ControladorUsuarios::crtGuardarUsuario();
+                    ?>
 
-            <!-- editar perfil -->
-
-            <div class="col-7 d-none" id="ocultar">
-                <div class="card card-secondary">
-                    <div class="card-header">
-                        <h3 class="card-title">Editar Perfil</h3>
-
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <!-- Perfil extras -->
-
-                    <div class="card card-primary col-12">
-                        <!-- Start FORM-->
-                        <form class="form-horizontal" method="POST" enctype="multipart/form-data" id="editar-perfil">
-                            <div class="form-group row">
-                                <input type="text" value="<?php echo $_SESSION['id_usuario']; ?>" name="id_usuario" hidden>
-                                <label for="inputImgPerfil" class="col-sm-2 col-form-label">Foto de perfil</label>
-                                <div class="col-sm-10">
-                                    <input type="file" class="form-control" id="inputImgPerfil" name="imgUsuario">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="domicilioPerfil" class="col-sm-2 col-form-label">Domicilio</label>
-                                <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="domicilioPerfil" name="domicilioPerfil" value="<?php echo isset($perfil[0]['domicilioPerfil']) ? $perfil[0]['domicilioPerfil'] : 'Falta completar tu perfil';?>">                                  
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label for="fnac" class="col-sm-2 col-form-label">Fecha de nacimiento</label>
-                                <div class="col-sm-10">
-                                    <input type="date" class="form-control" name="fnacPerfil" id="fnac" value="<?php echo isset($perfil[0]['fnacPerfil']) ? $perfil[0]['fnacPerfil'] : ''; ?>">
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label for="contenidoPerfil" class="col-sm-2 col-form-label">Sobre mi</label>
-                                <div class="col-sm-10">
-                                    <textarea class="form-control" id="contenidoPerfil" name="contenidoPerfil" value="<?php echo isset($perfil[0]['contenidoPerfil']) ? $perfil[0]['contenidoPerfil']: ''; ?>">
-                                    </textarea>
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <div class="offset-sm-2 col-sm-10">
-
-                                    <button type="button" class="btn btn-secondary" onclick="ocultar()">Cerrar</button>
-                                    <button type="submit" class="btn btn-success">Guardar Cambios</button>
-                                    <?php
-                                    $registro = ControladorPerfiles::crtEditarPerfil();
-                                    ?>
-
-                                </div>
-                            </div>
-                        </form>
-                        <!-- /.form -->
-                    </div>
-                    <!-- /.card-body -->
-
-                    <!-- /Perfil extras-->
+                    <input type="submit" class="btn btn-success" value="Modificar Datos">
+                    <?php
+                    if (isset($_SESSION['success_message'])) {
+                        echo '<div class="alert alert-success alert-dismissible">
+                      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                      <p><i class="icon fas fa-check"></i>' . $_SESSION['success_message'] . '</p>
+                    </div>';
+                        // Elimina el mensaje después de mostrarlo
+                        unset($_SESSION['success_message']);
+                    };
+                    ?>
                 </div>
-            </div>
-        </div>
+                <!-- /.card-footer -->
+        </form>
 
     </div>
 
 </div>
+<!-- Modal para mostrar la imagen en grande -->
+<div class="modal fade" id="imagenModal" tabindex="10" aria-labelledby="imagenModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imagenModalLabel">Vista previa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImagen" src="" class="img-fluid" alt="Vista previa">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Obtener el elemento select
+    var selectProvincia = document.getElementById("provincia");
+
+    // JSON con las provincias argentinas
+    var provinciasJSON = {
+        "provincias": [{
+                "nombre": "Buenos Aires"
+            }, {
+                "nombre": "Catamarca"
+            }, {
+                "nombre": "Chaco"
+            }, {
+                "nombre": "Chubut"
+            }, {
+                "nombre": "Ciudad Autónoma de Buenos Aires"
+            }, {
+                "nombre": "Córdoba"
+            }, {
+                "nombre": "Corrientes"
+            }, {
+                "nombre": "Entre Ríos"
+            }, {
+                "nombre": "Formosa"
+            }, {
+                "nombre": "Jujuy"
+            }, {
+                "nombre": "La Pampa"
+            },
+            {
+                "nombre": "La Rioja"
+            }, {
+                "nombre": "Mendoza"
+            }, {
+                "nombre": "Misiones"
+            }, {
+                "nombre": "Neuquén"
+            },
+            {
+                "nombre": "Río Negro"
+            }, {
+                "nombre": "Salta"
+            }, {
+                "nombre": "San Juan"
+            }, {
+                "nombre": "San Luis"
+            },
+            {
+                "nombre": "Santa Cruz"
+            }, {
+                "nombre": "Santa Fe"
+            }, {
+                "nombre": "Santiago del Estero"
+            },
+            {
+                "nombre": "Tierra del Fuego, Antártida e Islas del Atlántico Sur"
+            }, {
+                "nombre": "Tucumán"
+            }
+        ]
+    };
+
+
+    // Agregar opciones al select
+    provinciasJSON.provincias.forEach(function(provincia) {
+        var option = document.createElement("option");
+        option.value = provincia.nombre;
+        option.text = provincia.nombre;
+        selectProvincia.add(option);
+    });
+
+    //Para que funcione el modal
+    document.addEventListener("DOMContentLoaded", function() {
+        var imagen = document.querySelector('[data-bs-toggle="modal"]');
+
+        // Verificar si la imagen existe
+        if (imagen) {
+            imagen.addEventListener("click", function() {
+                var modalImagen = document.getElementById("modalImagen");
+                if (modalImagen) {
+                    modalImagen.src = this.src;
+                }
+            });
+        }
+    });
+</script>

@@ -177,8 +177,8 @@
             <!-- Sección colapsable para los botones -->
             <div id="collapseUsuarios" class="collapse">
               <div class="mt-2">
-                <button class="btn btn-block btn-info btn-sm">Nuevo</button>
-                <button class="btn btn-block btn-info btn-sm">Mostrar todos</button>
+                <button class="btn btn-block btn-info btn-sm"><a href="?r=crear-usuario" class="text-white">Nuevo</a> </button>
+                <button class="btn btn-block btn-info btn-sm"><a href="?r=listado-usuarios" class="text-white">Mostrar todos</a></button>
               </div>
             </div>
           </div>
