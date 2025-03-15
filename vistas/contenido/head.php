@@ -16,6 +16,9 @@
   <!-- Theme style -->
   <link rel="stylesheet" href="./css/adminlte.min.css">
 
+    <!-- Estilos propios -->
+    <link rel="stylesheet" href="./css/spec.css">
+
   <!-- Bootstrap4 Duallistbox -->
   <link rel="stylesheet" href="./plugins/bootstrap4-duallistbox/bootstrap-duallistbox.min.css">
   <link rel="stylesheet" href="./plugins/bootstrap4-duallistbox/bootstrap-duallistbox.css">

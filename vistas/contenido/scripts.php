@@ -59,19 +59,19 @@
 
 <!-- Modal para mostrar la imagen en grande -->
 <div class="modal fade" id="imagenModal" tabindex="-1" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Imagen Ampliada</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body text-center">
-                <img id="imagenAmpliada" src="" class="img-fluid" alt="Imagen ampliada">
-            </div>
-        </div>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Imagen Ampliada</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body text-center">
+        <img id="imagenAmpliada" src="" class="img-fluid" alt="Imagen ampliada">
+      </div>
     </div>
+  </div>
 </div>
 
 <script>
@@ -94,90 +94,90 @@
   });
 
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-//                             funcion para ocultar secciones
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
+  //                             funcion para ocultar secciones
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
   function ocultar() {
     $e = document.getElementById('ocultar');
     $e.classList.toggle('d-none');
   }
 
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-//       no permite enviar el formulario de editar-perfil sin que no se presione submit
-/////////////////////////////////////////////////////////////////////////////////////////////////////
- 
-  $("#editar-perfil").submit(function (event) {
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
+  //       no permite enviar el formulario de editar-perfil sin que no se presione submit
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  $("#editar-perfil").submit(function(event) {
     var fnac = $('#fnac').val();
     var domicilioPerfil = $('#domicilioPerfil').val();
     var errores = [];
 
     if ($.trim(fnac) === '') {
-        errores.push("Debe completar la fecha de nacimiento");
+      errores.push("Debe completar la fecha de nacimiento");
     }
     if ($.trim(domicilioPerfil) === '') {
-        errores.push("Debe completar el domiclio");
+      errores.push("Debe completar el domiclio");
     }
 
 
     if (errores.length > 0) {
-        // Muestra los errores como toasts en lugar de un alert
-        Toastify({
-            text: errores.join(" / "),
-            duration: 3000, // Duración en milisegundos
-            close: true, // Agregar un botón para cerrar el toast
-            gravity: "top", // Posición del toast 
-        }).showToast();
+      // Muestra los errores como toasts en lugar de un alert
+      Toastify({
+        text: errores.join(" / "),
+        duration: 3000, // Duración en milisegundos
+        close: true, // Agregar un botón para cerrar el toast
+        gravity: "top", // Posición del toast 
+      }).showToast();
 
-        event.preventDefault(); // Evita que el formulario se envíe
+      event.preventDefault(); // Evita que el formulario se envíe
     }
-    
-});
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-//funcion para completar el DNI y contraseña al mismo tiempo en  paginas/usuarios/crear-usuario.php
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-$(document).ready(function() {
-      $('#inputDNI').on('input', function() {
-        var valor = $(this).val();
-        var input2 = $('#inputPass');
-        var caracteresRestantes = $('#caracteresRestantes');
+  });
 
-        // Limitar la longitud a 8 caracteres
-        if (valor.length > 8) {
-          valor = valor.slice(0, 8);
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
+  //funcion para completar el DNI y contraseña al mismo tiempo en  paginas/usuarios/crear-usuario.php
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
+  $(document).ready(function() {
+    $('#inputDNI').on('input', function() {
+      var valor = $(this).val();
+      var input2 = $('#inputPass');
+      var caracteresRestantes = $('#caracteresRestantes');
+
+      // Limitar la longitud a 8 caracteres
+      if (valor.length > 8) {
+        valor = valor.slice(0, 8);
+      }
+
+      // Actualizar el valor del segundo input
+      input2.val(valor);
+
+      // Calcular y mostrar los caracteres restantes
+      var restantes = 8 - valor.length;
+      caracteresRestantes.text('Caracteres restantes: ' + restantes);
+    });
+  });
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
+  //funcion para agrandar las imagenes en un click
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
+  document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll("img[data-toggle='modal']").forEach(img => {
+      img.addEventListener("click", function() {
+        let modalId = this.getAttribute("data-target"); // Obtiene el modal específico
+        let modalImg = document.querySelector(`${modalId} img`);
+
+        if (modalImg) {
+          modalImg.setAttribute("src", this.getAttribute("src"));
+        } else {
+          console.error(`No se encontró la imagen en el modal ${modalId}`);
         }
-
-        // Actualizar el valor del segundo input
-        input2.val(valor);
-
-        // Calcular y mostrar los caracteres restantes
-        var restantes = 8 - valor.length;
-        caracteresRestantes.text('Caracteres restantes: ' + restantes);
       });
     });
+  });
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-//funcion para agrandar las imagenes en un click
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll("img[data-toggle='modal']").forEach(img => {
-        img.addEventListener("click", function () {
-            let modalId = this.getAttribute("data-target"); // Obtiene el modal específico
-            let modalImg = document.querySelector(`${modalId} img`);
-
-            if (modalImg) {
-                modalImg.setAttribute("src", this.getAttribute("src"));
-            } else {
-                console.error(`No se encontró la imagen en el modal ${modalId}`);
-            }
-        });
-    });
-});
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-//funcion para agregar provincias
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
+  //funcion para agregar provincias
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
   // Obtener el elemento select
   var selectProvincia = document.getElementById("provincia");
 
@@ -248,5 +248,30 @@ document.addEventListener("DOMContentLoaded", function () {
     selectProvincia.add(option);
   });
 
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
+  //                Quitar los botones de BROWSE en los input type file
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
+  document.querySelectorAll('.custom-file-input').forEach(input => {
+    input.addEventListener('change', function(e) {
+      let fileName = e.target.files[0] ? e.target.files[0].name : "Selecciona un archivo";
+      let label = e.target.nextElementSibling;
 
+      // Cambia el texto del label al nombre del archivo
+      label.textContent = fileName;
+
+      // Agrega color verde cuando hay un archivo seleccionado
+      if (e.target.files.length > 0) {
+        label.classList.add("file-selected");
+      } else {
+        label.classList.remove("file-selected");
+      }
+    });
+  });
+
+  // Hacer que el botón "Buscar" abra el input file
+  document.querySelectorAll('.custom-file-button').forEach((button, index) => {
+    button.addEventListener('click', function() {
+      document.querySelectorAll('.custom-file-input')[index].click();
+    });
+  });
 </script>

@@ -1,0 +1,51 @@
+    /* Cambiar color cuando el switch está activado */
+    .custom-control-input:checked+.custom-control-label::before {
+        background-color: #28a745 !important;
+        border-color: #28a745 !important;
+    }
+
+    /* Rojo para switch-danger */
+    .custom-control-input.switch-danger:checked+.custom-control-label::before {
+        background-color: #dc3545 !important;
+        border-color: #dc3545 !important;
+    }
+
+    /* Amarillo para switch-warning */
+    .custom-control-input.switch-warning:checked+.custom-control-label::before {
+        background-color: #ffc107 !important;
+        border-color: #ffc107 !important;
+    }
+
+    .custom-file-input {
+        display: none;
+        /* Oculta el input */
+    }
+
+    .custom-file-label {
+        background-color: rgb(23, 162, 184);
+        /* bg info */
+        color: white;
+        padding: 10px;
+        cursor: pointer;
+        border-radius: 5px;
+        display: inline-block;
+        text-align: center;
+        width: 90%;
+    }
+
+    .custom-file-label:hover {
+        background-color: #0056b3;
+    }
+
+    /* Color verde cuando hay archivo seleccionado */
+    .file-selected {
+        background-color: #28a745 !important;
+        /* Verde Bootstrap */
+        color: white !important;
+    }
+
+    /* Asegurar que el label no muestre "Browse" en algunos navegadores */
+    .custom-file-label::after {
+        content: "" !important;
+        /* Borra el "Browse" predeterminado en los input type file*/
+    }
