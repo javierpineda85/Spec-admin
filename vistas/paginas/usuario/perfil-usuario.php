@@ -7,24 +7,27 @@ $sql = "SELECT * FROM usuarios WHERE idUsuario =" . $idUsuario;
 $usuario = $db->consultas($sql);
 
 ?>
-    <style>
-        /* Cambiar color cuando está activado */
-        .form-check-input:checked {
-            background-color: var(--bs-success) !important; /* Color verde de Bootstrap */
-            border-color: var(--bs-success) !important;
-        }
+<style>
+    /* Cambiar color cuando está activado */
+    .form-check-input:checked {
+        background-color: var(--bs-success) !important;
+        /* Color verde de Bootstrap */
+        border-color: var(--bs-success) !important;
+    }
 
-        /* Alternativa para otros colores de Bootstrap */
-        .switch-danger:checked {
-            background-color: var(--bs-danger) !important; /* Rojo */
-            border-color: var(--bs-danger) !important;
-        }
+    /* Alternativa para otros colores de Bootstrap */
+    .switch-danger:checked {
+        background-color: var(--bs-danger) !important;
+        /* Rojo */
+        border-color: var(--bs-danger) !important;
+    }
 
-        .switch-warning:checked {
-            background-color: var(--bs-warning) !important; /* Amarillo */
-            border-color: var(--bs-warning) !important;
-        }
-    </style>
+    .switch-warning:checked {
+        background-color: var(--bs-warning) !important;
+        /* Amarillo */
+        border-color: var(--bs-warning) !important;
+    }
+</style>
 <!-- Default box -->
 <div class="card">
     <div class="card-header bg-primary">
@@ -44,7 +47,10 @@ $usuario = $db->consultas($sql);
                 <div class="row">
                     <div class="form-group col-sm-12 col-md-2">
                         <div class="text-center">
-                            <img class="profile-user-img img-fluid img-circle" src="<?php echo $usuario[0]['imgPerfil']; ?>" alt="Foto de perfil">
+                            <img class="profile-user-img img-fluid img-circle" src="<?php echo $usuario[0]['imgPerfil']; ?>" alt="Foto de perfil"                             alt="Carnet de REPRIV"
+                            data-toggle="modal"
+                            data-target="#imagenModal"
+                            style="cursor:pointer;">
                         </div>
                     </div>
                     <div class="form-group col-sm-12 col-md-2">
@@ -99,9 +105,9 @@ $usuario = $db->consultas($sql);
                         <label for="fotorepriv" class="form-label">Carnet de REPRIV</label>
                         <img src="<?php echo  $usuario[0]['imgRepriv']; ?>"
                             alt="Carnet de REPRIV"
-                            width="200"
-                            data-bs-toggle="modal"
-                            data-bs-target="#imagenModal"
+                            width="250"
+                            data-toggle="modal"
+                            data-target="#imagenModal"
                             style="cursor:pointer;">
                     </div>
 
@@ -122,7 +128,7 @@ $usuario = $db->consultas($sql);
                     </div>
 
                     <div class="form-group col-sm-12 col-md-12 parent4 p-3 border border-secondary">
-                        <label for=""class="form-label">Estado y seguridad</label>
+                        <label for="" class="form-label">Estado y seguridad</label>
                         <div class="custom-control custom-switch my-1">
                             <input type="checkbox" name="resetPass" class="custom-control-input switch-succss" id="customSwitch1">
                             <label class="custom-control-label text-secondary" for="customSwitch1">Restaurar contraseña</label>
@@ -160,104 +166,4 @@ $usuario = $db->consultas($sql);
     </div>
 
 </div>
-<!-- Modal para mostrar la imagen en grande -->
-<div class="modal fade" id="imagenModal" tabindex="10" aria-labelledby="imagenModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="imagenModalLabel">Vista previa</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body text-center">
-                <img id="modalImagen" src="" class="img-fluid" alt="Vista previa">
-            </div>
-        </div>
-    </div>
-</div>
 
-<script>
-    // Obtener el elemento select
-    var selectProvincia = document.getElementById("provincia");
-
-    // JSON con las provincias argentinas
-    var provinciasJSON = {
-        "provincias": [{
-                "nombre": "Buenos Aires"
-            }, {
-                "nombre": "Catamarca"
-            }, {
-                "nombre": "Chaco"
-            }, {
-                "nombre": "Chubut"
-            }, {
-                "nombre": "Ciudad Autónoma de Buenos Aires"
-            }, {
-                "nombre": "Córdoba"
-            }, {
-                "nombre": "Corrientes"
-            }, {
-                "nombre": "Entre Ríos"
-            }, {
-                "nombre": "Formosa"
-            }, {
-                "nombre": "Jujuy"
-            }, {
-                "nombre": "La Pampa"
-            },
-            {
-                "nombre": "La Rioja"
-            }, {
-                "nombre": "Mendoza"
-            }, {
-                "nombre": "Misiones"
-            }, {
-                "nombre": "Neuquén"
-            },
-            {
-                "nombre": "Río Negro"
-            }, {
-                "nombre": "Salta"
-            }, {
-                "nombre": "San Juan"
-            }, {
-                "nombre": "San Luis"
-            },
-            {
-                "nombre": "Santa Cruz"
-            }, {
-                "nombre": "Santa Fe"
-            }, {
-                "nombre": "Santiago del Estero"
-            },
-            {
-                "nombre": "Tierra del Fuego, Antártida e Islas del Atlántico Sur"
-            }, {
-                "nombre": "Tucumán"
-            }
-        ]
-    };
-
-
-    // Agregar opciones al select
-    provinciasJSON.provincias.forEach(function(provincia) {
-        var option = document.createElement("option");
-        option.value = provincia.nombre;
-        option.text = provincia.nombre;
-        selectProvincia.add(option);
-    });
-
-    //Para que funcione el modal
-    document.addEventListener("DOMContentLoaded", function() {
-        var imagen = document.querySelector('[data-bs-toggle="modal"]');
-
-        // Verificar si la imagen existe
-        if (imagen) {
-            imagen.addEventListener("click", function() {
-                var modalImagen = document.getElementById("modalImagen");
-                if (modalImagen) {
-                    modalImagen.src = this.src;
-                }
-            });
-        }
-    });
-</script>

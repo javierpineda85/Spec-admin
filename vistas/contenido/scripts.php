@@ -27,7 +27,7 @@
 <!-- overlayScrollbars -->
 <script src="./plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
 <!-- AdminLTE App -->
-<script src="/js/adminlte.js"></script>
+<script src="./js/adminlte.js"></script>
 
 <!-- jQuery -->
 <script src="./plugins/jquery/jquery.min.js"></script>
@@ -55,6 +55,24 @@
 <!-- Bootstrap Switch -->
 <script src="./plugins/bootstrap-switch/js/bootstrap-switch.min.js"></script>
 <script src="./plugins/bootstrap-switch/js/bootstrap-switch.js"></script>
+
+
+<!-- Modal para mostrar la imagen en grande -->
+<div class="modal fade" id="imagenModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Imagen Ampliada</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="imagenAmpliada" src="" class="img-fluid" alt="Imagen ampliada">
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
   $(function() {
@@ -138,6 +156,97 @@ $(document).ready(function() {
         caracteresRestantes.text('Caracteres restantes: ' + restantes);
       });
     });
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+//funcion para agrandar las imagenes en un click
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll("img[data-toggle='modal']").forEach(img => {
+        img.addEventListener("click", function () {
+            let modalId = this.getAttribute("data-target"); // Obtiene el modal específico
+            let modalImg = document.querySelector(`${modalId} img`);
+
+            if (modalImg) {
+                modalImg.setAttribute("src", this.getAttribute("src"));
+            } else {
+                console.error(`No se encontró la imagen en el modal ${modalId}`);
+            }
+        });
+    });
+});
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+//funcion para agregar provincias
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+  // Obtener el elemento select
+  var selectProvincia = document.getElementById("provincia");
+
+  // JSON con las provincias argentinas
+  var provinciasJSON = {
+    "provincias": [{
+        "nombre": "Buenos Aires"
+      }, {
+        "nombre": "Catamarca"
+      }, {
+        "nombre": "Chaco"
+      }, {
+        "nombre": "Chubut"
+      }, {
+        "nombre": "Ciudad Autónoma de Buenos Aires"
+      }, {
+        "nombre": "Córdoba"
+      }, {
+        "nombre": "Corrientes"
+      }, {
+        "nombre": "Entre Ríos"
+      }, {
+        "nombre": "Formosa"
+      }, {
+        "nombre": "Jujuy"
+      }, {
+        "nombre": "La Pampa"
+      },
+      {
+        "nombre": "La Rioja"
+      }, {
+        "nombre": "Mendoza"
+      }, {
+        "nombre": "Misiones"
+      }, {
+        "nombre": "Neuquén"
+      },
+      {
+        "nombre": "Río Negro"
+      }, {
+        "nombre": "Salta"
+      }, {
+        "nombre": "San Juan"
+      }, {
+        "nombre": "San Luis"
+      },
+      {
+        "nombre": "Santa Cruz"
+      }, {
+        "nombre": "Santa Fe"
+      }, {
+        "nombre": "Santiago del Estero"
+      },
+      {
+        "nombre": "Tierra del Fuego, Antártida e Islas del Atlántico Sur"
+      }, {
+        "nombre": "Tucumán"
+      }
+    ]
+  };
+
+
+  // Agregar opciones al select
+  provinciasJSON.provincias.forEach(function(provincia) {
+    var option = document.createElement("option");
+    option.value = provincia.nombre;
+    option.text = provincia.nombre;
+    selectProvincia.add(option);
+  });
 
 
 </script>
