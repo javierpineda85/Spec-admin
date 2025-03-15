@@ -68,16 +68,21 @@
               <div class="form-group col-sm-12 col-md-4">
                 <label for="inputGroupFile01" class="form-label">Foto de Perfil</label>
                 <div class="input-group">
-                  <!-- <label class="input-group-text" for="inputGroupFile01">Cargar</label>-->
-                  <input type="file" class="form-control" id="inputGroupFile01" name="imgPerfil" required>
+                  <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="inputGroupFile01" name="imgPerfil" required>
+                    <label class="custom-file-label" for="inputGroupFile01">Selecciona un archivo</label>
+                  </div>
                 </div>
                 <small class="form-text text-muted">Solo formatos .png, .jpg o .jpeg</small>
               </div>
+
               <div class="form-group col-sm-12 col-md-4">
                 <label for="inputGroupFile02" class="form-label">Carnet de REPRIV</label>
                 <div class="input-group">
-                  <!--<label class="input-group-text" for="inputGroupFile02">cargar</label>-->
-                  <input type="file" class="form-control" id="inputGroupFile02" name="imgRepriv" required>
+                  <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="inputGroupFile02" name="imgRepriv" required>
+                    <label class="custom-file-label" for="inputGroupFile02">Selecciona un archivo</label>
+                  </div>
                 </div>
                 <small class="form-text text-muted">Solo formatos .png, .jpg o .jpeg</small>
               </div>

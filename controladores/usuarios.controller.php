@@ -81,29 +81,69 @@ class ControladorUsuarios
         }
     }
 
-    /*MODIFICAR USUARIO */
-    static public function crtModificarUsuario(){
+    /*MODIFICAR USUARIOS */
+    static public function crtModificarUsuario()
+    {
+        var_dump($_POST);
+        if (isset($_POST["idUsuario"])) {
+            try {
+                $conexion = Conexion::conectar();
 
-        if (isset($_POST["nombreUsuario"])) {
-            
-            $tabla = "usuarios";
-            $datos = array(
-                "idUsuario"        => $_POST["idUsuario"],
-                "nombreUsuario"    => $_POST["nombreUsuario"],
-                "apellidoUsuario"  => $_POST["apellidoUsuario"],
-                "emailUsuario"     => $_POST["emailUsuario"],
-                "rol"              => $_POST["rol"]
-            );
-    
-            // Validar si el campo de contraseña está presente y no está vacío
-            if (isset($_POST["passUsuario"]) && !empty($_POST["passUsuario"])) {
-                // Si la contraseña está presente y no está vacía, agregamos el campo a los datos
-                $datos["passUsuario"] = $_POST["passUsuario"];
+                if (!$conexion->inTransaction()) {
+                    $conexion->beginTransaction();
+                }
+
+                $tabla = "usuarios";
+                $id_usuario = $_POST["idUsuario"];
+                $nombre = trim($_POST["nombre"]);
+                $apellido = trim($_POST["apellido"]);
+                $dni = trim($_POST["dni"]);
+                $f_nac = $_POST["f_nac"];
+                $telefono = $_POST["telefono"];
+                $tel_emergencia = $_POST["tel_emergencia"];
+                $domicilio = $_POST["domicilio"];
+                $provincia = $_POST["provincia"];
+                $rol = $_POST["rol"];
+                $resetPass = isset($_POST["resetPass"]) ? 0 : 1; //Cero es para NO restaurar
+                $activo = isset($_POST["activo"]) ? 1 : 0;
+
+                // Actualizar imágenes si se subieron nuevas
+                $nombreArchivo = preg_replace('/\s+/', '', $nombre . $apellido);
+
+                $imgPerfil = !empty($_FILES["imgPerfil"]["name"]) ? self::guardarImagen($_FILES["imgPerfil"], "img/perfil/", $nombreArchivo . "Perfil") : $_POST["imgPerfilActual"];
+                $imgRepriv = !empty($_FILES["imgRepriv"]["name"]) ? self::guardarImagen($_FILES["imgRepriv"], "img/repriv/", $nombreArchivo . "Repriv") : $_POST["imgReprivActual"];
+
+                $datos = array(
+                    "id_usuario" => $id_usuario,
+                    "nombre" => $nombre,
+                    "apellido" => $apellido,
+                    "dni" => $dni,
+                    "f_nac" => $f_nac,
+                    "telefono" => $telefono,
+                    "tel_emergencia" => $tel_emergencia,
+                    "domicilio" => $domicilio,
+                    "provincia" => $provincia,
+                    "rol" => $rol,
+                    "imgPerfil" => $imgPerfil,
+                    "imgRepriv" => $imgRepriv,
+                    "resetPass" => $resetPass,
+                    "activo" => $activo
+                );
+
+                $respuesta = ModeloUsuarios::mdlModificarUsuario($tabla, $datos);
+
+                if ($respuesta == "ok") {
+                    $conexion->commit();
+                    $_SESSION['success_message'] = "Usuario modificado correctamente.";
+                } else {
+                    throw new Exception("Error al modificar en la base de datos.");
+                }
+
+            } catch (Exception $e) {
+                $conexion->rollBack();
+                $_SESSION['error_message'] = $e->getMessage();
+                return false;
             }
-    
-            $respuesta = ModeloUsuarios::mdlModificarUsuario($tabla, $datos);
-            $_SESSION['success_message'] = 'Usuario modificado exitosamente';
-            return $respuesta;
         }
     }
   /* FUNCIÓN PARA GUARDAR IMÁGENES */

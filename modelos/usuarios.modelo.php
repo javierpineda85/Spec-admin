@@ -62,53 +62,33 @@ class ModeloUsuarios
     }
 
 
-    /*MODIFICAR USUARIO */
-    static public function mdlModificarUsuario($tabla, $datos)
-    {
-        // Comenzamos construyendo la parte inicial de la consulta SQL
-        $consulta = "UPDATE $tabla SET nombreUsuario = :nombreUsuario, apellidoUsuario = :apellidoUsuario, email = :email, rol = :rol";
+   /* ACTUALIZAR USUARIO */
+   static public function mdlModificarUsuario($tabla, $datos)
+   {
+       $stmt = Conexion::conectar()->prepare("UPDATE $tabla SET nombre = :nombre, apellido = :apellido, dni = :dni, f_nac = :f_nac, telefono = :telefono, tel_emergencia = :tel_emergencia, domicilio = :domicilio, provincia = :provincia, rol = :rol, imgPerfil = :imgPerfil, imgRepriv = :imgRepriv, resetPass = :resetPass, activo = :activo WHERE id_usuario = :id_usuario");
 
-        // Creamos un array para almacenar los valores que vamos a vincular en la consulta
-        $valores = array(
-            ":nombreUsuario" => $datos["nombreUsuario"],
-            ":apellidoUsuario" => $datos["apellidoUsuario"],
-            ":email" => $datos["emailUsuario"],
-            ":rol" => $datos["rol"]
-        );
+       $stmt->bindParam(":id_usuario", $datos["id_usuario"], PDO::PARAM_INT);
+       $stmt->bindParam(":nombre", $datos["nombre"], PDO::PARAM_STR);
+       $stmt->bindParam(":apellido", $datos["apellido"], PDO::PARAM_STR);
+       $stmt->bindParam(":dni", $datos["dni"], PDO::PARAM_STR);
+       $stmt->bindParam(":f_nac", $datos["f_nac"], PDO::PARAM_STR);
+       $stmt->bindParam(":telefono", $datos["telefono"], PDO::PARAM_STR);
+       $stmt->bindParam(":tel_emergencia", $datos["tel_emergencia"], PDO::PARAM_STR);
+       $stmt->bindParam(":domicilio", $datos["domicilio"], PDO::PARAM_STR);
+       $stmt->bindParam(":provincia", $datos["provincia"], PDO::PARAM_STR);
+       $stmt->bindParam(":rol", $datos["rol"], PDO::PARAM_STR);
+       $stmt->bindParam(":imgPerfil", $datos["imgPerfil"], PDO::PARAM_STR);
+       $stmt->bindParam(":imgRepriv", $datos["imgRepriv"], PDO::PARAM_STR);
+       $stmt->bindParam(":resetPass", $datos["resetPass"], PDO::PARAM_INT);
+       $stmt->bindParam(":activo", $datos["activo"], PDO::PARAM_INT);
 
-        // Si el campo de contraseña está presente en los datos y no está vacío, lo incluimos en la consulta y en los valores a vincular
-        if (isset($datos["passUsuario"]) && !empty($datos["passUsuario"])) {
-            $consulta .= ", pass = :passUsuario_hashed"; // Agregamos el campo de contraseña a la consulta
-            $consulta .=", resetPass = 1";
-            $valores[":passUsuario_hashed"] = password_hash($datos["passUsuario"], PASSWORD_DEFAULT); // Hasheamos la contraseña y la añadimos al array de valores
-        }
+       if ($stmt->execute()) {
+           return "ok";
+       } else {
+           print_r(Conexion::conectar()->errorInfo());
+       }
 
-        // Agregamos la condición WHERE para identificar el usuario a actualizar
-        $consulta .= " WHERE idUsuario = :idUsuario";
-
-        // Preparamos y ejecutamos la consulta
-        $registro = Conexion::conectar()->prepare($consulta);
-
-        // Vinculamos los valores a la consulta
-        foreach ($valores as $clave => $valor) {
-            $registro->bindValue($clave, $valor, PDO::PARAM_STR);
-        }
-
-        // Vinculamos el ID del usuario
-        $registro->bindValue(":idUsuario", $datos["idUsuario"], PDO::PARAM_INT);
-
-        // Ejecutamos la consulta
-        $registro->execute();
-
-        // Verificamos si se realizó la actualización correctamente
-        if ($registro->rowCount() > 0) {
-            return "ok";
-        } else {
-            print_r(Conexion::conectar()->errorInfo());
-        }
-
-        // Cerramos el cursor y liberamos los recursos
-        $registro->closeCursor();
-        $registro = null;
-    }
+       $stmt->closeCursor();
+       $stmt = null;
+   }
 }
