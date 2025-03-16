@@ -3,29 +3,28 @@
 class ModeloUsuarios
 {
     // Método para verificar las credenciales de inicio de sesión
-    public function authenticate($email, $password)
+    public function authenticate($dni, $password)
     {
-        // Aquí deberías realizar la lógica para verificar las credenciales en tu base de datos
-        // Este es solo un ejemplo básico
-        $storedPassword = $this->getStoredPasswordByUsername($email);
-        if ($storedPassword !== null && password_verify($password, $storedPassword)) {
-            // Las credenciales son válidas
-            return true;
-        } else {
-            // Las credenciales no son válidas
-            return false;
+        // Este es un ejemplo de cómo podrías verificar las credenciales
+        $usuario = $this->getUsuarioPorDni($dni);
+
+        if ($usuario && password_verify($password, $usuario[0]['pass'])) {
+            // Si las credenciales son correctas, devolver los datos del usuario
+            return $usuario;
         }
+
+        return false;
     }
 
     // Método para obtener el hash de contraseña almacenado en la base de datos
-    private function getStoredPasswordByUsername($username)
+    private function getUsuarioPorDni($dni)
     {
-        // Aquí deberías implementar la lógica para obtener el hash de contraseña de tu base de datos
-        // Este es solo un ejemplo básico
-        $users = [
-            'john' => '$2y$10$jWQxRc0kLlNhvX52nVpPve.hGzsOR5M10KgIrNzJwXvT4aQxir9jC' // Ejemplo de hash de contraseña
-        ];
-        return isset($users[$username]) ? $users[$username] : null;
+        $db = new Conexion;
+        $sql = "SELECT idUsuario, nombre, apellido, pass, imgPerfil FROM usuarios WHERE dni = $dni LIMIT 1";
+        $usuario = $db->consultas($sql);
+
+        // Si el usuario existe, devolver los datos
+        return $usuario ? $usuario : null;
     }
 
     /*INSERTAR USUARIO */
@@ -47,7 +46,7 @@ class ModeloUsuarios
         $registro->bindParam(":rol", $datos["rol"], PDO::PARAM_STR);
         $registro->bindParam(":imgPerfil", $datos["imgPerfil"], PDO::PARAM_STR);
         $registro->bindParam(":imgRepriv", $datos["imgRepriv"], PDO::PARAM_STR);
-        $registro->bindParam(":resetPass", $datos["resetPass"], PDO::PARAM_INT);      
+        $registro->bindParam(":resetPass", $datos["resetPass"], PDO::PARAM_INT);
         $registro->bindParam(":activo", $datos["activo"], PDO::PARAM_INT);
 
         if ($registro->execute()) {
@@ -62,33 +61,33 @@ class ModeloUsuarios
     }
 
 
-   /* ACTUALIZAR USUARIO */
-   static public function mdlModificarUsuario($tabla, $datos)
-   {
-       $stmt = Conexion::conectar()->prepare("UPDATE $tabla SET nombre = :nombre, apellido = :apellido, dni = :dni, f_nac = :f_nac, telefono = :telefono, tel_emergencia = :tel_emergencia, domicilio = :domicilio, provincia = :provincia, rol = :rol, imgPerfil = :imgPerfil, imgRepriv = :imgRepriv, resetPass = :resetPass, activo = :activo WHERE id_usuario = :id_usuario");
+    /* ACTUALIZAR USUARIO */
+    static public function mdlModificarUsuario($tabla, $datos)
+    {
+        $stmt = Conexion::conectar()->prepare("UPDATE $tabla SET nombre = :nombre, apellido = :apellido, dni = :dni, f_nac = :f_nac, telefono = :telefono, tel_emergencia = :tel_emergencia, domicilio = :domicilio, provincia = :provincia, rol = :rol, imgPerfil = :imgPerfil, imgRepriv = :imgRepriv, resetPass = :resetPass, activo = :activo WHERE id_usuario = :id_usuario");
 
-       $stmt->bindParam(":id_usuario", $datos["id_usuario"], PDO::PARAM_INT);
-       $stmt->bindParam(":nombre", $datos["nombre"], PDO::PARAM_STR);
-       $stmt->bindParam(":apellido", $datos["apellido"], PDO::PARAM_STR);
-       $stmt->bindParam(":dni", $datos["dni"], PDO::PARAM_STR);
-       $stmt->bindParam(":f_nac", $datos["f_nac"], PDO::PARAM_STR);
-       $stmt->bindParam(":telefono", $datos["telefono"], PDO::PARAM_STR);
-       $stmt->bindParam(":tel_emergencia", $datos["tel_emergencia"], PDO::PARAM_STR);
-       $stmt->bindParam(":domicilio", $datos["domicilio"], PDO::PARAM_STR);
-       $stmt->bindParam(":provincia", $datos["provincia"], PDO::PARAM_STR);
-       $stmt->bindParam(":rol", $datos["rol"], PDO::PARAM_STR);
-       $stmt->bindParam(":imgPerfil", $datos["imgPerfil"], PDO::PARAM_STR);
-       $stmt->bindParam(":imgRepriv", $datos["imgRepriv"], PDO::PARAM_STR);
-       $stmt->bindParam(":resetPass", $datos["resetPass"], PDO::PARAM_INT);
-       $stmt->bindParam(":activo", $datos["activo"], PDO::PARAM_INT);
+        $stmt->bindParam(":id_usuario", $datos["id_usuario"], PDO::PARAM_INT);
+        $stmt->bindParam(":nombre", $datos["nombre"], PDO::PARAM_STR);
+        $stmt->bindParam(":apellido", $datos["apellido"], PDO::PARAM_STR);
+        $stmt->bindParam(":dni", $datos["dni"], PDO::PARAM_STR);
+        $stmt->bindParam(":f_nac", $datos["f_nac"], PDO::PARAM_STR);
+        $stmt->bindParam(":telefono", $datos["telefono"], PDO::PARAM_STR);
+        $stmt->bindParam(":tel_emergencia", $datos["tel_emergencia"], PDO::PARAM_STR);
+        $stmt->bindParam(":domicilio", $datos["domicilio"], PDO::PARAM_STR);
+        $stmt->bindParam(":provincia", $datos["provincia"], PDO::PARAM_STR);
+        $stmt->bindParam(":rol", $datos["rol"], PDO::PARAM_STR);
+        $stmt->bindParam(":imgPerfil", $datos["imgPerfil"], PDO::PARAM_STR);
+        $stmt->bindParam(":imgRepriv", $datos["imgRepriv"], PDO::PARAM_STR);
+        $stmt->bindParam(":resetPass", $datos["resetPass"], PDO::PARAM_INT);
+        $stmt->bindParam(":activo", $datos["activo"], PDO::PARAM_INT);
 
-       if ($stmt->execute()) {
-           return "ok";
-       } else {
-           print_r(Conexion::conectar()->errorInfo());
-       }
+        if ($stmt->execute()) {
+            return "ok";
+        } else {
+            print_r(Conexion::conectar()->errorInfo());
+        }
 
-       $stmt->closeCursor();
-       $stmt = null;
-   }
+        $stmt->closeCursor();
+        $stmt = null;
+    }
 }
