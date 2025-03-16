@@ -1,5 +1,5 @@
 <?php
-$id = $_GET['id'];
+$id = isset($_GET['id']) ? intval($_GET['id']) : 0;;
 $db = new Conexion;
 $sql = "SELECT d.idDirectiva, d.id_objetivo, o.nombre, d.detalle FROM directivas d JOIN objetivos o ON d.id_objetivo = o.idObjetivo WHERE d.idDirectiva = $id";
 $directiva = $db->consultas($sql);
