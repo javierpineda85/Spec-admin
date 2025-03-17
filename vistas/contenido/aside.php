@@ -13,7 +13,7 @@
         <img src="<?php echo $_SESSION['imgPerfil']; ?>" class="img-circle elevation-2" alt="imagen del usuario">
       </div>
       <div class="info">
-        <a href="#" class="d-block"><?php echo $_SESSION['nombre'] . " " . $_SESSION['nombre'] ; ?></a>
+        <a href="#" class="d-block"><?php echo $_SESSION['nombre'] . " " . $_SESSION['apellido'] ; ?></a>
       </div>
     </div>
 
@@ -212,6 +212,13 @@
             </li>
 
           </ul>
+        </li>
+        <li class="nav-item"> <!-- Salir -->
+        <a href="index.php?r=cerrar_sesion" class="nav-link">
+          <i class="fas fa-sign-out-alt nav-icon text-danger"></i>
+            <p> Cerrar Sesión</p>
+          </a>
+
         </li>
       </ul>
     </nav>
