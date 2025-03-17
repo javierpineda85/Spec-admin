@@ -31,7 +31,7 @@ $objetivos = $db->consultas($sql);
                 ?>
                 <div class="row">
                     <div class="form-group col-sm-12 col-md-3">
-                        <label class="form-label">Sector</label>
+                        <label class="form-label">Sector / Puesto</label>
                         <input type="text" class="form-control" placeholder="Ronda 1" name="puesto">
                     </div>
                     <div class="form-group col-sm-12 col-md-3">

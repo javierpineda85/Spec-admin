@@ -34,7 +34,7 @@ $usuarios = $db->consultas($sql);
                   <th style="text-align: center;">Apellido</th>
                   <th style="text-align: center;">Nombre</th>
                   <th style="text-align: center;">Celular</th>
-                  <th style="text-align: center;">Celuar emergencia</th>
+                  <th style="text-align: center;">Celular emergencia</th>
                   <th style="text-align: center;">Rol</th>
                   <th style="text-align: center;">Objetivo</th>
                   <th style="text-align: center;">Guardia</th>
@@ -70,14 +70,13 @@ $usuarios = $db->consultas($sql);
                   </tr>
                 <?php endforeach ?>
 
-
               </tbody>
               <tfoot>
                 <tr>
                   <th style="text-align: center;">Apellido</th>
                   <th style="text-align: center;">Nombre</th>
                   <th style="text-align: center;">Celular</th>
-                  <th style="text-align: center;">Celuar emergencia</th>
+                  <th style="text-align: center;">Celular emergencia</th>
                   <th style="text-align: center;">Rol</th>
                   <th style="text-align: center;">Objetivo</th>
                   <th style="text-align: center;">Guardia</th>

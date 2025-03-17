@@ -21,11 +21,11 @@
         <form class="form-horizontal" method="POST" enctype="multipart/form-data">
           <div class="card-body">
             <div class="row">
-              <div class="form-group col-sm-12 col-md-5">
+              <div class="form-group col-sm-12 col-md-3">
                 <label class="form-label">Nombre</label>
                 <input type="text" class="form-control" placeholder="Juan Carlos" name="nombre" required>
               </div>
-              <div class="form-group col-sm-12 col-md-5">
+              <div class="form-group col-sm-12 col-md-3">
                 <label class="form-label">Apellido</label>
                 <input type="text" class="form-control" placeholder="Perez" name="apellido" required>
               </div>
@@ -35,37 +35,55 @@
                 <small id="caracteresRestantes" class="form-text text-muted">Caracteres restantes: 8</small>
               </div>
               <div class="form-group col-sm-12 col-md-2">
+                <label class="form-label">Contraseña</label>
+                <input type="password" class="form-control" placeholder="DNI como contraseña" name="pass" id="inputPass" readonly>
+              </div>
+
+              <div class="form-group col-sm-12 col-md-2">
                 <label class="form-label">Fecha Nac</label>
                 <input type="date" class="form-control" name="f_nac" required>
               </div>
 
-              <div class="form-group col-sm-12 col-md-3">
-                <label class="form-label">Contraseña</label>
-                <input type="password" class="form-control" placeholder="DNI como contraseña" name="pass" id="inputPass" readonly>
-
-              </div>
-
-              <div class="form-group col-sm-12 col-md-3">
+              <div class="form-group col-sm-12 col-md-2">
                 <label class="form-label">Teléfono</label>
                 <input type="text" class="form-control" placeholder="2612223333" name="telefono" required>
               </div>
 
 
-              <div class="form-group col-sm-12 col-md-3 text">
+              <div class="form-group col-sm-12 col-md-2">
                 <label class="form-label">Teléfono de Emergencia</label>
                 <input type="text" class="form-control" placeholder="2612223333" name="tel_emergencia" required>
               </div>
-              <div class="form-group col-sm-12 col-md-5">
+              <div class="form-group col-sm-12 col-md-2">
+                <label class="form-label">Nombre de contacto</label>
+                <input type="text" class="form-control" placeholder="Juan Perez" name="nombre_contacto" required>
+              </div>
+              <div class="form-group col-sm-12 col-md-2">
+                <label class="form-label">Parentesco</label>
+                <input type="text" class="form-control" placeholder="Parentesco" name="parentesco" required>
+              </div>
+              <div class="form-group col-sm-12 col-md-3">
+                <label class="form-label">Rol de Usuario</label>
+                <select class="custom-select" name="rol" required>
+                  <option value="" disabled selected> Rol de usuario</option>
+                  <option value="Vigilador">Vigilador</option>
+                  <option value="Referente">Referente</option>
+                  <option value="Supervisor">Supervisor</option>
+                  <option value="Gerencia">Gerencia</option>
+                  <option value="Administrador">Administrador</option>
+                </select>
+              </div>
+              <div class="form-group col-sm-12 col-md-4">
                 <label class="form-label">Domicilio</label>
                 <input type="text" class="form-control" placeholder="Av San Martin 123 Ciudad" name="domicilio" required>
               </div>
-              <div class="form-group col-sm-12 col-md-4">
+              <div class="form-group col-sm-12 col-md-2">
                 <label class="form-label">Provincia</label>
                 <select id="provincia" name="provincia" class="form-control" required>
                   <option value="" disabled selected>Elige una provincia</option>
                 </select>
               </div>
-              <div class="form-group col-sm-12 col-md-4">
+              <div class="form-group col-sm-12 col-md-3">
                 <label for="inputGroupFile01" class="form-label">Foto de Perfil</label>
                 <div class="input-group">
                   <div class="custom-file">
@@ -76,7 +94,7 @@
                 <small class="form-text text-muted">Solo formatos .png, .jpg o .jpeg</small>
               </div>
 
-              <div class="form-group col-sm-12 col-md-4">
+              <div class="form-group col-sm-12 col-md-3">
                 <label for="inputGroupFile02" class="form-label">Carnet de REPRIV</label>
                 <div class="input-group">
                   <div class="custom-file">
@@ -87,16 +105,6 @@
                 <small class="form-text text-muted">Solo formatos .png, .jpg o .jpeg</small>
               </div>
 
-              <div class="form-group col-sm-12 col-md-3">
-                <label class="form-label">Rol de Usuario</label>
-                <select class="custom-select" name="rol" required>
-                  <option value="" disabled selected> Rol de usuario</option>
-                  <option value="Vigilador">Vigilador</option>
-                  <option value="Referente">Referente</option>
-                  <option value="Supervisor">Supervisor</option>
-                  <option value="Administrador">Administrador</option>
-                </select>
-              </div>
             </div>
 
             <!-- /.card-body -->
