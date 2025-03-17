@@ -7,7 +7,7 @@ class hVivo
     public function registrar()
     {
 
-        if (isset($_SESSION['usuario_id'])) {
+        if (isset($_SESSION['idUsuario'])) {
 
             try {
                 $conexion = Conexion::conectar();
@@ -21,7 +21,7 @@ class hVivo
                 $tabla = "reporte_hombre_vivo";
 
                 $datos = array(
-                    "id_usuario" => $_SESSION['usuario_id'],
+                    "id_usuario" => $_SESSION['idUsuario'],
                     "fecha"      => date('Y-m-d'),
                     "hora"       => date('H:i:s')
                 );

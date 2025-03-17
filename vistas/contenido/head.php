@@ -6,6 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="author" content="Javier Pineda">
   <meta name="description" content="Sistema de gestión de trabajo de la empresa de seguridad S.P.E.C. perteneciente al grupo MARSAN S.A.">
+  <link rel="shortcut icon" href="img/spec-favicon.ico" type="image/x-icon">
+
   <title>S.P.E.C. </title>
 
   <!-- Google Font: Source Sans Pro -->

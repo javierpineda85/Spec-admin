@@ -1,7 +1,7 @@
 <?php
 
 $db = new Conexion;
-$sql = "SELECT * FROM usuarios ORDER BY rol ";
+$sql = "SELECT r.idRonda, r.puesto, r.objetivo_id, r.tipo, r.orden_escaneo, r.fecha_creacion, o.nombre FROM rondas r JOIN objetivos o ON r.objetivo_id = o.idObjetivo ORDER BY o.nombre ASC, r.orden_escaneo ASC";
 $usuarios = $db->consultas($sql);
 
 ?>
@@ -14,7 +14,7 @@ $usuarios = $db->consultas($sql);
 
         <div class="card">
           <div class="card-header">
-            <h3 class="card-title">Listado de usuarios</h3>
+            <h3 class="card-title">Listado de rondas</h3>
             <?php
             if (isset($_SESSION['success_message'])) {
               echo '<div class="alert alert-success alert-dismissible">
@@ -31,31 +31,26 @@ $usuarios = $db->consultas($sql);
             <table id="example1" class="table table-bordered table-striped table-sm">
               <thead>
                 <tr>
-                  <th style="text-align: center;">Apellido</th>
-                  <th style="text-align: center;">Nombre</th>
-                  <th style="text-align: center;">Celular</th>
-                  <th style="text-align: center;">Celular emergencia</th>
-                  <th style="text-align: center;">Rol</th>
                   <th style="text-align: center;">Objetivo</th>
-                  <th style="text-align: center;">Guardia</th>
+                  <th style="text-align: center;">Sector / nombre</th>
+                  <th style="text-align: center;">Tipo</th>
+                  <th style="text-align: center;">Orden de escaneo</th>
                   <th style="text-align: center;">Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 <?php foreach ($usuarios as $campo => $valor) : ?>
                   <tr>
-                    <td> <?php echo $valor['apellido']; ?></td>
                     <td> <?php echo $valor['nombre']; ?></td>
-                    <td> <?php echo $valor['telefono']; ?></td>
-                    <td> <?php echo $valor['tel_emergencia']; ?></td>
-                    <td> <?php echo $valor['rol']; ?></td>
-                    <td>Objetivo</td>
-                    <td>Guardia</td>
+                    <td> <?php echo $valor['puesto']; ?></td>
+                    <td> <?php echo $valor['tipo']; ?></td>
+                    <td> <?php echo $valor['orden_escaneo']; ?></td>
+
                     <td>
                       <div class="row d-flex justify-content-around">
-                        <a href="?r=perfil-usuario&id=<?php echo $valor["idUsuario"]; ?>" class="btn btn-success btn-sm"><i class="fas fa-eye"></i></a>
+                        <a href="?r=editar_ronda&id=<?php echo $valor["idRonda"]; ?>" class="btn btn-success btn-sm"><i class="fas fa-eye"></i></a>
                         <form method="post">
-                          <input type="hidden" value="<?php echo $valor["idUsuario"]; ?>" name="idEliminar">
+                          <input type="hidden" value="<?php echo $valor["idRonda"]; ?>" name="idEliminar">
                           <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></button>
                           <?php
 
@@ -70,16 +65,14 @@ $usuarios = $db->consultas($sql);
                   </tr>
                 <?php endforeach ?>
 
+
               </tbody>
               <tfoot>
                 <tr>
-                  <th style="text-align: center;">Apellido</th>
-                  <th style="text-align: center;">Nombre</th>
-                  <th style="text-align: center;">Celular</th>
-                  <th style="text-align: center;">Celular emergencia</th>
-                  <th style="text-align: center;">Rol</th>
-                  <th style="text-align: center;">Objetivo</th>
-                  <th style="text-align: center;">Guardia</th>
+                <th style="text-align: center;">Objetivo</th>
+                  <th style="text-align: center;">Sector / nombre</th>
+                  <th style="text-align: center;">Tipo</th>
+                  <th style="text-align: center;">Orden de escaneo</th>
                   <th style="text-align: center;">Acciones</th>
                 </tr>
               </tfoot>
