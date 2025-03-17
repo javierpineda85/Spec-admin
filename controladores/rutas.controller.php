@@ -10,7 +10,7 @@ class RutasController
             "crear-usuario"     => "usuario/crear-usuario.php",
             "listado-usuarios"  => "usuario/listado-usuarios.php",
             "perfil-usuario"    => "usuario/perfil-usuario.php",
-            "editar-usuario"    => "usuario/editar-usuario.php",
+            "cerrar_sesion"     => "usuario/salir.php",
             //hombre-vivo
             "reporte"            => "h-vivo/registro.php",
             "listado_reportes"   => "h-vivo/listado_reportes.php",
