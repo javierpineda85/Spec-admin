@@ -103,7 +103,7 @@
           </ul>
         </li>
         <li class="nav-item"> <!-- cronograma -->
-          <a href="../calendar.html" class="nav-link">
+          <a href="" class="nav-link">
             <i class="nav-icon far fa-calendar-alt text-info"></i>
             <p>
               Cronogramas
@@ -112,9 +112,15 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="?r=crear_cronograma" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Ver todo</p>
+                <p>Subir</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="?r=listado_cronogramas" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Ver todos</p>
               </a>
             </li>
           </ul>

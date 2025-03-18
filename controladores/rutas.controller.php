@@ -32,7 +32,9 @@ class RutasController
             "imprimir_qr"     => "rondas/imprimir_qr.php",
             "editar_ronda"    => "rondas/editar_ronda.php",
             "listado_rondas"  => "rondas/listado_rondas.php",
-
+            //Cronograma
+            "crear_cronograma"    => "cronogramas/crear_cronograma.php",
+            "listado_cronogramas"  => "cronogramas/listado_cronogramas.php",
             //web
             "login"             => "login.php",
             "forgot"            => "web/forgot-password.php"
