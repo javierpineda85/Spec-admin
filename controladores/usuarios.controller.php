@@ -84,7 +84,7 @@ class ControladorUsuarios
     /*MODIFICAR USUARIOS */
     static public function crtModificarUsuario()
     {
-        var_dump($_POST);
+       
         if (isset($_POST["idUsuario"])) {
             try {
                 $conexion = Conexion::conectar();

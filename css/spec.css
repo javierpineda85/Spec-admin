@@ -16,6 +16,39 @@
         border-color: #ffc107 !important;
     }
 
+    /* Estilos básicos del toggle button */
+    .entrada-salida-switch {
+        display: none !important;
+        /* Ocultamos el checkbox original */
+    }
+
+    /* Estilo del label para que sea un botón */
+    .entrada-salida-switch+.custom-control-label {
+        display: inline-block;
+        background-color: #28a745!important;
+        /* Verde para entrada */
+        color: #fff;
+        padding: 8px 5px;
+        /*border-radius: 50px;*/
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    /* Estilo cuando el switch está activado (Salida) */
+    .entrada-salida-switch:checked+.custom-control-label {
+        background-color: #dc3545;
+        /* Rojo para salida */
+    }
+
+    /* Transición suave para el cambio de color */
+    .entrada-salida-switch:checked+.custom-control-label {
+        background-color: #dc3545 !important;
+        /* Rojo para salida */
+    }
+
+
     .custom-file-input {
         display: none;
         /* Oculta el input */

@@ -7,6 +7,7 @@ require_once("controladores/directivas.controller.php");
 require_once('controladores/hvivo.controller.php');
 require_once('controladores/login.controller.php');
 require_once("controladores/mensajes.controller.php");
+require_once("controladores/novedades.controller.php");
 require_once("controladores/objetivos.controller.php");
 require_once("controladores/plantilla.controller.php");
 require_once("controladores/qr.controller.php");

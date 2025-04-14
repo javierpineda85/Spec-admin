@@ -130,6 +130,7 @@
               <div class="mt-2">
                 <button class="btn btn-block btn-info btn-sm">Nueva</button>
                 <button class="btn btn-block btn-info btn-sm">Mostrar todos</button>
+                <button class="btn btn-block btn-info btn-sm"><a href="?r=entradas_salidas" class="text-white">Entrada / Salida</a></button>
               </div>
             </div>
           </div>

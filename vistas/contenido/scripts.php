@@ -281,38 +281,49 @@
   //                Funcion para no enviar formularios vacios
   /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll("form").forEach(function (form) {
-        form.addEventListener("submit", function (event) {
-            let isValid = true;
-            let mensajeError = "";
+  document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll("form").forEach(function(form) {
+      form.addEventListener("submit", function(event) {
+        let isValid = true;
+        let mensajeError = "";
 
-            form.querySelectorAll("input, select, textarea").forEach(function (campo) {
-                // Omitir botones y campos opcionales
-                if (campo.type === "submit" || campo.type === "reset" || campo.disabled) return;
+        form.querySelectorAll("input, select, textarea").forEach(function(campo) {
+          // Omitir botones y campos opcionales
+          if (campo.type === "submit" || campo.type === "reset" || campo.disabled) return;
 
-                // Verificar si el campo está vacío
-                if (campo.value.trim() === "") {
-                    isValid = false;
-                    mensajeError = "⚠️ Todos los campos son obligatorios.";
-                    campo.style.border = "2px solid red";
-                } else {
-                    campo.style.border = ""; // Restablecer el borde si es válido
-                }
-            });
-
-            if (!isValid) {
-                event.preventDefault(); // Detener el envío del formulario
-
-                // Mostrar alerta con SweetAlert
-                Swal.fire({
-                    icon: "error",
-                    title: "Error",
-                    text: mensajeError,
-                    confirmButtonColor: "#d33"
-                });
-            }
+          // Verificar si el campo está vacío
+          if (campo.value.trim() === "") {
+            isValid = false;
+            mensajeError = "⚠️ Todos los campos son obligatorios.";
+            campo.style.border = "2px solid red";
+          } else {
+            campo.style.border = ""; // Restablecer el borde si es válido
+          }
         });
+
+        if (!isValid) {
+          event.preventDefault(); // Detener el envío del formulario
+
+          // Mostrar alerta con SweetAlert
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: mensajeError,
+            confirmButtonColor: "#d33"
+          });
+        }
+      });
     });
-});
+  });
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
+  //                Funcion para cambiar los colores del switch en novedades/entradas-salidas
+  /////////////////////////////////////////////////////////////////////////////////////////////////////
+  const switchInput = document.getElementById('entradaSalidaSwitch');
+  const switchLabel = document.getElementById('switchLabel');
+  const switchText = document.getElementById('switchText');
+
+  switchInput.addEventListener('change', function() {
+    switchLabel.textContent = this.checked ? 'Registrar Salida' : 'Registrar Entrada';
+    switchText.textContent = this.checked ? 'Ahora se registrará la salida' : 'Se registrará la entrada';
+  });
 </script>

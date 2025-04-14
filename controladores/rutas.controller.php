@@ -35,6 +35,8 @@ class RutasController
             //Cronograma
             "crear_cronograma"    => "cronogramas/crear_cronograma.php",
             "listado_cronogramas"  => "cronogramas/listado_cronogramas.php",
+            //Novedades
+            "entradas_salidas"    => "novedades/entradas_salidas.php",
             //web
             "login"             => "login.php",
             "forgot"            => "web/forgot-password.php"

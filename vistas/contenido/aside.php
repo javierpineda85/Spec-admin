@@ -141,6 +141,12 @@
               </a>
             </li>
             <li class="nav-item">
+              <a href="?r=entradas_salidas" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Entrada - Salida</p>
+              </a>
+            </li>
+            <li class="nav-item">
               <a href="#" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Crear</p>
