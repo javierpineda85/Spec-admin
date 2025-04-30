@@ -36,7 +36,7 @@ $hora = date('H:i');
                         };
                         ?>
                         <div class="row">
-                            <div class="form-group col-sm-12 col-md-3">
+                            <div class="form-group col-sm-12 col-md-2">
                                 <label class="form-label fw-bold">Usuario</label>
                                 <input type="text" class="form-control" name="idUsuario" value="<?php echo $_SESSION['idUsuario']; ?>" hidden>
                                 <input type="text" class="form-control" name="usuario" value="<?php echo $_SESSION['apellido'] . " " . $_SESSION['nombre']; ?>" readonly>
@@ -49,7 +49,9 @@ $hora = date('H:i');
                                 <label class="form-label fw-bold">Hora</label>
                                 <input type="time" class="form-control" value="<?= $hora ?>" readonly>
                             </div>
-                            <div class="form-group col-sm-12 col-md-2">
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-sm-12 col-md-3">
                                 <label class="form-label fw-bold">Objetivo:</label>
                                 <input type="text" class="form-control" value="" readonly>
                             </div>
