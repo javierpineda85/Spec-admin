@@ -33,11 +33,11 @@
             <div class="row">
               <div class="form-group col-sm-12 col-md-3">
                 <label class="form-label">Nombre</label>
-                <input type="text" class="form-control" placeholder="Servicio 1" name="nombreObjetivo">
+                <input type="text" class="form-control" placeholder="Servicio 1" name="nombreObjetivo" required>
               </div>
               <div class="form-group col-sm-12 col-md-3">
                 <label class="form-label">Localidad</label>
-                <select id="localidad" name="localidad" class="form-control">
+                <select id="localidad" name="localidad" class="form-control" required>
                   <option value="" disabled selected>Selecciona una localidad</option>
                 </select>
               </div>
@@ -47,7 +47,7 @@
               </div>
               <div class="form-group col-sm-12 col-md-3">
                 <label class="form-label">Tipo</label>
-                <select id="tipo" name="tipo" class="form-control">
+                <select id="tipo" name="tipo" class="form-control" required>
                   <option value="" disabled selected>Selecciona un tipo</option>
                   <option value="fijo">Fijo</option>
                   <option value="eventual">Eventual</option>

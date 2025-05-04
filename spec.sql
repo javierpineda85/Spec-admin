@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 08-03-2025 a las 23:42:26
+-- Tiempo de generación: 04-05-2025 a las 19:40:56
 -- Versión del servidor: 8.0.31
 -- Versión de PHP: 8.0.26
 
@@ -61,15 +61,34 @@ CREATE TABLE IF NOT EXISTS `asignaciones_objetivos` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `bajas`
+--
+
+DROP TABLE IF EXISTS `bajas`;
+CREATE TABLE IF NOT EXISTS `bajas` (
+  `idBaja` int NOT NULL AUTO_INCREMENT,
+  `usuario_id` int NOT NULL,
+  `motivo` varchar(100) NOT NULL,
+  `fecha` date NOT NULL,
+  `eliminado_por` int NOT NULL,
+  PRIMARY KEY (`idBaja`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `cronogramas`
 --
 
 DROP TABLE IF EXISTS `cronogramas`;
 CREATE TABLE IF NOT EXISTS `cronogramas` (
-  `idCrono` int NOT NULL,
+  `idCrono` int NOT NULL AUTO_INCREMENT,
   `objetivo_id` int NOT NULL,
-  `fechaCarga` date NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `imgCrono` varchar(100) NOT NULL,
+  `fechaCarga` date NOT NULL,
+  PRIMARY KEY (`idCrono`)
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 -- --------------------------------------------------------
 
@@ -83,8 +102,7 @@ CREATE TABLE IF NOT EXISTS `directivas` (
   `detalle` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `id_objetivo` int NOT NULL,
   PRIMARY KEY (`idDirectiva`)
-) ENGINE=MyISAM AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
+) ENGINE=MyISAM AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -148,13 +166,16 @@ CREATE TABLE IF NOT EXISTS `mensajes` (
 DROP TABLE IF EXISTS `novedades`;
 CREATE TABLE IF NOT EXISTS `novedades` (
   `idNovedad` int NOT NULL AUTO_INCREMENT,
-  `fecha` date NOT NULL,
-  `hora` time NOT NULL,
-  `vigilador_id` int NOT NULL,
-  `objetivo_id` int NOT NULL,
-  `detalle` text NOT NULL,
+  `usuario_id` int DEFAULT NULL,
+  `objetivo_id` int DEFAULT NULL,
+  `fecha` date DEFAULT NULL,
+  `hora` time DEFAULT NULL,
+  `tipo_registro` varchar(10) DEFAULT NULL,
+  `detalle` text,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`idNovedad`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 -- --------------------------------------------------------
 
@@ -170,7 +191,8 @@ CREATE TABLE IF NOT EXISTS `objetivos` (
   `referente` varchar(100) NOT NULL,
   `tipo` enum('fijo','movil','eventual') NOT NULL,
   PRIMARY KEY (`idObjetivo`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 
 -- --------------------------------------------------------
@@ -186,7 +208,8 @@ CREATE TABLE IF NOT EXISTS `reporte_hombre_vivo` (
   `fecha` date NOT NULL,
   `hora` time NOT NULL,
   PRIMARY KEY (`idReporte`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 -- --------------------------------------------------------
 
@@ -203,7 +226,8 @@ CREATE TABLE IF NOT EXISTS `rondas` (
   `orden_escaneo` int NOT NULL,
   `fecha_creacion` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`idRonda`)
-) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 
 -- --------------------------------------------------------
@@ -222,14 +246,42 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   `f_nac` date NOT NULL,
   `telefono` varchar(20) NOT NULL,
   `tel_emergencia` varchar(20) DEFAULT NULL,
+  `nombre_contacto` varchar(30) NOT NULL,
+  `parentesco` varchar(30) NOT NULL,
   `domicilio` varchar(100) DEFAULT NULL,
   `provincia` varchar(30) DEFAULT NULL,
-  `rol` enum('administrador','supervisor','vigilador') NOT NULL,
+  `rol` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `imgPerfil` varchar(60) DEFAULT NULL,
   `imgRepriv` varchar(60) DEFAULT NULL,
+  `resetPass` int NOT NULL,
+  `activo` int NOT NULL,
   `fecha_creacion` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`idUsuario`),
   UNIQUE KEY `dni` (`dni`)
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Volcado de datos para la tabla `usuarios`
+--
+
+INSERT INTO `usuarios` (`idUsuario`, `nombre`, `apellido`, `dni`, `pass`, `f_nac`, `telefono`, `tel_emergencia`, `nombre_contacto`, `parentesco`, `domicilio`, `provincia`, `rol`, `imgPerfil`, `imgRepriv`, `resetPass`, `activo`, `fecha_creacion`) VALUES
+
+(5, 'Admin', 'Admin', '12456789', '$2y$10$rxO8nd1EIiK7pFH8lh5GR.4rstP2hP5NXB2QXc.VRaijiMQ9eHnau', '2000-03-15', '2613334444', '2615553333', '', '', 'Av Siempre Viva 123', 'Mendoza', 'Administrador', 'img/perfil/AdminAdminPerfil.png', 'img/repriv/AdminAdminRepriv.png', 1, 1, '2025-03-15 21:22:52')
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `usuario_objetivo`
+--
+
+DROP TABLE IF EXISTS `usuario_objetivo`;
+CREATE TABLE IF NOT EXISTS `usuario_objetivo` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `usuario_id` int DEFAULT NULL,
+  `objetivo_id` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `usuario_id` (`usuario_id`),
+  KEY `objetivo_id` (`objetivo_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------

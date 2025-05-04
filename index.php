@@ -2,16 +2,20 @@
 session_start();  // Aseguramos que la sesión esté iniciada para poder verificar $_SESSION
 //session_destroy();
 require_once("config.php");
-require_once("controladores/rutas.controller.php");
-require_once("controladores/plantilla.controller.php");
-require_once("controladores/usuarios.controller.php");
-require_once("controladores/objetivos.controller.php");
-require_once("controladores/mensajes.controller.php");
-require_once("controladores/rondas.controller.php");
-require_once("controladores/qr.controller.php");
+require_once('controladores/asignaciones.controller.php');
+require_once('controladores/cronograma.controller.php');
 require_once("controladores/directivas.controller.php");
 require_once('controladores/hvivo.controller.php');
 require_once('controladores/login.controller.php');
+require_once("controladores/mensajes.controller.php");
+require_once("controladores/novedades.controller.php");
+require_once("controladores/objetivos.controller.php");
+require_once("controladores/plantilla.controller.php");
+require_once("controladores/qr.controller.php");
+require_once("controladores/rondas.controller.php");
+require_once("controladores/rutas.controller.php");
+require_once("controladores/usuarios.controller.php");
+
 
 // Comprobamos si el usuario está autenticado
 if (!isset($_SESSION['idUsuario']) || empty($_SESSION['idUsuario'])) {

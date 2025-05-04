@@ -104,8 +104,8 @@
             <!-- Sección colapsable para los botones -->
             <div id="collapseCronogramas" class="collapse">
               <div class="mt-2">
-                <button class="btn btn-block btn-primary btn-sm">Nuevo</button>
-                <button class="btn btn-block btn-primary btn-sm">Mostrar todos</button>
+                <button class="btn btn-block btn-primary btn-sm"><a href="?r=crear_cronograma" class="text-white">Subir</a></button>
+                <button class="btn btn-block btn-primary btn-sm"><a href="?r=listado_cronogramas" class="text-white">Mostrar todos</a></button>
               </div>
             </div>
           </div>
@@ -130,6 +130,7 @@
               <div class="mt-2">
                 <button class="btn btn-block btn-info btn-sm">Nueva</button>
                 <button class="btn btn-block btn-info btn-sm">Mostrar todos</button>
+                <button class="btn btn-block btn-info btn-sm"><a href="?r=entradas_salidas" class="text-white">Entrada / Salida</a></button>
               </div>
             </div>
           </div>
