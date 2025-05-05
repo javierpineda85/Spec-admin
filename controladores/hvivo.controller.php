@@ -33,7 +33,7 @@ class hVivo
 
                 $_SESSION['success_message'] = 'Reporte de hombre vivo creado exitosamente';
 
-
+            
                 header("Location: index.php");  
                 exit;
             } catch (Exception $e) {
