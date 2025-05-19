@@ -14,6 +14,7 @@ require_once("controladores/plantilla.controller.php");
 require_once("controladores/qr.controller.php");
 require_once("controladores/rondas.controller.php");
 require_once("controladores/rutas.controller.php");
+require_once("controladores/turnos.controller.php");
 require_once("controladores/usuarios.controller.php");
 
 
