@@ -62,7 +62,7 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 
 <!-- incluir JS personalizado -->
-<script src="./js/custom.js"></script>
+<script src="./js/custom.js" defer></script>
 
 <!-- Modal para mostrar la imagen en grande -->
 <div class="modal fade" id="imagenModal" tabindex="-1" role="dialog" aria-hidden="true">
