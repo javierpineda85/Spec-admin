@@ -1,5 +1,5 @@
 
-
+/*
 $(function () {
     $("#example1").DataTable({
         "responsive": true,
@@ -16,7 +16,79 @@ $(function () {
         "autoWidth": false,
         "responsive": true,
     });
+}); */
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+//                             funcion para mostrar botones en data table
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+$(function () {
+  // 1) Inicialización de DataTable con Buttons
+  var table = $("#example1").DataTable({
+    responsive: true,
+    lengthChange: false,
+    autoWidth: false,
+
+    // 2) Para que aparezcan los botones en la tabla
+    dom: 'Bfrtip',
+
+    // 3) Traducción general + textos de botones
+    language: {
+      url: "//cdn.datatables.net/plug-ins/1.11.4/i18n/es-ES.json",
+      buttons: {
+        copy:   'Copiar',
+        csv:    'CSV',
+        excel:  'Excel',
+        pdf:    'PDF',
+        print:  'Imprimir',
+        colvis: 'Ver columnas'
+      }
+    },
+
+    // 4) Definición de botones (TODO en un solo array)
+    buttons: [
+      {
+        extend: 'copy',
+        text:   null // ya toma "Copiar" de language.buttons
+      },
+      {
+        extend: 'csv',
+        text:   null // "CSV"
+      },
+      {
+        extend: 'excel',
+        text:   null, // "Excel"
+        exportOptions: {
+          columns: ':visible',
+          footer:  true   // incluye tu <tfoot>
+        }
+      },
+      {
+        extend: 'pdf',
+        text:   null,   // "PDF"
+        exportOptions: {
+          columns: ':visible',
+          footer:  true   // incluye tu <tfoot>
+        }
+      },
+      {
+        extend: 'print',
+        text:   null,   // "Imprimir"
+        footer: true     // activa tu <tfoot> en la vista de impresión
+      },
+      {
+        extend: 'colvis',
+        text:   null    // "Ver columnas"
+      }
+    ]
+  });
+
+  // 5) Mover la barra de botones justo donde la quieres
+  table.buttons()
+       .container()
+       .appendTo('#example1_wrapper .col-md-6:eq(0)');
 });
+
+
+
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////

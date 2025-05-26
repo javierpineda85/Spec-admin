@@ -1,9 +1,5 @@
 <?php
-/*
-$db = new Conexion;
-$sql = "SELECT * FROM cronogramas AS c JOIN objetivos AS o ON  c.objetivo_id = o.idObjetivo ORDER BY o.nombre ASC ";
-$crono = $db->consultas($sql);
-*/
+
 $db = new Conexion;
 $sql = "SELECT * FROM objetivos ORDER BY nombre";
 $objetivos = $db->consultas($sql);
@@ -17,8 +13,11 @@ $objetivos = $db->consultas($sql);
         <div class="row">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header bg-info text-white">
                         <h3 class="card-title">Buscar cronogramas por fechas</h3>
+
+                    </div>
+                    <div class="card-body">
                         <?php if (!empty($_SESSION['success_message'])): ?>
                             <div class="alert alert-success alert-dismissible">
                                 <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -27,8 +26,6 @@ $objetivos = $db->consultas($sql);
                                 unset($_SESSION['success_message']); ?>
                             </div>
                         <?php endif; ?>
-                    </div>
-                    <div class="card-body">
                         <form action="index.php?r=buscar_cronogramas" method="POST" class="card p-4 shadow-sm mb-4">
                             <div class="form-row">
                                 <div class="form-group col-md-4">

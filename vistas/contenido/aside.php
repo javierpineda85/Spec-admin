@@ -120,13 +120,31 @@
             <li class="nav-item">
               <a href="?r=listado_cronogramas" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Listar por objetivo</p>
+                <p>Por Objetivo</p>
               </a>
             </li>
             <li class="nav-item">
               <a href="?r=listado_porVigilador" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Listar por vigilador</p>
+                <p>Por Vigilador</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="?r=listado_resumen_diario" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Jornadas por Objetivo</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="?r=reporte_porHoras" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Horas por Objetivo</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="?r=reporte_porVigilador" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Horas por Vigilador</p>
               </a>
             </li>
           </ul>

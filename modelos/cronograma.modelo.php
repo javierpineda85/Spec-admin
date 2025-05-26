@@ -22,5 +22,24 @@ class ModeloCronograma
         $registro->closeCursor();
         $registro = null;
     }
+    static public function mdlResumenDiarioJornadas($tabla, $objetivoId, $desde, $hasta)
+    {
+        $sql = "SELECT t.fecha,
+            SUM(CASE WHEN t.turno = 'Diurno' THEN 1 ELSE 0 END)   AS diurnas,
+            SUM(CASE WHEN t.turno = 'Nocturno' THEN 1 ELSE 0 END) AS nocturnas
+          FROM $tabla t
+          WHERE t.objetivo_id = :objetivo_id
+            AND t.fecha BETWEEN :desde AND :hasta
+          GROUP BY t.fecha
+          ORDER BY t.fecha
+        ";
+        $stmt = Conexion::conectar()
+                      ->prepare($sql);
+        $stmt->bindParam(':objetivo_id', $objetivoId, PDO::PARAM_INT);
+        $stmt->bindParam(':desde',        $desde,       PDO::PARAM_STR);
+        $stmt->bindParam(':hasta',        $hasta,       PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
     
 }
