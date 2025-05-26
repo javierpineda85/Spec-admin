@@ -6,7 +6,7 @@ if (isset($_GET['t'])) {
     traer tb todos los usuarios
     */
         $mensaje = ControladorMensajes::crtMostrarUnMensaje($_GET['idMsj']);
-        $usuarios = ControladorUsuarios::crtSeleccionarUsuario('idUsuario', $mensaje[0]['id_remitente']); /*Busca el remitente */
+        $usuarios = ControladorUsuarios::crtSeleccionarUsuario('idUsuario', $mensaje[0]['remitente_id']); /*Busca el remitente */
     } else if ($_GET['t'] == 'share') {
         /*Cargar solo el id del destinatario
             y despues todos los usuarios

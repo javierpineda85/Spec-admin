@@ -3,8 +3,19 @@
 class RutasController
 {
     public static function cargarVista()
-    { // se crea el array de rutas para poder escalar el proyecto
+    {
+        //Para usar controladores sin pasar la vista
+        if (isset($_GET['r']) && $_GET['r'] === 'buscar_cronogramas') {
+            ControladorTurnos::crtBuscarTurnosPorRango();
+            return; // Importante: salimos para no caer en el include de más abajo
+        }
+        if (isset($_GET['r']) && $_GET['r'] === 'buscar_porVigilador') {
+            
+            ControladorTurnos::crtBuscarPorVigilador();
+            return;
+        }
 
+        // se crea el array de rutas para poder escalar el proyecto
         $mapeo = [
             //usuario - perfil
             "crear-usuario"     => "usuario/crear-usuario.php",
@@ -35,6 +46,7 @@ class RutasController
             //Cronograma
             "crear_cronograma"      => "cronogramas/crear_cronograma.php",
             "listado_cronogramas"   => "cronogramas/listado_cronogramas.php",
+            "listado_porVigilador"  => "cronogramas/listado_porVigilador.php",
             //Novedades
             "entradas_salidas"      => "novedades/entradas_salidas.php",
             //Asignacionnes

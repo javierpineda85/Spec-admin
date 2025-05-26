@@ -6,7 +6,7 @@ class ControladorMensajes
     static public function crtMostrarMensajes($item, $valor){
         $respuesta = ModeloMensajes::mdlMostrarMensajes($item, $valor);
         return $respuesta;
-
+var_dump($respuesta);
         exit;
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-$mensajes = ControladorMensajes::crtMostrarMensajesEnviados('id_remitente', $_SESSION['id_usuario']);
+$mensajes = ControladorMensajes::crtMostrarMensajesEnviados('remitente_id', $_SESSION['idUsuario']);
 
 ?>
 
@@ -101,8 +101,8 @@ $mensajes = ControladorMensajes::crtMostrarMensajesEnviados('id_remitente', $_SE
                             <label for="check1"></label>
                           </div>
                         </td>
-                        <td class="mailbox-name">Para: <a href="index.php?r=nuevo-mensaje&c=mensajes&idMsj=<?php echo $valor['idMensaje'] ?>&t=reply"><?php echo $valor['nombreUsuario'] . " " . $valor['apellidoUsuario'];  ?></a></td>
-                        <td class="mailbox-subject"> <?php echo $valor['contenidoMensaje'] ?></td>
+                        <td class="mailbox-name">Para: <a href="index.php?r=nuevo-mensaje&c=mensajes&idMsj=<?php echo $valor['idMensaje'] ?>&t=reply"><?php echo $valor['nombre'] . " " . $valor['apellido'];  ?></a></td>
+                        <td class="mailbox-subject"> <?php echo $valor['contenido'] ?></td>
                         <td class="mailbox-date"><?php echo $valor['fMensaje'] ?></td>
                         <td class="mailbox-date"><?php echo $valor['horaMensaje'] ?></td>
                         <td>

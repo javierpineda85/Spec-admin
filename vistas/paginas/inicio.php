@@ -205,8 +205,8 @@
             <!-- Sección colapsable para los botones -->
             <div id="collapseMensajeria" class="collapse">
               <div class="mt-2">
-                <button class="btn btn-block btn-info btn-sm">Ver mensajes</button>
-                <button class="btn btn-block btn-info btn-sm">Enviar mensaje</button>
+                <button class="btn btn-block btn-info btn-sm"><a href="?r=bandeja-entrada" class="text-white">Ver mensajes</button>
+                <button class="btn btn-block btn-info btn-sm"><a href="?r=nuevo-mensaje" class="text-white">Enviar mensaje</button>
               </div>
             </div>
           </div>
