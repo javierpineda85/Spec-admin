@@ -2,43 +2,42 @@
 class Conexion {
     private $conexion;
     
-    public 	function __construct() {
-		$this->conexion = $this->conectar();
-	}
+    public function __construct() {
+        $this->conexion = $this->conectar();
+    }
+
     static public function conectar() {
         try {
-            // Declaramos los parámetros de conexión
-            $link = new PDO("mysql:host=localhost; port=3306;dbname=spec", "root", "");
+            $link = new PDO("mysql:host=localhost;port=3306;dbname=spec", "root", "");
             $link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $link->exec("set names utf8"); // Esto es para no tener problemas con los caracteres
-            
-            // Iniciar la transacción
-            $link->beginTransaction();
-            
+            $link->exec("SET NAMES utf8");
             return $link;
         } catch (PDOException $e) {
-            // En caso de error, realiza un rollback y muestra un mensaje de error
-            if ($link) {
-                $link->rollBack();
-            }
             echo "Error de conexión: " . $e->getMessage();
             return null;
         }
     }
 
-    //Funcion para listado en general
-    public function consultas($query) {
+    /**
+     * Ejecuta una consulta SELECT, opcionalmente con parámetros.
+     * @param string $query   SQL con placeholders ?
+     * @param array  $params  Valores para bindear los placeholders
+     * @return array|null     Array asociativo de resultados o null en error
+     */
+    public function consultas(string $query, array $params = []) {
         try {
-            $stmt = $this->conexion->query($query);
-            $resultset = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            return $resultset;
+            // Si hay parámetros, usamos prepare/execute
+            if (count($params) > 0) {
+                $stmt = $this->conexion->prepare($query);
+                $stmt->execute($params);
+            } else {
+                // Sin parámetros basta con query()
+                $stmt = $this->conexion->query($query);
+            }
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            // Manejar la excepción aquí según tus necesidades
-            echo "Error: " . $e->getMessage();
+            echo "Error en consulta: " . $e->getMessage();
             return null;
         }
     }
-    
 }
-
-?>
