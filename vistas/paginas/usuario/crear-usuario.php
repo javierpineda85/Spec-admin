@@ -67,7 +67,6 @@
                 <select class="custom-select" name="rol" required>
                   <option value="" disabled selected> Rol de usuario</option>
                   <option value="Vigilador">Vigilador</option>
-                  <option value="Referente">Referente</option>
                   <option value="Supervisor">Supervisor</option>
                   <option value="Gerencia">Gerencia</option>
                   <option value="Administrador">Administrador</option>

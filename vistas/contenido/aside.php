@@ -13,7 +13,7 @@
         <img src="<?php echo $_SESSION['imgPerfil']; ?>" class="img-circle elevation-2" alt="imagen del usuario">
       </div>
       <div class="info">
-        <a href="#" class="d-block"><?php echo $_SESSION['nombre'] . " " . $_SESSION['apellido'] ; ?></a>
+        <a href="#" class="d-block"><?php echo $_SESSION['nombre'] . " " . $_SESSION['apellido']; ?></a>
       </div>
     </div>
 
@@ -114,13 +114,19 @@
             <li class="nav-item">
               <a href="?r=crear_cronograma" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Subir</p>
+                <p>Crear</p>
               </a>
             </li>
             <li class="nav-item">
               <a href="?r=listado_cronogramas" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Ver todos</p>
+                <p>Listar por objetivo</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="?r=listado_porVigilador" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Listar por vigilador</p>
               </a>
             </li>
           </ul>
@@ -226,8 +232,8 @@
           </ul>
         </li>
         <li class="nav-item"> <!-- Salir -->
-        <a href="index.php?r=cerrar_sesion" class="nav-link">
-          <i class="fas fa-sign-out-alt nav-icon text-danger"></i>
+          <a href="index.php?r=cerrar_sesion" class="nav-link">
+            <i class="fas fa-sign-out-alt nav-icon text-danger"></i>
             <p> Cerrar Sesión</p>
           </a>
 

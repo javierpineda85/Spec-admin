@@ -67,8 +67,8 @@ $hora = date('H:i');
                         </div>
                         <div class="row">
                             <div class="form-group col-sm-12 col-md-6">
-                                <label for="detalle" class="form-label fw-bold">Detalle</label>
-                                <textarea class="form-control" id="detalle" name="detalle" rows="8" placeholder="Escribe aquí los detalles..." required></textarea>
+                                <label for="detalle" class="form-label fw-bold">Novedades</label>
+                                <textarea class="form-control" id="detalle" name="detalle" rows="8" placeholder="Escribe aquí las novedades reportadas" required></textarea>
                                 </select>
                             </div>
                         </div>

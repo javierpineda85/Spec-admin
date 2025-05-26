@@ -26,11 +26,11 @@ $usuario = $db->consultas($sql);
             <form class="form-horizontal" action="" method="POST" enctype="multipart/form-data">
                 <div class="card-body row">
 
-                    <div class="col-sm-12 col-md-4">
+                    <div class="col-sm-12 col-md-5">
 
                         <h5>Foto de Perfil</h5>
                         <div class="text-center">
-                            <img class="profile-user-img img-fluid img-circle w-75" src="<?php echo $usuario[0]['imgPerfil']; ?>" alt="Foto de perfil"
+                            <img class="profile-user-img img-fluid img-circle w-50" src="<?php echo $usuario[0]['imgPerfil']; ?>" alt="Foto de perfil"
                                 data-toggle="modal"
                                 data-target="#imagenModal"
                                 style="cursor:pointer;">
@@ -46,7 +46,7 @@ $usuario = $db->consultas($sql);
                         </div>
 
                     </div>
-                    <div class="col-sm-12 col-md-8">
+                    <div class="col-sm-12 col-md-7">
 
                         <div class="row">
                             <div class="form-group col-sm-12 col-md-4">
