@@ -15,18 +15,12 @@ $turnos  = $_SESSION['turnos_porVigilador'] ?? [];
         <div class="row">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header bg-info text-white">
                         <h3 class="card-title">Buscar cronogramas por vigilador</h3>
-                        <?php if (!empty($_SESSION['success_message'])): ?>
-                            <div class="alert alert-success alert-dismissible">
-                                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                                <i class="icon fas fa-check"></i>
-                                <?= $_SESSION['success_message'];
-                                unset($_SESSION['success_message']); ?>
-                            </div>
-                        <?php endif; ?>
                     </div>
+                                            
                     <div class="card-body">
+
                         <form action="index.php?r=buscar_porVigilador" method="POST" class="form-inline">
                             <label class="mr-2">Vigilador</label>
                             <select name="vigilador" class="form-control mr-4" required>
@@ -50,7 +44,14 @@ $turnos  = $_SESSION['turnos_porVigilador'] ?? [];
                             <button type="submit" name="buscar_por_vigilador"
                                 class="btn btn-primary">Buscar</button>
                         </form>
-
+                        <?php if (!empty($_SESSION['success_message'])): ?>
+                            <div class="alert alert-success alert-dismissible mt-3">
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                <i class="icon fas fa-check"></i>
+                                <?= $_SESSION['success_message'];
+                                unset($_SESSION['success_message']); ?>
+                            </div>
+                        <?php endif; ?>
                         <hr>
 
                         <?php if (!empty($_SESSION['success_message'])): ?>

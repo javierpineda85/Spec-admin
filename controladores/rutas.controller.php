@@ -10,10 +10,22 @@ class RutasController
             return; // Importante: salimos para no caer en el include de más abajo
         }
         if (isset($_GET['r']) && $_GET['r'] === 'buscar_porVigilador') {
-            
             ControladorTurnos::crtBuscarPorVigilador();
             return;
         }
+        if (isset($_GET['r']) && $_GET['r'] === 'buscar_resumen_diario') {
+            ControladorCronograma::crtBuscarResumenDiario();
+            return;
+        }
+        if (isset($_GET['r']) && $_GET['r'] === 'buscar_resumen_horas') {
+            ControladorCronograma::crtBuscarResumenHoras();
+            return;
+        }
+        if (isset($_GET['r']) && $_GET['r'] === 'buscar_resumen_horas_por_vigilador') {
+            ControladorCronograma::crtBuscarResumenHorasPorVigilador();
+            return;
+        }
+
 
         // se crea el array de rutas para poder escalar el proyecto
         $mapeo = [
@@ -47,10 +59,16 @@ class RutasController
             "crear_cronograma"      => "cronogramas/crear_cronograma.php",
             "listado_cronogramas"   => "cronogramas/listado_cronogramas.php",
             "listado_porVigilador"  => "cronogramas/listado_porVigilador.php",
+            "listado_resumen_diario" => "cronogramas/resumen_diario_jornadas.php",
+            "reporte_porHoras"      => "cronogramas/reporte_horas_por_objetivo.php",
+            "reporte_porVigilador"  => "cronogramas/reporte_horas_vigilador.php",
+
             //Novedades
             "entradas_salidas"      => "novedades/entradas_salidas.php",
+
             //Asignacionnes
             "crear_asignaciones"    => "asignaciones/crear_asignaciones.php",
+
             //web
             "login"             => "login.php",
             "forgot"            => "web/forgot-password.php"

@@ -57,8 +57,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </script>
 
 <div class="card">
-    <div class="card-header">
-        <h3 class="card-title">Completa el formulario para crear un nuevo cronograma</h3>
+    <div class="card-header bg-info text-white">
+        <h3 class="card-title ">Completa el formulario para crear un nuevo cronograma</h3>
     </div>
     <div class="card-body">
         <!-- Formulario de agregado -->
@@ -179,18 +179,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <form method="POST">
                         <button type="submit" name="guardar_todos" value="guardar_todos" class="btn btn-success">Guardar Planilla</button>
                         <?php $registro = ControladorTurnos::ctrRegistrarPlanilla(); ?>
-                        <?php
-                        if (isset($_SESSION['success_message'])) {
-                            echo '<div class="alert alert-success alert-dismissible">
-                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                                    <p><i class="icon fas fa-check"></i>' . $_SESSION['success_message'] . '</p>
-                                </div>';
-                            // Elimina el mensaje después de mostrarlo
-                            unset($_SESSION['success_message']);
-                        };
-                        ?>
-                    </form>
 
+                    </form>
+                    <?php if (!empty($_SESSION['success_message'])): ?>
+                        <div class="alert alert-success alert-dismissible mt-3">
+                            <button type="button" class="close" data-dismiss="alert">&times;</button>
+                            <i class="icon fas fa-check"></i>
+                            <?= $_SESSION['success_message'];
+                            unset($_SESSION['success_message']); ?>
+                        </div>
+                    <?php endif; ?>
                     <form method="POST">
                         <button type="submit" name="borrar_todo" class="btn btn-danger">
                             <i class="fas fa-trash-alt"></i> Vaciar Planilla
