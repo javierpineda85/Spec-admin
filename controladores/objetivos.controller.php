@@ -24,7 +24,7 @@ class ControladorObjetivos
                 $datos = array(
                     "nombre" => $_POST["nombreObjetivo"],
                     "localidad" => $_POST["localidad"],
-                    "referente" => $_POST["referente"],
+                    //"referente" => $_POST["referente"],
                     "tipo" => $_POST["tipo"]
                 );
 
@@ -65,7 +65,7 @@ class ControladorObjetivos
                     "idObjetivo"  => $_POST["idObjetivo"],
                     "nombre"      => $_POST["nombre"],
                     "localidad"   => $_POST["localidad"],
-                    "referente"   => $_POST["referente"],
+                    //"referente"   => $_POST["referente"],
                     "tipo"        => $_POST["tipo"]
                 );
 

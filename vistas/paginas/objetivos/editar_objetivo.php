@@ -50,10 +50,6 @@ $objetivo = $db->consultas($sql);
                                 </select>
                             </div>
                             <div class="form-group col-sm-12 col-md-3">
-                                <label class="form-label">Referente</label>
-                                <input type="text" class="form-control" placeholder="Juan Perez" name="referente" value="<?php echo $objetivo[0]['referente']; ?>">
-                            </div>
-                            <div class="form-group col-sm-12 col-md-3">
                                 <label class="form-label">Tipo</label>
                                 <select id="tipo" name="tipo" class="form-control">
                                     <option value="<?php echo $objetivo[0]['tipo']; ?>" selected><?php echo $objetivo[0]['tipo']; ?></option>

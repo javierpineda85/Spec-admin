@@ -13,7 +13,7 @@ $objetivos = $db->consultas($sql);
             <div class="col-12">
 
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header bg-info text-white">
                         <h3 class="card-title">Listado de objetivos</h3>
                         <?php
                         if (isset($_SESSION['success_message'])) {
@@ -33,7 +33,6 @@ $objetivos = $db->consultas($sql);
                                 <tr>
                                     <th style="text-align: center;">Nombre</th>
                                     <th style="text-align: center;">Localidad</th>
-                                    <th style="text-align: center;">referente</th>
                                     <th style="text-align: center;">tipo</th>
                                     <th style="text-align: center;">Acciones</th>
                                 </tr>
@@ -41,10 +40,9 @@ $objetivos = $db->consultas($sql);
                             <tbody>
                                 <?php foreach ($objetivos as $campo => $valor) : ?>
                                     <tr>
-                                        <td> <?php echo $valor['nombre']; ?></td>
-                                        <td> <?php echo $valor['localidad']; ?></td>
-                                        <td> <?php echo $valor['referente']; ?></td>
-                                        <td> <?php echo $valor['tipo']; ?></td>
+                                        <td> <?= $valor['nombre'] ?></td>
+                                        <td> <?= $valor['localidad'] ?></td>
+                                        <td> <?= $valor['tipo'] ?></td>
                                         <td>
                                             <div class="row d-flex justify-content-around">
                                                 <a href="?r=editar_objetivo&id=<?php echo $valor["idObjetivo"]; ?>" class="btn btn-success btn-sm"><i class="fas fa-edit"></i></a>
@@ -70,7 +68,6 @@ $objetivos = $db->consultas($sql);
                                 <tr>
                                     <th style="text-align: center;">Nombre</th>
                                     <th style="text-align: center;">Localidad</th>
-                                    <th style="text-align: center;">referente</th>
                                     <th style="text-align: center;">tipo</th>
                                     <th style="text-align: center;">Acciones</th>
                                 </tr>
