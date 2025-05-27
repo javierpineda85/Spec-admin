@@ -8,11 +8,12 @@ $db = new Conexion;
 $usuarios  = $db->consultas("SELECT idUsuario, nombre, apellido FROM usuarios WHERE rol='Vigilador' ORDER BY apellido");
 
 $db = new Conexion;
-$rondas = $db->consultas("SELECT idRonda, puesto, objetivo_id FROM rondas");
+$puestos = $db->consultas("SELECT idPuesto, puesto, objetivo_id FROM puestos");
 
 // Mapas para resolver nombres
 $mapObjetivos = array_column($objetivos, 'nombre', 'idObjetivo');
-$mapPuestos   = array_column($rondas,    'puesto', 'idRonda');
+$mapPuestos   = array_column($puestos,    'puesto', 'idPuesto');
+
 $mapUsuarios  = [];
 foreach ($usuarios as $u) {
     $mapUsuarios[$u['idUsuario']] = $u['apellido'] . ', ' . $u['nombre'];
@@ -53,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <script>
-    const rondas = <?= json_encode($rondas, JSON_UNESCAPED_UNICODE) ?>;
+    const rondas = <?= json_encode($puestos, JSON_UNESCAPED_UNICODE) ?>;
 </script>
 
 <div class="card">
