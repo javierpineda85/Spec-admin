@@ -68,6 +68,9 @@ class RutasController
 
             //Asignacionnes
             "crear_asignaciones"    => "asignaciones/crear_asignaciones.php",
+            //Puestos
+            "crear_puesto"      => "puestos/crear_puesto.php",
+            "listado_puestos"   => "puestos/listado_puestos.php",
 
             //web
             "login"             => "login.php",

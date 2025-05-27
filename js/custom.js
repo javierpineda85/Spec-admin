@@ -1,5 +1,5 @@
 
-/*
+
 $(function () {
     $("#example1").DataTable({
         "responsive": true,
@@ -16,11 +16,11 @@ $(function () {
         "autoWidth": false,
         "responsive": true,
     });
-}); */
+}); 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 //                             funcion para mostrar botones en data table
 /////////////////////////////////////////////////////////////////////////////////////////////////////
-$(function () {
+/*$(function () {
   // 1) Inicialización de DataTable con Buttons
   var table = $("#example1").DataTable({
     responsive: true,
@@ -86,11 +86,7 @@ $(function () {
        .container()
        .appendTo('#example1_wrapper .col-md-6:eq(0)');
 });
-
-
-
-
-
+*/
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 //                             funcion para ocultar secciones
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -346,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
         rondas.forEach(r => {
           if (String(r.objetivo_id) === this.value) {
             const opt = document.createElement('option');
-            opt.value       = r.idRonda;
+            opt.value       = r.idPuesto;
             opt.textContent = r.puesto;
             puesto.appendChild(opt);
           }
@@ -362,7 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
         rondas.forEach(r => {
           if (String(r.objetivo_id) === id) {
-            $puesto.append(`<option value="${r.idRonda}">${r.puesto}</option>`);
+            $puesto.append(`<option value="${r.idPuesto}">${r.puesto}</option>`);
           }
         });
       });

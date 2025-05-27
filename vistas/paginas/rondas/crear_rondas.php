@@ -7,7 +7,7 @@ $sql = "SELECT * FROM objetivos ORDER BY nombre ";
 $objetivos = $db->consultas($sql);
 ?>
 <div class="card">
-    <div class="card-header">
+    <div class="card-header bg-info text-white">
         <h3 class="card-title">Completa los datos para generar una nueva ronda</h3>
         <div class="card-tools">
             <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">

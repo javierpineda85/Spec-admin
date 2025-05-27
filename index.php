@@ -11,6 +11,7 @@ require_once("controladores/mensajes.controller.php");
 require_once("controladores/novedades.controller.php");
 require_once("controladores/objetivos.controller.php");
 require_once("controladores/plantilla.controller.php");
+require_once("controladores/puestos.controller.php");
 require_once("controladores/qr.controller.php");
 require_once("controladores/rondas.controller.php");
 require_once("controladores/rutas.controller.php");

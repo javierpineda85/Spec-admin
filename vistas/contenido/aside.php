@@ -102,6 +102,29 @@
             </li>
           </ul>
         </li>
+        <li class="nav-item"> <!-- Puestos -->
+          <a href="#" class="nav-link">
+            <i class="nav-icon fas fa-eye text-success"></i>
+            <p>
+              Puestos
+              <i class="fas fa-angle-left right"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="?r=crear_puesto" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Crear</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="?r=listado_puestos" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Ver Todos</p>
+              </a>
+            </li>
+          </ul>
+        </li>
         <li class="nav-item"> <!-- cronograma -->
           <a href="" class="nav-link">
             <i class="nav-icon far fa-calendar-alt text-info"></i>
