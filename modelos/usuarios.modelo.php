@@ -31,8 +31,8 @@ class ModeloUsuarios
     static public function mdlGuardarUsuario($tabla, $datos)
     {
 
-        $registro = Conexion::conectar()->prepare("INSERT INTO $tabla (nombre, apellido, dni, pass, f_nac, telefono, tel_emergencia, domicilio, provincia, rol, imgPerfil, imgRepriv, resetPass, activo) 
-        VALUES (:nombre, :apellido, :dni, :pass, :f_nac, :telefono, :tel_emergencia, :domicilio, :provincia, :rol, :imgPerfil, :imgRepriv,:resetPass, :activo)");
+        $registro = Conexion::conectar()->prepare("INSERT INTO $tabla (nombre, apellido, dni, pass, f_nac, telefono, tel_emergencia,nombre_contacto, parentesco, domicilio, provincia, rol, imgPerfil, imgRepriv, resetPass, activo) 
+        VALUES (:nombre, :apellido, :dni, :pass, :f_nac, :telefono, :tel_emergencia,:nombre_contacto, :parentesco, :domicilio, :provincia, :rol, :imgPerfil, :imgRepriv,:resetPass, :activo)");
 
         $registro->bindParam(":nombre", $datos["nombre"], PDO::PARAM_STR);
         $registro->bindParam(":apellido", $datos["apellido"], PDO::PARAM_STR);
@@ -41,6 +41,8 @@ class ModeloUsuarios
         $registro->bindParam(":f_nac", $datos["f_nac"], PDO::PARAM_STR);
         $registro->bindParam(":telefono", $datos["telefono"], PDO::PARAM_STR);
         $registro->bindParam(":tel_emergencia", $datos["tel_emergencia"], PDO::PARAM_STR);
+        $registro->bindParam(":nombre_contacto", $datos["nombre_contacto"], PDO::PARAM_STR);
+        $registro->bindParam(":parentesco", $datos["parentesco"], PDO::PARAM_STR);
         $registro->bindParam(":domicilio", $datos["domicilio"], PDO::PARAM_STR);
         $registro->bindParam(":provincia", $datos["provincia"], PDO::PARAM_STR);
         $registro->bindParam(":rol", $datos["rol"], PDO::PARAM_STR);
