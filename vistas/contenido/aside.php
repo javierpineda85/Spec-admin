@@ -49,6 +49,13 @@
 
               </a>
             </li>
+            <li class="nav-item">
+              <a href="?r=listado_reportes" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Ver reportes</p>
+
+              </a>
+            </li>
 
           </ul>
         </li>

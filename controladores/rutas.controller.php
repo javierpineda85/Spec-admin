@@ -36,7 +36,7 @@ class RutasController
             "cerrar_sesion"     => "usuario/salir.php",
             //hombre-vivo
             "reporte"            => "h-vivo/registro.php",
-            "listado_reportes"   => "h-vivo/listado_reportes.php",
+            "listado_reportes"   => "h-vivo/listado_reportesHvivo.php",
             //Mensajes
             "bandeja-entrada"   => "mensajes/bandeja-entrada.php",
             "nuevo-mensaje"     => "mensajes/nuevo-mensaje.php",
