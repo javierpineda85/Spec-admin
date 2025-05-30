@@ -7,6 +7,9 @@
   <meta name="author" content="Javier Pineda">
   <meta name="description" content="Sistema de gestión de trabajo de la empresa de seguridad S.P.E.C. perteneciente al grupo MARSAN S.A.">
   <link rel="shortcut icon" href="img/spec-favicon.ico" type="image/x-icon">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
 
   <title>S.P.E.C. </title>
 
@@ -18,16 +21,16 @@
   <!-- Theme style -->
   <link rel="stylesheet" href="./css/adminlte.min.css">
 
-    <!-- Estilos propios -->
-    <link rel="stylesheet" href="./css/spec.css">
+  <!-- Estilos propios -->
+  <link rel="stylesheet" href="./css/spec.css">
 
   <!-- Bootstrap4 Duallistbox -->
   <link rel="stylesheet" href="./plugins/bootstrap4-duallistbox/bootstrap-duallistbox.min.css">
   <link rel="stylesheet" href="./plugins/bootstrap4-duallistbox/bootstrap-duallistbox.css">
   <!-- BS Stepper -->
   <link rel="stylesheet" href="./plugins/bs-stepper/css/bs-stepper.min.css">
- <!-- BS switch -->
- <link rel="stylesheet" href="./plugins/bootstrap-switch/css/bootstrap3/bootstrap-switch.css">
+  <!-- BS switch -->
+  <link rel="stylesheet" href="./plugins/bootstrap-switch/css/bootstrap3/bootstrap-switch.css">
   <!-- DataTables -->
   <link rel="stylesheet" href="./css/dataTables.bootstrap4.min.css">
   <link rel="stylesheet" href="./css/responsive.bootstrap4.min.css">
@@ -36,10 +39,10 @@
   <!-- Toastify -->
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.css">
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-  
+
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="./js/main.js"></script>
-  
+
   <!--Para crear objetos buscables-->
-  <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
 </head>

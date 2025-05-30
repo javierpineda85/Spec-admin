@@ -28,6 +28,8 @@ class ControladorUsuarios
                 $f_nac = $_POST["f_nac"];
                 $telefono = $_POST["telefono"];
                 $tel_emergencia = $_POST["tel_emergencia"];
+                $nombre_contacto = $_POST["nombre_contacto"];
+                $parentesco = $_POST["parentesco"];
                 $domicilio = $_POST["domicilio"];
                 $provincia = $_POST["provincia"];
                 $rol = $_POST["rol"];
@@ -48,13 +50,15 @@ class ControladorUsuarios
                     "f_nac" => $f_nac,
                     "telefono" => $telefono,
                     "tel_emergencia" => $tel_emergencia,
+                    "nombre_contacto" => $nombre_contacto,
+                    "parentesco" => $parentesco,
                     "domicilio" => $domicilio,
                     "provincia" => $provincia,
                     "rol" => $rol,
                     "imgPerfil" => $imgPerfil,
                     "imgRepriv" => $imgRepriv,
                     "resetPass" => 1,
-                    "activo" =>1
+                    "activo" => 1
                 );
 
                 $respuesta = ModeloUsuarios::mdlGuardarUsuario($tabla, $datos);
@@ -64,11 +68,9 @@ class ControladorUsuarios
                 if ($respuesta == "ok") {
                     $conexion->commit();
                     $_SESSION['success_message'] = "Usuario registrado correctamente.";
-                   
                 } else {
                     throw new Exception("Error al guardar en la base de datos.");
                 }
-
             } catch (Exception $e) {
                 // Revertir la transacción en caso de error
                 $conexion->rollBack();
@@ -84,7 +86,7 @@ class ControladorUsuarios
     /*MODIFICAR USUARIOS */
     static public function crtModificarUsuario()
     {
-       
+        
         if (isset($_POST["idUsuario"])) {
             try {
                 $conexion = Conexion::conectar();
@@ -101,11 +103,13 @@ class ControladorUsuarios
                 $f_nac = $_POST["f_nac"];
                 $telefono = $_POST["telefono"];
                 $tel_emergencia = $_POST["tel_emergencia"];
+                $nombre_contacto = $_POST['nombre_contacto'];
+                $parentesco = $_POST['parentesco'];
                 $domicilio = $_POST["domicilio"];
                 $provincia = $_POST["provincia"];
                 $rol = $_POST["rol"];
                 $resetPass = isset($_POST["resetPass"]) ? 0 : 1; //Cero es para NO restaurar
-                $activo = isset($_POST["activo"]) ? 1 : 0;
+                $activo = isset($_POST["activo"]) ? 0 : 1;
 
                 // Actualizar imágenes si se subieron nuevas
                 $nombreArchivo = preg_replace('/\s+/', '', $nombre . $apellido);
@@ -121,6 +125,8 @@ class ControladorUsuarios
                     "f_nac" => $f_nac,
                     "telefono" => $telefono,
                     "tel_emergencia" => $tel_emergencia,
+                    "nombre_contacto" => $nombre_contacto,
+                    "parentesco" => $parentesco,
                     "domicilio" => $domicilio,
                     "provincia" => $provincia,
                     "rol" => $rol,
@@ -138,7 +144,6 @@ class ControladorUsuarios
                 } else {
                     throw new Exception("Error al modificar en la base de datos.");
                 }
-
             } catch (Exception $e) {
                 $conexion->rollBack();
                 $_SESSION['error_message'] = $e->getMessage();
@@ -146,32 +151,30 @@ class ControladorUsuarios
             }
         }
     }
-  /* FUNCIÓN PARA GUARDAR IMÁGENES */
-  static public function guardarImagen($archivo, $directorio, $nombreArchivo)
-  {
-      if ($archivo["error"] == UPLOAD_ERR_OK) {
-          $ext = pathinfo($archivo["name"], PATHINFO_EXTENSION);
-          $ext = strtolower($ext);
+    /* FUNCIÓN PARA GUARDAR IMÁGENES */
+    static public function guardarImagen($archivo, $directorio, $nombreArchivo)
+    {
+        if ($archivo["error"] == UPLOAD_ERR_OK) {
+            $ext = pathinfo($archivo["name"], PATHINFO_EXTENSION);
+            $ext = strtolower($ext);
 
-          // Validar formato de imagen
-          $formatosPermitidos = array("jpg", "jpeg", "png", "webp", "avif");
-          if (!in_array($ext, $formatosPermitidos)) {
-              throw new Exception("Formato de imagen no permitido.");
-          }
+            // Validar formato de imagen
+            $formatosPermitidos = array("jpg", "jpeg", "png", "webp", "avif");
+            if (!in_array($ext, $formatosPermitidos)) {
+                throw new Exception("Formato de imagen no permitido.");
+            }
 
-          // Ruta completa
-          $ruta = $directorio . $nombreArchivo . "." . $ext;
+            // Ruta completa
+            $ruta = $directorio . $nombreArchivo . "." . $ext;
 
-          // Mover archivo al directorio
-          if (!move_uploaded_file($archivo["tmp_name"], $ruta)) {
-              throw new Exception("Error al subir la imagen.");
-          }
+            // Mover archivo al directorio
+            if (!move_uploaded_file($archivo["tmp_name"], $ruta)) {
+                throw new Exception("Error al subir la imagen.");
+            }
 
-          return $ruta; // Devuelve la ruta para guardarla en la base de datos
-      }
+            return $ruta; // Devuelve la ruta para guardarla en la base de datos
+        }
 
-      return null;
-  }   
-
-
+        return null;
+    }
 }

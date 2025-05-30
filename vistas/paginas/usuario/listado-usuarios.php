@@ -35,9 +35,9 @@ $usuarios = $db->consultas($sql);
                   <th style="text-align: center;">Nombre</th>
                   <th style="text-align: center;">Celular</th>
                   <th style="text-align: center;">Celular emergencia</th>
+                  <th style="text-align: center;">Contacto</th>
+                  <th style="text-align: center;">Parentesco</th>
                   <th style="text-align: center;">Rol</th>
-                  <th style="text-align: center;">Objetivo</th>
-                  <th style="text-align: center;">Guardia</th>
                   <th style="text-align: center;">Acciones</th>
                 </tr>
               </thead>
@@ -48,9 +48,9 @@ $usuarios = $db->consultas($sql);
                     <td> <?php echo $valor['nombre']; ?></td>
                     <td> <?php echo $valor['telefono']; ?></td>
                     <td> <?php echo $valor['tel_emergencia']; ?></td>
+                    <td> <?php echo $valor['nombre_contacto']; ?></td>
+                    <td> <?php echo $valor['parentesco']; ?></td>
                     <td> <?php echo $valor['rol']; ?></td>
-                    <td>Objetivo</td>
-                    <td>Guardia</td>
                     <td>
                       <div class="row d-flex justify-content-around">
                         <a href="?r=perfil-usuario&id=<?php echo $valor["idUsuario"]; ?>" class="btn btn-success btn-sm"><i class="fas fa-eye"></i></a>
