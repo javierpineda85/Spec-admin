@@ -71,6 +71,7 @@ class RutasController
             //Puestos
             "crear_puesto"      => "puestos/crear_puesto.php",
             "listado_puestos"   => "puestos/listado_puestos.php",
+            "editar_puesto"     => "puestos/editar_puesto.php",
 
             //web
             "login"             => "login.php",
