@@ -65,9 +65,7 @@ class RutasController
 
             //Novedades
             "entradas_salidas"      => "novedades/entradas_salidas.php",
-
-            //Asignacionnes
-            "crear_asignaciones"    => "asignaciones/crear_asignaciones.php",
+            
             //Puestos
             "crear_puesto"      => "puestos/crear_puesto.php",
             "listado_puestos"   => "puestos/listado_puestos.php",
