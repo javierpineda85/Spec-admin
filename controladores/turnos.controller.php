@@ -19,7 +19,7 @@ class ControladorTurnos
 
                 foreach ($_SESSION['turnos'] as $t) {
                     // Ajuste de tipo: guardia → guardia_pasiva
-                    $tipo = strtolower($t['actividad']);
+                    $tipo = strtolower($t['tipo_jornada']);
                     if ($tipo === 'guardia') {
                         $tipo = 'guardia pasiva';
                     }
@@ -30,7 +30,8 @@ class ControladorTurnos
                         "fecha"         => $t['fecha'],
                         "turno"         => $t['turno'],
                         "vigilador_id"  => $t['vigilador'],
-                        "actividad"     => $t['actividad'],
+                        "tipo_jornada"  => $t['tipo_jornada'],
+                        'is_referente'  => (!empty($_POST['is_referente'])) ? 1 : 0,
                         "entrada"       => $t['entrada'],
                         "salida"        => $t['salida'],
                         "color"         => $t['color'],
@@ -57,6 +58,7 @@ class ControladorTurnos
         }
     }
 
+    /*listado_cronograma.php */
     static public function crtBuscarTurnosPorRango()
     {
         //session_start();
@@ -83,7 +85,7 @@ class ControladorTurnos
 
     static public function crtBuscarPorVigilador()
     {
-        session_start();
+        
         if (isset($_POST['buscar_por_vigilador'])) {
             // Guardamos filtros en sesión
             $_SESSION['filtros_vigilador'] = [

@@ -106,6 +106,7 @@ class ControladorCronograma
         exit;
     }
 
+    /*reporte_horas_por_objetivo */
     static public function crtBuscarResumenHoras()
     {
         $desde      = $_POST['desde']    ?? null;
@@ -126,7 +127,7 @@ class ControladorCronograma
         $reporte = [];
         foreach ($objetivos as $o) {
             // 1) Traemos fecha, entrada y salida
-            $sql = "SELECT fecha, entrada, salida FROM turnos WHERE objetivo_id = ? AND DATE(fecha) BETWEEN ? AND ?";
+            $sql = "SELECT fecha, entrada, salida FROM turnos WHERE objetivo_id = ? AND DATE(fecha) BETWEEN ? AND ? AND tipo_jornada   = 'Normal'";
 
             $params = [$o['idObjetivo'], $desde, $hasta];
             $jornadas = $db->consultas($sql, $params);
@@ -193,6 +194,8 @@ class ControladorCronograma
 
         return $segDiurnos / 3600;
     }
+
+    /*reporte_horas_vigilador */
     static public function crtBuscarResumenHorasPorVigilador()
     {
         $desde = $_POST['desde'] ?? null;
@@ -213,50 +216,65 @@ class ControladorCronograma
         $reporte = [];
 
         foreach ($vigiladores as $v) {
-            // Traemos turno, fecha, entrada y salida
-            $sql    = "SELECT fecha, entrada, salida, turno
+            
+            $sql    = "SELECT fecha, entrada, salida, turno, tipo_jornada
                    FROM turnos
                    WHERE vigilador_id = ?
-                     AND DATE(fecha) BETWEEN ? AND ?";
+                     AND DATE(fecha) BETWEEN ? AND ? ";
             $params = [$v['idUsuario'], $desde, $hasta];
             $jornadas = $db->consultas($sql, $params);
 
-            $sumDiur = 0.0;
-            $sumNoct = 0.0;
+            $sumDiur      = 0.0;
+            $sumNoct      = 0.0;
+            $countPasivas = 0;
+            $countFrancos = 0;
             $fechasTrabajadas = [];
 
             foreach ($jornadas as $j) {
                 // 1) Siempre contamos la fecha como jornada
                 $fechasTrabajadas[] = $j['fecha'];
 
-                // 2) Si es guardia pasiva, saltamos el cómputo de horas
-                if ($j['turno'] === 'Guardia Pasiva') {
+                // 2) Si es guardia pasiva, incrementamos contador y saltamos cómputo de horas
+                if ($j['tipo_jornada'] === 'Guardia Pasiva') {
+                    $countPasivas++;
+                    continue;
+                }
+                // 3) Si es franco, incrementamos contador y saltamos cómputo de horas
+                if ($j['tipo_jornada'] === 'Franco') {
+                    $countFrancos++;
+                    continue;
+                }
+                // 4) Si no es trabajo normal (p. ej. 'licencia'), saltamos cómputo de horas
+                if ($j['tipo_jornada'] !== 'Normal') {
                     continue;
                 }
 
-                // 3) Para Diurno/Nocturno normales, hacemos el cálculo
+                // 5) Para 'Normal', sí hacemos el cálculo de horas
                 $start = new DateTime("{$j['fecha']} {$j['entrada']}");
                 $end   = new DateTime("{$j['fecha']} {$j['salida']}");
                 if ($j['salida'] <= $j['entrada']) {
                     $end->modify('+1 day');
                 }
 
-                $hDiur = self::calcularHorasEnVentana($start, $end, '06:00:00', '21:00:00');
-                $hTotal = ($end->getTimestamp() - $start->getTimestamp()) / 3600.0;
-                $hNoct  = $hTotal - $hDiur;
+                // Calculamos horas diurnas (entre 06:00 y 21:00) y restantes como nocturnas
+                $hDiur   = self::calcularHorasEnVentana($start, $end, '06:00:00', '21:00:00');
+                $hTotal  = ($end->getTimestamp() - $start->getTimestamp()) / 3600.0;
+                $hNoct   = $hTotal - $hDiur;
 
                 $sumDiur += $hDiur;
                 $sumNoct += $hNoct;
             }
 
+            // Contamos fechas únicas para obtener cantidad de jornadas
             $jornadasCount = count(array_unique($fechasTrabajadas));
-            
 
             $reporte[] = [
-                'vigilador' => $v['apellido'] . ' ' . $v['nombre'],
-                'diurnas'   => $sumDiur,
-                'nocturnas' => $sumNoct,
-                'jornadas'  => $jornadasCount
+                'vigilador'         => $v['apellido'] . ' ' . $v['nombre'],
+                'diurnas'           => $sumDiur,
+                'nocturnas'         => $sumNoct,
+                'jornadas'          => $jornadasCount,
+                'guardias_pasivas'  => $countPasivas,
+                'francos'           => $countFrancos
             ];
         }
 

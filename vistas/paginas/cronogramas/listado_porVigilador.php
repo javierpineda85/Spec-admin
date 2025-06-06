@@ -69,7 +69,7 @@ $turnos  = $_SESSION['turnos_porVigilador'] ?? [];
                         <?php
                         // Preparamos el pivot horizontal
                         $fechas       = [];
-                        $datos        = []; // datos por fecha: Objetivo, Puesto, Turno, Actividad
+                        $datos        = []; // datos por fecha: Objetivo, Puesto, Turno, Actividad(tipo de jornada)
                         $colorPorFecha = [];
 
                         foreach ($turnos as $t) {
@@ -81,7 +81,7 @@ $turnos  = $_SESSION['turnos_porVigilador'] ?? [];
                                 'Objetivo'  => $t['objetivo'],
                                 'Puesto'    => $t['puesto'],
                                 'Turno'     => $t['turno'],
-                                'Actividad' => $t['actividad']
+                                'Actividad' => $t['tipo_jornada']
                             ];
                             // guardamos el color para ese día
                             $colorPorFecha[$f] = $t['color'];

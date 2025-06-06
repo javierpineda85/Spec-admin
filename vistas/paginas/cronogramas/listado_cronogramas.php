@@ -64,7 +64,7 @@ $objetivos = $db->consultas($sql);
                                     <th>Puesto</th>
                                     <th>Turno</th>
                                     <th>Vigilador</th>
-                                    <th>Actividad</th>
+                                    <th>Tipo de Jornada</th>
                                     <th>Entrada</th>
                                     <th>Salida</th>
                                 </tr>
@@ -91,7 +91,7 @@ $objetivos = $db->consultas($sql);
                                             <td class="text-center"><?= htmlspecialchars($t['puesto']) ?></td>
                                             <td class="text-center"><?= htmlspecialchars($t['turno']) ?></td>
                                             <td class="text-center"><?= htmlspecialchars($t['vigilador']) ?></td>
-                                            <td class="text-center"><?= htmlspecialchars($t['actividad']) ?></td>
+                                            <td class="text-center"><?= htmlspecialchars($t['tipo_jornada']) ?></td>
                                             <td class="text-center"><?= htmlspecialchars($t['entrada']) ?></td>
                                             <td class="text-center"><?= htmlspecialchars($t['salida']) ?></td>
                                         </tr>

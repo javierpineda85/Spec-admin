@@ -37,6 +37,8 @@ $rows = $_SESSION['reporte_vigilador'] ?? [];
               <th>Vigilador</th>
               <th class="text-center">Horas Diurnas</th>
               <th class="text-center">Horas Nocturnas</th>
+              <th class="text-center">Guardias Pasivas</th>
+              <th class="text-center">Francos</th>
               <th class="text-center">Total Jornadas</th>
             </tr>
           </thead>
@@ -47,6 +49,8 @@ $rows = $_SESSION['reporte_vigilador'] ?? [];
                   <td><?= htmlspecialchars($r['vigilador']) ?></td>
                   <td class="text-center"><?= number_format($r['diurnas'], 2) ?></td>
                   <td class="text-center"><?= number_format($r['nocturnas'], 2) ?></td>
+                  <td class="text-center"><?= number_format($r['guardias_pasivas'], 2) ?></td>
+                  <td class="text-center"><?= $r['francos'] ?></td>
                   <td class="text-center"><?= $r['jornadas'] ?></td>
                 </tr>
               <?php endforeach; ?>
@@ -63,11 +67,15 @@ $rows = $_SESSION['reporte_vigilador'] ?? [];
             $totD = array_sum(array_column($rows, 'diurnas'));
             $totN = array_sum(array_column($rows, 'nocturnas'));
             $totJ = array_sum(array_column($rows, 'jornadas'));
+            $totGP = array_sum(array_column($rows, 'guardias_pasivas'));
+            $totF = array_sum(array_column($rows, 'francos'));
             ?>
             <tr>
               <td><strong>Totales:</strong></td>
               <td class="text-center"><?= number_format($totD, 2) ?></td>
               <td class="text-center"><?= number_format($totN, 2) ?></td>
+              <td class="text-center"><?= number_format($totGP, 2) ?></td>
+              <td class="text-center"><?= $totF ?></td>
               <td class="text-center"><?= $totJ ?></td>
             </tr>
           </tfoot>

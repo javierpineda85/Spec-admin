@@ -48,6 +48,7 @@
                                     <th>Objetivo</th>
                                     <th class="text-center">Horas Diurnas</th>
                                     <th class="text-center">Horas Nocturnas</th>
+                                    <th class="text-center">Totals Horas</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -57,6 +58,7 @@
                                             <td><?= htmlspecialchars($r['nombre']) ?></td>
                                             <td class="text-center"><?= number_format($r['diurnas'], 2) ?></td>
                                             <td class="text-center"><?= number_format($r['nocturnas'], 2) ?></td>
+                                            <td class="text-center"><?= $r['diurnas'] + $r['nocturnas']?></td>
                                         </tr>
                                     <?php endforeach; ?>
                                 <?php else: ?>

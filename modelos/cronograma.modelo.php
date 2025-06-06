@@ -30,6 +30,7 @@ class ModeloCronograma
           FROM $tabla t
           WHERE t.objetivo_id = :objetivo_id
             AND t.fecha BETWEEN :desde AND :hasta
+            AND t.tipo_jornada  = 'Normal'
           GROUP BY t.fecha
           ORDER BY t.fecha
         ";

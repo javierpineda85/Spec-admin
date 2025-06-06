@@ -43,7 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'fecha'      => $_POST['fecha'],
             'turno'      => $_POST['turno'],
             'vigilador'  => $_POST['vigilador'],
-            'actividad'  => $_POST['actividad'],
+            'tipo_jornada' => $_POST['tipo_jornada'],
+            'is_referente' => isset($_POST['is_referente']) ? 1 : 0,
             'entrada'    => $_POST['entrada'],
             'salida'     => $_POST['salida'],
             'color'      => $_POST['color'] ?? '#FFFFFF'
@@ -62,8 +63,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h3 class="card-title ">Completa el formulario para crear un nuevo cronograma</h3>
     </div>
     <div class="card-body">
+    <?php if (!empty($_SESSION['success_message'])): ?>
+        <div class="alert alert-success alert-dismissible mt-3">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <i class="icon fas fa-check"></i>
+            <?= $_SESSION['success_message'];
+            unset($_SESSION['success_message']); ?>
+        </div>
+    <?php endif; ?>
         <!-- Formulario de agregado -->
         <form method="POST" class="card p-4 shadow-sm mb-4">
+
             <div class="form-row">
                 <div class="form-group col-md-4">
                     <label>Objetivo</label>
@@ -90,7 +100,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <option value disabled selected>Seleccionar turno</option>
                         <option value="Diurno">Diurno</option>
                         <option value="Nocturno">Nocturno</option>
-                        <option value="Guardia Pasiva">Guardia Pasiva</option>
                     </select>
                 </div>
                 <div class="form-group col-md-3">
@@ -103,14 +112,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </select>
                 </div>
                 <div class="form-group col-md-2">
-                    <label>Actividad</label>
-                    <select name="actividad" class="form-control" required>
+                    <label>Tipo de Jornada</label>
+                    <select name="tipo_jornada" class="form-control" required>
                         <option value="Normal">Normal</option>
                         <option value="Franco">Franco</option>
                         <option value="Guardia Pasiva">Guardia Pasiva</option>
                         <option value="Licencia">Licencia</option>
-                        <option value="Referente">Referente</option>
                     </select>
+                </div>
+                <div class="form-group col-md-2 ">
+                    <label for="">Marcar si es referente</label>
+                    <div class="form-check">
+                        <input type="checkbox" name="is_referente" value="1" class="form-check-input" id="is_referente">
+                        <label class="form-check-label" for="is_referente">Referente</label>
+                    </div>
                 </div>
                 <div class="form-group col-md-2">
                     <label>Entrada</label>
@@ -142,7 +157,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <th>Fecha</th>
                             <th>Turno</th>
                             <th>Vigilador</th>
-                            <th>Actividad</th>
+                            <th>Tipo de Jornada</th>
                             <th>Entrada</th>
                             <th>Salida</th>
                             <th>Acción</th>
@@ -157,10 +172,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <tr style="background-color: <?= htmlspecialchars($t['color']) ?>;">
                                 <td><?= htmlspecialchars($nombreObj) ?></td>
                                 <td><?= htmlspecialchars($nombrePuesto) ?></td>
-                                <td><?= htmlspecialchars($t['fecha']) ?></td>
+                                <td><?= htmlspecialchars(date('d-m-Y', strtotime($t['fecha']))) ?></td>
                                 <td><?= htmlspecialchars($t['turno']) ?></td>
                                 <td><?= htmlspecialchars($nombreUser) ?></td>
-                                <td><?= htmlspecialchars($t['actividad']) ?></td>
+                                <td><?= htmlspecialchars($t['tipo_jornada']) ?></td>
                                 <td><?= htmlspecialchars($t['entrada']) ?></td>
                                 <td><?= htmlspecialchars($t['salida']) ?></td>
                                 <td>
@@ -182,14 +197,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <?php $registro = ControladorTurnos::ctrRegistrarPlanilla(); ?>
 
                     </form>
-                    <?php if (!empty($_SESSION['success_message'])): ?>
-                        <div class="alert alert-success alert-dismissible mt-3">
-                            <button type="button" class="close" data-dismiss="alert">&times;</button>
-                            <i class="icon fas fa-check"></i>
-                            <?= $_SESSION['success_message'];
-                            unset($_SESSION['success_message']); ?>
-                        </div>
-                    <?php endif; ?>
+
                     <form method="POST">
                         <button type="submit" name="borrar_todo" class="btn btn-danger">
                             <i class="fas fa-trash-alt"></i> Vaciar Planilla
