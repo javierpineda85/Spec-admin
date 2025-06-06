@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 26-05-2025 a las 21:05:47
+-- Tiempo de generación: 06-06-2025 a las 16:24:47
 -- Versión del servidor: 8.3.0
 -- Versión de PHP: 8.2.18
 
@@ -289,16 +289,17 @@ INSERT INTO `rondas` (`idRonda`, `puesto`, `objetivo_id`, `tipo`, `orden_escaneo
 
 DROP TABLE IF EXISTS `turnos`;
 CREATE TABLE IF NOT EXISTS `turnos` (
-  `idTurno` int NOT NULL AUTO_INCREMENT,
-  `objetivo_id` int DEFAULT NULL,
-  `puesto_id` int DEFAULT NULL,
-  `fecha` date DEFAULT NULL,
-  `turno` varchar(20) DEFAULT NULL,
-  `vigilador_id` int DEFAULT NULL,
-  `actividad` varchar(20) DEFAULT NULL,
-  `entrada` time DEFAULT NULL,
-  `salida` time DEFAULT NULL,
-  `color` varchar(7) DEFAULT '#FFFFFF',
+  `idTurno` INT NOT NULL AUTO_INCREMENT,
+  `objetivo_id` INT DEFAULT NULL,
+  `puesto_id` INT DEFAULT NULL,
+  `fecha` DATE NOT NULL,
+  `turno` ENUM('Diurno','Nocturno') NOT NULL,
+  `vigilador_id` INT NOT NULL,
+  `tipo_jornada` ENUM('Normal','Guardia Pasiva','Franco','Licencia') NOT NULL,
+  `is_referente` TINYINT(1) NOT NULL DEFAULT 0,
+  `entrada` TIME DEFAULT NULL,
+  `salida` TIME DEFAULT NULL,
+  `color` VARCHAR(7) NOT NULL DEFAULT '#FFFFFF',
   PRIMARY KEY (`idTurno`),
   KEY `objetivo_id` (`objetivo_id`),
   KEY `puesto_id` (`puesto_id`),
@@ -387,6 +388,7 @@ CREATE TABLE IF NOT EXISTS `usuario_objetivo` (
   `id` int NOT NULL AUTO_INCREMENT,
   `usuario_id` int DEFAULT NULL,
   `objetivo_id` int DEFAULT NULL,
+  `fecha` DATE NOT NULL,
   PRIMARY KEY (`id`),
   KEY `usuario_id` (`usuario_id`),
   KEY `objetivo_id` (`objetivo_id`)
