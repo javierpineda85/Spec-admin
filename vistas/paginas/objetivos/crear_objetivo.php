@@ -11,64 +11,59 @@
     </div>
   </div>
   <div class="card-body">
-    <form action="" method="POST">
-      <div class="card card-info">
-        <div class="card-header">
-          <h3 class="card-title">Crear Objetivo</h3>
-        </div>
-        <!-- /.card-header -->
-        <!-- form start -->
-        <form class="form-horizontal" method="POST">
-          <div class="card-body">
-            <?php
-            if (isset($_SESSION['success_message'])) {
-              echo '<div class="alert alert-success alert-dismissible">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                        <p><i class="icon fas fa-check"></i>' . $_SESSION['success_message'] .
-                '</p></div>';
-              // Elimina el mensaje después de mostrarlo
-              unset($_SESSION['success_message']);
-            };
-            ?>
-            <div class="row">
-              <div class="form-group col-sm-12 col-md-3">
-                <label class="form-label">Nombre</label>
-                <input type="text" class="form-control" placeholder="Servicio 1" name="nombreObjetivo" required>
-              </div>
-              <div class="form-group col-sm-12 col-md-3">
-                <label class="form-label">Localidad</label>
-                <select id="localidad" name="localidad" class="form-control" required>
-                  <option value="" disabled selected>Selecciona una localidad</option>
-                </select>
-              </div>
-              <div class="form-group col-sm-12 col-md-3">
-                <label class="form-label">Tipo</label>
-                <select id="tipo" name="tipo" class="form-control" required>
-                  <option value="" disabled selected>Selecciona un tipo</option>
-                  <option value="fijo">Fijo</option>
-                  <option value="eventual">Eventual</option>
-                  <option value="movil">Móvil</option>
-                </select>
-              </div>
 
-
-
-              <!-- /.card-body -->
-              <div class="card-footer">
-                <button type="reset" class="btn btn-default float-right">Borrar campos</button>
-                <?php
-
-                $registro =  ControladorObjetivos::crtGuardarObjetivo();
-                ?>
-
-                <input type="submit" class="btn btn-success" value="Registrar">
-
-              </div>
-              <!-- /.card-footer -->
-        </form>
+    <div class="card card-info">
+      <div class="card-header">
+        <h3 class="card-title">Crear Objetivo</h3>
       </div>
-      <!-- /.card-info -->
-    </form>
+      <!-- /.card-header -->
+      <!-- form start -->
+      <form class="form-horizontal" action="?r=crear_objetivo" method="POST">
+        <div class="card-body">
+          <div class="row">
+            <div class="form-group col-sm-12 col-md-3">
+              <label class="form-label">Nombre</label>
+              <input type="text" class="form-control" placeholder="Servicio 1" name="nombreObjetivo" required>
+            </div>
+            <div class="form-group col-sm-12 col-md-3">
+              <label class="form-label">Localidad</label>
+              <select id="localidad" name="localidad" class="form-control" required>
+                <option value="" disabled selected>Selecciona una localidad</option>
+              </select>
+            </div>
+            <div class="form-group col-sm-12 col-md-3">
+              <label class="form-label">Tipo</label>
+              <select id="tipo" name="tipo" class="form-control" required>
+                <option value="" disabled selected>Selecciona un tipo</option>
+                <option value="fijo">Fijo</option>
+                <option value="eventual">Eventual</option>
+                <option value="movil">Móvil</option>
+              </select>
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer mt-3">
+
+              <?php
+              $registro =  ControladorObjetivos::crtGuardarObjetivo();
+              ?>
+
+              <input type="submit" class="btn btn-success" value="Registrar">
+              <button type="reset" class="btn btn-default">Borrar campos</button>
+
+            </div>
+            <?php if (!empty($_SESSION['success_message'])): ?>
+              <div class="alert alert-success alert-dismissible mt-3">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <i class="icon fas fa-check"></i>
+                <?= $_SESSION['success_message'];
+                unset($_SESSION['success_message']); ?>
+              </div>
+            <?php endif; ?>
+            <!-- /.card-footer -->
+      </form>
+    </div>
+    <!-- /.card-info -->
+
   </div>
   <!-- /.card-body -->
 

@@ -31,12 +31,14 @@ class ControladorObjetivos
                 ModeloObjetivos::mdlGuardarObjetivo($tabla, $datos);
 
                 // Confirmar la transacción si no hay errores
-                Conexion::conectar()->commit();
+                $conexion->commit();
 
                 $_SESSION['success_message'] = 'Objetivo creado exitosamente';
             } catch (Exception $e) {
                 // Revertir la transacción en caso de error
-                Conexion::conectar()->rollBack();
+                if ($conexion->inTransaction()) {
+                    $conexion->rollBack();
+                }
 
                 // Manejar el error según sea necesario
                 $_SESSION['success_message'] =  $e->getMessage();
