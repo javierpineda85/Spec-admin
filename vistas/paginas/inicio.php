@@ -6,14 +6,14 @@
   </div>
   <div class="card-body">
     <?php
-      if (isset($_SESSION['success_message'])) {
-        echo '<div class="alert alert-success alert-dismissible">
+    if (isset($_SESSION['success_message'])) {
+      echo '<div class="alert alert-success alert-dismissible">
                   <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                   <p><i class="icon fas fa-check"></i>' . $_SESSION['success_message'] . '</p>
               </div>';
-        // Elimina el mensaje después de mostrarlo
-        unset($_SESSION['success_message']);
-      };
+      // Elimina el mensaje después de mostrarlo
+      unset($_SESSION['success_message']);
+    };
     ?>
     <!-- Small boxes (Stat box) -->
     <div class="row">
@@ -32,8 +32,8 @@
             <!-- Sección colapsable para los botones -->
             <div id="collapsHvivo" class="collapse">
               <div class="mt-2">
-                <button class="btn btn-block btn-danger btn-sm"><a href="tel:911" class="text-white">Llamar 911</a></button>
-                <button class="btn btn-block btn-info btn-sm"><a href="?r=reporte" class="text-white">Registrar</a> </button>
+                <a href="tel:911" class="btn btn-block btn-danger btn-sm text-white">Llamar 911</a>
+                <a href="?r=reporte" class=" btn btn-block btn-info btn-smtext-white">Registrar</a>
               </div>
             </div>
           </div>
@@ -56,8 +56,8 @@
             <!-- Sección colapsable para los botones -->
             <div id="collapsDirectivas" class="collapse">
               <div class="mt-2">
-                <button class="btn btn-block btn-warning btn-sm"><a href="?r=crear_directivas" class="text-dark">Crear</a></button>
-                <button class="btn btn-block btn-warning btn-sm"><a href="?r=listado_directivas" class="text-dark">Mostrar todas</a></button>
+                <a href="?r=crear_directivas" class="btn btn-block btn-warning btn-sm text-dark">Crear</a>
+                <a href="?r=listado_directivas" class="btn btn-block btn-warning btn-sm text-dark">Mostrar todas</a>
               </div>
             </div>
           </div>
@@ -80,8 +80,8 @@
             <!-- Sección colapsable para los botones -->
             <div id="collapseRondas" class="collapse">
               <div class="mt-2">
-                <button class="btn btn-block btn-success btn-sm"><a href="?r=crear_rondas" class="text-white">Nueva</a></button>
-                <button class="btn btn-block btn-success btn-sm"><a href="?r=listado_rondas" class="text-white">Mostrar todas</a></button>
+                <a href="?r=crear_rondas" class="btn btn-block btn-success btn-sm text-white">Crear</a>
+                <a href="?r=listado_rondas" class="btn btn-block btn-success btn-sm text-white">Mostrar Todas</a>
               </div>
             </div>
           </div>
@@ -104,8 +104,12 @@
             <!-- Sección colapsable para los botones -->
             <div id="collapseCronogramas" class="collapse">
               <div class="mt-2">
-                <button class="btn btn-block btn-primary btn-sm"><a href="?r=crear_cronograma" class="text-white">Subir</a></button>
-                <button class="btn btn-block btn-primary btn-sm"><a href="?r=listado_cronogramas" class="text-white">Mostrar todos</a></button>
+                <a href="?r=crear_cronograma" class="btn btn-block btn-primary btn-sm text-white">Crear</a>
+                <a href="?r=listado_cronogramas" class="btn btn-block btn-primary btn-sm text-white">Por Objetivo</a>
+                <a href="?r=listado_porVigilador" class="btn btn-block btn-primary btn-sm text-white">Por Vigilador</a></button>
+                <a href="?r=listado_resumen_diario" class="btn btn-block btn-primary btn-sm text-white">Jornadas por Objetivo</a>
+                <a href="?r=reporte_porHoras" class="btn btn-block btn-primary btn-sm text-white">Horas por Objetivo</a>
+                <a href="?r=reporte_porVigilador" class="btn btn-block btn-primary btn-sm text-white">Horas por Vigilador</a>
               </div>
             </div>
           </div>
@@ -128,9 +132,10 @@
             <!-- Sección colapsable para los botones -->
             <div id="collapseNovedades" class="collapse">
               <div class="mt-2">
-                <button class="btn btn-block btn-info btn-sm">Nueva</button>
-                <button class="btn btn-block btn-info btn-sm">Mostrar todos</button>
-                <button class="btn btn-block btn-info btn-sm"><a href="?r=entradas_salidas" class="text-white">Entrada / Salida</a></button>
+                <a href="?r=entradas_salidas" class="btn btn-block btn-info btn-sm text-white">Crear Novedad</a>
+                <a href="?r=listado_novedades" class="btn btn-block btn-info btn-sm text-white">Mostrar Todas</a>
+                <a href="?r=entradas_salidas" class="btn btn-block btn-info btn-sm text-white">Marcar Entrada/Salida</a>
+                <a href="?r=reporte_entradas_salidas" class="btn btn-block btn-info btn-sm text-white">Mostrar Entrada/Salida</a>
               </div>
             </div>
           </div>
@@ -154,8 +159,9 @@
             <!-- Sección colapsable para los botones -->
             <div id="collapseObjetivos" class="collapse">
               <div class="mt-2">
-                <button class="btn btn-block btn-info btn-sm"><a href="?r=crear_objetivo" class="text-white">Nuevo</a> </button>
-                <button class="btn btn-block btn-info btn-sm"><a href="?r=listado_objetivos" class="text-white">Mostrar todos</a></button>
+                <a href="?r=crear_objetivo" class="btn btn-block btn-info btn-sm text-white">Crear Objetivo</a> 
+                <a href="?r=listado_objetivos" class="btn btn-block btn-info btn-sm text-white">Mostrar Activos</a>
+                <a href="?r=listado_objetivos_inactivos" class="btn btn-block btn-info btn-sm text-white">Mostrar Inactivos</a>
               </div>
             </div>
           </div>
@@ -178,8 +184,9 @@
             <!-- Sección colapsable para los botones -->
             <div id="collapseUsuarios" class="collapse">
               <div class="mt-2">
-                <button class="btn btn-block btn-info btn-sm"><a href="?r=crear-usuario" class="text-white">Nuevo</a> </button>
-                <button class="btn btn-block btn-info btn-sm"><a href="?r=listado-usuarios" class="text-white">Mostrar todos</a></button>
+                <a href="?r=crear-usuario" class="btn btn-block btn-info btn-sm text-white">Crear</a> <
+                <a href="?r=listado-usuarios" class="btn btn-block btn-info btn-sm text-white">Mostrar Activos</a>
+                <a href="?r=listado-usuarios-inactivos" class="btn btn-block btn-info btn-sm text-white">Mostrar Inactivos</a>
               </div>
             </div>
           </div>
@@ -205,8 +212,8 @@
             <!-- Sección colapsable para los botones -->
             <div id="collapseMensajeria" class="collapse">
               <div class="mt-2">
-                <button class="btn btn-block btn-info btn-sm"><a href="?r=bandeja-entrada" class="text-white">Ver mensajes</button>
-                <button class="btn btn-block btn-info btn-sm"><a href="?r=nuevo-mensaje" class="text-white">Enviar mensaje</button>
+                <a href="?r=bandeja-entrada" class="btn btn-block btn-info btn-sm text-white">Ver mensajes</a>
+                <a href="?r=nuevo-mensaje" class="btn btn-block btn-info btn-sm text-white">Enviar mensaje</a>
               </div>
             </div>
           </div>
@@ -214,13 +221,7 @@
       </div>
       <!-- ./mensajeria -->
 
-      <!-- Main content -->
-      <section class="content">
-        <div class="container-fluid">
 
-
-        </div><!-- /.container-fluid -->
-      </section>
-      <!-- /.content -->
     </div>
   </div>
+</div>

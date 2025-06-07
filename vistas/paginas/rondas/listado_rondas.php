@@ -13,7 +13,7 @@ $usuarios = $db->consultas($sql);
       <div class="col-12">
 
         <div class="card">
-          <div class="card-header">
+          <div class="card-header bg-info text-white">
             <h3 class="card-title">Listado de rondas</h3>
             <?php
             if (isset($_SESSION['success_message'])) {

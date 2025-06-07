@@ -16,8 +16,8 @@ $objetivos = $db->consultas($sql);
             <div class="col-12">
 
                 <div class="card">
-                    <div class="card-header bg-info text-white">
-                        <h3 class="card-title">Listado de objetivos</h3>
+                    <div class="card-header bg-warning text-white">
+                        <h3 class="card-title">Listado de Objetivos Inactivos</h3>
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body">

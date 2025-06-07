@@ -25,7 +25,7 @@
                with font-awesome or any other icon font library -->
         <li class="nav-item"> <!-- dashboard -->
           <a href="index.php" class="nav-link">
-            <i class="nav-icon fas fa-tachometer-alt text-warning"></i>
+            <i class="nav-icon fas fa-tachometer-alt text-lime"></i>
             <p>
               Panel de Control
             </p>
@@ -71,18 +71,17 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="?r=listado_directivas" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Ver todos</p>
-              </a>
-            </li>
-            <li class="nav-item">
               <a href="?r=crear_directivas" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Crear</p>
               </a>
             </li>
-
+            <li class="nav-item">
+              <a href="?r=listado_directivas" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Mostrar Todas</p>
+              </a>
+            </li>
           </ul>
         </li>
 
@@ -96,17 +95,18 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="?r=listado_rondas" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Ver todas</p>
-              </a>
-            </li>
-            <li class="nav-item">
               <a href="?r=crear_rondas" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Crear</p>
               </a>
             </li>
+            <li class="nav-item">
+              <a href="?r=listado_rondas" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Mostrar Todas</p>
+              </a>
+            </li>
+
           </ul>
         </li>
         <li class="nav-item"> <!-- Puestos -->
@@ -298,7 +298,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="index.php?r=nuevo-mensaje&t=" class="nav-link">
+              <a href="index.php?r=nuevo-mensaje" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Nuevo mensaje</p>
               </a>
