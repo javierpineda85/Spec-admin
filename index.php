@@ -2,6 +2,7 @@
 session_start();  // Aseguramos que la sesión esté iniciada para poder verificar $_SESSION
 //session_destroy();
 require_once("config.php");
+require_once('controladores/archivos.controller.php');
 require_once('controladores/cronograma.controller.php');
 require_once("controladores/directivas.controller.php");
 require_once('controladores/hvivo.controller.php');
