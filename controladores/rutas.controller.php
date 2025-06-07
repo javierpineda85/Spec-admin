@@ -45,6 +45,7 @@ class RutasController
             "crear_objetivo"    => "objetivos/crear_objetivo.php",
             "editar_objetivo"   => "objetivos/editar_objetivo.php",
             "listado_objetivos" => "objetivos/listado_objetivos.php",
+            "listado_objetivos_inactivos" => "objetivos/listado_objetivos_desactivados.php",
             //directivas
             "crear_directivas"        => "directivas/crear_directivas.php",
             "modificar_directivas"    => "directivas/modificar_directivas.php",
@@ -65,11 +66,12 @@ class RutasController
 
             //Novedades
             "entradas_salidas"      => "novedades/entradas_salidas.php",
-            
+
             //Puestos
             "crear_puesto"      => "puestos/crear_puesto.php",
             "listado_puestos"   => "puestos/listado_puestos.php",
             "editar_puesto"     => "puestos/editar_puesto.php",
+            "listado_puestos_inactivos"     => "puestos/listado_puestos_desactivados.php",
 
             //web
             "login"             => "login.php",

@@ -127,7 +127,13 @@
             <li class="nav-item">
               <a href="?r=listado_puestos" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Ver Todos</p>
+                <p>Mostrar Activos</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="?r=listado_puestos_inactivos" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Mostrar Inactivos</p>
               </a>
             </li>
           </ul>
@@ -226,9 +232,15 @@
             <li class="nav-item">
               <a href="?r=listado_objetivos" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Mostrar todos</p>
+                <p>Mostrar Activos</p>
               </a>
-
+            </li>
+            <li class="nav-item">
+              <a href="?r=listado_objetivos_inactivos" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Mostrar Inactivos</p>
+              </a>
+            </li>
           </ul>
         </li>
         <li class="nav-item"> <!-- usuarios -->
