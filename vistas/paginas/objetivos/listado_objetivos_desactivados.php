@@ -1,10 +1,10 @@
 <?php
-if (isset($_POST['idEliminar'])) {
-    ControladorObjetivos::crtDesactivarObjetivo();
+if (isset($_POST['idReactivar'])) {
+    ControladorObjetivos::crtReactivarObjetivo();
 }
 
 $db = new Conexion;
-$sql = "SELECT * FROM objetivos WHERE activo = 1 ORDER BY nombre";
+$sql = "SELECT * FROM objetivos WHERE activo = 0 ORDER BY nombre";
 $objetivos = $db->consultas($sql);
 
 ?>
@@ -47,14 +47,9 @@ $objetivos = $db->consultas($sql);
                                         <td> <?= $valor['tipo'] ?></td>
                                         <td>
                                             <div class="d-flex justify-content-center">
-                                                <!-- Botón Editar -->
-                                                <a href="?r=editar_objetivo&id=<?php echo $valor["idObjetivo"]; ?>"class="btn btn-success btn-sm mr-1" title="Editar objetivo"><i class="fas fa-edit"></i>
-                                                </a>
-
-                                                <!-- Botón Eliminar -->
-                                                <form method="post" style="display:inline-block;">
-                                                    <input type="hidden" name="idEliminar" value="<?php echo $valor["idObjetivo"]; ?>">
-                                                    <button type="submit" class="btn btn-danger btn-sm" title="Eliminar objetivo"  onclick="return confirm('¿Desea desactivar este objetivo?');"> <i class="fas fa-trash-alt"></i></button>
+                                                <form method="post">
+                                                    <input type="hidden" name="idReactivar" value="<?= $valor['idObjetivo'] ?>" title="Activar">
+                                                    <button class="btn btn-success btn-sm"><i class="fas fa-check-circle"></i></button>
                                                 </form>
                                             </div>
                                         </td>

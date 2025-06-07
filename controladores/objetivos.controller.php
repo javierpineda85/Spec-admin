@@ -95,4 +95,55 @@ class ControladorObjetivos
             }
         }
     }
+
+      /** DESACTIVAR UN OBJETIVO **/
+    static public function crtDesactivarObjetivo()
+    {
+        if (isset($_POST['idEliminar'])) {
+            $id = intval($_POST['idEliminar']);
+            try {
+                $db = Conexion::conectar();
+                if (!$db->inTransaction()) {
+                    $db->beginTransaction();
+                }
+
+                $res = ModeloObjetivos::mdlDesactivarObjetivo('objetivos', $id);
+                if ($res === 'ok') {
+                    $db->commit();
+                    $_SESSION['success_message'] = 'Objetivo desactivado.';
+                } else {
+                    $db->rollBack();
+                    $_SESSION['error_message'] = 'No se pudo desactivar.';
+                }
+            } catch (Exception $e) {
+                if ($db->inTransaction()) $db->rollBack();
+                $_SESSION['error_message'] = 'Error: ' . $e->getMessage();
+            }
+        }
+    }
+    /** REACTIVAR UN OBJETIVO **/
+    static public function crtReactivarObjetivo() { 
+        if (isset($_POST['idReactivar'])) {
+            $id = intval($_POST['idReactivar']);
+            try {
+                $db = Conexion::conectar();
+                if (!$db->inTransaction()) {
+                    $db->beginTransaction();
+                }
+
+                $res = ModeloObjetivos::mdlReactivarObjetivo('objetivos', $id);
+                if ($res === 'ok') {
+                    $db->commit();
+                    $_SESSION['success_message'] = 'Objetivo activado.';
+                } else {
+                    $db->rollBack();
+                    $_SESSION['error_message'] = 'No se pudo activar el objetivo.';
+                }
+            } catch (Exception $e) {
+                if ($db->inTransaction()) $db->rollBack();
+                $_SESSION['error_message'] = 'Error: ' . $e->getMessage();
+            }
+        }
+    }
+
 }
