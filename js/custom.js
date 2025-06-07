@@ -239,9 +239,9 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener("DOMContentLoaded", function () {
   document.querySelectorAll("form").forEach(function (form) {
     form.addEventListener("submit", function (event) {
-console.log("📝 submit on form:", form, "– id:", form.id);
-      if (form.id === "perfilForm") {
-        console.log("↪ Saltando perfilForm");
+
+      if (form.id === "perfilForm" || form.id === "entradaSalidaForm") {
+        console.log("↪ Saltando validación genérica para este form:", form.id);
         return;
       }
       let isValid = true;

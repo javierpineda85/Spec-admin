@@ -1,54 +1,55 @@
 <?php
 ob_start(); // Para que los headers no tiren error
 
-require_once ('modelos/novedades.modelo.php');
+require_once('modelos/novedades.modelo.php');
 
 class NovedadesController
 {
-    static public function crtRegistrar()
+    /**
+     * Registra una novedad asociada a un usuario y objetivo, con manejo de transacción y errores.
+     */
+    public static function crtRegistrar()
     {
-        if (isset($_POST['idUsuario'])) {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        $vigilador_id =  $_POST['vigilador_id'] ?? null;
+        $objetivo_id =  $_POST['objetivo_id'] ?? null;
+        $detalle = trim($_POST['detalle'] ?? '');
+        $fecha = date('Y-m-d');
+        $hora = date('H:i');
 
-            try {
-                $conexion = Conexion::conectar();
+        if (! $vigilador_id || ! $detalle) {
+            $_SESSION['error_message'] = 'Faltan datos obligatorios.';
+            header('Location:?r=crear_novedad');
+            exit;
+        }
 
-                if (!$conexion->inTransaction()) {
-                    $conexion->beginTransaction();
-                }
+        try {
+            $pdo = Conexion::conectar();
+            if (! $pdo->inTransaction())  $pdo->beginTransaction();
 
-                $tabla = "novedades";
+            // Manejo de archivo
+            $ruta = ControladorArchivos::guardarArchivo($_FILES['adjunto'] ?? [], 'img/novedades', 'novedad_' . time());
 
-                // Determinar si es Entrada o Salida
-                $tipoRegistro = isset($_POST['tipo_registro']) ? "Salida" : "Entrada";
+            $sql = "INSERT INTO novedades (vigilador_id, objetivo_id, fecha, hora, detalle, adjunto) VALUES (:v, :o, :f, :h, :d, :a)";
+            $stmt =  $pdo->prepare($sql);
+            $stmt->execute([
+                ':v' =>  $vigilador_id,
+                ':o' =>  $objetivo_id,
+                ':f' =>  $fecha,
+                ':h' =>  $hora,
+                ':d' =>  $detalle,
+                ':a' =>  $ruta
+            ]);
 
-                $datos = array(
-                    "usuario_id"     => $_SESSION['idUsuario'],
-                    "objetivo_id"    => 0, // Placeholder. Podés reemplazar por un valor real si lo estás usando
-                    "fecha"          => date('Y-m-d'),
-                    "hora"           => date('H:i:s'),
-                    "detalle"        => $_POST['detalle'],
-                    "tipo_registro"  => $tipoRegistro
-                );
-
-                $respuesta = ModeloNovedades::mdlGuardarNovedad($tabla, $datos);
-
-                if ($respuesta == "ok") {
-                    $conexion->commit();
-                    $_SESSION['success_message'] = "Registro de $tipoRegistro guardado correctamente.";
-                    header("Location: index.php");
-                    exit;
-                } else {
-                    throw new Exception("Error al guardar la novedad.");
-                }
-            } catch (Exception $e) {
-                $conexion->rollBack();
-                $_SESSION['success_message'] = "ERROR: " . $e->getMessage();
-                header("Location: index.php");
-                exit;
-            }
-        } 
+            $pdo->commit();
+            $_SESSION['success_message'] = 'Novedad registrada correctamente.';
+            header('Location:?r=crear_novedad');
+            exit;
+        } catch (Exception  $e) {
+            if (isset($pdo) &&  $pdo->inTransaction())  $pdo->rollBack();
+            $_SESSION['error_message'] = 'Error: ' . $e->getMessage();
+            header('Location:?r=crear_novedad');
+            exit;
+        }
     }
 }
-
-
-?>

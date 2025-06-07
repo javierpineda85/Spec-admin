@@ -64,6 +64,9 @@
 <!-- incluir JS personalizado -->
 <script src="./js/custom.js" defer></script>
 
+<!-- incluir API GPS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <!-- Modal para mostrar la imagen en grande -->
 <div class="modal fade" id="imagenModal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">

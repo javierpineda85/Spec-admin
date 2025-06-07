@@ -195,22 +195,30 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="?r=crear_novedad" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Ver todas</p>
+                <p>Crear Novedad</p>
               </a>
             </li>
+            <li class="nav-item">
+              <a href="?r=listado_novedades" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Mostrar Novedades</p>
+              </a>
+            </li>
+
             <li class="nav-item">
               <a href="?r=entradas_salidas" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Entrada - Salida</p>
+                <p>Marcar Ingreso/Salida</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link">
+              <a href="?r=reporte_entradas_salidas" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
-                <p>Crear</p>
+                <p>Mostrar Ingresos/Salidas</p>
               </a>
+            </li>
 
           </ul>
         </li>

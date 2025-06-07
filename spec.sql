@@ -178,21 +178,41 @@ INSERT INTO `mensajes` (`idMensaje`, `remitente_id`, `destinatario_id`, `conteni
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `marcaciones_servicio`
+--
+
+DROP TABLE IF EXISTS `marcaciones_servicio`;
+CREATE TABLE IF NOT EXISTS `marcaciones_servicio` (
+  `idMarcacion` int NOT NULL AUTO_INCREMENT,
+  `vigilador_id` int NOT NULL,
+  `objetivo_id` int DEFAULT NULL,
+  `tipo_evento` enum('Entrada','Salida') NOT NULL,
+  `fecha_hora` datetime NOT NULL,
+  `latitud` decimal(10,8) NOT NULL,
+  `longitud` decimal(11,8) NOT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`idMarcacion`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+COMMIT;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `novedades`
 --
 
 DROP TABLE IF EXISTS `novedades`;
 CREATE TABLE IF NOT EXISTS `novedades` (
-  `idNovedad` int NOT NULL AUTO_INCREMENT,
-  `usuario_id` int DEFAULT NULL,
-  `objetivo_id` int DEFAULT NULL,
-  `fecha` date DEFAULT NULL,
-  `hora` time DEFAULT NULL,
-  `tipo_registro` varchar(10) DEFAULT NULL,
-  `detalle` text,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `idNovedad` INT NOT NULL AUTO_INCREMENT,
+  `vigilador_id` INT NOT NULL,
+  `objetivo_id`  INT DEFAULT NULL,
+  `fecha`        DATE,
+  `hora`         TIME,
+  `detalle`      TEXT,
+  `adjunto` varchar(255) NULL,
+  `created_at`   TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`idNovedad`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+); ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -204,12 +224,15 @@ DROP TABLE IF EXISTS `objetivos`;
 CREATE TABLE IF NOT EXISTS `objetivos` (
   `idObjetivo` int NOT NULL AUTO_INCREMENT,
   `nombre` varchar(100) NOT NULL,
+  `latitud` decimal(10,8) NOT NULL,
+  `longitud` decimal(11,8) NOT NULL,
+  `radio_m` int NOT NULL DEFAULT '200',
   `localidad` varchar(100) NOT NULL,
-  `referente` varchar(100) NOT NULL,
+  `referente` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `tipo` enum('fijo','movil','eventual') NOT NULL,
-  `activo` TINYINT(1) NOT NULL DEFAULT 1,
+  `activo` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`idObjetivo`)
-) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Volcado de datos para la tabla `objetivos`

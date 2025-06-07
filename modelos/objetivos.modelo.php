@@ -3,51 +3,32 @@
 class ModeloObjetivos
 {
     /*INSERTAR OBJETIVO */
-    static public function mdlGuardarObjetivo($tabla, $datos)
+    static public function mdlGuardarObjetivo($tabla, $d)
     {
-        $registro = Conexion::conectar()->prepare("INSERT INTO $tabla (nombre, localidad, tipo) 
-            VALUES (:nombre, :localidad, :tipo)");
-
-        $registro->bindParam(":nombre", $datos["nombre"], PDO::PARAM_STR);
-        $registro->bindParam(":localidad", $datos["localidad"], PDO::PARAM_STR);
-        //$registro->bindParam(":referente", $datos["referente"], PDO::PARAM_STR);
-        $registro->bindParam(":tipo", $datos["tipo"], PDO::PARAM_STR);
-
-        if ($registro->execute()) {
-
-            return "ok";
-        } else {
-            print_r(Conexion::conectar()->errorInfo());
-        }
-
-        $registro->closeCursor();
-        $registro = null;
+        $sql = "INSERT INTO $tabla (nombre,localidad,tipo,latitud,longitud,radio_m) VALUES (:nombre,:localidad,:tipo,:latitud,:longitud,:radio_m)";
+        $stmt = Conexion::conectar()->prepare($sql);
+        $stmt->bindParam(':nombre', $d['nombre'], PDO::PARAM_STR);
+        $stmt->bindParam(':localidad', $d['localidad'], PDO::PARAM_STR);
+        $stmt->bindParam(':tipo', $d['tipo'], PDO::PARAM_STR);
+        $stmt->bindParam(':latitud', $d['latitud']);
+        $stmt->bindParam(':longitud', $d['longitud']);
+        $stmt->bindParam(':radio_m', $d['radio_m'], PDO::PARAM_INT);
+        return $stmt->execute() ? 'ok' : 'error';
     }
 
-
     /*MODIFICAR OBJETIVO */
-    static public function mdlModificarObjetivo($tabla, $datos)
+    static public function mdlModificarObjetivo($tabla, $d)
     {
-        try {
-            $conexion = Conexion::conectar();
-            $sql = "UPDATE $tabla SET nombre = :nombre, localidad = :localidad, tipo = :tipo WHERE idObjetivo = :idObjetivo";
-    
-            $stmt = $conexion->prepare($sql);
-    
-            $stmt->bindParam(":idObjetivo", $datos["idObjetivo"], PDO::PARAM_INT);
-            $stmt->bindParam(":nombre", $datos["nombre"], PDO::PARAM_STR);
-            $stmt->bindParam(":localidad", $datos["localidad"], PDO::PARAM_STR);
-           // $stmt->bindParam(":referente", $datos["referente"], PDO::PARAM_STR);
-            $stmt->bindParam(":tipo", $datos["tipo"], PDO::PARAM_STR);
-    
-            if ($stmt->execute()) {
-                return "ok";
-            } else {
-                return "error";
-            }
-        } catch (PDOException $e) {
-            return $e->getMessage();
-        }
+        $sql = "UPDATE $tabla SET nombre=:nombre,localidad=:localidad,tipo=:tipo, latitud=:latitud,longitud=:longitud,radio_m=:radio_m WHERE idObjetivo=:idObjetivo";
+        $stmt = Conexion::conectar()->prepare($sql);
+        $stmt->bindParam(':idObjetivo', $d['idObjetivo'], PDO::PARAM_INT);
+        $stmt->bindParam(':nombre', $d['nombre'], PDO::PARAM_STR);
+        $stmt->bindParam(':localidad', $d['localidad'], PDO::PARAM_STR);
+        $stmt->bindParam(':tipo', $d['tipo'], PDO::PARAM_STR);
+        $stmt->bindParam(':latitud', $d['latitud']);
+        $stmt->bindParam(':longitud', $d['longitud']);
+        $stmt->bindParam(':radio_m', $d['radio_m'], PDO::PARAM_INT);
+        return $stmt->execute() ? 'ok' : 'error';
     }
 
     /** DESACTIVAR (soft-delete) UN OBJETIVO **/
@@ -58,13 +39,11 @@ class ModeloObjetivos
         return $stmt->execute() ? 'ok' : 'error';
     }
 
-        /** RESACTIVAR (soft-delete) UN OBJETIVO **/
+    /** RESACTIVAR (soft-delete) UN OBJETIVO **/
     static public function mdlReactivarObjetivo($tabla, $idObjetivo)
     {
-        $stmt = Conexion::conectar() ->prepare("UPDATE $tabla SET activo = 1 WHERE idObjetivo = :id");
+        $stmt = Conexion::conectar()->prepare("UPDATE $tabla SET activo = 1 WHERE idObjetivo = :id");
         $stmt->bindParam(':id', $idObjetivo, PDO::PARAM_INT);
         return $stmt->execute() ? 'ok' : 'error';
     }
-
-
 }

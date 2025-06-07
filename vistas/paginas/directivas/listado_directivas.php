@@ -106,5 +106,4 @@ $directivas = $db->consultas($sql);
         <!-- /.row -->
     </div>
     <!-- /.container-fluid -->
-</section>
-<!-- /.content -->
+

@@ -3,10 +3,12 @@ session_start();  // Aseguramos que la sesión esté iniciada para poder verific
 //session_destroy();
 require_once("config.php");
 require_once('controladores/archivos.controller.php');
+require_once('controladores/bajas.controller.php');
 require_once('controladores/cronograma.controller.php');
 require_once("controladores/directivas.controller.php");
 require_once('controladores/hvivo.controller.php');
 require_once('controladores/login.controller.php');
+require_once('controladores/marcaciones.controller.php');
 require_once("controladores/mensajes.controller.php");
 require_once("controladores/novedades.controller.php");
 require_once("controladores/objetivos.controller.php");
