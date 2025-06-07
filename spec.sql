@@ -97,8 +97,9 @@ CREATE TABLE IF NOT EXISTS `cronogramas` (
 DROP TABLE IF EXISTS `directivas`;
 CREATE TABLE IF NOT EXISTS `directivas` (
   `idDirectiva` int NOT NULL AUTO_INCREMENT,
-  `detalle` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `id_objetivo` int NOT NULL,
+  `detalle` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `adjunto` varchar(255) NULL,
   PRIMARY KEY (`idDirectiva`)
 ) ENGINE=MyISAM AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -206,6 +207,7 @@ CREATE TABLE IF NOT EXISTS `objetivos` (
   `localidad` varchar(100) NOT NULL,
   `referente` varchar(100) NOT NULL,
   `tipo` enum('fijo','movil','eventual') NOT NULL,
+  `activo` TINYINT(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`idObjetivo`)
 ) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -218,6 +220,21 @@ INSERT INTO `objetivos` (`idObjetivo`, `nombre`, `localidad`, `referente`, `tipo
 (7, 'Hospital Perrupato', 'San Martín', 'Juan Perez', 'fijo'),
 (8, 'Hospital Central', 'Capital', 'Juan Perez', 'fijo'),
 (9, 'Objetivo de prueba 22-05', 'Santa Rosa', 'Juan Perez', 'fijo');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `puestos`
+--
+
+DROP TABLE IF EXISTS `puestos`;
+CREATE TABLE IF NOT EXISTS `puestos` (
+  `idPuesto` int NOT NULL AUTO_INCREMENT,
+  `puesto` varchar(100) NOT NULL,
+  `objetivo_id` int NOT NULL,
+  `tipo` enum('Fijo','Eventual') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  PRIMARY KEY (`idPuesto`)
+) ENGINE=MyISAM AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -352,7 +369,7 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   `imgPerfil` varchar(60) DEFAULT NULL,
   `imgRepriv` varchar(60) DEFAULT NULL,
   `resetPass` int NOT NULL,
-  `activo` int NOT NULL,
+  `activo` TINYINT(1) NOT NULL DEFAULT 1,
   `fecha_creacion` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`idUsuario`),
   UNIQUE KEY `dni` (`dni`)
