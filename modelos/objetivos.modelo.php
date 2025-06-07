@@ -49,4 +49,22 @@ class ModeloObjetivos
             return $e->getMessage();
         }
     }
+
+    /** DESACTIVAR (soft-delete) UN OBJETIVO **/
+    static public function mdlDesactivarObjetivo($tabla, $idObjetivo)
+    {
+        $stmt = Conexion::conectar()->prepare("UPDATE $tabla SET activo = 0 WHERE idObjetivo = :id");
+        $stmt->bindParam(':id', $idObjetivo, PDO::PARAM_INT);
+        return $stmt->execute() ? 'ok' : 'error';
+    }
+
+        /** RESACTIVAR (soft-delete) UN OBJETIVO **/
+    static public function mdlReactivarObjetivo($tabla, $idObjetivo)
+    {
+        $stmt = Conexion::conectar() ->prepare("UPDATE $tabla SET activo = 1 WHERE idObjetivo = :id");
+        $stmt->bindParam(':id', $idObjetivo, PDO::PARAM_INT);
+        return $stmt->execute() ? 'ok' : 'error';
+    }
+
+
 }

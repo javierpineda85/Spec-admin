@@ -1,10 +1,10 @@
 <?php
-if (isset($_POST['idEliminar'])) {
-    ControladorPuestos::crtDesactivarPuesto();
+if (isset($_POST['idReactivar'])) {
+    ControladorPuestos::crtReactivarPuesto();
 }
 
 $db = new Conexion;
-$sql = "SELECT p.idPuesto, p.puesto, p.objetivo_id, p.tipo, o.nombre as objetivo FROM puestos p JOIN objetivos o ON p.objetivo_id = o.idObjetivo WHERE p.activo = 1 ORDER BY p.objetivo_id ";
+$sql = "SELECT p.idPuesto, p.puesto, p.objetivo_id, p.tipo, o.nombre as objetivo FROM puestos p JOIN objetivos o ON p.objetivo_id = o.idObjetivo WHERE p.activo = 0 ORDER BY p.objetivo_id ";
 $objetivos = $db->consultas($sql);
 
 ?>
@@ -46,13 +46,9 @@ $objetivos = $db->consultas($sql);
                                         <td> <?= $valor['tipo'] ?></td>
                                         <td style="vertical-align: middle; text-align: center;">
                                             <div class="d-flex justify-content-center">
-                                                <!-- Editar -->
-                                                <a href="?r=editar_puesto&id=<?php echo $valor['idPuesto']; ?>" class="btn btn-success btn-sm mr-1" title="Editar puesto"> <i class="fas fa-edit"></i> </a>
-
-                                                <!-- Desactivar (soft-delete) -->
-                                                <form method="post" style="display:inline-block;">
-                                                    <input type="hidden" name="idEliminar" value="<?php echo $valor['idPuesto']; ?>">
-                                                    <button type="submit" class="btn btn-warning btn-sm" title="Desactivar puesto" onclick="return confirm('¿Desea desactivar este puesto?');"> <i class="fas fa-ban"></i> </button>
+                                                <form method="post">
+                                                    <input type="hidden" name="idReactivar" value="<?= $valor['idPuesto'] ?>" title="Reactivar">
+                                                    <button class="btn btn-success btn-sm"><i class="fas fa-check-circle"></i></button>
                                                 </form>
                                             </div>
                                         </td>

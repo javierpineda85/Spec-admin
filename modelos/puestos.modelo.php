@@ -22,20 +22,20 @@ class ModeloPuestos
         $registro->closeCursor();
         $registro = null;
     }
-   
+
     static public function mdlModificarPuesto($tabla, $datos)
     {
         try {
             $conexion = Conexion::conectar();
             $sql = "UPDATE $tabla SET puesto = :puesto, objetivo_id = :objetivo_id, tipo = :tipo WHERE idPuesto = :idPuesto";
-    
+
             $stmt = $conexion->prepare($sql);
-    
+
             $stmt->bindParam(":idPuesto", $datos["idPuesto"], PDO::PARAM_INT);
             $stmt->bindParam(":puesto", $datos["puesto"], PDO::PARAM_STR);
             $stmt->bindParam(":objetivo_id", $datos["objetivo_id"], PDO::PARAM_INT);
             $stmt->bindParam(":tipo", $datos["tipo"], PDO::PARAM_STR);
-    
+
             if ($stmt->execute()) {
                 return "ok";
             } else {
@@ -46,4 +46,19 @@ class ModeloPuestos
         }
     }
 
+    /** DESACTIVAR (soft-delete) UN OBJETIVO **/
+    static public function mdlDesactivarPuesto($tabla, $idPuesto)
+    {
+        $stmt = Conexion::conectar()->prepare("UPDATE $tabla SET activo = 0 WHERE idPuesto = :id");
+        $stmt->bindParam(':id', $idPuesto, PDO::PARAM_INT);
+        return $stmt->execute() ? 'ok' : 'error';
+    }
+
+    /** REACTIVAR OBJETIVO **/
+    static public function mdlReactivarPuesto($tabla, $idObjetivo)
+    {
+        $stmt = Conexion::conectar()->prepare("UPDATE $tabla SET activo = 1 WHERE idPuesto = :id");
+        $stmt->bindParam(':id', $idObjetivo, PDO::PARAM_INT);
+        return $stmt->execute() ? 'ok' : 'error';
+    }
 }

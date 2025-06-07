@@ -96,4 +96,55 @@ class ControladorPuestos
             }
         }
     }
+
+      /** DESACTIVAR UN PUESTO **/
+    static public function crtDesactivarPuesto()
+    {
+        if (isset($_POST['idEliminar'])) {
+            $id = intval($_POST['idEliminar']);
+            try {
+                $db = Conexion::conectar();
+                if (!$db->inTransaction()) {
+                    $db->beginTransaction();
+                }
+
+                $res = ModeloPuestos::mdlDesactivarPuesto('puestos', $id);
+                if ($res === 'ok') {
+                    $db->commit();
+                    $_SESSION['success_message'] = 'Puesto activado.';
+                } else {
+                    $db->rollBack();
+                    $_SESSION['error_message'] = 'No se pudo activar el puesto';
+                }
+            } catch (Exception $e) {
+                if ($db->inTransaction()) $db->rollBack();
+                $_SESSION['error_message'] = 'Error: ' . $e->getMessage();
+            }
+        }
+    }
+
+        /** REACTIVAR UN PUESTO **/
+    static public function crtReactivarPuesto() { 
+        if (isset($_POST['idReactivar'])) {
+            $id = intval($_POST['idReactivar']);
+            try {
+                $db = Conexion::conectar();
+                if (!$db->inTransaction()) {
+                    $db->beginTransaction();
+                }
+
+                $res = ModeloPuestos::mdlReactivarPuesto('puestos', $id);
+                if ($res === 'ok') {
+                    $db->commit();
+                    $_SESSION['success_message'] = 'Puesto activado.';
+                } else {
+                    $db->rollBack();
+                    $_SESSION['error_message'] = 'No se pudo activar el puesto.';
+                }
+            } catch (Exception $e) {
+                if ($db->inTransaction()) $db->rollBack();
+                $_SESSION['error_message'] = 'Error: ' . $e->getMessage();
+            }
+        }
+    }
 }
