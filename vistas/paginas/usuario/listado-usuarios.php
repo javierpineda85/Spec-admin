@@ -1,7 +1,7 @@
 <?php
 
 $db = new Conexion;
-$sql = "SELECT * FROM usuarios ORDER BY rol ";
+$sql = "SELECT * FROM usuarios WHERE activo = 1 ORDER BY rol ";
 $usuarios = $db->consultas($sql);
 
 ?>
@@ -15,19 +15,17 @@ $usuarios = $db->consultas($sql);
         <div class="card">
           <div class="card-header">
             <h3 class="card-title">Listado de usuarios</h3>
-            <?php
-            if (isset($_SESSION['success_message'])) {
-              echo '<div class="alert alert-success alert-dismissible">
-                      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                      <p><i class="icon fas fa-check"></i>' . $_SESSION['success_message'] . '</p>
-                    </div>';
-              // Elimina el mensaje después de mostrarlo
-              unset($_SESSION['success_message']);
-            };
-            ?>
           </div>
           <!-- /.card-header -->
           <div class="card-body">
+            <?php if (!empty($_SESSION['success_message'])): ?>
+              <div class="alert alert-success alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                <i class="icon fas fa-check"></i>
+                <?= $_SESSION['success_message'];
+                unset($_SESSION['success_message']); ?>
+              </div>
+            <?php endif; ?>
             <table id="example1" class="table table-bordered table-striped table-sm">
               <thead>
                 <tr>

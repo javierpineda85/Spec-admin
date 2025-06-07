@@ -1,4 +1,7 @@
 <?php
+if (isset($_POST['modificar_usuario'])) {
+    ControladorUsuarios::crtModificarUsuario();
+}
 
 $idUsuario = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
@@ -10,7 +13,7 @@ $usuario = $db->consultas($sql);
 <!-- Default box -->
 <div class="card">
     <div class="card card-info">
-        <div class="card-header bg-primary">
+        <div class="card-header bg-info text-white">
             <h3 class="card-title"><?php echo htmlspecialchars($usuario[0]['nombre']) . " " . htmlspecialchars($usuario[0]['apellido']); ?></h3>
 
             <div class="card-tools">
@@ -20,28 +23,27 @@ $usuario = $db->consultas($sql);
 
             </div>
         </div>
-        <!-- /.card-header -->
-        <!-- form start -->
+
         <form class="form-horizontal" action="" method="POST" id="perfilForm" enctype="multipart/form-data">
+            <?php if (!empty($_SESSION['success_message'])): ?>
+                <div class="alert alert-success alert-dismissible mt-3">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <i class="icon fas fa-check"></i>
+                    <?= $_SESSION['success_message'];
+                    unset($_SESSION['success_message']); ?>
+                </div>
+            <?php endif; ?>
             <div class="card-body row">
 
                 <div class="col-sm-12 col-md-5">
 
                     <h5>Foto de Perfil</h5>
                     <div class="text-center">
-                        <img class="profile-user-img img-fluid img-circle w-50" src="<?php echo $usuario[0]['imgPerfil']; ?>" alt="Foto de perfil"
-                            data-toggle="modal"
-                            data-target="#imagenModal"
-                            style="cursor:pointer;">
+                        <img class="profile-user-img img-fluid img-circle w-50" src="<?php echo $usuario[0]['imgPerfil']; ?>" alt="Foto de perfil" data-toggle="modal" data-target="#imagenModal" style="cursor:pointer;">
                     </div>
                     <h5 class="mt-5">Foto Carnet Repriv</h5>
                     <div class="text-center">
-                        <img src="<?php echo  $usuario[0]['imgRepriv']; ?>"
-                            alt="Carnet de REPRIV"
-                            width="400"
-                            data-toggle="modal"
-                            data-target="#imagenModal"
-                            style="cursor:pointer;">
+                        <img src="<?php echo  $usuario[0]['imgRepriv']; ?>" alt="Carnet de REPRIV" width="400" data-toggle="modal" data-target="#imagenModal" style="cursor:pointer;">
                     </div>
 
                 </div>
@@ -158,15 +160,6 @@ $usuario = $db->consultas($sql);
 
                 <input type="submit" class="btn btn-success" value="Modificar datos" name="modificar_usuario">
 
-                <?php ControladorUsuarios::crtModificarUsuario(); ?>
-                <?php if (!empty($_SESSION['success_message'])): ?>
-                    <div class="alert alert-success alert-dismissible mt-3">
-                        <button type="button" class="close" data-dismiss="alert">&times;</button>
-                        <i class="icon fas fa-check"></i>
-                        <?= $_SESSION['success_message'];
-                        unset($_SESSION['success_message']); ?>
-                    </div>
-                <?php endif; ?>
             </div>
             <!-- /.card-footer -->
         </form>

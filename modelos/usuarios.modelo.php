@@ -95,4 +95,15 @@ class ModeloUsuarios
         $stmt->closeCursor();
         $stmt = null;
     }
+
+    /*
+ * Reactiva ( un usuario.
+ */
+static public function mdlReactivarUsuario($tabla, $idUsuario)
+{
+    $sql = "UPDATE $tabla SET activo = 1 WHERE idUsuario = :id";
+    $stmt = Conexion::conectar()->prepare($sql);
+    $stmt->bindParam(':id', $idUsuario, PDO::PARAM_INT);
+    return $stmt->execute() ? 'ok' : 'error';
+}
 }

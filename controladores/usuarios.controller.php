@@ -1,7 +1,8 @@
 <?php
 
-require_once ('archivos.controller.php');   
-require_once ('modelos/usuarios.modelo.php'); 
+require_once('modelos/usuarios.modelo.php');
+require_once('modelos/bajas.modelo.php');
+require_once('archivos.controller.php');
 
 class ControladorUsuarios
 {
@@ -58,7 +59,7 @@ class ControladorUsuarios
                     "f_nac"          => $f_nac,
                     "telefono"       => $telefono,
                     "tel_emergencia" => $tel_emergencia,
-                    "nombre_contacto"=> $nombre_contacto,
+                    "nombre_contacto" => $nombre_contacto,
                     "parentesco"     => $parentesco,
                     "domicilio"      => $domicilio,
                     "provincia"      => $provincia,
@@ -78,7 +79,6 @@ class ControladorUsuarios
                     // Si el modelo devolvió “error” u otro string, hacemos rollback
                     throw new Exception("Error al guardar en la base de datos.");
                 }
-
             } catch (Exception $e) {
                 // Rollback y mostrar mensaje
                 if ($conexion->inTransaction()) {
@@ -126,7 +126,7 @@ class ControladorUsuarios
                         $_FILES["imgPerfil"],
                         "img/perfil/",
                         $nombreArchivo . "Perfil"
-                      )
+                    )
                     : $_POST["imgPerfilActual"];
 
                 // Lo mismo para imgRepriv
@@ -135,7 +135,7 @@ class ControladorUsuarios
                         $_FILES["imgRepriv"],
                         "img/repriv/",
                         $nombreArchivo . "Repriv"
-                      )
+                    )
                     : $_POST["imgReprivActual"];
 
                 $datos = array(
@@ -146,7 +146,7 @@ class ControladorUsuarios
                     "f_nac"          => $f_nac,
                     "telefono"       => $telefono,
                     "tel_emergencia" => $tel_emergencia,
-                    "nombre_contacto"=> $nombre_contacto,
+                    "nombre_contacto" => $nombre_contacto,
                     "parentesco"     => $parentesco,
                     "domicilio"      => $domicilio,
                     "provincia"      => $provincia,
@@ -159,13 +159,35 @@ class ControladorUsuarios
 
                 $respuesta = ModeloUsuarios::mdlModificarUsuario($tabla, $datos);
 
+                $activo = isset($_POST["activo"]) ? 0 : 1; // 0 = inactivo (baja)
+
+
+
                 if ($respuesta === "ok") {
+                    // 2) Si marcó “dar de baja” insertamos en bajas
+                    if ($activo === 0) {
+                        // validar que haya motivo
+                        $motivo = trim($_POST['motivo'] ?? '');
+                        if ($motivo === '') {
+                            throw new Exception("Debe indicar un motivo para la baja.");
+                        }
+                        // preparar datos de baja
+                        $datosBaja = [
+                            'usuario_id'    => $datos['id_usuario'],
+                            'motivo'        => $motivo,
+                            'fecha'         => date('Y-m-d'),
+                            'eliminado_por' => $_SESSION['idUsuario']
+                        ];
+                        $resBaja = ModeloBajas::mdlCrearBaja('bajas', $datosBaja);
+                        if ($resBaja !== 'ok') {
+                            throw new Exception("Error al registrar la baja en la base de datos.");
+                        }
+                    }
                     $conexion->commit();
                     $_SESSION['success_message'] = "Usuario modificado correctamente.";
                 } else {
                     throw new Exception("Error al modificar en la base de datos.");
                 }
-
             } catch (Exception $e) {
                 if ($conexion->inTransaction()) {
                     $conexion->rollBack();
@@ -176,4 +198,28 @@ class ControladorUsuarios
         }
     }
 
+    /*REACTIVAR USUARIO */
+    static public function crtReactivarUsuario()
+    {
+        if (isset($_POST['idReactivar'])) {
+            $id = intval($_POST['idReactivar']);
+            try {
+                $db = Conexion::conectar();
+                if (!$db->inTransaction()) {
+                    $db->beginTransaction();
+                }
+                $res = ModeloUsuarios::mdlReactivarUsuario('usuarios', $id);
+                if ($res === 'ok') {
+                    $db->commit();
+                    $_SESSION['success_message'] = 'Usuario reactivado.';
+                } else {
+                    $db->rollBack();
+                    $_SESSION['error_message'] = 'No se pudo reactivar el usuario.';
+                }
+            } catch (Exception $e) {
+                if ($db->inTransaction()) $db->rollBack();
+                $_SESSION['error_message'] = 'Error: ' . $e->getMessage();
+            }
+        }
+    }
 }

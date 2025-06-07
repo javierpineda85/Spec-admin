@@ -32,6 +32,7 @@ class RutasController
             //usuario - perfil
             "crear-usuario"     => "usuario/crear-usuario.php",
             "listado-usuarios"  => "usuario/listado-usuarios.php",
+            "listado-usuarios-inactivos"  => "usuario/listado-usuarios-inactivos.php",
             "perfil-usuario"    => "usuario/perfil-usuario.php",
             "cerrar_sesion"     => "usuario/salir.php",
             //hombre-vivo

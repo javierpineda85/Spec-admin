@@ -67,7 +67,7 @@ DROP TABLE IF EXISTS `bajas`;
 CREATE TABLE IF NOT EXISTS `bajas` (
   `idBaja` int NOT NULL AUTO_INCREMENT,
   `usuario_id` int NOT NULL,
-  `motivo` varchar(100) NOT NULL,
+  `motivo` varchar(255) NOT NULL,
   `fecha` date NOT NULL,
   `eliminado_por` int NOT NULL,
   PRIMARY KEY (`idBaja`)

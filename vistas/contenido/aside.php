@@ -253,16 +253,23 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="index.php?r=listado-usuarios" class="nav-link">
-                <i class="far fa-circle nav-icon"></i>
-                <p>Ver todos</p>
-              </a>
-            </li>
-            <li class="nav-item">
               <a href="index.php?r=crear-usuario" class="nav-link">
                 <i class="far fa-circle nav-icon"></i>
                 <p>Crear</p>
               </a>
+            </li>
+            <li class="nav-item">
+              <a href="index.php?r=listado-usuarios" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Mostrar Activos</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="index.php?r=listado-usuarios-inactivos" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Mostrar Inactivos</p>
+              </a>
+            </li>
 
           </ul>
         </li>
