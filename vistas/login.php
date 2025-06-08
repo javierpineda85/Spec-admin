@@ -42,7 +42,7 @@
                                 <div class="row">
 
                                     <!-- /.col -->
-                                    <div class="col-4">
+                                    <div class="col-12">
                                         <button type="submit" class="btn btn-primary btn-block">Ingresar</button>
                                         <?php $registro = LoginController::procesarLogin() ; ?>
                                     </div>

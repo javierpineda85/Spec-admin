@@ -67,6 +67,9 @@
 <!-- incluir API GPS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+<!-- incluir Scaner QR -->
+<script src="https://unpkg.com/@zxing/library@latest"></script>
+
 <!-- Modal para mostrar la imagen en grande -->
 <div class="modal fade" id="imagenModal" tabindex="-1" role="dialog" aria-hidden="true">
   <div class="modal-dialog">
