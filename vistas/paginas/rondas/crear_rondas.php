@@ -1,10 +1,11 @@
 <?php
-// Inicia la sesión y carga datos necesarios (objetivos, etc.)
-//session_start();
-//$_SESSION['qr_codes']=[];
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
 $db = new Conexion;
 $sql = "SELECT * FROM objetivos ORDER BY nombre ";
 $objetivos = $db->consultas($sql);
+
 ?>
 <div class="card">
     <div class="card-header bg-info text-white">
@@ -19,16 +20,14 @@ $objetivos = $db->consultas($sql);
         <!-- Aquí definimos el action para invocar el método del controlador Qr -->
         <form action="index.php?r=generar_qr" method="POST" class="form-horizontal">
             <div class="card-body">
-                <?php
-                if (isset($_SESSION['success_message'])) {
-                    echo '<div class="alert alert-success alert-dismissible">
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                            <p><i class="icon fas fa-check"></i>' . $_SESSION['success_message'] . '</p>
-                        </div>';
-                    // Elimina el mensaje después de mostrarlo
-                    unset($_SESSION['success_message']);
-                };
-                ?>
+                <?php if (!empty($_SESSION['success_message'])): ?>
+                    <div class="alert alert-success alert-dismissible mt-3">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        <i class="icon fas fa-check"></i>
+                        <?= $_SESSION['success_message'];
+                        unset($_SESSION['success_message']); ?>
+                    </div>
+                <?php endif; ?>
                 <div class="row">
                     <div class="form-group col-sm-12 col-md-3">
                         <label class="form-label">Sector / Puesto</label>
@@ -47,7 +46,7 @@ $objetivos = $db->consultas($sql);
                         <label class="form-label">Tipo</label>
                         <select name="tipo" id="" class="form-control">
                             <option value="" selected disabled>Elige una opción</option>
-                            <option value="Fijo">Fijo</option>
+                            <option value="Fija">Fija</option>
                             <option value="Eventual">Eventual</option>
                         </select>
                     </div>
@@ -63,74 +62,62 @@ $objetivos = $db->consultas($sql);
             </div>
             <!-- Aquí puedes incluir el listado de QR generados (cards) -->
             <div class="card-footer">
-                <div id="qr-list" class="row">
-                    <?php if (isset($_SESSION['qr_codes']) && !empty($_SESSION['qr_codes'])): ?>
+                <?php if (!empty($_SESSION['qr_codes'])): ?>
+                    <div class="row">
                         <?php foreach ($_SESSION['qr_codes'] as $key => $qr): ?>
-                            <div class="card col-3" data-key="<?php echo $key; ?>">
-                                <img src="<?php echo htmlspecialchars($qr['image']); ?>" alt="Código QR">
-                                <label for="" class="form-label"><?php echo htmlspecialchars($qr['data']); ?></label>
-                                <div class="actions">
-
-                                    <button class="delete-btn btn btn-danger" data-key="<?php echo $key; ?>">Eliminar</button>
+                            <div class="card col-md-3 text-center mb-4" data-key="<?= $key ?>">
+                                <img src="?r=mostrar_qr&ronda_id=<?= $qr['idRonda'] ?>&vigilador_id=<?= $_SESSION['idUsuario'] ?>&v=<?= time() ?>" class="img-fluid mb-2" alt="QR Ronda <?= $qr['orden'] ?>" />
+                                <div class="card-body">
+                                    <p><strong>Objetivo:</strong> <?= htmlspecialchars($qr['objetivo_nombre']) ?></p>
+                                    <p><strong>Puesto:</strong> <?= htmlspecialchars($qr['puesto']) ?></p>
+                                    <p><strong>Orden:</strong> <?= htmlspecialchars($qr['orden']) ?></p>
+                                    <!-- Ahora $key está definido -->
+                                    <button class="btn btn-danger btn-sm delete-qr" data-key="<?= $key ?>">
+                                        <i class="fas fa-trash-alt"></i> Eliminar
+                                    </button>
                                 </div>
                             </div>
                         <?php endforeach; ?>
-                    <?php else: ?>
-                        <p>No hay códigos QR generados aún.</p>
-                    <?php endif; ?>
-                </div>
-                <br>
+                    </div>
+                <?php endif; ?>
 
                 <button class="btn btn-info"><a href="?r=imprimir_qr" target="_blank" class="text-white">Vista de Impresión</a> </button>
-                <!-- Aquí podrías mostrar mensajes de éxito u otros avisos -->
 
             </div>
         </form>
     </div>
 </div>
 
-</section>
-<!-- /.content -->
 <!-- Script ajax para editar los card creados con los QR -->
 <script>
     // Eliminar un QR
-    $(document).on('click', '.delete-btn', function(e) {
+    $(document).on('click', '.delete-qr', function(e) {
         e.preventDefault();
-        var key = $(this).data('key');
-
+        const key = $(this).data('key');
         $.ajax({
-            url: 'libraries/ajax/ajax_qr.php',
-            type: 'POST',
-            dataType: 'json',
-            data: {
-                action: 'delete',
-                key: key
-            },
-            success: function(response) {
-                if (response.success) {
-                    // 1️⃣ Eliminar el QR del DOM
+                url: 'index.php?r=delete_qr',
+                method: 'POST',
+                data: {
+                    key: key
+                },
+                dataType: 'json'
+            })
+            .done(function(resp) {
+                if (resp.success) {
                     $('.card[data-key="' + key + '"]').remove();
-
-                    // 2️⃣ Mostrar mensaje de éxito
-                    $('#message').text('QR eliminado exitosamente').fadeIn().delay(2000).fadeOut();
-
-                    // 3️⃣ Recargar la lista de QR sin recargar la página completa
-                    setTimeout(function() {
-                        $("#qr-list").load(location.href + " #qr-list > *", function() {
-                            //console.log("Lista de QR recargada");
-                        });
-                    }, 500);
-
+                    // Reindexar cards
+                    $('.row > .card').each(function(i, card) {
+                        $(card).attr('data-key', i);
+                    });
                 } else {
-                    alert('Error al eliminar el QR');
+                    alert('No se pudo eliminar el QR.');
                 }
-            },
-            error: function(xhr, status, error) {
-                console.error("Error en la petición AJAX:", error);
-            }
-        });
+            })
+            .fail(function(jqXHR, textStatus, errorThrown) {
+                console.error('AJAX error:', textStatus, errorThrown, jqXHR.responseText);
+                alert('Error en la petición: ' + textStatus);
+            });
     });
-
 
     // Guardar todos los QR en la base de datos
     $('#save-all').click(function() {

@@ -14,49 +14,31 @@ class RondasController
     // Guardar rondas
     static public function crtGuardarRondas($rondas)
     {
+        $db = Conexion::conectar();
         try {
-            $conexion = Conexion::conectar();
-
-            if (!$conexion->inTransaction()) {
-                $conexion->beginTransaction();
-            }
-
-            $tabla = "rondas";
+            $db->beginTransaction();
             $resultados = [];
-
-            // Crear una instancia de la clase para llamar a los métodos de instancia
-            $controller = new RondasController();
 
             foreach ($rondas as $ronda) {
                 $datos = [
-                    "puesto" => $ronda["puesto"],
-                    "objetivo_id" => $ronda["objetivo_id"],
-                    "orden_escaneo" => $ronda["orden_escaneo"],
-                    "tipo" => $ronda["tipo"]
+                    'puesto'        => $ronda['puesto'],
+                    'objetivo_id'   => $ronda['objetivo_id'],
+                    'tipo'          => $ronda['tipo'],
+                    'orden_escaneo' => $ronda['orden_escaneo']
                 ];
-
-                $res = ModeloRondas::mdlGuardarRonda($tabla, $datos);
-
-                // Llamar las funciones de instancia
-                $controller->eliminarImagenesQR();
-                $controller->eliminarErroresQR();
-                $controller->limpiarSesionQR();
-
-                // Mostrar el mensaje de éxito
-                echo json_encode(['success' => true, 'message' => 'Rondas guardadas correctamente.']);
-
-                if ($res !== "ok") {
-                    throw new Exception("Error al guardar la ronda.");
+                $res = ModeloRondas::mdlGuardarRonda('rondas', $datos);
+                if (!is_numeric($res) || intval($res) <= 0) {
+                    throw new Exception("Error al guardar ronda: " . $res);
                 }
-                $resultados[] = $res;
+                $resultados[] = intval($res);
             }
 
-            $conexion->commit();
-            return ['success' => true, 'resultados' => $resultados];
-            
-            exit();
+            $db->commit();
+            // Limpiar sesión solo **después** de confirmar el commit
+            unset($_SESSION['qr_codes']);
+            return ['success' => true, 'inserted_ids' => $resultados];
         } catch (Exception $e) {
-            $conexion->rollBack();
+            $db->rollBack();
             return ['success' => false, 'error' => $e->getMessage()];
         }
     }
@@ -90,6 +72,87 @@ class RondasController
     {
         if (isset($_SESSION['qr_codes'])) {
             unset($_SESSION['qr_codes']);  // Eliminar la variable de sesión 'qr_codes'
+        }
+    }
+
+    static public function crtDesactivarRonda($idRonda)
+    {
+        $res = ModeloRondas::mdlDesactivarRonda('rondas', $idRonda);
+        if ($res === 'ok') {
+            $_SESSION['success_message'] = 'Ronda desactivada correctamente.';
+        } else {
+            $_SESSION['error_message'] = 'Error al desactivar ronda: ' . $res;
+        }
+    }
+
+
+    static public function crtActualizarRonda()
+    {
+
+        // 1️⃣ Recoger y validar datos
+        $idRonda    = intval($_POST['idRonda']     ?? 0);
+        $puesto     = trim($_POST['puesto']        ?? '');
+        $objetivoId = intval($_POST['objetivo_id'] ?? 0);
+        $tipo       = trim($_POST['tipo']          ?? '');
+        $orden      = intval($_POST['orden']       ?? 0);
+
+        if (!$idRonda || !$puesto || !$objetivoId || !$tipo || !$orden) {
+            $_SESSION['error_message'] = 'Faltan datos para actualizar la ronda.';
+            header("Location: ?r=editar_ronda&id={$idRonda}");
+            exit;
+        }
+
+        // 2️⃣ Armar array para el modelo
+        $datos = [
+            'idRonda'       => $idRonda,
+            'puesto'        => $puesto,
+            'objetivo_id'   => $objetivoId,
+            'tipo'          => $tipo,
+            'orden_escaneo' => $orden
+        ];
+
+        // 3️⃣ Ejecutar UPDATE
+        $res = ModeloRondas::mdlActualizarRonda('rondas', $datos);
+
+        if ($res === 'ok') {
+            // 4️⃣ Al actualizar con éxito, limpiamos viejos QRs de sesión
+            unset($_SESSION['qr_codes']);
+
+            // 5️⃣ Recuperar datos actualizados de la ronda
+            $db   = Conexion::conectar();
+            $stmt = $db->prepare("SELECT r.idRonda,
+                       r.puesto,
+                       r.objetivo_id,
+                       r.tipo,
+                       r.orden_escaneo,
+                       o.nombre AS objetivo_nombre
+                  FROM rondas r
+                  JOIN objetivos o 
+                    ON r.objetivo_id = o.idObjetivo
+                 WHERE r.idRonda = ?
+            ");
+            $stmt->execute([$idRonda]);
+            $r = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            // 6️⃣ Generar nuevo QR en sesión
+            $_SESSION['qr_codes'][] = [
+                'idRonda'         => $r['idRonda'],
+                'objetivo_id'     => $r['objetivo_id'],
+                'objetivo_nombre' => $r['objetivo_nombre'],
+                'puesto'          => $r['puesto'],
+                'orden'           => $r['orden_escaneo'],
+                'tipo'            => $r['tipo']
+            ];
+
+            // 7️⃣ Feedback y redirección a impresión
+            $_SESSION['success_message'] = 'Ronda actualizada. Ya puedes imprimir el nuevo QR.';
+            header("Location: ?r=imprimir_qr");
+            exit;
+        } else {
+            // 8️⃣ En caso de error en el UPDATE, volvemos al formulario
+            $_SESSION['error_message'] = 'Error al actualizar: ' . $res;
+            header("Location: ?r=editar_ronda&id={$idRonda}");
+            exit;
         }
     }
 }

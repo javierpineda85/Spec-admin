@@ -106,6 +106,12 @@
                 <p>Mostrar Todas</p>
               </a>
             </li>
+            <li class="nav-item">
+              <a href="?r=escanear" class="nav-link">
+                <i class="far fa-circle nav-icon"></i>
+                <p>Escanear QR</p>
+              </a>
+            </li>
 
           </ul>
         </li>

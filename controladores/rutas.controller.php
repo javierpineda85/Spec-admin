@@ -4,10 +4,42 @@ class RutasController
 {
     public static function cargarVista()
     {
-        //Para usar controladores sin pasar la vista
+
+        // ========= RUTAS QUE LLAMAN A MÉTODOS =========
+
+        ini_set('display_errors', 1);
+        error_reporting(E_ALL);
+        if (isset($_GET['r']) && $_GET['r'] === 'registrar_escaneo') {
+            EscaneosController::registrar();
+            exit;
+        }
+        if (isset($_GET['r']) && $_GET['r'] === 'mostrar_qr') {
+            QrController::mostrar();
+            exit;
+        }
+        if (isset($_GET['r']) && $_GET['r'] === 'delete_qr') {
+            QrController::delete();
+            return;
+        }
+        if (isset($_GET['r']) && $_GET['r'] === 'generar_qr') {
+            QrController::generar();
+            return;
+        }
+        if (isset($_GET['r']) && $_GET['r'] === 'actualizar_ronda') {
+            RondasController::crtActualizarRonda();
+            exit;
+        }
+        if (isset($_GET['r']) && $_GET['r'] === 'escanear') {
+            include __DIR__ . '/../vistas/paginas/rondas/escanear_rondas.php';
+            return;
+        }
+        if (isset($_GET['r']) && $_GET['r'] === 'ajax_rondas') {
+            require_once __DIR__ . '/../libraries/ajax/ajax_rondas.php';
+            exit;
+        }
         if (isset($_GET['r']) && $_GET['r'] === 'buscar_cronogramas') {
             ControladorTurnos::crtBuscarTurnosPorRango();
-            return; // Importante: salimos para no caer en el include de más abajo
+            return;
         }
         if (isset($_GET['r']) && $_GET['r'] === 'buscar_porVigilador') {
             ControladorTurnos::crtBuscarPorVigilador();
@@ -25,38 +57,25 @@ class RutasController
             ControladorCronograma::crtBuscarResumenHorasPorVigilador();
             return;
         }
+        if (isset($_POST['idEliminar'])) {
+            RondasController::crtDesactivarRonda(intval($_POST['idEliminar']));
+        }
 
-
-        // se crea el array de rutas para poder escalar el proyecto
+        // ========= MAPEO DE RUTAS A VISTAS =========
         $mapeo = [
-            //usuario - perfil
+            // usuario
             "crear-usuario"     => "usuario/crear-usuario.php",
             "listado-usuarios"  => "usuario/listado-usuarios.php",
             "listado-usuarios-inactivos"  => "usuario/listado-usuarios-inactivos.php",
             "perfil-usuario"    => "usuario/perfil-usuario.php",
             "cerrar_sesion"     => "usuario/salir.php",
-            //hombre-vivo
-            "reporte"            => "h-vivo/registro.php",
-            "listado_reportes"   => "h-vivo/listado_reportesHvivo.php",
-            //Mensajes
-            "bandeja-entrada"   => "mensajes/bandeja-entrada.php",
-            "nuevo-mensaje"     => "mensajes/nuevo-mensaje.php",
-            "mensajes-enviados" => "mensajes/mensajes-enviados.php",
-            //objetivos
-            "crear_objetivo"    => "objetivos/crear_objetivo.php",
-            "editar_objetivo"   => "objetivos/editar_objetivo.php",
-            "listado_objetivos" => "objetivos/listado_objetivos.php",
-            "listado_objetivos_inactivos" => "objetivos/listado_objetivos_desactivados.php",
-            //directivas
-            "crear_directivas"        => "directivas/crear_directivas.php",
-            "modificar_directivas"    => "directivas/modificar_directivas.php",
-            "listado_directivas"      => "directivas/listado_directivas.php",
-            //rondas
+
+            // rondas
             "crear_rondas"    => "rondas/crear_rondas.php",
-            "generar_qr"      => "rondas/generar_qr.php",
             "imprimir_qr"     => "rondas/imprimir_qr.php",
             "editar_ronda"    => "rondas/editar_ronda.php",
             "listado_rondas"  => "rondas/listado_rondas.php",
+
             //Cronograma
             "crear_cronograma"      => "cronogramas/crear_cronograma.php",
             "listado_cronogramas"   => "cronogramas/listado_cronogramas.php",
@@ -69,7 +88,7 @@ class RutasController
             "entradas_salidas"      => "novedades/entradas_salidas.php",
             "crear_novedad"      => "novedades/crear_novedades.php",
             "listado_novedades"      => "novedades/listado_novedades.php",
-            "reporte_entradas_salidas"      => "novedades/listado_entradaSalidas.php",           
+            "reporte_entradas_salidas"      => "novedades/listado_entradaSalidas.php",
 
             //Puestos
             "crear_puesto"      => "puestos/crear_puesto.php",
@@ -83,10 +102,12 @@ class RutasController
 
         ];
 
-
         if (isset($_GET['r']) && array_key_exists($_GET['r'], $mapeo)) {
             $archivo = "vistas/paginas/" . $mapeo[$_GET['r']];
-            include(file_exists($archivo) ? $archivo : "vistas/paginas/404.php");
+            include(file_exists($archivo)
+                ? $archivo
+                : "vistas/paginas/404.php"
+            );
         } else {
             include("vistas/paginas/inicio.php");
         }

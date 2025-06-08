@@ -82,6 +82,7 @@
               <div class="mt-2">
                 <a href="?r=crear_rondas" class="btn btn-block btn-success btn-sm text-white">Crear</a>
                 <a href="?r=listado_rondas" class="btn btn-block btn-success btn-sm text-white">Mostrar Todas</a>
+                <a href="?r=escanear" class="btn btn-block btn-success btn-sm text-white">Escanear QR</a>
               </div>
             </div>
           </div>
