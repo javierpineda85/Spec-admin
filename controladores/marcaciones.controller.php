@@ -11,6 +11,7 @@ class MarcacionesController
      */
     public static function crtRegistrarMarcacion()
     {
+        Auth::check('marcaciones', 'crtRegistrarMarcacion');
         // Inicia sesión si no está activa
         if (session_status() === PHP_SESSION_NONE) {
             session_start();

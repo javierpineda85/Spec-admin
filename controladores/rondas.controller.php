@@ -14,6 +14,7 @@ class RondasController
     // Guardar rondas
     static public function crtGuardarRondas($rondas)
     {
+        Auth::check('rondas', 'crtGuardarRondas');
         $db = Conexion::conectar();
         try {
             $db->beginTransaction();
@@ -46,6 +47,7 @@ class RondasController
     // Funciones de instancia
     public function eliminarImagenesQR()
     {
+        Auth::check('rondas', 'eliminarImagenesQR');
         $directorio = __DIR__ . '/../../img/qrcodes';  // Ruta de la carpeta 'img/qrcodes'
         $archivos = glob($directorio . '/*.png');  // Obtener todos los archivos PNG
 
@@ -58,6 +60,7 @@ class RondasController
 
     public function eliminarErroresQR()
     {
+        Auth::check('rondas', 'eliminarErroresQR');
         $directorio = __DIR__ . '/../../libraries/phpqrcode';  // Ruta de la carpeta 'phpqrcode'
         $archivos = glob($directorio . '/*.log');  // Obtener todos los archivos de errores (si existen)
 
@@ -70,6 +73,7 @@ class RondasController
 
     public function limpiarSesionQR()
     {
+        Auth::check('rondas', 'limpiarSesionQR');
         if (isset($_SESSION['qr_codes'])) {
             unset($_SESSION['qr_codes']);  // Eliminar la variable de sesión 'qr_codes'
         }
@@ -77,6 +81,7 @@ class RondasController
 
     static public function crtDesactivarRonda($idRonda)
     {
+        Auth::check('rondas', 'crtDesactivarRonda');
         $res = ModeloRondas::mdlDesactivarRonda('rondas', $idRonda);
         if ($res === 'ok') {
             $_SESSION['success_message'] = 'Ronda desactivada correctamente.';
@@ -88,7 +93,7 @@ class RondasController
 
     static public function crtActualizarRonda()
     {
-
+        Auth::check('rondas', 'crtActualizarRonda');
         // 1️⃣ Recoger y validar datos
         $idRonda    = intval($_POST['idRonda']     ?? 0);
         $puesto     = trim($_POST['puesto']        ?? '');
@@ -155,4 +160,32 @@ class RondasController
             exit;
         }
     }
+
+    static public function vistaListadoRondas()
+    {
+        Auth::check('rondas', 'vistaListadoRondas');
+        $db = new Conexion;
+        $sql = " SELECT r.idRonda, r.puesto, r.objetivo_id, r.tipo, o.nombre AS objetivo
+                  FROM rondas r
+                  JOIN objetivos o ON r.objetivo_id = o.idObjetivo
+                  WHERE r.status = 'active'
+                  ORDER BY r.objetivo_id, r.orden_escaneo";
+        $rondas = $db->consultas($sql);
+        include __DIR__ . '/../vistas/paginas/rondas/listado_rondas.php';
+        return;
+    }
+
+    static public function vistaCrearRondas()
+    {
+        Auth::check('rondas', 'vistaCrearRondas');
+        include __DIR__ . '/../vistas/paginas/rondas/crear_rondas.php';
+        return;
+    }
+        static public function vistaEditarRondas()
+    {
+        Auth::check('rondas', 'vistaEditarRondas');
+        include __DIR__ . '/../vistas/paginas/rondas/editar_rondas.php';
+        return;
+    }
+
 }

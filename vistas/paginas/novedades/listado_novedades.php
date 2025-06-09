@@ -1,9 +1,9 @@
 <?php
-
+/*
 $db = new Conexion();
 $sql = "SELECT n.idNovedad, o.nombre AS objetivo, CONCAT(u.apellido, ' ', u.nombre) AS creado_por, n.fecha, n.hora, n.detalle, n.created_at,n.adjunto FROM novedades n LEFT JOIN objetivos o ON n.objetivo_id = o.idObjetivo LEFT JOIN usuarios u ON n.vigilador_id = u.idUsuario ORDER BY n.fecha DESC, n.hora DESC ";
 
-$novedades = $db->consultas($sql);
+$novedades = $db->consultas($sql);*/
 ?>
 
 <div class="container-fluid">

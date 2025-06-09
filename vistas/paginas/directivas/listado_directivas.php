@@ -3,13 +3,6 @@ if (isset($_POST['idEliminar'])) {
     ControladorDirectivas::crtEliminarDirectiva();
 }
 
-$db = new Conexion;
-$sql = "SELECT d.*, o.nombre 
-        FROM directivas d 
-        JOIN objetivos o ON d.id_objetivo = o.idObjetivo 
-        ORDER BY d.id_objetivo";
-$directivas = $db->consultas($sql);
-
 ?>
 
 <!-- Main content -->

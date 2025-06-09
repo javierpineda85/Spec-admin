@@ -4,19 +4,22 @@ require_once('modelos/mensajes.modelo.php');
 class ControladorMensajes
 {
     static public function crtMostrarMensajes($item, $valor){
+        Auth::check('mensajes', 'crtMostrarMensajes');
         $respuesta = ModeloMensajes::mdlMostrarMensajes($item, $valor);
         return $respuesta;
-var_dump($respuesta);
+
         exit;
     }
 
     static public function crtMostrarMensajesEnviados($item, $valor){
+        Auth::check('mensajes', 'crtMostrarMensajesEnviados');
         $respuesta = ModeloMensajes::mdlMostrarMensajesEnviados($item, $valor);
         return $respuesta;
 
         exit;
     }
     static public function crtMostrarUnMensaje($id){
+        Auth::check('mensajes', 'crtMostrarUnMensaje');
         $respuesta = ModeloMensajes::mdlMostrarUnMensaje($id);
         return $respuesta;
 
@@ -24,6 +27,7 @@ var_dump($respuesta);
     }
 
     static public function crtGuardarMensaje(){
+        Auth::check('mensajes', 'crtGuardarMensaje');
         if (isset($_POST["id_destinatario"])) {
             $datos = array(
                 "id_remitente"        => $_POST["id_remitente"],

@@ -5,6 +5,7 @@ class ControladorPuestos
 {
     public static function ctrGuardarPuesto()
     {
+        Auth::check('puestos', 'crtGuardarPuesto');
         if (isset($_POST["puesto"])) {
 
             try {
@@ -53,6 +54,7 @@ class ControladorPuestos
 
     static public function crtModificarPuesto()
     {
+        Auth::check('puestos', 'crtModificarPuesto');
         if (isset($_POST["puesto"])) {
 
             try {
@@ -97,9 +99,10 @@ class ControladorPuestos
         }
     }
 
-      /** DESACTIVAR UN PUESTO **/
+    /** DESACTIVAR UN PUESTO **/
     static public function crtDesactivarPuesto()
     {
+        Auth::check('puestos', 'crtDesactivarPuesto');
         if (isset($_POST['idEliminar'])) {
             $id = intval($_POST['idEliminar']);
             try {
@@ -123,8 +126,10 @@ class ControladorPuestos
         }
     }
 
-        /** REACTIVAR UN PUESTO **/
-    static public function crtReactivarPuesto() { 
+    /** REACTIVAR UN PUESTO **/
+    static public function crtReactivarPuesto()
+    {
+        Auth::check('puestos', 'crtReactivarPuesto');
         if (isset($_POST['idReactivar'])) {
             $id = intval($_POST['idReactivar']);
             try {
@@ -146,5 +151,37 @@ class ControladorPuestos
                 $_SESSION['error_message'] = 'Error: ' . $e->getMessage();
             }
         }
+    }
+    static public function vistaListadoPuestos()
+    {
+        Auth::check('puestos', 'vistaListadoPuestos');
+
+        $db = new Conexion;
+        $sql = "SELECT p.idPuesto, p.puesto, p.objetivo_id, p.tipo, o.nombre as objetivo FROM puestos p JOIN objetivos o ON p.objetivo_id = o.idObjetivo WHERE p.activo = 1 ORDER BY p.objetivo_id ";
+        $objetivos = $db->consultas($sql);
+
+        include __DIR__ . '/../vistas/paginas/puestos/listado_puestos.php';
+        return;
+    }
+    static public function vistaListadoPuestosDesactivados()
+    {
+        Auth::check('puestos', 'vistaListadoPuestosDesactivados');
+        $db = new Conexion;
+        $sql = "SELECT p.idPuesto, p.puesto, p.objetivo_id, p.tipo, o.nombre as objetivo FROM puestos p JOIN objetivos o ON p.objetivo_id = o.idObjetivo WHERE p.activo = 0 ORDER BY p.objetivo_id ";
+        $objetivos = $db->consultas($sql);
+        include __DIR__ . '/../vistas/paginas/puestos/listado_puestos_desactivados.php';
+        return;
+    }
+    static public function vistaCrearPuestos()
+    {
+        Auth::check('puestos', 'vistaCrearPuestos');
+        include __DIR__ . '/../vistas/paginas/puestos/crear_puesto.php';
+        return;
+    }
+    static public function vistaEditarPuesto()
+    {
+        Auth::check('puestos', 'vistaEditarPuesto');
+        include __DIR__ . '/../vistas/paginas/puestos/editar_puesto.php';
+        return;
     }
 }

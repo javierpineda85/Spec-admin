@@ -2,11 +2,11 @@
 if (isset($_POST['idReactivar'])) {
     ControladorPuestos::crtReactivarPuesto();
 }
-
+/*
 $db = new Conexion;
 $sql = "SELECT p.idPuesto, p.puesto, p.objetivo_id, p.tipo, o.nombre as objetivo FROM puestos p JOIN objetivos o ON p.objetivo_id = o.idObjetivo WHERE p.activo = 0 ORDER BY p.objetivo_id ";
 $objetivos = $db->consultas($sql);
-
+*/
 ?>
 
 <!-- Main content -->

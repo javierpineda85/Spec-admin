@@ -12,7 +12,7 @@ class QrController
 {
     public static function generar()
     {
-
+        Auth::check('qr', 'generar');
         // 1) Validar datos
         $puesto       = trim($_POST['puesto']        ?? '');
         $objetivoId   = intval($_POST['objetivo_id'] ?? 0);
@@ -28,11 +28,11 @@ class QrController
         // 2) Insertar la ronda y obtener su ID
         $datosRonda = [
             'puesto'        => $puesto,
-            'objetivo_id'   => $objetivoId,  
+            'objetivo_id'   => $objetivoId,
             'tipo'          => $tipo,
             'orden_escaneo' => $orden,
             'status'        => 'draft'
-            
+
         ];
         $idRonda = ModeloRondas::mdlGuardarRonda('rondas', $datosRonda);
 
@@ -69,7 +69,7 @@ class QrController
 
     public static function mostrar()
     {
-
+        Auth::check('qr', 'generar');
         // 1️⃣ Asegura buffer limpio
         while (ob_get_level()) {
             ob_end_clean();
@@ -103,41 +103,41 @@ class QrController
         QRcode::png($scanUrl, false, QR_ECLEVEL_H, 8, 2);
         exit;
     }
-// controladores/qr.controller.php
-public static function delete()
-{
-    session_start();
-    // 1️ Limpia cualquier buffer accidental
-    while (ob_get_level()) {
-        ob_end_clean();
-    }
 
-    header('Content-Type: application/json; charset=utf-8');
+    public static function delete()
+    {
+        Auth::check('qr', 'delete');
+        //session_start();
+        // 1️ Limpia cualquier buffer accidental
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
 
-    // 2️ Recoge el key vía POST
-    $key = isset($_POST['key']) ? intval($_POST['key']) : null;
-    if ($key === null || !isset($_SESSION['qr_codes'][$key])) {
-        echo json_encode(['success' => false]);
+        header('Content-Type: application/json; charset=utf-8');
+
+        // 2️ Recoge el key vía POST
+        $key = isset($_POST['key']) ? intval($_POST['key']) : null;
+        if ($key === null || !isset($_SESSION['qr_codes'][$key])) {
+            echo json_encode(['success' => false]);
+            exit;
+        }
+
+        // 3️ Recupera el idRonda del borrador
+        $idRonda = intval($_SESSION['qr_codes'][$key]['idRonda']);
+
+        // 4️⃣ Eliminar de la sesión y reindexar
+        unset($_SESSION['qr_codes'][$key]);
+        $_SESSION['qr_codes'] = array_values($_SESSION['qr_codes']);
+
+        // 5️ Eliminar el draft de la BD
+        require_once __DIR__ . '/../modelos/conexion.php';
+        $db = Conexion::conectar();
+        $stmt = $db->prepare("DELETE FROM rondas WHERE idRonda = :idRonda AND status = 'draft'");
+        $stmt->bindParam(':idRonda', $idRonda, PDO::PARAM_INT);
+        $stmt->execute();
+
+        // 6️⃣ Devuelve el JSON limpio
+        echo json_encode(['success' => true]);
         exit;
     }
-
-    // 3️ Recupera el idRonda del borrador
-    $idRonda = intval($_SESSION['qr_codes'][$key]['idRonda']);
-
-    // 4️⃣ Eliminar de la sesión y reindexar
-    unset($_SESSION['qr_codes'][$key]);
-    $_SESSION['qr_codes'] = array_values($_SESSION['qr_codes']);
-
-    // 5️ Eliminar el draft de la BD
-    require_once __DIR__ . '/../modelos/conexion.php';
-    $db = Conexion::conectar();
-    $stmt = $db->prepare("DELETE FROM rondas WHERE idRonda = :idRonda AND status = 'draft'");
-    $stmt->bindParam(':idRonda', $idRonda, PDO::PARAM_INT);
-    $stmt->execute();
-
-    // 6️⃣ Devuelve el JSON limpio
-    echo json_encode(['success' => true]);
-    exit;
-}
-
 }

@@ -2,11 +2,11 @@
 if (isset($_POST['idEliminar'])) {
     ControladorObjetivos::crtDesactivarObjetivo();
 }
-
+/*
 $db = new Conexion;
 $sql = "SELECT * FROM objetivos WHERE activo = 1 ORDER BY nombre";
 $objetivos = $db->consultas($sql);
-
+*/
 ?>
 
 <!-- Main content -->

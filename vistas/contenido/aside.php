@@ -1,7 +1,7 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
   <!-- Brand Logo -->
   <a href="index.php" class="brand-link">
-    <img src="img/logo2024.png" alt="SPEC Logo" class="brand-image img-circle elevation-3" >
+    <img src="img/logo2024.png" alt="SPEC Logo" class="brand-image img-circle elevation-3">
     <span class="brand-text font-weight-light">SPEC</span>
   </a>
 
@@ -312,13 +312,19 @@
 
           </ul>
         </li>
+        <li class="nav-item"> <!-- Permisos -->
+          <a href="?r=permisos/index" class="nav-link">
+            <i class="fas fa-user-shield text-danger"></i>
+            <p>Gestión de Permisos</p>
+          </a>
+        </li>
         <li class="nav-item"> <!-- Salir -->
           <a href="index.php?r=cerrar_sesion" class="nav-link">
             <i class="fas fa-sign-out-alt nav-icon text-danger"></i>
             <p> Cerrar Sesión</p>
           </a>
-
         </li>
+
       </ul>
     </nav>
     <!-- /.sidebar-menu -->

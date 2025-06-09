@@ -1,9 +1,9 @@
 <?php
-
+/*
 $db = new Conexion();
 $sql = " SELECT m.idMarcacion,CONCAT(u.apellido, ' ', u.nombre) AS vigilador, o.nombre AS objetivo, m.tipo_evento, m.fecha_hora, m.latitud, m.longitud, m.created_at FROM marcaciones_servicio m JOIN usuarios u ON m.vigilador_id = u.idUsuario LEFT JOIN objetivos o ON m.objetivo_id = o.idObjetivo ORDER BY m.fecha_hora DESC ";
 
-$marcaciones = $db->consultas($sql);
+$marcaciones = $db->consultas($sql);*/
 ?>
 
 <div class="container-fluid">

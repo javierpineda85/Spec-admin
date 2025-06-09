@@ -1,25 +1,19 @@
 <?php
-class ModeloHvivo
+class ModeloReporteHombreVivo
 {
 
-    static public function mdlGuardarRegistro($tabla, $datos)
+    static public function mdlGuardarReporte($tabla, $datos)
     {
-
-        $registro = Conexion::conectar()->prepare("INSERT INTO $tabla (id_usuario, fecha, hora) 
-        VALUES (:id_usuario, :fecha, :hora)");
-
-        $registro->bindParam(":id_usuario", $datos["id_usuario"], PDO::PARAM_STR);
-        $registro->bindParam(":fecha", $datos["fecha"], PDO::PARAM_STR);
-        $registro->bindParam(":hora", $datos["hora"], PDO::PARAM_STR);
-
-        if ($registro->execute()) {
-
-            return "ok";
-        } else {
-            print_r(Conexion::conectar()->errorInfo());
+        try {
+            $db = Conexion::conectar();
+            $sql = "INSERT INTO $tabla (id_usuario, ronda_id, fecha_hora, demora) VALUES (:id_usuario, :ronda_id, NOW(), :demora)";
+            $stmt = $db->prepare($sql);
+            $stmt->bindParam(':id_usuario', $datos['id_usuario'], PDO::PARAM_INT);
+            $stmt->bindParam(':ronda_id',   $datos['ronda_id'],   PDO::PARAM_INT);
+            $stmt->bindParam(':demora',     $datos['demora'],     PDO::PARAM_STR);
+            return $stmt->execute() ? 'ok' : $stmt->errorInfo()[2];
+        } catch (Exception $e) {
+            return $e->getMessage();
         }
-
-        $registro->closeCursor();
-        $registro = null;
     }
 }

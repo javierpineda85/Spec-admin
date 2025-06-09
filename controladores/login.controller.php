@@ -14,11 +14,13 @@ class LoginController
 
     public function mostrarLogin()
     {
+       // Auth::check('login', 'mostrarLogin');
         include_once('vistas/login.php');
     }
 
     public static function procesarLogin()
     {
+       // Auth::check('login', 'procesarLogin');
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }

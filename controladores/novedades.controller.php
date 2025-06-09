@@ -10,6 +10,7 @@ class NovedadesController
      */
     public static function crtRegistrar()
     {
+        Auth::check('novedades', 'crtRegistrar');
         if (session_status() === PHP_SESSION_NONE) session_start();
         $vigilador_id =  $_POST['vigilador_id'] ?? null;
         $objetivo_id =  $_POST['objetivo_id'] ?? null;
@@ -52,4 +53,51 @@ class NovedadesController
             exit;
         }
     }
+
+    static public function vistaListadoNovedades()
+    {
+        Auth::check('novedades', 'vistaListadoNovedades');
+        $db  = new Conexion();
+        $rol = $_SESSION['rol'] ?? '';
+
+        if ($rol === 'Vigilador') {
+            // Asumimos que guardaste el objetivo del vigilador en sesión
+            $objetivoId = $_SESSION['objetivo_id'] ?? null;
+            if (! $objetivoId) {
+                // Si no tiene objetivo asignado, devolvemos un array vacío
+                $novedades = [];
+                include __DIR__ . '/../vistas/paginas/novedades/listado_novedades.php';
+                return;
+            }
+            // Sólo las novedades de su objetivo
+            $sql = "SELECT n.idNovedad, o.nombre  AS objetivo, CONCAT(u.apellido,' ',u.nombre) AS creado_por, n.fecha, n.hora, n.detalle, n.created_at, n.adjunto FROM novedades n LEFT JOIN objetivos o ON n.objetivo_id = o.idObjetivo LEFT JOIN usuarios u ON n.vigilador_id = u.idUsuario WHERE n.objetivo_id = :obj ORDER BY n.fecha DESC, n.hora DESC ";
+            $params = [':obj' => $objetivoId];
+        } else {
+            // Todos las novedades
+            $sql = "SELECT n.idNovedad, o.nombre AS objetivo,CONCAT(u.apellido,' ',u.nombre) AS creado_por, n.fecha, n.hora, n.detalle, n.created_at, n.adjunto FROM novedades n LEFT JOIN objetivos o ON n.objetivo_id = o.idObjetivo LEFT JOIN usuarios u ON n.vigilador_id = u.idUsuario  ORDER BY n.fecha DESC, n.hora DESC ";
+            $params = [];
+        }
+
+
+        $novedades = $db->consultas($sql, $params);
+
+        include __DIR__ . '/../vistas/paginas/novedades/listado_novedades.php';
+    }
+    static public function vistaListadoEntradaSalida()
+    {
+        Auth::check('novedades', 'vistaListadoEntradaSalida');
+        $db = new Conexion();
+        $sql = " SELECT m.idMarcacion,CONCAT(u.apellido, ' ', u.nombre) AS vigilador, o.nombre AS objetivo, m.tipo_evento, m.fecha_hora, m.latitud, m.longitud, m.created_at FROM marcaciones_servicio m JOIN usuarios u ON m.vigilador_id = u.idUsuario LEFT JOIN objetivos o ON m.objetivo_id = o.idObjetivo ORDER BY m.fecha_hora DESC ";
+
+        $marcaciones = $db->consultas($sql);
+        include __DIR__ . '/../vistas/paginas/novedades/listado_entradaSalidas.php';
+        return;
+    }
+
+    static public function vistaCrearNovedades()
+    {
+        Auth::check('novedades', 'vistaCrearNovedades');
+        include __DIR__ . '/../vistas/paginas/novedades/crear_novedades.php';
+    }
+
 }

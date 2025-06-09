@@ -68,4 +68,19 @@ class Auth
             exit;
         }
     }
+    /**
+     * Lanza acceso denegado si el usuario no tiene permiso.
+     * @param string $controller  nombre en minúsculas (p.ej. 'novedades')
+     * @param string $action      nombre exacto del método (p.ej. 'crtListarNovedades')
+     */
+    public static function check(string $controller, string $action)
+    {
+        // arrancar sesión si no está
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+
+        // usa tu middleware genérico bajo el capó
+        CheckPermissionMiddleware::handle($controller, $action);
+    }
 }

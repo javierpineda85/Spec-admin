@@ -6,7 +6,7 @@ class ControladorTurnos
     /* Recorre $_SESSION['turnos'] y los guarda en BD. */
     public static function ctrRegistrarPlanilla()
     {
-
+        Auth::check('turnos', 'ctrRegistrarPlanilla');
         // Solo si llegó la petición de guardar y hay turnos en sesión
         if (isset($_POST['guardar_todos']) && !empty($_SESSION['turnos'])) {
 
@@ -61,6 +61,7 @@ class ControladorTurnos
     /*listado_cronograma.php */
     static public function crtBuscarTurnosPorRango()
     {
+        Auth::check('turnos', 'crtBuscarTurnosPorRango');
         //session_start();
         if (isset($_POST['buscar_turnos'])) {
             // Guardamos filtros para “pintar” el form luego
@@ -85,7 +86,7 @@ class ControladorTurnos
 
     static public function crtBuscarPorVigilador()
     {
-        
+        Auth::check('turnos', 'crtBuscarPorVigilador');
         if (isset($_POST['buscar_por_vigilador'])) {
             // Guardamos filtros en sesión
             $_SESSION['filtros_vigilador'] = [

@@ -2,6 +2,7 @@
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idEliminar'])) {
   RondasController::crtDesactivarRonda(intval($_POST['idEliminar']));
 }
+/*
 $db = new Conexion;
 $sql = " SELECT r.idRonda, r.puesto, r.objetivo_id, r.tipo, o.nombre AS objetivo
                   FROM rondas r
@@ -10,7 +11,7 @@ $sql = " SELECT r.idRonda, r.puesto, r.objetivo_id, r.tipo, o.nombre AS objetivo
                   ORDER BY r.objetivo_id, r.orden_escaneo
 ";
 $rondas = $db->consultas($sql);
-
+*/
 ?>
 
 <div class="card">

@@ -7,6 +7,7 @@
     <li class="nav-item d-none d-sm-inline-block">
       <a href="index.php" class="nav-link">Inicio</a>
     </li>
+
     <li class="nav-item d-none d-sm-inline-block">
       <a href="index.php?r=cerrar_sesion" class="nav-link">Cerrar Sesion</a>
     </li>

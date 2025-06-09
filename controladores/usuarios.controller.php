@@ -9,7 +9,7 @@ class ControladorUsuarios
     /* GUARDAR USUARIOS */
     static public function crtGuardarUsuario()
     {
-
+        Auth::check('usuarios', 'crtGuardarUsuario');
         if (isset($_POST["nombre"])) {
             try {
                 $conexion = Conexion::conectar();
@@ -113,6 +113,7 @@ class ControladorUsuarios
     /* MODIFICAR USUARIOS */
     static public function crtModificarUsuario()
     {
+        Auth::check('usuarios', 'crtModificarUsuario');
         if (isset($_POST["idUsuario"])) {
             try {
                 $conexion = Conexion::conectar();
@@ -221,6 +222,7 @@ class ControladorUsuarios
     /*REACTIVAR USUARIO */
     static public function crtReactivarUsuario()
     {
+        Auth::check('usuarios', 'crtReactivarUsuario');
         if (isset($_POST['idReactivar'])) {
             $id = intval($_POST['idReactivar']);
             try {
@@ -241,5 +243,42 @@ class ControladorUsuarios
                 $_SESSION['error_message'] = 'Error: ' . $e->getMessage();
             }
         }
+    }
+
+    static public function vistaListadoUsuarios()
+    {
+        Auth::check('usuarios', 'vistaListadoUsuarios');
+        $db = new Conexion;
+        $sql = "SELECT * FROM usuarios WHERE activo = 1 ORDER BY rol ";
+        $usuarios = $db->consultas($sql);
+        include __DIR__ . '/../vistas/paginas/usuarios/listado-usuarios.php';
+        return;
+    }
+
+    static public function vistaListadoUsuariosInactivos()
+    {
+        Auth::check('usuarios', 'vistaListadoUsuariosInactivos');
+        $db = new Conexion;
+        $sql = "SELECT u.idUsuario, CONCAT(u.apellido, ' ', u.nombre) AS empleado, b.motivo, b.fecha, CONCAT(e.apellido, ' ', e.nombre) AS eliminado_por
+                FROM usuarios u
+                JOIN bajas b ON u.idUsuario = b.usuario_id
+                JOIN usuarios e ON b.eliminado_por = e.idUsuario
+                WHERE u.activo = 0
+                ORDER BY empleado ";
+        $usuarios = $db->consultas($sql);
+        include __DIR__ . '/../vistas/paginas/usuarios/listado-usuarios-inactivos.php';
+        return;
+    }
+    static public function vistaCrearUsuario()
+    {
+        Auth::check('usuarios', 'vistaListadoUsuariosInactivos');
+        include __DIR__ . '/../vistas/paginas/usuarios/crear-usuario.php';
+        return;
+    }
+    static public function vistaPerfilUsuario()
+    {
+        Auth::check('usuarios', 'vistaListadoUsuariosInactivos');
+        include __DIR__ . '/../vistas/paginas/usuarios/perfil-usuario.php';
+        return;
     }
 }

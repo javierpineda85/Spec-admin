@@ -2,11 +2,11 @@
 if (isset($_POST['idReactivar'])) {
     ControladorObjetivos::crtReactivarObjetivo();
 }
-
+/*
 $db = new Conexion;
 $sql = "SELECT * FROM objetivos WHERE activo = 0 ORDER BY nombre";
 $objetivos = $db->consultas($sql);
-
+*/
 ?>
 
 <!-- Main content -->

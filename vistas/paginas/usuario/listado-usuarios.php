@@ -1,9 +1,9 @@
 <?php
-
+/*
 $db = new Conexion;
 $sql = "SELECT * FROM usuarios WHERE activo = 1 ORDER BY rol ";
 $usuarios = $db->consultas($sql);
-
+*/
 ?>
 
 <!-- Main content -->

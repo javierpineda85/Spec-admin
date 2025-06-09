@@ -7,6 +7,7 @@ class ControladorDirectivas
     /* GUARDAR DIRECTIVAS */
     static public function crtGuardarDirectiva()
     {
+        Auth::check('directivas', 'crtGuardarDirectiva');
         if (isset($_POST["id_objetivo"])) {
             // Para mensajes de sesión
             if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -74,6 +75,7 @@ class ControladorDirectivas
     /* MODIFICAR DIRECTIVAS */
     static public function crtModificarDirectiva()
     {
+        Auth::check('directivas', 'crtModificarDirectiva');
         if (isset($_POST["idDirectiva"])) {
             try {
                 $conexion = Conexion::conectar();
@@ -145,6 +147,7 @@ class ControladorDirectivas
 
     static public function crtEliminarDirectiva()
     {
+        Auth::check('directivas', 'crtEliminarDirectiva');
         if (isset($_POST['idEliminar'])) {
             // Convertimos a entero para sanear
             $idDirectiva = intval($_POST['idEliminar']);
@@ -173,5 +176,51 @@ class ControladorDirectivas
                 $_SESSION['error_message'] = 'Error: ' . $e->getMessage();
             }
         }
+    }
+    static public function vistaListadoDirectivas()
+    {
+        Auth::check('directivas', 'vistaListadoDirectivas');
+        $db = new Conexion();
+
+
+        // Recupero rol y, en caso de Vigilador, su objetivo
+        $rol = $_SESSION['rol'] ?? '';
+
+        if ($rol === 'Vigilador') {
+            // Opción A: lo sacas directo de sesión
+            $objetivoId = $_SESSION['objetivo_id'] ?? null;
+
+            if ($objetivoId) {
+                $sql = "SELECT d.*, o.nombre FROM directivas d JOIN objetivos o ON d.id_objetivo = o.idObjetivo WHERE d.id_objetivo = :obj ORDER BY d.id_objetivo ";
+                $params = [':obj' => $objetivoId];
+            } else {
+                // Si no tiene objetivo asignado, devolvemos vacío
+                $directivas = [];
+                include __DIR__ . '/../vistas/paginas/directivas/listado_directivas.php';
+                return;
+            }
+        } else {
+            // Para todos los demás roles, sin filtro
+            $sql = " SELECT d.*, o.nombre FROM directivas d JOIN objetivos o ON d.id_objetivo = o.idObjetivo ORDER BY d.id_objetivo ";
+            $params = [];
+        }
+
+        // Ejecuto la consulta
+        $directivas = $db->consultas($sql, $params);
+
+        // Cargo la vista
+        include __DIR__ . '/../vistas/paginas/directivas/listado_directivas.php';
+    }
+
+
+    static public function vistaCrearDirectiva()
+    {
+        Auth::check('directivas', 'vistaCrearDirectiva');
+        include __DIR__ . '/../vistas/paginas/directivas/crear_directiva.php';
+    }
+    static public function vistaEditarDirectiva()
+    {
+        Auth::check('directivas', 'vistaEditarDirectiva');
+        include __DIR__ . '/../vistas/paginas/directivas/modificar_directiva.php';
     }
 }

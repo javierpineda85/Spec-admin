@@ -5,79 +5,14 @@ require_once('modelos/cronograma.modelo.php');
 class ControladorCronograma
 {
 
-    static public function crtSubirCrono()
-    {
-        if (!empty($_FILES["imgCrono"]["name"])) {
-            try {
-                $conexion = Conexion::conectar();
 
-                if (!$conexion->inTransaction()) {
-                    $conexion->beginTransaction();
-                }
-
-                $tabla = "cronogramas";
-                $objetivo_id = trim($_POST["id_objetivo"]);
-                $fecha = date("Y-m-d H:i:s");
-
-                // Normalizar nombre de archivos
-                $nombreArchivo = preg_replace('/\s+/', '', $_FILES["imgCrono"]["name"]);
-
-                // Guardar imagen
-                $imgCrono = self::guardarImagen($_FILES["imgCrono"], "img/cronogramas/", $nombreArchivo . "Cronograma");
-
-                $datos = array(
-                    "objetivo_id" => $objetivo_id,
-                    "fechaCarga" => $fecha,
-                    "img_crono" => $imgCrono
-                );
-
-                $respuesta = ModeloCronograma::mdlSubirCrono($tabla, $datos);
-
-                if ($respuesta == "ok") {
-                    $conexion->commit();
-                    $_SESSION['success_message'] = "Cronograma registrado correctamente.";
-                } else {
-                    throw new Exception("Error al guardar en la base de datos.");
-                }
-            } catch (Exception $e) {
-                $conexion->rollBack();
-                $_SESSION['success_message'] = $e->getMessage();
-                return false;
-            }
-        }
-    }
-
-    /* FUNCIÓN PARA GUARDAR IMÁGENES */
-    static public function guardarImagen($archivo, $directorio, $nombreArchivo)
-    {
-        if ($archivo["error"] == UPLOAD_ERR_OK) {
-            $ext = pathinfo($archivo["name"], PATHINFO_EXTENSION);
-            $ext = strtolower($ext);
-
-            // Validar formato de imagen
-            $formatosPermitidos = array("jpg", "jpeg", "png", "webp", "avif");
-            if (!in_array($ext, $formatosPermitidos)) {
-                throw new Exception("Formato de imagen no permitido.");
-            }
-
-            // Ruta completa
-            $ruta = $directorio . $nombreArchivo . "." . $ext;
-
-            // Mover archivo al directorio
-            if (!move_uploaded_file($archivo["tmp_name"], $ruta)) {
-                throw new Exception("Error al subir la imagen.");
-            }
-
-            return $ruta; // Devuelve la ruta para guardarla en la base de datos
-        }
-
-        return null;
-    }
-
-    /*Funcion para buscar por resumen diario */
+    /*Funcion para buscar por resumen diario de jornadas trabajadas*/
     static public function crtBuscarResumenDiario()
     {
-        session_start();
+        Auth::check('cronogramas', 'crtBuscarResumenDiario');
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
         if (isset($_POST['buscar_resumen_diario'])) {
             // 1) guardo filtros
             $_SESSION['filtros_resumen'] = [
@@ -109,6 +44,7 @@ class ControladorCronograma
     /*reporte_horas_por_objetivo */
     static public function crtBuscarResumenHoras()
     {
+        Auth::check('cronogramas', 'crtBuscarResumenHoras');
         $desde      = $_POST['desde']    ?? null;
         $hasta      = $_POST['hasta']    ?? null;
 
@@ -172,6 +108,7 @@ class ControladorCronograma
      */
     static private function calcularHorasEnVentana(DateTime $start, DateTime $end, string $horaDesde, string $horaHasta): float
     {
+        Auth::check('cronogramas', 'calcularHorasEnVentana');
         $segDiurnos = 0;
         $cursor = clone $start;
 
@@ -198,6 +135,7 @@ class ControladorCronograma
     /*reporte_horas_vigilador */
     static public function crtBuscarResumenHorasPorVigilador()
     {
+        Auth::check('cronogramas', 'crtBuscarResumenHorasPorVigilador');
         $desde = $_POST['desde'] ?? null;
         $hasta = $_POST['hasta'] ?? null;
         if (!$desde || !$hasta) {
@@ -216,7 +154,7 @@ class ControladorCronograma
         $reporte = [];
 
         foreach ($vigiladores as $v) {
-            
+
             $sql    = "SELECT fecha, entrada, salida, turno, tipo_jornada
                    FROM turnos
                    WHERE vigilador_id = ?
@@ -281,5 +219,36 @@ class ControladorCronograma
         $_SESSION['reporte_vigilador'] = $reporte;
         header('Location: ?r=reporte_porVigilador');
         exit;
+    }
+
+    static public function vistaCrearCronograma()
+    {
+        Auth::check('cronogramas', 'vistaCrearCronograma');
+        include __DIR__ . '/../vistas/paginas/cronogramas/crear_cronograma.php';
+        return;
+    }
+    static public function vistaListadoCronogramas()
+    {
+        Auth::check('cronogramas', 'vistaListadoCronogramas');
+        include __DIR__ . '/../vistas/paginas/cronogramas/listado_cronogramas.php';
+        return;
+    }
+    static public function vistaListadoCronogramaPorVigilador()
+    {
+        Auth::check('cronogramas', 'vistaListadoCronogramaPorVigilador');
+        include __DIR__ . '/../vistas/paginas/cronogramas/listado_cronogramas.php';
+        return;
+    }
+    static public function vistaJornadasPorObjetivo()
+    {
+        Auth::check('cronogramas', 'vistaJornadasPorObjetivo');
+        include __DIR__ . '/../vistas/paginas/cronogramas/resumen_diario_jornadas.php';
+        return;
+    }
+    static public function vistaHorasPorVigilador()
+    {
+        Auth::check('cronogramas', 'reporte_porVigilador');
+        include __DIR__ . '/../vistas/paginas/cronogramas/reporte_horas_vigilador.php';
+        return;
     }
 }

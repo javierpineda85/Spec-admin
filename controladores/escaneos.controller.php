@@ -12,7 +12,7 @@ class EscaneosController
      */
     public static function registrar()
     {
-       
+       Auth::check('escaneos', 'registrar');
         header('Content-Type: text/html; charset=utf-8');
 
         $rondaId     = intval($_GET['ronda_id']     ?? 0);

@@ -85,4 +85,15 @@ class ModeloDirectivas
         // Ejecutamos y devolvemos ok/error
         return $stmt->execute() ? 'ok' : 'error';
     }
+
+    static public function mdlObtenerTodas()
+    {
+        $db = new Conexion;
+        $sql = "SELECT d.*, o.nombre 
+        FROM directivas d 
+        JOIN objetivos o ON d.id_objetivo = o.idObjetivo 
+        ORDER BY d.id_objetivo";
+        $directivas = $db->consultas($sql);
+        return $directivas;
+    }
 }
