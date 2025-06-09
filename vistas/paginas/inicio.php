@@ -5,16 +5,20 @@
 
   </div>
   <div class="card-body">
-    <?php
-    if (isset($_SESSION['success_message'])) {
-      echo '<div class="alert alert-success alert-dismissible">
-                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                  <p><i class="icon fas fa-check"></i>' . $_SESSION['success_message'] . '</p>
-              </div>';
-      // Elimina el mensaje después de mostrarlo
-      unset($_SESSION['success_message']);
-    };
-    ?>
+    <?php if (!empty($_SESSION['success_message'])): ?>
+      <div class="alert alert-success alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <i class="icon fas fa-check"></i>
+        <?= $_SESSION['success_message'];
+        unset($_SESSION['success_message']); ?>
+      </div>
+    <?php endif; ?>
+    <?php if (!empty($_SESSION['sinAsignaciones'])): ?>
+      <div class="alert alert-success text-center mt-3">
+        <strong>Bienvenido.</strong> Aún no tienes objetivos asignados.
+      </div>
+      <?php unset($_SESSION['sinAsignaciones']); ?>
+    <?php endif; ?>
     <!-- Small boxes (Stat box) -->
     <div class="row">
       <!-- hombre vivo -->
@@ -160,7 +164,7 @@
             <!-- Sección colapsable para los botones -->
             <div id="collapseObjetivos" class="collapse">
               <div class="mt-2">
-                <a href="?r=crear_objetivo" class="btn btn-block btn-info btn-sm text-white">Crear Objetivo</a> 
+                <a href="?r=crear_objetivo" class="btn btn-block btn-info btn-sm text-white">Crear Objetivo</a>
                 <a href="?r=listado_objetivos" class="btn btn-block btn-info btn-sm text-white">Mostrar Activos</a>
                 <a href="?r=listado_objetivos_inactivos" class="btn btn-block btn-info btn-sm text-white">Mostrar Inactivos</a>
               </div>
@@ -185,9 +189,9 @@
             <!-- Sección colapsable para los botones -->
             <div id="collapseUsuarios" class="collapse">
               <div class="mt-2">
-                <a href="?r=crear-usuario" class="btn btn-block btn-info btn-sm text-white">Crear</a> <
-                <a href="?r=listado-usuarios" class="btn btn-block btn-info btn-sm text-white">Mostrar Activos</a>
-                <a href="?r=listado-usuarios-inactivos" class="btn btn-block btn-info btn-sm text-white">Mostrar Inactivos</a>
+                <a href="?r=crear-usuario" class="btn btn-block btn-info btn-sm text-white">Crear</a>
+                  <a href="?r=listado-usuarios" class="btn btn-block btn-info btn-sm text-white">Mostrar Activos</a>
+                  <a href="?r=listado-usuarios-inactivos" class="btn btn-block btn-info btn-sm text-white">Mostrar Inactivos</a>
               </div>
             </div>
           </div>

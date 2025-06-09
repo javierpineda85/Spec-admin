@@ -1,6 +1,7 @@
 <?php
 session_start();  // Aseguramos que la sesión esté iniciada para poder verificar $_SESSION
 //session_destroy();
+require_once __DIR__ . '/core/Auth.php';
 require_once("config.php");
 require_once('controladores/archivos.controller.php');
 require_once('controladores/bajas.controller.php');
@@ -22,7 +23,13 @@ require_once("controladores/turnos.controller.php");
 require_once("controladores/usuarios.controller.php");
 
 
-// Comprobamos si el usuario está autenticado
+
+// Si no es la ruta de login (GET o POST), exigimos autenticación
+$r = $_GET['r'] ?? '';
+if ($r !== 'login') {
+    Auth::requireLogin();
+}
+
 if (!isset($_SESSION['idUsuario']) || empty($_SESSION['idUsuario'])) {
     // Si no está autenticado, redirigimos al login
     // Aquí puedes hacer una redirección o mostrar la vista de login

@@ -74,10 +74,11 @@ $usuario = $db->consultas($sql);
                             <select class="custom-select" name="rol" required>
                                 <option value="<?php echo  $usuario[0]['rol'] ?>" selected><?php echo $usuario[0]['rol'] ?></option>
                                 <option value="Vigilador">Vigilador</option>
-                                <option value="Referente">Referente</option>
-                                <option value="Supervisor">Supervisor</option>
+                                <option value="Supervisor 1">Supervisor 1</option>
+                                <option value="Supervisor 2">Supervisor 2</option>
+                                <option value="Diagramador">Diagramador</option>
+                                <option value="Administrativo">Administrativo</option>
                                 <option value="Gerencia">Gerencia</option>
-                                <option value="Administrador">Administrador</option>
                             </select>
                         </div>
                         <div class="form-group col-sm-12 col-md-4">
@@ -114,7 +115,7 @@ $usuario = $db->consultas($sql);
                             <label for="inputGroupFile01">Cambiar Foto de Perfil</label>
                             <div class="input-group">
                                 <div class="custom-file">
-                                    <input type="hidden" name="imgPerfilActual" value="<?= htmlspecialchars($usuario[0]['imgPerfil']) ?>">
+                                    <input type="hidden" name="imgPerfilActual" value="<?= htmlspecialchars($usuario[0]['imgPerfil'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                                     <input type="file" class="custom-file-input" id="inputGroupFile01" name="imgPerfil">
                                     <label class="custom-file-label" for="inputGroupFile01">Selecciona un archivo</label>
                                 </div>
@@ -127,7 +128,7 @@ $usuario = $db->consultas($sql);
                             <label for="inputGroupFile02">Cambiar Carnet de Repiv</label>
                             <div class="input-group">
                                 <div class="custom-file">
-                                    <input type="hidden" name="imgReprivActual" value="<?= htmlspecialchars($usuario[0]['imgRepriv']) ?>">
+                                    <input type="hidden" name="imgReprivActual" value="<?= htmlspecialchars($usuario[0]['imgRepriv'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                                     <input type="file" class="custom-file-input" id="inputGroupFile02" name="imgRepriv">
                                     <label class="custom-file-label" for="inputGroupFile02">Selecciona un archivo</label>
                                 </div>

@@ -9,6 +9,7 @@ class ControladorUsuarios
     /* GUARDAR USUARIOS */
     static public function crtGuardarUsuario()
     {
+
         if (isset($_POST["nombre"])) {
             try {
                 $conexion = Conexion::conectar();
@@ -37,7 +38,7 @@ class ControladorUsuarios
                 $nombreArchivo = preg_replace('/\s+/', '', $nombre . $apellido);
 
                 // --- Aquí llamamos a ControladorArchivos::guardarArchivo() ---
-                // Rutas ya definidas: "img/perfil/" y "img/repriv/"
+
                 $imgPerfil = ControladorArchivos::guardarArchivo(
                     $_FILES["imgPerfil"],
                     "img/perfil/",
@@ -50,6 +51,25 @@ class ControladorUsuarios
                     $nombreArchivo . "Repriv"
                 );
                 // ------------------------------------------------------------
+
+                // --- BLOQUE NUEVO: Validación opcional de imgRepriv ---
+                if (isset($_FILES['imgRepriv']) && $_FILES['imgRepriv']['error'] !== UPLOAD_ERR_NO_FILE) {
+                    $tmp  = $_FILES['imgRepriv']['tmp_name'];
+                    $name = uniqid() . '_' . basename($_FILES['imgRepriv']['name']);
+                    $dest = __DIR__ . '/../uploads/docs/' . $name;
+
+                    if (move_uploaded_file($tmp, $dest)) {
+                        // Actualizar sólo el campo imgRepriv en la BD
+                        $sql = "UPDATE usuarios SET imgRepriv = ? WHERE idUsuario = ?";
+                        // Si es un INSERT recién hecho, usamos lastInsertId(); si es UPDATE, reemplazar por el ID que corresponda
+                        $newId = $conexion->lastInsertId();
+                        $stmt = $conexion->prepare("UPDATE usuarios SET imgRepriv = ? WHERE idUsuario = ?");
+                        $stmt->execute([$dest, $newId]);
+                    } else {
+                        $_SESSION['error_message'] = "No se pudo guardar el documento.";
+                    }
+                }
+                // -------------------------------------------------------
 
                 $datos = array(
                     "nombre"         => $nombre,

@@ -75,9 +75,11 @@ if (isset($_POST['Registrar'])) {
             <select class="custom-select" name="rol" required>
               <option value="" disabled selected> Rol de usuario</option>
               <option value="Vigilador">Vigilador</option>
-              <option value="Supervisor">Supervisor</option>
+              <option value="Supervisor 1">Supervisor 1</option>
+              <option value="Supervisor 2">Supervisor 2</option>
+              <option value="Diagramador">Diagramador</option>
+              <option value="Administrativo">Administrativo</option>
               <option value="Gerencia">Gerencia</option>
-              <option value="Administrador">Administrador</option>
             </select>
           </div>
           <div class="form-group col-sm-12 col-md-4">
@@ -94,7 +96,7 @@ if (isset($_POST['Registrar'])) {
             <label for="inputGroupFile01" class="form-label">Foto de Perfil</label>
             <div class="input-group">
               <div class="custom-file">
-                <input type="file" class="custom-file-input" id="inputGroupFile01" name="imgPerfil" required>
+                <input type="file" class="custom-file-input" id="inputGroupFile01" name="imgPerfil">
                 <label class="custom-file-label" for="inputGroupFile01">Selecciona un archivo</label>
               </div>
             </div>
@@ -105,7 +107,7 @@ if (isset($_POST['Registrar'])) {
             <label for="inputGroupFile02" class="form-label">Carnet de REPRIV</label>
             <div class="input-group">
               <div class="custom-file">
-                <input type="file" class="custom-file-input" id="inputGroupFile02" name="imgRepriv" required>
+                <input type="file" class="custom-file-input" id="inputGroupFile02" name="imgRepriv">
                 <label class="custom-file-label" for="inputGroupFile02">Selecciona un archivo</label>
               </div>
             </div>

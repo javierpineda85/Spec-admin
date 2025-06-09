@@ -20,11 +20,23 @@ class ModeloUsuarios
     private function getUsuarioPorDni($dni)
     {
         $db = new Conexion;
-        $sql = "SELECT idUsuario, nombre, apellido, pass, imgPerfil FROM usuarios WHERE dni = $dni LIMIT 1";
+        $sql = "SELECT idUsuario, nombre, apellido, pass, imgPerfil, rol FROM usuarios  WHERE dni = $dni LIMIT 1";
         $usuario = $db->consultas($sql);
 
         // Si el usuario existe, devolver los datos
         return $usuario ? $usuario : null;
+    }
+
+    //Metodo para saber en cual objetivo y ronda trabaja 
+    public function getAsignacionHoy(int $usuarioId)
+    {
+        $db = new Conexion;
+        $sql =" SELECT r.idRonda AS ronda_id, t.objetivo_id, t.is_referente FROM turnos t JOIN rondas r ON r.objetivo_id = t.objetivo_id WHERE t.vigilador_id = :uid AND t.fecha = CURDATE() ORDER BY r.orden_escaneo ASC LIMIT 1";
+        $stmt = Conexion::conectar()->prepare($sql);
+        $stmt->bindParam(':uid', $usuarioId, PDO::PARAM_INT);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ?: null;
     }
 
     /*INSERTAR USUARIO */
@@ -66,7 +78,7 @@ class ModeloUsuarios
     /* ACTUALIZAR USUARIO */
     static public function mdlModificarUsuario($tabla, $datos)
     {
-        
+
         $stmt = Conexion::conectar()->prepare("UPDATE $tabla SET nombre = :nombre, apellido = :apellido, dni = :dni, f_nac = :f_nac, telefono = :telefono, tel_emergencia = :tel_emergencia,nombre_contacto = :nombre_contacto, parentesco = :parentesco, domicilio = :domicilio, provincia = :provincia, rol = :rol, imgPerfil = :imgPerfil, imgRepriv = :imgRepriv, resetPass = :resetPass, activo = :activo WHERE idUsuario = :id_usuario");
 
         $stmt->bindParam(":id_usuario", $datos["id_usuario"], PDO::PARAM_INT);
@@ -99,11 +111,11 @@ class ModeloUsuarios
     /*
  * Reactiva ( un usuario.
  */
-static public function mdlReactivarUsuario($tabla, $idUsuario)
-{
-    $sql = "UPDATE $tabla SET activo = 1 WHERE idUsuario = :id";
-    $stmt = Conexion::conectar()->prepare($sql);
-    $stmt->bindParam(':id', $idUsuario, PDO::PARAM_INT);
-    return $stmt->execute() ? 'ok' : 'error';
-}
+    static public function mdlReactivarUsuario($tabla, $idUsuario)
+    {
+        $sql = "UPDATE $tabla SET activo = 1 WHERE idUsuario = :id";
+        $stmt = Conexion::conectar()->prepare($sql);
+        $stmt->bindParam(':id', $idUsuario, PDO::PARAM_INT);
+        return $stmt->execute() ? 'ok' : 'error';
+    }
 }
