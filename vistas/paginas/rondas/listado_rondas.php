@@ -24,15 +24,9 @@ $rondas = $db->consultas($sql);
       unset($_SESSION['success_message']); ?>
     </div>
   <?php endif; ?>
-  <?php if (!empty($_SESSION['error_message'])): ?>
-    <div class="alert alert-danger mt-3">
-      <?= $_SESSION['error_message'];
-      unset($_SESSION['error_message']); ?>
-    </div>
-  <?php endif; ?>
 
   <div class="card-body">
-    <table id="tabla-rondas" class="table table-bordered table-striped table-sm">
+    <table id="example1" class="table table-bordered table-striped table-sm">
       <thead>
         <tr>
           <th>Puesto</th>

@@ -83,4 +83,37 @@ class Auth
         // usa tu middleware genérico bajo el capó
         CheckPermissionMiddleware::handle($controller, $action);
     }
+public static function hasPermission(string $controller, string $action): bool
+{
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        session_start();
+    }
+
+    // Si aún no hemos precargado los permisos en sesión, los cargamos ahora
+    if (!isset($_SESSION['permisos_usuario'])) {
+        $rol = $_SESSION['rol'] ?? '';
+        if (!$rol) {
+            // Sin rol, sin permisos
+            $_SESSION['permisos_usuario'] = [];
+        } else {
+            $db = new Conexion();
+            $res = $db->consultas(
+                "SELECT p.controlador, p.accion
+                   FROM role_permissions rp
+                   JOIN permissions p ON rp.permission_id = p.id
+                  WHERE rp.role = ?",
+                [$rol]
+            );
+            // Formateamos como “controlador/accion”
+            $_SESSION['permisos_usuario'] = array_map(
+                fn($r) => "{$r['controlador']}/{$r['accion']}",
+                $res
+            );
+        }
+    }
+
+    // Y comprobamos si existe en el array precargado
+    return in_array("$controller/$action", $_SESSION['permisos_usuario'], true);
+}
+
 }

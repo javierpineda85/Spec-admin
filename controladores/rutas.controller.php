@@ -19,21 +19,21 @@ class RutasController
         // Registrar escaneo de ronda (AJAX o GET)
         if (isset($_GET['r']) && $_GET['r'] === 'registrar_escaneo') {
             EscaneosController::registrar();
-            exit;
+            return;
         }
         // Gestión de permisos
         if (isset($_GET['r']) && ($_GET['r'] === 'permisos' || $_GET['r'] === 'permisos/index')) {
             PermisosController::index();
-            exit;
+            return;
         }
         if (isset($_GET['r']) && $_GET['r'] === 'permisos/update') {
             PermisosController::update();
-            exit;
+            return;
         }
         // Mostrar QR dinámico
         if (isset($_GET['r']) && $_GET['r'] === 'mostrar_qr') {
             QrController::mostrar();
-            exit;
+            return;
         }
 
         // Eliminar QR de sesión y draft
@@ -48,23 +48,30 @@ class RutasController
             return;
         }
 
-        // Cámara para escanear
+        // Vista para escanear con cámara
         if (isset($_GET['r']) && $_GET['r'] === 'escanear') {
-            include __DIR__ . '/../vistas/paginas/rondas/escanear_rondas.php';
+            RondasController::vistaEscanearRondas();
             return;
         }
 
         // Vista de reporte hombre vivo (timer)
         if (isset($_GET['r']) && $_GET['r'] === 'reporte_hombre_vivo') {
-            include __DIR__ . '/../vistas/paginas/h-vivo/reporte_hombre_vivo.php';
+            HombreVivoController::vistaHombreVivo();
             return;
         }
+
+        // Vista de Listado Reportes H VIVO
+        if (isset($_GET['r']) && $_GET['r'] === 'listado_reportes') {
+            HombreVivoController::vistaListadoReportesHombreVivo();
+            return;
+        }
+
 
         // Endpoint AJAX para registrar reporte hombre vivo
         if (isset($_GET['r']) && $_GET['r'] === 'registrar_reporte') {
             //require_once __DIR__ . '/hvivo.controller.php';
             HombreVivoController::registrar();
-            exit;
+            return;
         }
 
         if (isset($_GET['r']) && $_GET['r'] === 'ajax_rondas') {
@@ -74,14 +81,14 @@ class RutasController
         // Actualizar ronda (formulario de edición)
         if (isset($_GET['r']) && $_GET['r'] === 'actualizar_ronda') {
             RondasController::crtActualizarRonda();
-            exit;
+            return;
         }
 
         // Desactivar ronda (listado)
         if (isset($_GET['r']) && $_GET['r'] === 'desactivar_ronda') {
             // require_once __DIR__ . '/rondas.controller.php';
             RondasController::crtDesactivarRonda(intval($_POST['idEliminar'] ?? 0));
-            exit;
+            return;
         }
 
         // Rutas de búsqueda de cronogramas (ejemplo)
@@ -135,119 +142,125 @@ class RutasController
         //Reporte de horas por objetivo
         if (isset($_GET['r']) && $_GET['r'] === 'reporte_porHoras') {
             ControladorCronograma::crtBuscarResumenHoras();
-            exit;
+            return;
         }
 
         //Vista crear directivas
         if (isset($_GET['r']) && $_GET['r'] === 'vistaCrearDirectiva') {
             ControladorDirectivas::vistaCrearDirectiva();
-            exit;
+            return;
         }
         //Vista editar directivas
         if (isset($_GET['r']) && $_GET['r'] === 'vistaEditarDirectiva') {
             ControladorDirectivas::vistaEditarDirectiva();
-            exit;
+            return;
         }
         //Vista listado de directivas
         if (isset($_GET['r']) && $_GET['r'] === 'listado_directivas') {
             ControladorDirectivas::vistaListadoDirectivas();
-            exit;
+            return;
         }
 
         //Vista crear novedad
         if (isset($_GET['r']) && $_GET['r'] === 'crear_novedad') {
             NovedadesController::vistaCrearNovedades();
-            exit;
+            return;
         }
         //Vista listado de novedades
         if (isset($_GET['r']) && $_GET['r'] === 'listado_novedades') {
             NovedadesController::vistaListadoNovedades();
-            exit;
+            return;
         }
         //Vista Reporte entradas y salidas
         if (isset($_GET['r']) && $_GET['r'] === 'reporte_entradas_salidas') {
             NovedadesController::vistaListadoEntradaSalida();
-            exit;
+            return;
         }
 
         //Listado de objetivos
         if (isset($_GET['r']) && $_GET['r'] === 'listado_objetivos') {
             ControladorObjetivos::vistaListadoObjetivos();
-            exit;
+            return;
         }
         //Crear objetivos
         if (isset($_GET['r']) && $_GET['r'] === 'crear_objetivo') {
             ControladorObjetivos::vistaCreaObjetivo();
-            exit;
+            return;
         }
         //editar objetivos
         if (isset($_GET['r']) && $_GET['r'] === 'editar_objetivo') {
             ControladorObjetivos::vistaEditarObjetivo();
-            exit;
+            return;
         }
         //Listado de objetivos
         if (isset($_GET['r']) && $_GET['r'] === 'listado_objetivos_inactivos') {
             ControladorObjetivos::vistaListadoObjetivosInactivos();
-            exit;
+            return;
         }
 
         //Crear puestos
         if (isset($_GET['r']) && $_GET['r'] === 'crear_puesto') {
             ControladorPuestos::vistaCrearPuestos();
-            exit;
+            return;
         }
         //Editar puestos
         if (isset($_GET['r']) && $_GET['r'] === 'editar_puesto') {
             ControladorPuestos::vistaEditarPuesto();
-            exit;
+            return;
         }
         //Listado de puestos activos
         if (isset($_GET['r']) && $_GET['r'] === 'listado_puestos') {
             ControladorPuestos::vistaListadoPuestos();
-            exit;
+            return;
         }
         //Listado de puestos desactivados
         if (isset($_GET['r']) && $_GET['r'] === 'listado_puestos_inactivos') {
             ControladorPuestos::vistaListadoPuestosDesactivados();
-            exit;
+            return;
         }
 
         //Crear rondas
         if (isset($_GET['r']) && $_GET['r'] === 'crear_rondas') {
             RondasController::vistaCrearRondas();
-            exit;
+            return;
         }
 
         //Editar rondas
         if (isset($_GET['r']) && $_GET['r'] === 'editar_ronda') {
             RondasController::vistaEditarRondas();
-            exit;
+            return;
         }
         //Listado de rondas
         if (isset($_GET['r']) && $_GET['r'] === 'listado_rondas') {
             RondasController::vistaListadoRondas();
-            exit;
+            return;
         }
 
         //Crear rondas
         if (isset($_GET['r']) && $_GET['r'] === 'crear-usuario') {
             ControladorUsuarios::vistaCrearUsuario();
-            exit;
+            return;
         }
         //Crear rondas
         if (isset($_GET['r']) && $_GET['r'] === 'perfil-usuario') {
             ControladorUsuarios::vistaPerfilUsuario();
-            exit;
+            return;
         }
         //Listado de usuarios
         if (isset($_GET['r']) && $_GET['r'] === 'listado-usuarios') {
             ControladorUsuarios::vistaListadoUsuarios();
-            exit;
+            return;
         }
         //Listado de usuarios inactivos
         if (isset($_GET['r']) && $_GET['r'] === 'listado-usuarios-inactivos') {
             ControladorUsuarios::vistaListadoUsuariosInactivos();
-            exit;
+            return;
+        }
+
+        //Archivos
+        if (isset($_GET['r']) && $_GET['r'] === 'listado-usuarios-inactivos') {
+            ControladorUsuarios::vistaListadoUsuariosInactivos();
+            return;
         }
 
 
@@ -262,7 +275,7 @@ class RutasController
             "cerrar_sesion"     => "usuario/salir.php",
 
             //hombre-vivo
-            "listado_reportes"      => "h-vivo/listado_reportes.php",
+            //"listado_reportes"      => "h-vivo/listado_reportes.php",
 
             //Mensajes
             "bandeja-entrada"   => "mensajes/bandeja-entrada.php",

@@ -15,7 +15,7 @@ class ControladorArchivos
      */
     static public function guardarArchivo($archivo, $directorio, $nombreBase)
     {
-        Auth::check('archivos', 'guardarArchvios');
+       // Auth::check('archivos', 'guardarArchvios');
 
         // 1) Verificar que no venga vacío ni con error de “no file”
         if (!isset($archivo) || $archivo["error"] === UPLOAD_ERR_NO_FILE) {

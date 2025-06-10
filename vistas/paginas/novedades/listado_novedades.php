@@ -30,6 +30,7 @@ $novedades = $db->consultas($sql);*/
                                 <th style="text-align:center;">Creado por</th>
                                 <th style="text-align:center;">Fecha</th>
                                 <th style="text-align:center;">Hora</th>
+                                <th style="text-align:center;">Detalle</th> 
                                 <th style="text-align:center;">Adjunto</th>
                             </tr>
                         </thead>
@@ -47,6 +48,9 @@ $novedades = $db->consultas($sql);*/
                                     </td>
                                     <td style="vertical-align:middle; text-align:center;">
                                         <?= htmlspecialchars($n['hora'], ENT_QUOTES, 'UTF-8') ?>
+                                    </td>
+                                    <td style="vertical-align:middle;">
+                                        <?= nl2br(htmlspecialchars($n['detalle'], ENT_QUOTES, 'UTF-8')) ?>
                                     </td>
                                     <td style="vertical-align:middle; text-align:center;">
                                         <?php if (!empty($n['adjunto'])): ?>

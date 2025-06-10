@@ -1,4 +1,4 @@
-<?php include_once('contenido/head.php'); ?>
+<?php include __DIR__ .'/contenido/head.php'; ?>
 
 <body class="hold-transition sidebar-mini sidebar-collapse">
   <style>
@@ -28,12 +28,12 @@
 
     <!-- Navbar -->
 
-    <?php include_once('contenido/header.php'); ?>
+    <?php include __DIR__ .'/contenido/header.php'; ?>
 
     <!-- /.navbar -->
 
     <!-- Main Sidebar Container -->
-    <?php include_once('contenido/aside.php'); ?>
+    <?php include __DIR__ .'/contenido/aside.php'; ?>
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
@@ -42,9 +42,9 @@
       <!-- Main content -->
       <section class="content mt-2">
 
-        <!--AQUI VAN LAS VISTAS DEPENDIENDO DE LA RUTA -->
+
         <?php
-        // Se instancia el objeto de ruta para cargar la vista correspondiente
+
         RutasController::cargarVista();
         ?>
 
@@ -54,12 +54,11 @@
     <!-- /.content-wrapper -->
 
     <footer class="main-footer">
-      <?php include_once('contenido/footer.php'); ?>
+      <?php include __DIR__ .'/contenido/footer.php'; ?>
     </footer>
 
-
     <!-- scripts -->
-    <?php include_once('contenido/scripts.php'); ?>
+    <?php include __DIR__ .'/contenido/scripts.php'; ?>
 
 
 </body>

@@ -236,7 +236,7 @@ class ControladorUsuarios
                     $_SESSION['success_message'] = 'Usuario reactivado.';
                 } else {
                     $db->rollBack();
-                    $_SESSION['error_message'] = 'No se pudo reactivar el usuario.';
+                    $_SESSION['success_message'] = 'No se pudo reactivar el usuario.';
                 }
             } catch (Exception $e) {
                 if ($db->inTransaction()) $db->rollBack();
@@ -251,7 +251,7 @@ class ControladorUsuarios
         $db = new Conexion;
         $sql = "SELECT * FROM usuarios WHERE activo = 1 ORDER BY rol ";
         $usuarios = $db->consultas($sql);
-        include __DIR__ . '/../vistas/paginas/usuarios/listado-usuarios.php';
+        include __DIR__ . '/../vistas/paginas/usuario/listado-usuarios.php';
         return;
     }
 
@@ -266,19 +266,19 @@ class ControladorUsuarios
                 WHERE u.activo = 0
                 ORDER BY empleado ";
         $usuarios = $db->consultas($sql);
-        include __DIR__ . '/../vistas/paginas/usuarios/listado-usuarios-inactivos.php';
+        include __DIR__ . '/../vistas/paginas/usuario/listado-usuarios-inactivos.php';
         return;
     }
     static public function vistaCrearUsuario()
     {
         Auth::check('usuarios', 'vistaListadoUsuariosInactivos');
-        include __DIR__ . '/../vistas/paginas/usuarios/crear-usuario.php';
+        include __DIR__ . '/../vistas/paginas/usuario/crear-usuario.php';
         return;
     }
     static public function vistaPerfilUsuario()
     {
-        Auth::check('usuarios', 'vistaListadoUsuariosInactivos');
-        include __DIR__ . '/../vistas/paginas/usuarios/perfil-usuario.php';
+        Auth::check('usuarios', 'vistaPerfilUsuario');
+        include __DIR__ . '/../vistas/paginas/usuario/perfil-usuario.php';
         return;
     }
 }

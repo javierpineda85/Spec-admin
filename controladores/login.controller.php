@@ -14,13 +14,13 @@ class LoginController
 
     public function mostrarLogin()
     {
-       // Auth::check('login', 'mostrarLogin');
+        // Auth::check('login', 'mostrarLogin');
         include_once('vistas/login.php');
     }
 
     public static function procesarLogin()
     {
-       // Auth::check('login', 'procesarLogin');
+        // Auth::check('login', 'procesarLogin');
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
@@ -42,6 +42,8 @@ class LoginController
                 $_SESSION['imgPerfil'] = $esAutenticado[0]['imgPerfil'];
                 $_SESSION['rol'] = $esAutenticado[0]['rol'];
 
+                unset($_SESSION['permisos_usuario']);
+
                 // Para Vigilador o Referente, cargamos su asignación del día:
                 if (in_array($_SESSION['rol'], ['Vigilador', 'Referente'])) {
                     // Instanciamos el modelo para consultar cronogramas
@@ -62,6 +64,21 @@ class LoginController
                         $_SESSION['sinAsignaciones'] = true;
                     }
                 }
+                // ** Aquí definimos $resultados con todos los permisos del rol **
+                $db = new Conexion();
+                $resultados = $db->consultas(
+                    "SELECT p.controlador, p.accion
+                   FROM role_permissions rp
+                   JOIN permissions p ON rp.permission_id = p.id
+                  WHERE rp.role = ?",
+                    [$_SESSION['rol']]
+                );
+
+                // Guardar en sesión el array de permisos para hasPermission()
+                $_SESSION['permisos_usuario'] = array_map(
+                    fn($r) => "{$r['controlador']}/{$r['accion']}",
+                    $resultados
+                );
 
                 // Redirigir al inicio
                 header('Location: index.php');

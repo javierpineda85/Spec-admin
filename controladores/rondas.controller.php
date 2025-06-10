@@ -181,11 +181,17 @@ class RondasController
         include __DIR__ . '/../vistas/paginas/rondas/crear_rondas.php';
         return;
     }
-        static public function vistaEditarRondas()
+    static public function vistaEditarRondas()
     {
         Auth::check('rondas', 'vistaEditarRondas');
-        include __DIR__ . '/../vistas/paginas/rondas/editar_rondas.php';
+        include __DIR__ . '/../vistas/paginas/rondas/editar_ronda.php';
         return;
     }
 
+    static public function vistaEscanearRondas()
+    {
+        Auth::check('rondas', 'vistaEscanearRondas');
+        include __DIR__ . '/../vistas/paginas/rondas/escanear_rondas.php';
+        return;
+    }
 }

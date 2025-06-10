@@ -4,7 +4,7 @@ require_once('modelos/hvivo.modelo.php');
 
 class HombreVivoController
 {
-    static public function registrar()
+    public static function registrar()
     {
         Auth::check('hvivo', 'registrar');
         if (session_status() === PHP_SESSION_NONE) {
@@ -35,5 +35,15 @@ class HombreVivoController
             echo json_encode(['success' => false, 'error' => $res]);
         }
         exit;
+    }
+    public static function vistaHombreVivo()
+    {
+        Auth::check('hvivo', 'vistaHombreVivo');
+        include __DIR__ . '/../vistas/paginas/h-vivo/reporte_hombre_vivo.php';
+    }
+    public static function vistaListadoReportesHombreVivo()
+    {
+        Auth::check('hvivo', 'vistaListadoReportesHombreVivo');
+        include __DIR__ . '/../vistas/paginas/h-vivo/listado_reportesHvivo.php';
     }
 }

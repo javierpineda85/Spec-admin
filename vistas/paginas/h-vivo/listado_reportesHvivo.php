@@ -24,17 +24,17 @@ if (isset($_POST['buscar_reportes'])) {
 }
 
 // Construir y ejecutar la consulta con o sin filtro
-$sql = "SELECT r.idReporte, r.fecha, r.hora, CONCAT(u.nombre, ' ', u.apellido) AS vigilador FROM reporte_hombre_vivo AS r JOIN usuarios AS u ON r.id_usuario = u.idUsuario";
+$sql = " SELECT r.idReporte, DATE(r.fecha_hora) AS fecha,TIME(r.fecha_hora) AS hora, CONCAT(u.nombre, ' ', u.apellido) AS vigilador FROM reporte_hombre_vivo AS r JOIN usuarios AS u ON r.id_usuario = u.idUsuario ";
 
 // Si tenemos fechas válidas en sesión, aplicamos BETWEEN
 if (!empty($_SESSION['filtros']['desde']) && !empty($_SESSION['filtros']['hasta'])) {
     $desde = $_SESSION['filtros']['desde'];
     $hasta = $_SESSION['filtros']['hasta'];
-    $sql .= " WHERE r.fecha BETWEEN '$desde' AND '$hasta'";
+    $sql .= " WHERE fecha BETWEEN '$desde' AND '$hasta'";
 }
 
 // Siempre ordenamos
-$sql .= " ORDER BY r.fecha, r.hora";
+$sql .= " ORDER BY fecha, hora";
 
 // Ejecutamos con tu método habitual
 $reportes = $db->consultas($sql);

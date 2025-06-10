@@ -216,11 +216,11 @@ class ControladorDirectivas
     static public function vistaCrearDirectiva()
     {
         Auth::check('directivas', 'vistaCrearDirectiva');
-        include __DIR__ . '/../vistas/paginas/directivas/crear_directiva.php';
+        include __DIR__ . '/../vistas/paginas/directivas/crear_directivas.php';
     }
     static public function vistaEditarDirectiva()
     {
         Auth::check('directivas', 'vistaEditarDirectiva');
-        include __DIR__ . '/../vistas/paginas/directivas/modificar_directiva.php';
+        include __DIR__ . '/../vistas/paginas/directivas/modificar_directivas.php';
     }
 }

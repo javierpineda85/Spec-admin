@@ -67,7 +67,7 @@ if (isset($_POST['idEliminar'])) {
                                         <td style="vertical-align: middle; text-align: center;">
                                             <div class="d-flex justify-content-center">
                                                 <!-- Botón Editar -->
-                                                <a href="?r=modificar_directivas&id=<?php echo $valor["idDirectiva"]; ?>" class="btn btn-success btn-sm mr-1" title="Editar directiva"><i class="fas fa-edit"></i>
+                                                <a href="?r=vistaEditarDirectiva&id=<?php echo $valor["idDirectiva"]; ?>" class="btn btn-success btn-sm mr-1" title="Editar directiva"><i class="fas fa-edit"></i>
                                                 </a>
 
                                                 <!-- Botón Eliminar (formulario) -->

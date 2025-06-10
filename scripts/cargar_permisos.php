@@ -34,6 +34,12 @@ foreach ($files as $file) {
         ucfirst($base) . 'Controller',    // Turnos → TurnosController
         'Controlador' . ucfirst($base),   // Turnos → ControladorTurnos
     ];
+    
+    if ($base === 'hvivo') {
+        $ctrlNames = ['HombreVivoController'];
+    } else {
+        $ctrlNames = [ucfirst($base) . 'Controller', 'Controlador' . ucfirst($base)];
+    }
 
     $inClass     = false;
     $methodNames = [];

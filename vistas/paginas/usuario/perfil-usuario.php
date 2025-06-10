@@ -136,23 +136,24 @@ $usuario = $db->consultas($sql);
                             <small class="form-text text-muted">Solo formatos .png, .jpg o .jpeg</small>
                         </div>
                     </div>
-                    <div class="form-group col-sm-12 col-md-12 p-3 border border-secondary">
-                        <label for="" class="form-label">Estado y seguridad</label>
-                        <div class="custom-control custom-switch my-1">
-                            <input type="checkbox" name="resetPass" class="custom-control-input switch-warning" id="customSwitch1">
-                            <label class="custom-control-label text-secondary" for="customSwitch1">Restaurar contraseña</label>
-                            <small class="form-text text-muted">Al restaurar la contraseña, el usuario deberá escribir una nueva contraseña para iniciar sesión</small>
+                    <?php if (isset($_SESSION['rol']) && $_SESSION['rol'] === 'Gerencia'): ?>
+                        <div class="form-group col-sm-12 col-md-12 p-3 border border-secondary">
+                            <label for="" class="form-label">Estado y seguridad</label>
+                            <div class="custom-control custom-switch my-1">
+                                <input type="checkbox" name="resetPass" class="custom-control-input switch-warning" id="customSwitch1">
+                                <label class="custom-control-label text-secondary" for="customSwitch1">Restaurar contraseña</label>
+                                <small class="form-text text-muted">Al restaurar la contraseña, el usuario deberá escribir una nueva contraseña para iniciar sesión</small>
+                            </div>
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" name="activo" class="custom-control-input switch-danger" id="customSwitch2">
+                                <label class="custom-control-label text-secondary" for="customSwitch2">Dar de baja</label>
+                            </div>
+                            <!-- Input motivo (inicialmente oculto) -->
+                            <div id="motivoContainer" style="display: none; margin-top: 10px;">
+                                <input type="text" name="motivo" class="form-control" placeholder="Por favor indique el motivo">
+                            </div>
                         </div>
-                        <div class="custom-control custom-switch">
-                            <input type="checkbox" name="activo" class="custom-control-input switch-danger" id="customSwitch2">
-                            <label class="custom-control-label text-secondary" for="customSwitch2">Dar de baja</label>
-                        </div>
-
-                        <!-- Input motivo (inicialmente oculto) -->
-                        <div id="motivoContainer" style="display: none; margin-top: 10px;">
-                            <input type="text" name="motivo" class="form-control" placeholder="Por favor indique el motivo">
-                        </div>
-                    </div>
+                    <?php endif; ?>
 
                 </div>
 
