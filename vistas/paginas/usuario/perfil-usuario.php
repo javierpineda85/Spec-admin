@@ -62,7 +62,7 @@ $usuario = $db->consultas($sql);
                         </div>
                         <div class="form-group col-sm-12 col-md-4">
                             <label class="form-label">DNI</label>
-                            <input type="text" class="form-control" placeholder="12345678" name="dni" id="inputDNI" maxlength="8" value="<?php echo  $usuario[0]['dni'] ?>" required>
+                            <input type="text" class="form-control" placeholder="12345678" name="dni" id="inputDNI" maxlength="8" value="<?php echo  $usuario[0]['dni'] ?>" required readonly>
                             <small id="caracteresRestantes" class="form-text text-muted">Caracteres restantes: 8</small>
                         </div>
                         <div class="form-group col-sm-12 col-md-4">

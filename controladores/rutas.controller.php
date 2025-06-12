@@ -139,9 +139,16 @@ class RutasController
             ControladorCronograma::crtBuscarResumenHorasPorVigilador();
             return;
         }
-        //Reporte de horas por objetivo
-        if (isset($_GET['r']) && $_GET['r'] === 'reporte_porHoras') {
+
+        // Procesar el POST de “Horas por Objetivo”
+        if (isset($_GET['r']) && $_GET['r'] === 'reporte_porHoras' && $_SERVER['REQUEST_METHOD'] === 'POST') {
             ControladorCronograma::crtBuscarResumenHoras();
+            return;
+        }
+
+        // Mostrar el formulario / resultado (GET)
+        if (isset($_GET['r']) && $_GET['r'] === 'reporte_porHoras') {
+            ControladorCronograma::vistaReporteHorasPorObjetivo();
             return;
         }
 
@@ -177,6 +184,11 @@ class RutasController
             return;
         }
 
+        // Vista marcar ingreso / salida del servicio
+        if (isset($_GET['r']) && $_GET['r'] === 'entradas_salidas') {
+            NovedadesController::vistaEntradaSalida();
+            return;
+        }
         //Listado de objetivos
         if (isset($_GET['r']) && $_GET['r'] === 'listado_objetivos') {
             ControladorObjetivos::vistaListadoObjetivos();
@@ -184,7 +196,7 @@ class RutasController
         }
         //Crear objetivos
         if (isset($_GET['r']) && $_GET['r'] === 'crear_objetivo') {
-            ControladorObjetivos::vistaCreaObjetivo();
+            ControladorObjetivos::vistaCrearObjetivo();
             return;
         }
         //editar objetivos
@@ -195,6 +207,12 @@ class RutasController
         //Listado de objetivos
         if (isset($_GET['r']) && $_GET['r'] === 'listado_objetivos_inactivos') {
             ControladorObjetivos::vistaListadoObjetivosInactivos();
+            return;
+        }
+
+        //Guardar un puesto
+        if (isset($_GET['r']) && $_GET['r'] === 'crear_puesto' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+            ControladorPuestos::ctrGuardarPuesto();
             return;
         }
 

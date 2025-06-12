@@ -87,12 +87,12 @@ $objetivo = $db->consultas($sql, [$_GET['id']])[0];
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col-sm-12 col-md-6">
                         <div id="map" style="height:300px;margin-bottom:1rem;"></div>
                     </div>
                 </div>
             </div>
-            <div class="card-footer col-6">
+            <div class="card-footer col-sm-12 col-md-6">
                 <button type="submit" name="Modificar" class="btn btn-success">Modificar</button>
                 <button type="reset" class="btn btn-default">Borrar</button>
             </div>

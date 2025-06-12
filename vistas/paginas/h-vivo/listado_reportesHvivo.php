@@ -30,11 +30,11 @@ $sql = " SELECT r.idReporte, DATE(r.fecha_hora) AS fecha,TIME(r.fecha_hora) AS h
 if (!empty($_SESSION['filtros']['desde']) && !empty($_SESSION['filtros']['hasta'])) {
     $desde = $_SESSION['filtros']['desde'];
     $hasta = $_SESSION['filtros']['hasta'];
-    $sql .= " WHERE fecha BETWEEN '$desde' AND '$hasta'";
+    $sql .= " WHERE DATE(r.fecha_hora) BETWEEN '$desde' AND '$hasta'";
 }
 
 // Siempre ordenamos
-$sql .= " ORDER BY fecha, hora";
+$sql .= " ORDER BY r.fecha_hora, hora";
 
 // Ejecutamos con tu método habitual
 $reportes = $db->consultas($sql);

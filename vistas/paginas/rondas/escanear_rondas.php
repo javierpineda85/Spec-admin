@@ -1,4 +1,3 @@
-
 <div class="card">
   <div class="card-header bg-info text-white">
     <h3 class="card-title">Escanear Ronda</h3>
@@ -15,44 +14,64 @@
 
 <script src="https://unpkg.com/@zxing/library@latest"></script>
 <script>
-  // Instancia del lector de códigos QR
-  const codeReader = new ZXing.BrowserQRCodeReader();
-  const deviceList = document.getElementById('deviceList');
+  
+    document.addEventListener('DOMContentLoaded', async () => {
+    const codeReader = new ZXing.BrowserQRCodeReader();
+    const deviceList = document.getElementById('deviceList');
+    const mensaje = document.getElementById('mensaje');
+    const videoElem = document.getElementById('preview');
 
-  // Enumerar cámaras disponibles
-  codeReader.listVideoInputDevices()
-    .then(devices => {
+    // 1) Pide permiso a la cámara antes de listar
+    try {
+      await navigator.mediaDevices.getUserMedia({
+        video: true
+      });
+    } catch (err) {
+      console.error('No se pudo obtener permiso de cámara:', err);
+      mensaje.innerText = 'Permiso de cámara denegado.';
+      return;
+    }
+
+    // 2) Ahora sí, lista las cámaras
+    try {
+      const devices = await codeReader.listVideoInputDevices();
       if (devices.length === 0) {
-        document.getElementById('mensaje').innerText = 'No se encontró cámara.';
+        mensaje.innerText = 'No se encontró ninguna cámara.';
         return;
       }
-      devices.forEach(device => {
-        const option = document.createElement('option');
-        option.value = device.deviceId;
-        option.text = device.label || `Cámara ${deviceList.length + 1}`;
-        deviceList.appendChild(option);
+      devices.forEach((d, i) => {
+        const opt = document.createElement('option');
+        opt.value = d.deviceId;
+        // Puede que label esté vacío en algunos navegadores la primera vez
+        opt.text = d.label || `Cámara #${i+1}`;
+        deviceList.appendChild(opt);
       });
-      // Iniciar con la primera cámara
+      // Arranca el scanner con la primera cámara
+      startScanner(devices[0].deviceId);
+    } catch (err) {
+      console.error('Error al enumerar dispositivos de video:', err);
+      mensaje.innerText = 'Error al acceder a la cámara.';
+    }
+
+    // 3) Resetea y arranca con la cámara seleccionada
+    deviceList.addEventListener('change', () => {
+      codeReader.reset();
       startScanner(deviceList.value);
-    })
-    .catch(err => {
-      console.error(err);
-      document.getElementById('mensaje').innerText = 'Error al acceder a la cámara.';
     });
 
-  // Al cambiar la selección de cámara
-  deviceList.addEventListener('change', () => {
-    codeReader.reset();
-    startScanner(deviceList.value);
+    // 4) Función para arrancar la captura
+    function startScanner(deviceId) {
+      mensaje.innerText = 'Buscando código…';
+      codeReader.decodeFromVideoDevice(deviceId, videoElem, (result, err) => {
+        if (result) {
+          codeReader.reset();
+          window.location.href = result.getText();
+        }
+        // opcional: mostrar error de lectura intermitente
+        if (err && !(err instanceof ZXing.NotFoundException)) {
+          console.error(err);
+        }
+      });
+    }
   });
-
-  // Función para iniciar la captura de video y decodificación
-  function startScanner(deviceId) {
-    codeReader.decodeFromVideoDevice(deviceId, 'preview', (result, err) => {
-      if (result) {
-        codeReader.reset();
-        window.location.href = result.getText();
-      }
-    });
-  }
 </script>

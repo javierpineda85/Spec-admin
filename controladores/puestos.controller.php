@@ -5,7 +5,7 @@ class ControladorPuestos
 {
     public static function ctrGuardarPuesto()
     {
-        Auth::check('puestos', 'crtGuardarPuesto');
+        Auth::check('puestos', 'ctrGuardarPuesto');
         if (isset($_POST["puesto"])) {
 
             try {
@@ -37,6 +37,8 @@ class ControladorPuestos
                 if ($respuesta == "ok") {
                     $conexion->commit();
                     $_SESSION['success_message'] = "Puesto registrado correctamente.";
+                    header("Location:?r=listado_puestos");
+                    exit;
                 } else {
                     throw new Exception("Error al guardar en la base de datos.");
                 }

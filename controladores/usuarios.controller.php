@@ -126,7 +126,6 @@ class ControladorUsuarios
                 $id_usuario = $_POST["idUsuario"];
                 $nombre     = trim($_POST["nombre"]);
                 $apellido   = trim($_POST["apellido"]);
-                $dni        = trim($_POST["dni"]);
                 $f_nac      = $_POST["f_nac"];
                 $telefono   = $_POST["telefono"];
                 $tel_emergencia  = $_POST["tel_emergencia"];
@@ -163,7 +162,6 @@ class ControladorUsuarios
                     "id_usuario"     => $id_usuario,
                     "nombre"         => $nombre,
                     "apellido"       => $apellido,
-                    "dni"            => $dni,
                     "f_nac"          => $f_nac,
                     "telefono"       => $telefono,
                     "tel_emergencia" => $tel_emergencia,

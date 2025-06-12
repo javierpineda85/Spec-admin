@@ -93,6 +93,12 @@ class NovedadesController
         include __DIR__ . '/../vistas/paginas/novedades/listado_entradaSalidas.php';
         return;
     }
+        static public function vistaEntradaSalida()
+    {
+        Auth::check('novedades', 'vistaEntradaSalida');
+        include __DIR__ . '/../vistas/paginas/novedades/entradas_salidas.php';
+        return;
+    }
 
     static public function vistaCrearNovedades()
     {

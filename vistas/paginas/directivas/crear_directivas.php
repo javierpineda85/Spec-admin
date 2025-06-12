@@ -24,7 +24,7 @@ $objetivos = $db->consultas($sql);
             </div>
         <?php endif; ?>
         <!-- form start -->
-        <form class="form-horizontal" method="POST">
+        <form class="form-horizontal" method="POST" enctype="multipart/form-data">
 
             <div class="row">
                 <div class="form-group col-sm-12 col-md-6">

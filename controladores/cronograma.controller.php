@@ -9,7 +9,7 @@ class ControladorCronograma
     /*Funcion para buscar por resumen diario de jornadas trabajadas*/
     static public function crtBuscarResumenDiario()
     {
-        Auth::check('cronogramas', 'crtBuscarResumenDiario');
+        Auth::check('cronograma', 'crtBuscarResumenDiario');
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
@@ -44,7 +44,7 @@ class ControladorCronograma
     /*reporte_horas_por_objetivo */
     static public function crtBuscarResumenHoras()
     {
-        Auth::check('cronogramas', 'crtBuscarResumenHoras');
+        Auth::check('cronograma', 'crtBuscarResumenHoras');
         $desde      = $_POST['desde']    ?? null;
         $hasta      = $_POST['hasta']    ?? null;
 
@@ -108,7 +108,7 @@ class ControladorCronograma
      */
     static private function calcularHorasEnVentana(DateTime $start, DateTime $end, string $horaDesde, string $horaHasta): float
     {
-        Auth::check('cronogramas', 'calcularHorasEnVentana');
+        Auth::check('cronograma', 'calcularHorasEnVentana');
         $segDiurnos = 0;
         $cursor = clone $start;
 
@@ -135,7 +135,7 @@ class ControladorCronograma
     /*reporte_horas_vigilador */
     static public function crtBuscarResumenHorasPorVigilador()
     {
-        Auth::check('cronogramas', 'crtBuscarResumenHorasPorVigilador');
+        Auth::check('cronograma', 'crtBuscarResumenHorasPorVigilador');
         $desde = $_POST['desde'] ?? null;
         $hasta = $_POST['hasta'] ?? null;
         if (!$desde || !$hasta) {
@@ -223,32 +223,43 @@ class ControladorCronograma
 
     static public function vistaCrearCronograma()
     {
-        Auth::check('cronogramas', 'vistaCrearCronograma');
+        Auth::check('cronograma', 'vistaCrearCronograma');
         include __DIR__ . '/../vistas/paginas/cronogramas/crear_cronograma.php';
         return;
     }
     static public function vistaListadoCronogramas()
     {
-        Auth::check('cronogramas', 'vistaListadoCronogramas');
+        Auth::check('cronograma', 'vistaListadoCronogramas');
         include __DIR__ . '/../vistas/paginas/cronogramas/listado_cronogramas.php';
         return;
     }
     static public function vistaListadoCronogramaPorVigilador()
     {
-        Auth::check('cronogramas', 'vistaListadoCronogramaPorVigilador');
-        include __DIR__ . '/../vistas/paginas/cronogramas/listado_cronogramas.php';
+        Auth::check('cronograma', 'vistaListadoCronogramaPorVigilador');
+        //include __DIR__ . '/../vistas/paginas/cronogramas/listado_cronogramas.php';
+        include __DIR__ . '/../vistas/paginas/cronogramas/listado_porVigilador.php';
         return;
     }
     static public function vistaJornadasPorObjetivo()
     {
-        Auth::check('cronogramas', 'vistaJornadasPorObjetivo');
+        Auth::check('cronograma', 'vistaJornadasPorObjetivo');
         include __DIR__ . '/../vistas/paginas/cronogramas/resumen_diario_jornadas.php';
         return;
     }
     static public function vistaHorasPorVigilador()
     {
-        Auth::check('cronogramas', 'reporte_porVigilador');
+        Auth::check('cronograma', 'vistaHorasPorVigilador');
         include __DIR__ . '/../vistas/paginas/cronogramas/reporte_horas_vigilador.php';
         return;
+    }
+    public static function vistaReporteHorasPorObjetivo()
+    {
+        Auth::check('cronograma', 'crtBuscarResumenHoras');
+        // Carga lista de objetivos
+        $db = new Conexion();
+        $objetivos = $db->consultas("SELECT idObjetivo, nombre FROM objetivos ORDER BY nombre");
+        // Recupera el reporte generado por POST (si existe)
+        $reporte = $_SESSION['resumen_periodo'] ?? null;
+        include __DIR__ . '/../vistas/paginas/cronogramas/reporte_horas_por_objetivo.php';
     }
 }

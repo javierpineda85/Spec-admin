@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           </div>
           <!-- Contenedor del mapa -->
           <div class="row">
-            <div class="col-6">
+            <div class="col-sm-12 col-md-6">
               <div id="map" style="height: 300px; margin-bottom: 1rem;"></div>
             </div>
           </div>
@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         <!-- /.card-body -->
 
-        <div class="card-footer col-6 mt-3">
+        <div class="card-footer col-sm-12 col-md-6">
           <input type="submit" class="btn btn-success" value="Registrar" name="Registrar">
           <button type="reset" class="btn btn-default">Borrar campos</button>
         </div>

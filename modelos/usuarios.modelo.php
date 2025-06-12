@@ -79,12 +79,11 @@ class ModeloUsuarios
     static public function mdlModificarUsuario($tabla, $datos)
     {
 
-        $stmt = Conexion::conectar()->prepare("UPDATE $tabla SET nombre = :nombre, apellido = :apellido, dni = :dni, f_nac = :f_nac, telefono = :telefono, tel_emergencia = :tel_emergencia,nombre_contacto = :nombre_contacto, parentesco = :parentesco, domicilio = :domicilio, provincia = :provincia, rol = :rol, imgPerfil = :imgPerfil, imgRepriv = :imgRepriv, resetPass = :resetPass, activo = :activo WHERE idUsuario = :id_usuario");
+        $stmt = Conexion::conectar()->prepare("UPDATE $tabla SET nombre = :nombre, apellido = :apellido, f_nac = :f_nac, telefono = :telefono, tel_emergencia = :tel_emergencia,nombre_contacto = :nombre_contacto, parentesco = :parentesco, domicilio = :domicilio, provincia = :provincia, rol = :rol, imgPerfil = :imgPerfil, imgRepriv = :imgRepriv, resetPass = :resetPass, activo = :activo WHERE idUsuario = :id_usuario");
 
         $stmt->bindParam(":id_usuario", $datos["id_usuario"], PDO::PARAM_INT);
         $stmt->bindParam(":nombre", $datos["nombre"], PDO::PARAM_STR);
         $stmt->bindParam(":apellido", $datos["apellido"], PDO::PARAM_STR);
-        $stmt->bindParam(":dni", $datos["dni"], PDO::PARAM_STR);
         $stmt->bindParam(":f_nac", $datos["f_nac"], PDO::PARAM_STR);
         $stmt->bindParam(":telefono", $datos["telefono"], PDO::PARAM_STR);
         $stmt->bindParam(":tel_emergencia", $datos["tel_emergencia"], PDO::PARAM_STR);

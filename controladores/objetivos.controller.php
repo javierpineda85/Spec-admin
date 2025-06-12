@@ -129,7 +129,7 @@ class ControladorObjetivos
         include __DIR__ . '/../vistas/paginas/objetivos/listado_objetivos_desactivados.php';
         return;
     }
-    static public function vistaCreaObjetivo()
+    static public function vistaCrearObjetivo()
     {
         Auth::check('objetivos', 'vistaCrearObjetivo');
         include __DIR__ . '/../vistas/paginas/objetivos/crear_objetivo.php';
