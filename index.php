@@ -4,6 +4,7 @@ session_start();  // Aseguramos que la sesión esté iniciada para poder verific
 require_once __DIR__ . '/core/Auth.php';
 require_once __DIR__ . '/core/CheckPermissionMiddleware.php';
 require_once("config.php");
+require_once('controladores/alertas.controller.php');
 require_once('controladores/archivos.controller.php');
 require_once('controladores/bajas.controller.php');
 require_once('controladores/cronograma.controller.php');
@@ -31,7 +32,13 @@ $r = $_GET['r'] ?? '';
 if ($r !== 'login') {
     Auth::requireLogin();
 }
-
+//colocamos el handler acá para que cargue antes que la vista
+if (isset($_GET['r']) && $_GET['r'] === 'registrar_reporte') {
+    header('Content-Type: application/json; charset=utf-8');
+    require_once __DIR__ . '/controladores/hvivo.controller.php';
+    HombreVivoController::ajaxRegistrarReporte();
+    exit;  // importantísimo para que no siga al resto
+}
 if (!isset($_SESSION['idUsuario']) || empty($_SESSION['idUsuario'])) {
     // Si no está autenticado, redirigimos al login
     // Aquí puedes hacer una redirección o mostrar la vista de login

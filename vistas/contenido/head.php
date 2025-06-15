@@ -13,6 +13,13 @@
 
   <title>S.P.E.C. </title>
 
+  <link rel="manifest" href="<?= BASE_URL ?>/manifest.json">
+  <meta name="theme-color" content="#007bff">
+  <!-- Registro del Service Worker -->
+  <script src="<?= BASE_URL ?>/sw-register.js"></script>
+
+  <!-- Audio para alertas -->
+  <audio id="sonido-alerta-global" src="<?= BASE_URL ?>/public/sonidos/spec_notificacion.mp3" preload="auto"></audio>
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome -->

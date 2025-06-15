@@ -68,14 +68,15 @@ $objetivoAsignado = in_array($rol_usuario, ['Vigilador', 'Referente'])
                     <?= $_SESSION['success_message'];
                     unset($_SESSION['success_message']); ?>
                 </div>
-                <?php if (!empty($_SESSION['error_message'])): ?>
-                    <div class="alert alert-danger alert-dismissible mt-3">
-                        <button type="button" class="close" data-dismiss="alert">&times;</button>
-                        <i class="icon fas fa-exclamation-circle"></i>
-                        <?= $_SESSION['error_message'];
-                        unset($_SESSION['error_message']); ?>
-                    </div>
-                <?php endif; ?>
+            <?php endif; ?>
+            <?php if (!empty($_SESSION['error_message'])): ?>
+                <div class="alert alert-danger alert-dismissible mt-3">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    <i class="icon fas fa-exclamation-circle"></i>
+                    <?= $_SESSION['error_message'];
+                    unset($_SESSION['error_message']); ?>
+                </div>
+
             <?php endif; ?>
             <div class="card-body">
                 <h6>Para registrar la entrada al servicio, solo presiona "Registrar"</h6>

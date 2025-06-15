@@ -4,6 +4,7 @@ class RutasController
 {
     public static function cargarVista()
     {
+
         $public = [
             'login/index',
             'plantillas/crtGetPlantilla',
@@ -11,14 +12,57 @@ class RutasController
             'cerrar_sesion',
             'acceso_denegado/index',
             'inicio/index',
+            'registrar_reporte/index'
         ];
         // ========= RUTAS QUE LLAMAN A MÉTODOS =========
 
         ini_set('display_errors', 1);
         error_reporting(E_ALL);
+
+        //Notificaciones y alertas
+        if (isset($_GET['r']) && $_GET['r'] === 'registrar_alerta_hombrevivo' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+            AlertasController::registrarDemoraHombreVivo();
+            exit;
+        }
+
+        //Vista de alertas
+        if (isset($_GET['r']) && $_GET['r'] === 'alertas_supervisor') {
+            require_once 'vistas/paginas/supervisores/alertas_supervisor.php';
+            exit;
+        }
+        //Vista publicas para ver alertas
+        if (isset($_GET['r']) && $_GET['r'] === 'ver_alertas') {
+            AlertasController::verAlertasNoLeidas();
+            exit;
+        }
+
+        //Marcar alertas como leidas
+        if (isset($_GET['r']) && $_GET['r'] === 'marcar_alerta_leida' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+            AlertasController::marcarLeida();
+            exit;
+        }
+
+        //Historial de alertas leidas
+        if (isset($_GET['r']) && $_GET['r'] === 'ver_historial_alertas') {
+            AlertasController::verHistorialLeidas();
+            exit;
+        }
+
         // Registrar escaneo de ronda (AJAX o GET)
         if (isset($_GET['r']) && $_GET['r'] === 'registrar_escaneo') {
             EscaneosController::registrar();
+            return;
+        }
+
+        // Vista para escanear con cámara
+        if (isset($_GET['r']) && $_GET['r'] === 'escanear') {
+            RondasController::vistaEscanearRondas();
+            return;
+        }
+
+        //Escaneo feedbak es la vista que retorna luego de escanear un QR
+        if (isset($_GET['r']) && $_GET['r'] === 'escaneo_feedback') {
+            EscaneosController::feedback();
             return;
         }
         // Gestión de permisos
@@ -54,6 +98,7 @@ class RutasController
             return;
         }
 
+
         // Vista de reporte hombre vivo (timer)
         if (isset($_GET['r']) && $_GET['r'] === 'reporte_hombre_vivo') {
             HombreVivoController::vistaHombreVivo();
@@ -67,12 +112,6 @@ class RutasController
         }
 
 
-        // Endpoint AJAX para registrar reporte hombre vivo
-        if (isset($_GET['r']) && $_GET['r'] === 'registrar_reporte') {
-            //require_once __DIR__ . '/hvivo.controller.php';
-            HombreVivoController::registrar();
-            return;
-        }
 
         if (isset($_GET['r']) && $_GET['r'] === 'ajax_rondas') {
             require_once __DIR__ . '/../libraries/ajax/ajax_rondas.php';

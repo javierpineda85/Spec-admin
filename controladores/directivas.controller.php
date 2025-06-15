@@ -4,12 +4,12 @@ require_once('modelos/directivas.modelo.php');
 
 class ControladorDirectivas
 {
+
     /* GUARDAR DIRECTIVAS */
     static public function crtGuardarDirectiva()
     {
         Auth::check('directivas', 'crtGuardarDirectiva');
         if (isset($_POST["id_objetivo"])) {
-            // Para mensajes de sesión
             if (session_status() !== PHP_SESSION_ACTIVE) {
                 session_start();
             }
@@ -17,15 +17,13 @@ class ControladorDirectivas
             try {
                 $conexion = Conexion::conectar();
 
-                // Iniciar transacción si no hay una activa
                 if (!$conexion->inTransaction()) {
                     $conexion->beginTransaction();
                 }
 
-                // 1. Procesar adjunto si existe
+                // 1. Procesar adjunto
                 $rutaAdjunto = null;
                 if (isset($_FILES["adjunto"]) && $_FILES["adjunto"]["error"] !== UPLOAD_ERR_NO_FILE) {
-                    // Generamos un nombre base único para el archivo, p. ej. "directiva_20250606204530"
                     $nombreBase = "directiva_" . date("YmdHis");
                     $rutaAdjunto = ControladorArchivos::guardarArchivo(
                         $_FILES["adjunto"],
@@ -36,33 +34,45 @@ class ControladorDirectivas
 
                 $tabla = "directivas";
 
-                // 2. Preparar datos a insertar en la BD
+                // 2. Datos a insertar
                 $datos = array(
                     "id_objetivo" => $_POST["id_objetivo"],
-                    // Limpiar saltos de línea (ya lo hacías en el modelo)
                     "detalle"     => $_POST["detalle"],
-                    // Puede ser nulo si no subieron nada
                     "adjunto"     => $rutaAdjunto
                 );
 
-                // 3. Llamar al modelo para guardar
+                // 3. Guardar directiva
                 $respuesta = ModeloDirectivas::mdlGuardarDirectiva($tabla, $datos);
 
                 if ($respuesta === "ok") {
-                    // Confirmar transacción
+                    // ✅ Insertar alertas para supervisores y vigiladores activos
+                    $sqlUsuarios = "SELECT idUsuario FROM usuarios 
+                                WHERE rol IN ('Vigilador', 'Supervisor I', 'Supervisor II') 
+                                  AND activo = 1";
+                    $usuarios = $conexion->query($sqlUsuarios)->fetchAll(PDO::FETCH_ASSOC);
+
+                    $sqlAlerta = "INSERT INTO alertas (tipo, mensaje, usuario_id, objetivo_id, leida, creada_en)
+                              VALUES ('directiva', :mensaje, :uid, :oid, 0, NOW())";
+                    $stmt = $conexion->prepare($sqlAlerta);
+                    foreach ($usuarios as $u) {
+                        $stmt->execute([
+                            ':mensaje' => 'Se ha publicado una nueva directiva.',
+                            ':uid' => $u['idUsuario'],
+                            ':oid' => $_POST["id_objetivo"]
+                        ]);
+                    }
+
+                    // Confirmar todo
                     $conexion->commit();
                     $_SESSION['success_message'] = 'Directiva creada exitosamente';
                 } else {
-                    // Si algo falla, revirtiendo cambios
                     $conexion->rollBack();
                     $_SESSION['error_message'] = 'Error al guardar la directiva.';
                 }
             } catch (Exception $e) {
-                // Rollback en caso de excepción
                 if ($conexion->inTransaction()) {
                     $conexion->rollBack();
                 }
-                // Puedes, por ejemplo, borrar el archivo si lo habías movido y hubo un error después
                 if (!empty($rutaAdjunto) && file_exists($rutaAdjunto)) {
                     unlink($rutaAdjunto);
                 }
@@ -71,6 +81,7 @@ class ControladorDirectivas
             }
         }
     }
+
 
     /* MODIFICAR DIRECTIVAS */
     static public function crtModificarDirectiva()

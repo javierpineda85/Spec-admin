@@ -31,7 +31,7 @@ class ModeloUsuarios
     public function getAsignacionHoy(int $usuarioId)
     {
         $db = new Conexion;
-        $sql =" SELECT r.idRonda AS ronda_id, t.objetivo_id, t.is_referente FROM turnos t JOIN rondas r ON r.objetivo_id = t.objetivo_id WHERE t.vigilador_id = :uid AND t.fecha = CURDATE() ORDER BY r.orden_escaneo ASC LIMIT 1";
+        $sql =" SELECT t.idTurno AS turno_id, t.objetivo_id, t.is_referente FROM turnos t WHERE t.vigilador_id = :uid AND DATE(t.fecha) = CURDATE() ORDER BY t.idTurno ASC LIMIT 1";
         $stmt = Conexion::conectar()->prepare($sql);
         $stmt->bindParam(':uid', $usuarioId, PDO::PARAM_INT);
         $stmt->execute();

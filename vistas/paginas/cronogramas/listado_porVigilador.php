@@ -2,8 +2,19 @@
 
 
 $db = new Conexion();
-$sql = "SELECT idUsuario, apellido, nombre FROM usuarios ORDER BY apellido, nombre";
-$vigiladores = $db->consultas($sql);
+// Si es “Vigilador”, solo traemos sus datos
+if ( ($_SESSION['rol'] ?? '') === 'Vigilador' ) {
+    $sql = "SELECT idUsuario, apellido, nombre 
+              FROM usuarios 
+             WHERE idUsuario = ?";
+    $vigiladores = $db->consultas($sql, [$_SESSION['idUsuario']]);
+} else {
+    // Cualquier otro rol: listamos todos
+    $sql = "SELECT idUsuario, apellido, nombre 
+              FROM usuarios 
+          ORDER BY apellido, nombre";
+    $vigiladores = $db->consultas($sql);
+}
 
 $filtros = $_SESSION['filtros_vigilador'] ?? [];
 $turnos  = $_SESSION['turnos_porVigilador'] ?? [];

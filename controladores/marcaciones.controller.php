@@ -78,6 +78,7 @@ class MarcacionesController
                         $dist,
                         $radio
                     ));
+                     $_SESSION['error_message'] = 'Estás a %.0f m fuera del área permitida (%d m).';
                 }
             }
 
