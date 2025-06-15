@@ -98,6 +98,79 @@
       <?php endif; ?>
       <!-- ./directivas -->
 
+      <!-- Objetivos -->
+      <?php if (
+        Auth::hasPermission('objetivos', 'vistaCreaObjetivo')
+        || Auth::hasPermission('objetivos', 'vistaListadoObjetivos')
+        || Auth::hasPermission('objetivos', 'vistaListadoObjetivosInactivos')
+        || Auth::hasPermission('objetivos', 'vistaEditarObjetivo')
+      ): ?>
+        <div class="col-lg-3 col-md-6 col-sm-12">
+          <div class="info-box shadow">
+            <span class="info-box-icon bg-success"><i class="fas fa-map-marker-alt"></i></span>
+            <div class="info-box-content">
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="info-box-number">Objetivos</span>
+                <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapseObjetivos" aria-expanded="false" aria-controls="collapseObjetivos">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+              <div id="collapseObjetivos" class="collapse">
+                <div class="mt-2">
+                  <?php if (Auth::hasPermission('objetivos', 'vistaCreaObjetivo')): ?>
+                    <a href="?r=crear_objetivo" class="btn btn-block btn-success btn-sm text-white">Crear</a>
+                  <?php endif; ?>
+                  <?php if (Auth::hasPermission('objetivos', 'vistaListadoObjetivos')): ?>
+                    <a href="?r=listado_objetivos" class="btn btn-block btn-success btn-sm text-white">Mostrar Activos</a>
+                  <?php endif; ?>
+                  <?php if (Auth::hasPermission('objetivos', 'vistaListadoObjetivosInactivos')): ?>
+                    <a href="?r=listado_objetivos_inactivos" class="btn btn-block btn-success btn-sm text-white">Mostrar Inactivos</a>
+                  <?php endif; ?>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <?php endif; ?>
+      <!-- ./objetivos -->
+
+      <!-- Puestos -->
+
+      <?php if (
+        Auth::hasPermission('puestos', 'vistaCrearPuestos') ||
+        Auth::hasPermission('puestos', 'vistaListadoPuestos') ||
+        Auth::hasPermission('puestos', 'vistaListadoPuestosDesactivados')
+      ): ?>
+
+        <div class="col-lg-3 col-md-6 col-sm-12">
+          <div class="info-box shadow">
+            <span class="info-box-icon bg-success"><i class="fas fa-eye"></i></span>
+            <div class="info-box-content">
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="info-box-number">Puestos</span>
+                <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapsePuestos" aria-expanded="false" aria-controls="collapseObjetivos">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+              <div id="collapsePuestos" class="collapse">
+                <div class="mt-2">
+                  <?php if (Auth::hasPermission('puestos', 'vistaCrearPuestos')): ?>
+                    <a href="?r=crear_puesto" class="btn btn-block btn-success btn-sm text-white">Crear</a>
+                  <?php endif; ?>
+                  <?php if (Auth::hasPermission('puestos', 'vistaListadoPuestos')): ?>
+                    <a href="?r=listado_puestos" class="btn btn-block btn-success btn-sm text-white">Mostrar Activos</a>
+                  <?php endif; ?>
+                  <?php if (Auth::hasPermission('puestos', 'vistaListadoPuestosDesactivados')): ?>
+                    <a href="?r=listado_puestos_inactivos" class="btn btn-block btn-success btn-sm text-white">Mostrar Inactivos</a>
+                  <?php endif; ?>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <?php endif; ?>
+      <!-- ./objetivos -->
+
       <!-- Rondas -->
       <?php if (
         Auth::hasPermission('rondas', 'vistaCrearRondas')
@@ -108,14 +181,12 @@
           <div class="info-box shadow">
             <span class="info-box-icon bg-success"><i class="nav-icon fas fa-sync-alt"></i></span>
             <div class="info-box-content">
-              <!-- Fila para el título y botón de colapsar -->
               <div class="d-flex justify-content-between align-items-center">
                 <span class="info-box-number">Rondas</span>
                 <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapseRondas" aria-expanded="false" aria-controls="collapseRondas">
                   <i class="fas fa-plus"></i>
                 </button>
               </div>
-              <!-- Sección colapsable para los botones -->
               <div id="collapseRondas" class="collapse">
                 <div class="mt-2">
                   <?php if (Auth::hasPermission('rondas', 'vistaCrearRondas')): ?>
@@ -208,7 +279,7 @@
                     <a href="?r=entradas_salidas" class="btn btn-block btn-info btn-sm text-white">Marcar Entrada/Salida</a>
                   <?php endif; ?>
                   <?php if (Auth::hasPermission('novedades', 'vistaCrearNovedades')): ?>
-                    <a href="?r=crear_novedad" class="btn btn-block btn-info btn-sm text-white">Crear Novedad</a>
+                    <a href="?r=crear_novedad" class="btn btn-block btn-info btn-sm text-white">Crear</a>
                   <?php endif; ?>
                   <?php if (Auth::hasPermission('novedades', 'vistaListadoNovedades')): ?>
                     <a href="?r=listado_novedades" class="btn btn-block btn-info btn-sm text-white">Mostrar Todas</a>
@@ -224,43 +295,6 @@
       <?php endif; ?>
       <!-- ./novedades -->
 
-      <!-- Objetivos -->
-      <?php if (
-        Auth::hasPermission('objetivos', 'vistaCreaObjetivo')
-        || Auth::hasPermission('objetivos', 'vistaListadoObjetivos')
-        || Auth::hasPermission('objetivos', 'vistaListadoObjetivosInactivos')
-        || Auth::hasPermission('objetivos', 'vistaEditarObjetivo')
-      ): ?>
-        <div class="col-lg-3 col-md-6 col-sm-12">
-          <div class="info-box shadow">
-            <span class="info-box-icon bg-info"><i class="fas fa-map-marker-alt"></i></span>
-            <div class="info-box-content">
-              <!-- Fila para el título y botón de colapsar -->
-              <div class="d-flex justify-content-between align-items-center">
-                <span class="info-box-number">Objetivos</span>
-                <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapseObjetivos" aria-expanded="false" aria-controls="collapseObjetivos">
-                  <i class="fas fa-plus"></i>
-                </button>
-              </div>
-              <!-- Sección colapsable para los botones -->
-              <div id="collapseObjetivos" class="collapse">
-                <div class="mt-2">
-                  <?php if (Auth::hasPermission('objetivos', 'vistaCreaObjetivo')): ?>
-                    <a href="?r=crear_objetivo" class="btn btn-block btn-info btn-sm text-white">Crear Objetivo</a>
-                  <?php endif; ?>
-                  <?php if (Auth::hasPermission('objetivos', 'vistaListadoObjetivos')): ?>
-                    <a href="?r=listado_objetivos" class="btn btn-block btn-info btn-sm text-white">Mostrar Activos</a>
-                  <?php endif; ?>
-                  <?php if (Auth::hasPermission('objetivos', 'vistaListadoObjetivosInactivos')): ?>
-                    <a href="?r=listado_objetivos_inactivos" class="btn btn-block btn-info btn-sm text-white">Mostrar Inactivos</a>
-                  <?php endif; ?>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      <?php endif; ?>
-      <!-- ./objetivos -->
 
       <!-- Usuarios -->
       <?php if (

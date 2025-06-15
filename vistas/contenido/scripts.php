@@ -28,15 +28,15 @@
 <!-- Knob -->
 <script src="<?= BASE_URL ?>/plugins/jquery-knob/jquery.knob.min.js"></script>
 
-<!-- Daterangepicker -->
+<!-- Daterangepicker 
 <script src="<?= BASE_URL ?>/plugins/moment/moment.min.js"></script>
-<script src="<?= BASE_URL ?>/plugins/daterangepicker/daterangepicker.js"></script>
+<script src="<?= BASE_URL ?>/plugins/daterangepicker/daterangepicker.js"></script>-->
 
-<!-- Tempusdominus -->
-<script src="<?= BASE_URL ?>/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+<!-- Tempusdominus
+<script src="<?= BASE_URL ?>/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script> -->
 
-<!-- Summernote -->
-<script src="<?= BASE_URL ?>/plugins/summernote/summernote-bs4.min.js"></script>
+<!-- Summernote 
+<script src="<?= BASE_URL ?>/plugins/summernote/summernote-bs4.min.js"></script>-->
 
 <!-- OverlayScrollbars -->
 <script src="<?= BASE_URL ?>/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>

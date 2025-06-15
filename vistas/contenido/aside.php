@@ -91,46 +91,52 @@
           </li>
         <?php endif; ?>
 
-        <!-- Rondas -->
-        <?php if (Auth::hasPermission('rondas', 'vistaCrearRondas') || Auth::hasPermission('rondas', 'vistaListadoRondas') || Auth::hasPermission('rondas', 'vistaEscanearRondas')): ?>
+                <!-- Objetivos -->
+        <?php if (
+          Auth::hasPermission('objetivos', 'vistaCreaObjetivo') ||
+          Auth::hasPermission('objetivos', 'vistaListadoObjetivos') ||
+          Auth::hasPermission('objetivos', 'vistaListadoObjetivosInactivos') ||
+          Auth::hasPermission('objetivos', 'vistaEditarObjetivo')
+        ): ?>
           <li class="nav-item has-treeview">
             <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-sync-alt text-success"></i>
+              <i class="nav-icon fas fa-map-marker-alt text-success"></i>
               <p>
-                Rondas
-                <i class="fas fa-angle-left right"></i>
+                Objetivos
+                <i class="right fas fa-angle-left"></i>
               </p>
             </a>
             <ul class="nav nav-treeview">
-              <?php if (Auth::hasPermission('rondas', 'vistaCrearRondas')): ?>
+              <?php if (Auth::hasPermission('objetivos', 'vistaCrearObjetivo')): ?>
                 <li class="nav-item">
-                  <a href="?r=crear_rondas" class="nav-link">
+                  <a href="?r=crear_objetivo" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
                     <p>Crear</p>
                   </a>
                 </li>
               <?php endif; ?>
-              <?php if (Auth::hasPermission('rondas', 'vistaListadoRondas')): ?>
+              <?php if (Auth::hasPermission('objetivos', 'vistaListadoObjetivos')): ?>
                 <li class="nav-item">
-                  <a href="?r=listado_rondas" class="nav-link">
+                  <a href="?r=listado_objetivos" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
-                    <p>Mostrar Todas</p>
+                    <p>Mostrar Activos</p>
                   </a>
                 </li>
               <?php endif; ?>
-              <?php if (Auth::hasPermission('rondas', 'vistaEscanearRondas')): ?>
+              <?php if (Auth::hasPermission('objetivos', 'vistaListadoObjetivosInactivos')): ?>
                 <li class="nav-item">
-                  <a href="?r=escanear" class="nav-link">
+                  <a href="?r=listado_objetivos_inactivos" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
-                    <p>Escanear QR</p>
+                    <p>Mostrar Inactivos</p>
                   </a>
                 </li>
               <?php endif; ?>
+              
             </ul>
           </li>
         <?php endif; ?>
 
-        <!-- Puestos -->
+                <!-- Puestos -->
         <?php if (Auth::hasPermission('puestos', 'vistaCrearPuestos') || 
                   Auth::hasPermission('puestos', 'vistaListadoPuestos') || 
                   Auth::hasPermission('puestos', 'vistaListadoPuestosDesactivados')): ?>
@@ -171,6 +177,47 @@
           </li>
         <?php endif; ?>
 
+        <!-- Rondas -->
+        <?php if (Auth::hasPermission('rondas', 'vistaCrearRondas') || Auth::hasPermission('rondas', 'vistaListadoRondas') || Auth::hasPermission('rondas', 'vistaEscanearRondas')): ?>
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-sync-alt text-success"></i>
+              <p>
+                Rondas
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <?php if (Auth::hasPermission('rondas', 'vistaCrearRondas')): ?>
+                <li class="nav-item">
+                  <a href="?r=crear_rondas" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Crear</p>
+                  </a>
+                </li>
+              <?php endif; ?>
+              <?php if (Auth::hasPermission('rondas', 'vistaListadoRondas')): ?>
+                <li class="nav-item">
+                  <a href="?r=listado_rondas" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Mostrar Todas</p>
+                  </a>
+                </li>
+              <?php endif; ?>
+              <?php if (Auth::hasPermission('rondas', 'vistaEscanearRondas')): ?>
+                <li class="nav-item">
+                  <a href="?r=escanear" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Escanear QR</p>
+                  </a>
+                </li>
+              <?php endif; ?>
+            </ul>
+          </li>
+        <?php endif; ?>
+
+
+
         <!-- Cronogramas -->
         <?php if (
           Auth::hasPermission('cronograma', 'vistaCrearCronograma') ||
@@ -181,7 +228,7 @@
         ): ?>
           <li class="nav-item has-treeview">
             <a href="#" class="nav-link">
-              <i class="nav-icon far fa-calendar-alt text-info"></i>
+              <i class="nav-icon far fa-calendar-alt text-primary"></i>
               <p>
                 Cronogramas
                 <i class="fas fa-angle-left right"></i>
@@ -291,50 +338,7 @@
           </li>
         <?php endif; ?>
 
-        <!-- Objetivos -->
-        <?php if (
-          Auth::hasPermission('objetivos', 'vistaCreaObjetivo') ||
-          Auth::hasPermission('objetivos', 'vistaListadoObjetivos') ||
-          Auth::hasPermission('objetivos', 'vistaListadoObjetivosInactivos') ||
-          Auth::hasPermission('objetivos', 'vistaEditarObjetivo')
-        ): ?>
-          <li class="nav-item has-treeview">
-            <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-map-marker-alt text-info"></i>
-              <p>
-                Objetivos
-                <i class="right fas fa-angle-left"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <?php if (Auth::hasPermission('objetivos', 'vistaCrearObjetivo')): ?>
-                <li class="nav-item">
-                  <a href="?r=crear_objetivo" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Crear</p>
-                  </a>
-                </li>
-              <?php endif; ?>
-              <?php if (Auth::hasPermission('objetivos', 'vistaListadoObjetivos')): ?>
-                <li class="nav-item">
-                  <a href="?r=listado_objetivos" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Mostrar Activos</p>
-                  </a>
-                </li>
-              <?php endif; ?>
-              <?php if (Auth::hasPermission('objetivos', 'vistaListadoObjetivosInactivos')): ?>
-                <li class="nav-item">
-                  <a href="?r=listado_objetivos_inactivos" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Mostrar Inactivos</p>
-                  </a>
-                </li>
-              <?php endif; ?>
-              
-            </ul>
-          </li>
-        <?php endif; ?>
+
 
         <!-- Usuarios -->
         <?php if (
@@ -389,13 +393,10 @@
         <?php endif; ?>
 
         <!-- Mensajes -->
-        <?php if (
-          Auth::hasPermission('mensajes', 'bandejaEntrada') ||
-          Auth::hasPermission('mensajes', 'crtNuevoMensaje')
-        ): ?>
+        <?php if ( Auth::hasPermission('mensajes', 'bandejaEntrada') || Auth::hasPermission('mensajes', 'crtNuevoMensaje') ): ?>
           <li class="nav-item has-treeview">
             <a href="#" class="nav-link">
-              <i class="nav-icon far fa-envelope text-primary"></i>
+              <i class="nav-icon far fa-envelope text-info"></i>
               <p>
                 Mensajes
                 <i class="fas fa-angle-left right"></i>
