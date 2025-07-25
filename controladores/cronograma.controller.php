@@ -31,9 +31,8 @@ class ControladorCronograma
             );
 
             // 3) opcional, mensaje de éxito
-            $_SESSION['success_message'] =
-                "Se encontraron " . count($_SESSION['resumen_diario'])
-                . " registros.";
+            ToastifyController::success("Se encontraron " . count($_SESSION['resumen_diario'])
+                . " registros.");
         }
 
         // 4) redirijo a la vista que tú tengas mapeada, p. ej.:
@@ -50,8 +49,7 @@ class ControladorCronograma
 
         //  Validamos que tengamos fechas 
         if (!$desde || !$hasta) {
-            $_SESSION['error_message'] = "Por favor completa todos los filtros.";
-            header('location: ?r=reporte_porHoras');
+            ToastifyController::error("Por favor completa todos los filtros.");
             exit;
         }
 
@@ -139,7 +137,8 @@ class ControladorCronograma
         $desde = $_POST['desde'] ?? null;
         $hasta = $_POST['hasta'] ?? null;
         if (!$desde || !$hasta) {
-            $_SESSION['error_message'] = "Por favor completa los dos campos de fecha.";
+            ToastifyController::error('Por favor completa los dos campos de fecha.');
+
             header('Location: ?r=reporte_porVigilador');
             exit;
         }

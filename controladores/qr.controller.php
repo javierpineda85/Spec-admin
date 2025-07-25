@@ -20,7 +20,7 @@ class QrController
         $orden        = intval($_POST['orden']       ?? 0);
 
         if (!$puesto || !$objetivoId || !$tipo || !$orden) {
-            $_SESSION['error_message'] = 'Faltan datos para generar la ronda.';
+            ToastifyController::error('Faltan datos para generar la ronda');
             header("Location: ?r=crear_rondas");
             exit;
         }
@@ -38,7 +38,7 @@ class QrController
 
         // 3) Verificar éxito
         if (!is_numeric($idRonda) || intval($idRonda) <= 0) {
-            $_SESSION['error_message'] = 'Error al crear la ronda: ' . $idRonda;
+            ToastifyController::error('Error al crear la ronda: ' . $idRonda);
             header("Location: ?r=crear_rondas");
             exit;
         }
@@ -62,7 +62,7 @@ class QrController
             'orden'           => $orden
         ];
 
-        $_SESSION['success_message'] = 'QR creado con éxito.';
+        ToastifyController::success('QR creado con éxito');
         header("Location: ?r=crear_rondas");
         exit;
     }

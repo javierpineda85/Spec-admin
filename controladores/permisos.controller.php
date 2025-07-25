@@ -53,7 +53,8 @@ class PermisosController
             }
         }
 
-        $_SESSION['success_message'] = "Permisos actualizados correctamente.";
+        ToastifyController::success('Permisos actualizados correctamente');
+
         header("Location: ?r=permisos&role={$role}");
         exit;
     }

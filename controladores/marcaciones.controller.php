@@ -31,7 +31,7 @@ class MarcacionesController
 
         // Validación mínima
         if (!$vigilador_id || !$tipo_evento || !$lat || !$lng) {
-            $_SESSION['error_message'] = 'Faltan datos para registrar la marcación.';
+            ToastifyController::error('Faltan datos para registrar la marcación');
             header('Location: ?r=entradas_salidas');
             exit;
         }
@@ -78,7 +78,7 @@ class MarcacionesController
                         $dist,
                         $radio
                     ));
-                     $_SESSION['error_message'] = 'Estás a %.0f m fuera del área permitida (%d m).';
+                     ToastifyController::error('Estás a %.0f m fuera del área permitida (%d m).');
                 }
             }
 
@@ -97,14 +97,14 @@ class MarcacionesController
             // Commit
             $pdo->commit();
 
-            $_SESSION['success_message'] = ucfirst($tipo_evento) . ' registrada correctamente.';
+            ToastifyController::error(ucfirst($tipo_evento) . ' registrada correctamente.');
             header('Location: ?r=entradas_salidas');
             exit;
         } catch (Exception $e) {
             if (isset($pdo) && $pdo->inTransaction()) {
                 $pdo->rollBack();
             }
-            $_SESSION['error_message'] = 'Error: ' . $e->getMessage();
+            ToastifyController::error('Error: ' . $e->getMessage());
             header('Location: ?r=entradas_salidas');
             exit;
         }

@@ -14,15 +14,29 @@ class ControladorObjetivos
             $conexion->beginTransaction();
             $datos = [
                 'nombre'    => $_POST['nombreObjetivo'],
-                'localidad' => $_POST['localidad'],
-                'tipo'      => $_POST['tipo'],
                 'latitud'   => $_POST['latitud'],
                 'longitud'  => $_POST['longitud'],
                 'radio_m'   => $_POST['radio_m'],
+                'localidad' => $_POST['localidad'],
+                'tipo'      => $_POST['tipo']
             ];
+            // Guardar objetivo principal
             ModeloObjetivos::mdlGuardarObjetivo('objetivos', $datos);
+
+            // Obtener ID del nuevo objetivo
+            $idObjetivo = $conexion->lastInsertId();
+
+            // Guardar vigiladores si vienen
+            if (!empty($_POST['vigiladores']) && is_array($_POST['vigiladores'])) {
+                ModeloObjetivos::mdlGuardarVigiladoresObjetivo($idObjetivo, $_POST['vigiladores']);
+            }
+
+            // Guardar referentes si vienen
+            if (!empty($_POST['referentes']) && is_array($_POST['referentes'])) {
+                ModeloObjetivos::mdlGuardarReferentesObjetivo($idObjetivo, $_POST['referentes']);
+            }
             $conexion->commit();
-            $_SESSION['success_message'] = 'Objetivo creado exitosamente';
+            ToastifyController::success('Objetivo creado exitosamente');
         }
     }
 
@@ -30,30 +44,37 @@ class ControladorObjetivos
     static public function crtModificarObjetivo()
     {
         Auth::check('objetivos', 'crtModificarObjetivo');
-        if (isset($_POST['idObjetivo'])) {
+
+        if (isset($_POST['idObjetivo'], $_POST['nombreObjetivo'])) {
             $conexion = Conexion::conectar();
             $conexion->beginTransaction();
+
             $datos = [
                 'idObjetivo' => $_POST['idObjetivo'],
-                'nombre'    => $_POST['nombreObjetivo'],
-                'localidad' => $_POST['localidad'],
-                'tipo'      => $_POST['tipo'],
-                'latitud'   => $_POST['latitud'],
-                'longitud'  => $_POST['longitud'],
-                'radio_m'   => $_POST['radio_m'],
+                'nombre'     => $_POST['nombreObjetivo'],
+                'latitud'    => $_POST['latitud'],
+                'longitud'   => $_POST['longitud'],
+                'radio_m'    => $_POST['radio_m'],
+                'localidad'  => $_POST['localidad'],
+                'tipo'       => $_POST['tipo']
             ];
-            $resp = ModeloObjetivos::mdlModificarObjetivo('objetivos', $datos);
-            if ($resp === 'ok') {
-                $conexion->commit();
-                $_SESSION['success_message'] = 'Objetivo modificado exitosamente';
-                header('Location:?r=listado_objetivos');
-                exit;
-            } else {
-                $conexion->rollBack();
-                $_SESSION['error_message'] = 'Error al modificar';
-                header('Location:?r=editar_objetivo&id=' . $_POST['idObjetivo']);
-                exit;
+
+            ModeloObjetivos::mdlModificarObjetivo('objetivos', $datos);
+
+            // Eliminar y reinsertar relaciones
+            ModeloObjetivos::mdlEliminarVigiladoresObjetivo($datos['idObjetivo']);
+            ModeloObjetivos::mdlEliminarReferentesObjetivo($datos['idObjetivo']);
+
+            if (!empty($_POST['vigiladores']) && is_array($_POST['vigiladores'])) {
+                ModeloObjetivos::mdlGuardarVigiladoresObjetivo($datos['idObjetivo'], $_POST['vigiladores']);
             }
+
+            if (!empty($_POST['referentes']) && is_array($_POST['referentes'])) {
+                ModeloObjetivos::mdlGuardarReferentesObjetivo($datos['idObjetivo'], $_POST['referentes']);
+            }
+
+            $conexion->commit();
+            ToastifyController::success('Objetivo actualizado correctamente');
         }
     }
 
@@ -72,14 +93,14 @@ class ControladorObjetivos
                 $res = ModeloObjetivos::mdlDesactivarObjetivo('objetivos', $id);
                 if ($res === 'ok') {
                     $db->commit();
-                    $_SESSION['success_message'] = 'Objetivo desactivado.';
+                    ToastifyController::success('Objetivo desactivado');
                 } else {
                     $db->rollBack();
-                    $_SESSION['error_message'] = 'No se pudo desactivar.';
+                    ToastifyController::error('No se pudo desactivar');
                 }
             } catch (Exception $e) {
                 if ($db->inTransaction()) $db->rollBack();
-                $_SESSION['error_message'] = 'Error: ' . $e->getMessage();
+                ToastifyController::error('Error: ' . $e->getMessage());
             }
         }
     }
@@ -98,14 +119,15 @@ class ControladorObjetivos
                 $res = ModeloObjetivos::mdlReactivarObjetivo('objetivos', $id);
                 if ($res === 'ok') {
                     $db->commit();
-                    $_SESSION['success_message'] = 'Objetivo activado.';
+                    ToastifyController::success('Objetivo activado');
+                    
                 } else {
                     $db->rollBack();
-                    $_SESSION['error_message'] = 'No se pudo activar el objetivo.';
+                    ToastifyController::error('No se pudo activar el objetivo');
                 }
             } catch (Exception $e) {
                 if ($db->inTransaction()) $db->rollBack();
-                $_SESSION['error_message'] = 'Error: ' . $e->getMessage();
+                ToastifyController::error('Error: ' . $e->getMessage());
             }
         }
     }
@@ -135,7 +157,7 @@ class ControladorObjetivos
         include __DIR__ . '/../vistas/paginas/objetivos/crear_objetivo.php';
         return;
     }
-        static public function vistaEditarObjetivo()
+    static public function vistaEditarObjetivo()
     {
         Auth::check('objetivos', 'vistaEditarObjetivo');
         include __DIR__ . '/../vistas/paginas/objetivos/editar_objetivo.php';

@@ -64,10 +64,11 @@ class ControladorDirectivas
 
                     // Confirmar todo
                     $conexion->commit();
-                    $_SESSION['success_message'] = 'Directiva creada exitosamente';
+
+                    ToastifyController::success("Directiva creada exitosamente.");
                 } else {
                     $conexion->rollBack();
-                    $_SESSION['error_message'] = 'Error al guardar la directiva.';
+                    ToastifyController::error("Error al guardar la directiva.");
                 }
             } catch (Exception $e) {
                 if ($conexion->inTransaction()) {
@@ -76,7 +77,7 @@ class ControladorDirectivas
                 if (!empty($rutaAdjunto) && file_exists($rutaAdjunto)) {
                     unlink($rutaAdjunto);
                 }
-                $_SESSION['error_message'] = "Error: " . $e->getMessage();
+                ToastifyController::error("Error: " . $e->getMessage());
                 return false;
             }
         }
@@ -136,12 +137,12 @@ class ControladorDirectivas
 
                 if ($respuesta === "ok") {
                     $conexion->commit();
-                    $_SESSION['success_message'] = 'Directiva modificada exitosamente';
+                    ToastifyController::success("Directiva modificada exitosamente.");
                     header("Location:?r=listado_directivas");
                     exit;
                 } else {
                     $conexion->rollBack();
-                    $_SESSION['error_message'] = 'Error al modificar la directiva';
+                    ToastifyController::error("Error al modificar la directiva.");
                     header("Location: ?r=modificar_directivas&id=" . $idDirectiva);
                     exit;
                 }
@@ -149,7 +150,7 @@ class ControladorDirectivas
                 if ($conexion->inTransaction()) {
                     $conexion->rollBack();
                 }
-                $_SESSION['error_message'] = "Error: " . $e->getMessage();
+                ToastifyController::error("Error: " . $e->getMessage());
                 header("Location: ?r=modificar_directivas&id=" . intval($_POST["idDirectiva"]));
                 exit;
             }
@@ -175,16 +176,16 @@ class ControladorDirectivas
 
                 if ($respuesta === 'ok') {
                     $conexion->commit();
-                    $_SESSION['success_message'] = 'Directiva eliminada correctamente.';
+                    ToastifyController::success("Directiva eliminada correctamente.");
                 } else {
                     $conexion->rollBack();
-                    $_SESSION['error_message'] = 'No se pudo eliminar la directiva.';
+                    ToastifyController::error("No se pudo eliminar la directiva.");
                 }
             } catch (Exception $e) {
                 if ($conexion->inTransaction()) {
                     $conexion->rollBack();
                 }
-                $_SESSION['error_message'] = 'Error: ' . $e->getMessage();
+                ToastifyController::error('Error: ' . $e->getMessage());
             }
         }
     }

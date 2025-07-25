@@ -45,7 +45,8 @@ class ControladorTurnos
 
                 // Commit y limpieza
                 $db->commit();
-                $_SESSION['success_message'] = "Planilla guardada correctamente.";
+                ToastifyController::success('Planilla guardada correctamente');
+
                 $_SESSION['turnos'] = [];  // vaciar planilla
 
                 // Redirigir a la misma página o a donde quieras
@@ -53,7 +54,7 @@ class ControladorTurnos
                 exit;
             } catch (Exception $e) {
                 $db->rollBack();
-                $_SESSION['error_message'] = $e->getMessage();
+                ToastifyController::error('Error: ' . $e->getMessage());
             }
         }
     }
@@ -78,6 +79,7 @@ class ControladorTurnos
             // Mensaje opcional
             $_SESSION['success_message'] =
                 "Se encontraron " . count($_SESSION['turnos']) . " registros.";
+                
         }
         // Volvemos al listado
         header("Location: index.php?r=listado_cronogramas");

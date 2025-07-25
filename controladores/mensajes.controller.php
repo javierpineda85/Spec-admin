@@ -4,7 +4,7 @@ require_once('modelos/mensajes.modelo.php');
 class ControladorMensajes
 {
     static public function crtMostrarMensajes($item, $valor){
-        Auth::check('mensajes', 'crtMostrarMensajes');
+       // Auth::check('mensajes', 'crtMostrarMensajes');
         $respuesta = ModeloMensajes::mdlMostrarMensajes($item, $valor);
         return $respuesta;
 
@@ -12,14 +12,14 @@ class ControladorMensajes
     }
 
     static public function crtMostrarMensajesEnviados($item, $valor){
-        Auth::check('mensajes', 'crtMostrarMensajesEnviados');
+      //  Auth::check('mensajes', 'crtMostrarMensajesEnviados');
         $respuesta = ModeloMensajes::mdlMostrarMensajesEnviados($item, $valor);
         return $respuesta;
 
         exit;
     }
     static public function crtMostrarUnMensaje($id){
-        Auth::check('mensajes', 'crtMostrarUnMensaje');
+       // Auth::check('mensajes', 'crtMostrarUnMensaje');
         $respuesta = ModeloMensajes::mdlMostrarUnMensaje($id);
         return $respuesta;
 
@@ -27,7 +27,7 @@ class ControladorMensajes
     }
 
     static public function crtGuardarMensaje(){
-        Auth::check('mensajes', 'crtGuardarMensaje');
+     //   Auth::check('mensajes', 'crtGuardarMensaje');
         if (isset($_POST["id_destinatario"])) {
             $datos = array(
                 "id_remitente"        => $_POST["id_remitente"],
@@ -37,7 +37,7 @@ class ControladorMensajes
             );
 
             $respuesta = ModeloMensajes::mdlGuardarMensaje($datos);
-            $_SESSION['success_message'] = 'Mensaje enviado exitosamente';
+            ToastifyController::success('Mensaje enviado exitosamente');
            return $respuesta;
             
         }

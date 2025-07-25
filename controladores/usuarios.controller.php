@@ -66,7 +66,7 @@ class ControladorUsuarios
                         $stmt = $conexion->prepare("UPDATE usuarios SET imgRepriv = ? WHERE idUsuario = ?");
                         $stmt->execute([$dest, $newId]);
                     } else {
-                        $_SESSION['error_message'] = "No se pudo guardar el documento.";
+                        ToastifyController::error('No se pudo guardar el archivo');
                     }
                 }
                 // -------------------------------------------------------
@@ -94,7 +94,7 @@ class ControladorUsuarios
 
                 if ($respuesta === "ok") {
                     $conexion->commit();
-                    $_SESSION['success_message'] = "Usuario registrado correctamente.";
+                    ToastifyController::success('Usuario registrado correctamente');
                 } else {
                     // Si el modelo devolvió “error” u otro string, hacemos rollback
                     throw new Exception("Error al guardar en la base de datos.");
@@ -104,7 +104,8 @@ class ControladorUsuarios
                 if ($conexion->inTransaction()) {
                     $conexion->rollBack();
                 }
-                $_SESSION['error_message'] = $e->getMessage();
+                ToastifyController::error('Error: ' . $e->getMessage());
+
                 return false;
             }
         }
@@ -203,7 +204,7 @@ class ControladorUsuarios
                         }
                     }
                     $conexion->commit();
-                    $_SESSION['success_message'] = "Usuario modificado correctamente.";
+                    ToastifyController::success('Usuario modificado correctamente.');
                 } else {
                     throw new Exception("Error al modificar en la base de datos.");
                 }
@@ -211,7 +212,8 @@ class ControladorUsuarios
                 if ($conexion->inTransaction()) {
                     $conexion->rollBack();
                 }
-                $_SESSION['error_message'] = $e->getMessage();
+                ToastifyController::error('Error: ' . $e->getMessage());
+
                 return false;
             }
         }
@@ -231,14 +233,14 @@ class ControladorUsuarios
                 $res = ModeloUsuarios::mdlReactivarUsuario('usuarios', $id);
                 if ($res === 'ok') {
                     $db->commit();
-                    $_SESSION['success_message'] = 'Usuario reactivado.';
+                    ToastifyController::success('Usuario reactivado');
                 } else {
                     $db->rollBack();
-                    $_SESSION['success_message'] = 'No se pudo reactivar el usuario.';
+                    ToastifyController::error('No se pudo reactivar el usuario');
                 }
             } catch (Exception $e) {
                 if ($db->inTransaction()) $db->rollBack();
-                $_SESSION['error_message'] = 'Error: ' . $e->getMessage();
+                ToastifyController::error('Error: ' . $e->getMessage());
             }
         }
     }

@@ -11,6 +11,7 @@ require_once('controladores/cronograma.controller.php');
 require_once("controladores/directivas.controller.php");
 require_once("controladores/escaneos.controller.php");
 require_once('controladores/hvivo.controller.php');
+require_once('controladores/legajos.controller.php');
 require_once('controladores/login.controller.php');
 require_once('controladores/marcaciones.controller.php');
 require_once("controladores/mensajes.controller.php");
@@ -22,6 +23,7 @@ require_once("controladores/puestos.controller.php");
 require_once("controladores/qr.controller.php");
 require_once("controladores/rondas.controller.php");
 require_once("controladores/rutas.controller.php");
+require_once("controladores/toastify.controller.php");
 require_once("controladores/turnos.controller.php");
 require_once("controladores/usuarios.controller.php");
 

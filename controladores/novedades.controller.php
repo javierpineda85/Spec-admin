@@ -19,7 +19,7 @@ class NovedadesController
         $hora = date('H:i');
 
         if (! $vigilador_id || ! $detalle) {
-            $_SESSION['error_message'] = 'Faltan datos obligatorios.';
+            ToastifyController::error('Falta datos obligatorios');
             header('Location:?r=crear_novedad');
             exit;
         }
@@ -43,12 +43,13 @@ class NovedadesController
             ]);
 
             $pdo->commit();
-            $_SESSION['success_message'] = 'Novedad registrada correctamente.';
+            ToastifyController::success('Novedad registrada correctamente');
             header('Location:?r=crear_novedad');
             exit;
         } catch (Exception  $e) {
             if (isset($pdo) &&  $pdo->inTransaction())  $pdo->rollBack();
-            $_SESSION['error_message'] = 'Error: ' . $e->getMessage();
+            
+            ToastifyController::error('Error: ' . $e->getMessage());
             header('Location:?r=crear_novedad');
             exit;
         }

@@ -33,9 +33,9 @@ class EscaneosController
         $res = ModeloEscaneos::mdlGuardarEscaneo('escaneos', $data);
 
         if ($res === 'ok') {
-            $_SESSION['success_message'] = "Escaneo registrado correctamente.";
+            ToastifyController::success('Escaneo registrado correctamente');
         } else {
-            $_SESSION['error_message'] = "<h3>Error al registrar:</h3><pre>" . htmlspecialchars($res) . "</pre>";
+            ToastifyController::error("<h3>Error al registrar:</h3><pre>" . htmlspecialchars($res) . "</pre>");
         }
         header('Location: ?r=escaneo_feedback');
         exit;

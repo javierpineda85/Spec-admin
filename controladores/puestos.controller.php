@@ -36,7 +36,7 @@ class ControladorPuestos
 
                 if ($respuesta == "ok") {
                     $conexion->commit();
-                    $_SESSION['success_message'] = "Puesto registrado correctamente.";
+                    ToastifyController::success('Puesto registrado correctamente');
                     header("Location:?r=listado_puestos");
                     exit;
                 } else {
@@ -47,7 +47,7 @@ class ControladorPuestos
                 $conexion->rollBack();
 
                 // Manejar el error según sea necesario
-                $_SESSION['success_message'] =  $e->getMessage();
+                ToastifyController::error('Error: ' . $e->getMessage());
 
                 return false;
             }
@@ -81,20 +81,20 @@ class ControladorPuestos
                 if ($respuesta === "ok") {
                     // Confirmar la transacción
                     $conexion->commit();
-                    $_SESSION['success_message'] = 'Puesto modificado exitosamente';
+                    ToastifyController::success('Puesto actualizado correctamente');
                     header("Location:?r=listado_puestos");
                     exit;
                 } else {
                     // Si algo falla, hacer rollback
                     $conexion->rollBack();
-                    $_SESSION['error_message'] = 'Error al modificar el puesto';
+                    ToastifyController::error('Error al modificar el puesto');
                     header("Location: ?r=editar_puesto&id=" . $_POST["idPuesto"]);
                     exit;
                 }
             } catch (Exception $e) {
                 // En caso de error, revertir la transacción
                 $conexion->rollBack();
-                $_SESSION['error_message'] = "Error: " . $e->getMessage();
+                ToastifyController::error('Error: ' . $e->getMessage());
                 header("Location: ?r=editar_puesto.php&id=" . $_POST["idPuesto"]);
                 exit;
             }
@@ -116,14 +116,14 @@ class ControladorPuestos
                 $res = ModeloPuestos::mdlDesactivarPuesto('puestos', $id);
                 if ($res === 'ok') {
                     $db->commit();
-                    $_SESSION['success_message'] = 'Puesto activado.';
+                    ToastifyController::success('Puesto activado.');
                 } else {
                     $db->rollBack();
-                    $_SESSION['error_message'] = 'No se pudo activar el puesto';
+                    ToastifyController::error('No se pudo activar el puesto.');
                 }
             } catch (Exception $e) {
                 if ($db->inTransaction()) $db->rollBack();
-                $_SESSION['error_message'] = 'Error: ' . $e->getMessage();
+                ToastifyController::error('Error: ' . $e->getMessage());
             }
         }
     }
@@ -143,14 +143,13 @@ class ControladorPuestos
                 $res = ModeloPuestos::mdlReactivarPuesto('puestos', $id);
                 if ($res === 'ok') {
                     $db->commit();
-                    $_SESSION['success_message'] = 'Puesto activado.';
-                } else {
+                    ToastifyController::success('Puesto activado.');
                     $db->rollBack();
-                    $_SESSION['error_message'] = 'No se pudo activar el puesto.';
+                    ToastifyController::error('No se pudo activar el puesto');
                 }
             } catch (Exception $e) {
                 if ($db->inTransaction()) $db->rollBack();
-                $_SESSION['error_message'] = 'Error: ' . $e->getMessage();
+                ToastifyController::error('Error: ' . $e->getMessage());
             }
         }
     }

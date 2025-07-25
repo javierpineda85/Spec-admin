@@ -84,9 +84,9 @@ class RondasController
         Auth::check('rondas', 'crtDesactivarRonda');
         $res = ModeloRondas::mdlDesactivarRonda('rondas', $idRonda);
         if ($res === 'ok') {
-            $_SESSION['success_message'] = 'Ronda desactivada correctamente.';
+            ToastifyController::success('Ronda desactivada correctamente');
         } else {
-            $_SESSION['error_message'] = 'Error al desactivar ronda: ' . $res;
+            ToastifyController::error('Error al desactivar ronda: ' . $res);
         }
     }
 
@@ -102,7 +102,7 @@ class RondasController
         $orden      = intval($_POST['orden']       ?? 0);
 
         if (!$idRonda || !$puesto || !$objetivoId || !$tipo || !$orden) {
-            $_SESSION['error_message'] = 'Faltan datos para actualizar la ronda.';
+            ToastifyController::warning('Faltan datos para actualizar ronda');
             header("Location: ?r=editar_ronda&id={$idRonda}");
             exit;
         }
@@ -150,12 +150,13 @@ class RondasController
             ];
 
             // 7️⃣ Feedback y redirección a impresión
-            $_SESSION['success_message'] = 'Ronda actualizada. Ya puedes imprimir el nuevo QR.';
+            ToastifyController::success('Ronda actualizada. Ya puedes imprimir el nuevo QR');
             header("Location: ?r=imprimir_qr");
             exit;
         } else {
             // 8️⃣ En caso de error en el UPDATE, volvemos al formulario
-            $_SESSION['error_message'] = 'Error al actualizar: ' . $res;
+            ToastifyController::error('Error al actualizar la ronda: ' . $res);
+
             header("Location: ?r=editar_ronda&id={$idRonda}");
             exit;
         }
