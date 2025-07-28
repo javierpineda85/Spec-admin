@@ -61,7 +61,7 @@
 
     <!-- Toast reutilizable -->
     <div aria-live="polite" aria-atomic="true" style="position: fixed; top: 1rem; right: 1rem; z-index: 1050;">
-      <div id="toast-alerta" class="toast" role="alert" data-delay="5000" style="min-width: 350px;">
+      <div id="toast-alerta" class="toast" role="alert" data-delay="5000" style="min-width: 300px;">
         <div class="toast-header bg-info text-white">
           <strong class="mr-auto"><i class="fas fa-info-circle"></i> Notificación</strong>
           <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Cerrar">

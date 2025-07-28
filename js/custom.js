@@ -240,32 +240,50 @@ document.addEventListener("DOMContentLoaded", function () {
   document.querySelectorAll("form").forEach(function (form) {
     form.addEventListener("submit", function (event) {
 
-      if (form.id === "perfilForm" || form.id === "entradaSalidaForm") {
+      if (form.id === "perfilForm" || form.id === "entradaSalidaForm" ) {
         console.log("↪ Saltando validación genérica para este form:", form.id);
         return;
       }
+
       let isValid = true;
       let mensajeError = "";
 
-      form.querySelectorAll("input, select, textarea").forEach(function (campo) {
-        // Omitir botones y campos opcionales
-        if (campo.type === "submit" || campo.type === "reset" || campo.type === "file" || campo.type === "hidden"|| campo.disabled) return;
+      form.querySelectorAll(".form-control").forEach(function (campo) {
+        // Omitir botones, ocultos, deshabilitados o explícitamente opcionales
+        const isOptional = campo.hasAttribute("data-optional");
 
-        // Verificar si el campo está vacío
-        if (campo.value.trim() === "") {
+        if (
+          campo.type === "submit" ||
+          campo.type === "reset" ||
+          campo.type === "file" ||
+          campo.type === "hidden" ||
+          campo.disabled ||
+          isOptional
+        ) {
+          return;
+        }
+        let vacio = false;
+        // Validar múltiple select
+        if (campo.tagName === "SELECT" && campo.multiple) {
+          const valoresSeleccionados = Array.from(campo.options).filter(op => op.selected && op.value !== "");
+          vacio = valoresSeleccionados.length === 0;
+        } else {
+          vacio = campo.value.trim() === "";
+        }
+console.log("Campo:", campo.name || campo.id, "| Optional:", campo.dataset.optional);
+
+        if (vacio) {
           isValid = false;
-          mensajeError = "⚠️ Todos los campos son obligatorios.";
-          console.log(mensajeError)
+          mensajeError = "⚠️ Todos los campos obligatorios deben estar completos.";
+          console.log("Campo vacío:", campo.name || campo.id);
           campo.style.border = "2px solid red";
         } else {
-          campo.style.border = ""; // Restablecer el borde si es válido
+          campo.style.border = "";
         }
       });
 
       if (!isValid) {
         event.preventDefault(); // Detener el envío del formulario
-
-        // Mostrar alerta con SweetAlert
         Swal.fire({
           icon: "error",
           title: "Error",
@@ -276,6 +294,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 });
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 //                Funcion para cambiar los colores del switch en novedades/entradas-salidas
 /////////////////////////////////////////////////////////////////////////////////////////////////////

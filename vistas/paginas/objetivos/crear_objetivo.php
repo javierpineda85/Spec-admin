@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <div class="card card-info">
 
-      <form class="form-horizontal" action="?r=crear_objetivo" method="POST">
+      <form class="form-horizontal" id="formObjetivo" action="?r=crear_objetivo" method="POST">
         <div class="card-body">
           <div class="row">
             <div class="form-group col-sm-12 col-md-4">
@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="form-group col-sm-12 col-md-5">
               <label class="form-label">Buscar dirección</label>
               <div class="input-group">
-                <input type="text" id="address" class="form-control" placeholder="Ingresa una dirección">
+                <input type="text" id="address" class="form-control" data-optional="true" placeholder="Ingresa una dirección">
                 <div class="input-group-append">
                   <button type="button" id="btnSearch" class="btn btn-primary">Buscar</button>
                 </div>
@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <div class="row">
             <div class="form-group col-sm-12 col-md-5">
               <label for="vigiladores">Seleccionar Vigiladores</label>
-              <select name="vigiladores[]" id="vigiladores" class="form-control select2" multiple required>
+              <select name="vigiladores[]" id="vigiladores" class="form-control select2" data-optional="true" multiple >
                 <?php foreach ($usuarios as $u): ?>
                   <option value="<?= $u['idUsuario'] ?>"><?= $u['apellido'] ?> <?= $u['nombre'] ?></option>
                 <?php endforeach; ?>
@@ -94,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="form-group col-sm-12 col-md-5">
               <label for="referentes">Seleccionar Referentes</label>
-              <select name="referentes[]" id="referentes" class="form-control select2" multiple required>
+              <select name="referentes[]" id="referentes" class="form-control select2" data-optional="true" multiple >
                 <?php foreach ($referentes as $r): ?>
                   <option value="<?= $r['idUsuario'] ?>"><?= $r['apellido'] . ' ' . $r['nombre'] ?></option>
                 <?php endforeach; ?>
@@ -121,21 +121,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <!-- /.card-body -->
 </div>
 <!-- /.card -->
-
-<!-- TOAST DE ALERTA -->
-<div aria-live="polite" aria-atomic="true" style="position: fixed; top: 1rem; right: 1rem; z-index: 1050;">
-  <div id="toast-alerta" class="toast" role="alert" data-delay="5000" style="min-width: 250px;">
-    <div class="toast-header bg-warning text-dark">
-      <strong class="mr-auto"><i class="fas fa-exclamation-triangle"></i> Alerta</strong>
-      <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Cerrar">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="toast-body" id="toast-msg">
-      <!-- Mensaje dinámico -->
-    </div>
-  </div>
-</div>
 
 
 <script>

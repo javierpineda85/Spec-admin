@@ -5,18 +5,23 @@ class ModeloObjetivos
     /*INSERTAR OBJETIVO */
     static public function mdlGuardarObjetivo($tabla, $d)
     {
+        $conexion = Conexion::conectar(); // cambia la forma para poder obtener el ultimo id
         $sql = "INSERT INTO $tabla (nombre,latitud,longitud,radio_m,localidad,tipo, activo) VALUES (:nombre, :latitud, :longitud, :radio_m, :localidad, :tipo, :activo)";
-        $stmt = Conexion::conectar()->prepare($sql);
+        $stmt = $conexion->prepare($sql);
         $stmt->bindParam(':nombre', $d['nombre'], PDO::PARAM_STR);
         $stmt->bindParam(':latitud', $d['latitud']);
         $stmt->bindParam(':longitud', $d['longitud']);
         $stmt->bindParam(':radio_m', $d['radio_m'], PDO::PARAM_INT);
         $stmt->bindParam(':localidad', $d['localidad'], PDO::PARAM_STR);
         $stmt->bindParam(':tipo', $d['tipo'], PDO::PARAM_STR);
-        $stmt->bindParam(':activo', 1, PDO::PARAM_INT);
+        $stmt->bindValue(':activo', 1, PDO::PARAM_INT);
 
 
-        return $stmt->execute() ? 'ok' : 'error';
+        if ($stmt->execute()) {
+            return $conexion->lastInsertId(); // ← retorna el ID real insertado
+        } else {
+            return false;
+        }
     }
     /* GUARDAR VIGILADORES EN OBJETIVO */
     static public function mdlGuardarVigiladoresObjetivo($objetivo_id, $vigiladores)
@@ -72,6 +77,21 @@ class ModeloObjetivos
     {
         $stmt = Conexion::conectar()->prepare("DELETE FROM objetivo_referentes WHERE objetivo_id = ?");
         return $stmt->execute([$idObjetivo]);
+    }
+    // Obtener IDs de vigiladores por objetivo
+    static public function mdlObtenerVigiladoresPorObjetivo($idObjetivo)
+    {
+        $stmt = Conexion::conectar()->prepare("SELECT vigilador_id FROM objetivo_vigiladores WHERE objetivo_id = ?");
+        $stmt->execute([$idObjetivo]);
+        return $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+    }
+
+    // Obtener IDs de referentes por objetivo
+    static public function mdlObtenerReferentesPorObjetivo($idObjetivo)
+    {
+        $stmt = Conexion::conectar()->prepare("SELECT referente_id FROM objetivo_referentes WHERE objetivo_id = ?");
+        $stmt->execute([$idObjetivo]);
+        return $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
     }
     /** DESACTIVAR (soft-delete) UN OBJETIVO **/
     static public function mdlDesactivarObjetivo($tabla, $idObjetivo)

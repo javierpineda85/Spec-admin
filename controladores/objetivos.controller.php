@@ -21,16 +21,17 @@ class ControladorObjetivos
                 'tipo'      => $_POST['tipo']
             ];
             // Guardar objetivo principal
-            ModeloObjetivos::mdlGuardarObjetivo('objetivos', $datos);
-
-            // Obtener ID del nuevo objetivo
-            $idObjetivo = $conexion->lastInsertId();
+            $idObjetivo = ModeloObjetivos::mdlGuardarObjetivo('objetivos', $datos); // devuelve el ultimo id
 
             // Guardar vigiladores si vienen
             if (!empty($_POST['vigiladores']) && is_array($_POST['vigiladores'])) {
                 ModeloObjetivos::mdlGuardarVigiladoresObjetivo($idObjetivo, $_POST['vigiladores']);
             }
-
+            if (!$idObjetivo) {
+                $conexion->rollBack();
+                ToastifyController::error('No se pudo crear el objetivo');
+                return;
+            }
             // Guardar referentes si vienen
             if (!empty($_POST['referentes']) && is_array($_POST['referentes'])) {
                 ModeloObjetivos::mdlGuardarReferentesObjetivo($idObjetivo, $_POST['referentes']);
@@ -62,9 +63,33 @@ class ControladorObjetivos
             ModeloObjetivos::mdlModificarObjetivo('objetivos', $datos);
 
             // Eliminar y reinsertar relaciones
-            ModeloObjetivos::mdlEliminarVigiladoresObjetivo($datos['idObjetivo']);
-            ModeloObjetivos::mdlEliminarReferentesObjetivo($datos['idObjetivo']);
+            // === VIGILADORES ===
+            $actualesVigiladores = ModeloObjetivos::mdlObtenerVigiladoresPorObjetivo($datos['idObjetivo']);
+            $nuevosVigiladores = $_POST['vigiladores'] ?? [];
 
+            sort($actualesVigiladores);
+            sort($nuevosVigiladores);
+
+            if ($actualesVigiladores !== $nuevosVigiladores) {
+                ModeloObjetivos::mdlEliminarVigiladoresObjetivo($datos['idObjetivo']);
+                if (!empty($nuevosVigiladores)) {
+                    ModeloObjetivos::mdlGuardarVigiladoresObjetivo($datos['idObjetivo'], $nuevosVigiladores);
+                }
+            }
+
+            // === REFERENTES ===
+            $actualesReferentes = ModeloObjetivos::mdlObtenerReferentesPorObjetivo($datos['idObjetivo']);
+            $nuevosReferentes = $_POST['referentes'] ?? [];
+
+            sort($actualesReferentes);
+            sort($nuevosReferentes);
+
+            if ($actualesReferentes !== $nuevosReferentes) {
+                ModeloObjetivos::mdlEliminarReferentesObjetivo($datos['idObjetivo']);
+                if (!empty($nuevosReferentes)) {
+                    ModeloObjetivos::mdlGuardarReferentesObjetivo($datos['idObjetivo'], $nuevosReferentes);
+                }
+            }
             if (!empty($_POST['vigiladores']) && is_array($_POST['vigiladores'])) {
                 ModeloObjetivos::mdlGuardarVigiladoresObjetivo($datos['idObjetivo'], $_POST['vigiladores']);
             }
@@ -120,7 +145,6 @@ class ControladorObjetivos
                 if ($res === 'ok') {
                     $db->commit();
                     ToastifyController::success('Objetivo activado');
-                    
                 } else {
                     $db->rollBack();
                     ToastifyController::error('No se pudo activar el objetivo');
