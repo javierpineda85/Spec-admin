@@ -416,9 +416,7 @@
             </a>
             <ul class="nav nav-treeview">
 
-              <?php if (
-                Auth::hasPermission('feriados', 'vistaCrearFeriado')
-              ): ?>
+              <?php if (Auth::hasPermission('feriados', 'vistaCrearFeriado')): ?>
                 <li class="nav-item">
                   <a href="?r=crear_feriados" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
@@ -427,9 +425,7 @@
                 </li>
               <?php endif; ?>
 
-              <?php if (
-                Auth::hasPermission('feriados', 'vistaListadoFeriado')
-              ): ?>
+              <?php if (Auth::hasPermission('feriados', 'vistaListadoFeriado')): ?>
                 <li class="nav-item">
                   <a href="?r=listado_feriados" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
@@ -438,24 +434,17 @@
                 </li>
               <?php endif; ?>
 
-              <?php if (
-                Auth::hasPermission('legajos', 'vistaGestionLegajos')
-              ): ?>
-                <li class="nav-item">
-                  <a href="?r=gestion_legajos" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Legajos</p>
-                  </a>
-                </li>
-              <?php endif; ?>
-
-              <?php if (
-                Auth::hasPermission('art', 'vistaGestionArt')
-              ): ?>
+              <?php if (Auth::hasPermission('art', 'vistaGestionArt')): ?>
                 <li class="nav-item">
                   <a href="?r=gestion_art" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
-                    <p>A.R.T.</p>
+                    <p>Crear A.R.T.</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="?r=listado_art" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Listado A.R.T.</p>
                   </a>
                 </li>
               <?php endif; ?>
@@ -495,6 +484,27 @@
             </ul>
           </li>
         <?php endif; ?>
+        <!-- Noticias -->
+        <?php if (Auth::hasPermission('noticias', 'verCumples')): ?>
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-bullhorn text-info"></i>
+              <p>
+                Noticias
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="?r=cumpleanos" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Cumpleaños del Mes</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+        <?php endif; ?>
+        <!-- /Noticias -->
 
         <!-- Mis Datos -->
         <?php if (

@@ -336,12 +336,16 @@
       <!-- Administración -->
       <?php if (
         Auth::hasPermission('feriados', 'vistaCrearFeriado') ||
-        Auth::hasPermission('feriados', 'vistaListadoFeriado')
+        Auth::hasPermission('feriados', 'vistaListadoFeriado') ||
+        Auth::hasPermission('legajos', 'vistaGestionLegajos') ||
+        Auth::hasPermission('art', 'crtGuardarArt') ||
+        Auth::hasPermission('art', 'vistaListadoArt')
       ): ?>
         <div class="col-lg-3 col-md-6 col-sm-12">
           <div class="info-box shadow">
             <span class="info-box-icon bg-warning"><i class="fas fa-cogs"></i></span>
             <div class="info-box-content">
+
               <!-- Fila para el título y botón de colapsar -->
               <div class="d-flex justify-content-between align-items-center">
                 <span class="info-box-number">Administración</span>
@@ -349,31 +353,71 @@
                   <i class="fas fa-plus"></i>
                 </button>
               </div>
+
               <!-- Sección colapsable para los botones -->
               <div id="collapseAdministracion" class="collapse">
                 <div class="mt-2">
+
                   <?php if (Auth::hasPermission('feriados', 'vistaCrearFeriado')): ?>
                     <a href="?r=crear_feriados" class="btn btn-block btn-warning btn-sm text-white">Crear Feriados</a>
                   <?php endif; ?>
+
                   <?php if (Auth::hasPermission('feriados', 'vistaListadoFeriado')): ?>
                     <a href="?r=listado_feriados" class="btn btn-block btn-warning btn-sm text-white">Ver Feriados</a>
                   <?php endif; ?>
-                  <!-- Espacio reservado para futuras opciones -->
+
                   <?php if (Auth::hasPermission('art', 'crtGuardarArt')): ?>
                     <a href="?r=crear_art" class="btn btn-block btn-warning btn-sm text-white">Crear ART</a>
+                  <?php endif; ?>
+
+                  <?php if (Auth::hasPermission('art', 'vistaListadoArt')): ?>
+                    <a href="?r=listado_art" class="btn btn-block btn-warning btn-sm text-white">Listado ART</a>
                   <?php endif; ?>
 
                   <?php if (Auth::hasPermission('legajos', 'vistaGestionLegajos')): ?>
                     <a href="?r=gestion_legajos" class="btn btn-block btn-warning btn-sm text-white">Legajos</a>
                   <?php endif; ?>
+
                 </div>
               </div>
+
             </div>
           </div>
         </div>
       <?php endif; ?>
 
+
       <!-- ./administracion -->
+
+      <!-- Noticias -->
+      <?php if (Auth::hasPermission('noticias', 'verCumples')): ?>
+        <div class="col-lg-3 col-md-6 col-sm-12">
+          <div class="info-box shadow">
+            <span class="info-box-icon bg-info"><i class="fas fa-bullhorn"></i></span>
+            <div class="info-box-content">
+
+              <!-- Fila para el título y botón de colapsar -->
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="info-box-number">Noticias</span>
+                <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapseNoticias" aria-expanded="false" aria-controls="collapseNoticias">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+
+              <!-- Sección colapsable para los botones -->
+              <div id="collapseNoticias" class="collapse">
+                <div class="mt-2">
+                  <a href="?r=cumpleanos" class="btn btn-block btn-info btn-sm text-white">Cumpleaños del Mes</a>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      <?php endif; ?>
+
+      <!-- /Noticias -->
+
       <!-- Mensajería -->
       <?php if (
         Auth::hasPermission('mensajes', 'bandejaEntrada')

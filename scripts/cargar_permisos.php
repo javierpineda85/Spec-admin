@@ -34,7 +34,7 @@ foreach ($files as $file) {
         ucfirst($base) . 'Controller',    // Turnos → TurnosController
         'Controlador' . ucfirst($base),   // Turnos → ControladorTurnos
     ];
-    
+
     if ($base === 'hvivo') {
         $ctrlNames = ['HombreVivoController'];
     } else {
@@ -83,10 +83,16 @@ foreach ($files as $file) {
         }
 
         // 6) Insertar en BD (INSERT IGNORE para no duplicar)
+
         foreach (array_unique($methodNames) as $action) {
+            $accionFinal = $action;
+            if (preg_match('/^vista(.+)/', $action, $matches)) {
+                $accionFinal = 'ver' . $matches[1];
+            }
             $db->consultas(
                 "INSERT IGNORE INTO permissions (controlador, accion) VALUES (?, ?)",
                 [$base, $action]
+
             );
         }
     }

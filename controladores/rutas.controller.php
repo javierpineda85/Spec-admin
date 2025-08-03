@@ -381,6 +381,12 @@ class RutasController
             UniformesController::vistaMiUniforme();
             return;
         }
+        // Noticias
+
+        if (isset($_GET['r']) && $_GET['r'] ===  'cumpleanos') {
+            NoticiasController::vistaCumple();
+            exit;
+        }
 
 
         // ========= MAPEO DE RUTAS A VISTAS =========

@@ -79,7 +79,8 @@ class LoginController
                     fn($r) => "{$r['controlador']}/{$r['accion']}",
                     $resultados
                 );
-
+                // Esto es para compatibilidad con Auth::check()
+                $_SESSION['permisos'] = $_SESSION['permisos_usuario'];
                 // Redirigir al inicio
                 header('Location: index.php');
                 exit();
