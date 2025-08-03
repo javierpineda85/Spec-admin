@@ -333,6 +333,47 @@
       <?php endif; ?>
       <!-- ./usuarios -->
 
+      <!-- Administración -->
+      <?php if (
+        Auth::hasPermission('feriados', 'vistaCrearFeriado') ||
+        Auth::hasPermission('feriados', 'vistaListadoFeriado')
+      ): ?>
+        <div class="col-lg-3 col-md-6 col-sm-12">
+          <div class="info-box shadow">
+            <span class="info-box-icon bg-warning"><i class="fas fa-cogs"></i></span>
+            <div class="info-box-content">
+              <!-- Fila para el título y botón de colapsar -->
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="info-box-number">Administración</span>
+                <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapseAdministracion" aria-expanded="false" aria-controls="collapseAdministracion">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+              <!-- Sección colapsable para los botones -->
+              <div id="collapseAdministracion" class="collapse">
+                <div class="mt-2">
+                  <?php if (Auth::hasPermission('feriados', 'vistaCrearFeriado')): ?>
+                    <a href="?r=crear_feriados" class="btn btn-block btn-warning btn-sm text-white">Crear Feriados</a>
+                  <?php endif; ?>
+                  <?php if (Auth::hasPermission('feriados', 'vistaListadoFeriado')): ?>
+                    <a href="?r=listado_feriados" class="btn btn-block btn-warning btn-sm text-white">Ver Feriados</a>
+                  <?php endif; ?>
+                  <!-- Espacio reservado para futuras opciones -->
+                  <?php if (Auth::hasPermission('art', 'crtGuardarArt')): ?>
+                    <a href="?r=crear_art" class="btn btn-block btn-warning btn-sm text-white">Crear ART</a>
+                  <?php endif; ?>
+
+                  <?php if (Auth::hasPermission('legajos', 'vistaGestionLegajos')): ?>
+                    <a href="?r=gestion_legajos" class="btn btn-block btn-warning btn-sm text-white">Legajos</a>
+                  <?php endif; ?>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <?php endif; ?>
+
+      <!-- ./administracion -->
       <!-- Mensajería -->
       <?php if (
         Auth::hasPermission('mensajes', 'bandejaEntrada')
@@ -366,6 +407,56 @@
       <?php endif; ?>
       <!-- ./mensajeria -->
 
+      <!-- Mis Datos -->
+      <?php if (
+        Auth::hasPermission('usuarios', 'vistaPerfilUsuario') ||
+        Auth::hasPermission('art', 'verCredencialArt') ||
+        Auth::hasPermission('datos_personales', 'verMisDatos') ||
+        Auth::hasPermission('salud', 'vistaMiSalud') ||
+        Auth::hasPermission('uniformes', 'verMiUniforme')
+      ): ?>
+        <div class="col-lg-3 col-md-6 col-sm-12">
+          <div class="info-box shadow">
+            <span class="info-box-icon bg-info"><i class="fas fa-user-circle"></i></span>
+            <div class="info-box-content">
+              <!-- Título y botón colapsar -->
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="info-box-number">Mis Datos</span>
+                <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapseMisDatos" aria-expanded="false" aria-controls="collapseMisDatos">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+              <!-- Contenido colapsable -->
+              <div id="collapseMisDatos" class="collapse">
+                <div class="mt-2">
+                  <?php $id = $_SESSION['idUsuario']; ?>
+
+                  <?php if (Auth::hasPermission('usuarios', 'vistaPerfilUsuario')): ?>
+                    <a href="?r=perfil-usuario&id=<?= $id ?>" class="btn btn-block btn-info btn-sm text-white">Mi Perfil</a>
+                  <?php endif; ?>
+
+                  <?php if (Auth::hasPermission('datos_personales', 'verMisDatos')): ?>
+                    <a href="?r=mis_datos_personales&id=<?= $id ?>" class="btn btn-block btn-info btn-sm text-white">Datos Personales</a>
+                  <?php endif; ?>
+
+                  <?php if (Auth::hasPermission('salud', 'verMiSalud')): ?>
+                    <a href="?r=mi_salud&id=<?= $id ?>" class="btn btn-block btn-info btn-sm text-white">Salud</a>
+                  <?php endif; ?>
+
+                  <?php if (Auth::hasPermission('uniformes', 'verMiUniforme')): ?>
+                    <a href="?r=mi_uniforme&id=<?= $id ?>" class="btn btn-block btn-info btn-sm text-white">Uniforme</a>
+                  <?php endif; ?>
+
+                  <?php if (Auth::hasPermission('art', 'verCredencialArt')): ?>
+                    <a href="?r=credencial_art&id=<?= $id ?>" class="btn btn-block btn-info btn-sm text-white">Mi A.R.T.</a>
+                  <?php endif; ?>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <?php endif; ?>
 
 
     </div>

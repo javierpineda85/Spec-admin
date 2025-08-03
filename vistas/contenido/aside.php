@@ -91,7 +91,7 @@
           </li>
         <?php endif; ?>
 
-                <!-- Objetivos -->
+        <!-- Objetivos -->
         <?php if (
           Auth::hasPermission('objetivos', 'vistaCreaObjetivo') ||
           Auth::hasPermission('objetivos', 'vistaListadoObjetivos') ||
@@ -131,15 +131,17 @@
                   </a>
                 </li>
               <?php endif; ?>
-              
+
             </ul>
           </li>
         <?php endif; ?>
 
-                <!-- Puestos -->
-        <?php if (Auth::hasPermission('puestos', 'vistaCrearPuestos') || 
-                  Auth::hasPermission('puestos', 'vistaListadoPuestos') || 
-                  Auth::hasPermission('puestos', 'vistaListadoPuestosDesactivados')): ?>
+        <!-- Puestos -->
+        <?php if (
+          Auth::hasPermission('puestos', 'vistaCrearPuestos') ||
+          Auth::hasPermission('puestos', 'vistaListadoPuestos') ||
+          Auth::hasPermission('puestos', 'vistaListadoPuestosDesactivados')
+        ): ?>
           <li class="nav-item has-treeview">
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-eye text-success"></i>
@@ -381,29 +383,90 @@
                   </a>
                 </li>
               <?php endif; ?>
-              <?php if (Auth::hasPermission('usuarios', 'vistaPerfilUsuario')): ?>
-                <li class="nav-item">
-                  <a href="?r=perfil-usuario&id=<?= $_SESSION['idUsuario']; ?>" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Mi Perfil</p>
-                  </a>
-                </li>
-              <?php endif; ?>
 
-              <?php //if (Auth::hasPermission('legajos', 'vistaLegajos')): ?>
-                <li class="nav-item">
-                  <a href="?r=legajos" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Legajos</p>
-                  </a>
-                </li>
-              <?php //endif; ?>
+
+              <?php //if (Auth::hasPermission('legajos', 'vistaLegajos')): 
+              ?>
+              <li class="nav-item">
+                <a href="?r=legajos" class="nav-link">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Legajos</p>
+                </a>
+              </li>
+              <?php //endif; 
+              ?>
             </ul>
           </li>
         <?php endif; ?>
 
+        <!-- Administración -->
+        <?php if (
+          Auth::hasPermission('feriados', 'vistaCrearFeriado') ||
+          Auth::hasPermission('feriados', 'vistaListadoFeriado') ||
+          Auth::hasPermission('legajos', 'vistaGestionLegajos') ||
+          Auth::hasPermission('art', 'vistaGestionArt')
+        ): ?>
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-cogs text-warning"></i>
+              <p>
+                Administración
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+
+              <?php if (
+                Auth::hasPermission('feriados', 'vistaCrearFeriado')
+              ): ?>
+                <li class="nav-item">
+                  <a href="?r=crear_feriados" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Crear Feriados</p>
+                  </a>
+                </li>
+              <?php endif; ?>
+
+              <?php if (
+                Auth::hasPermission('feriados', 'vistaListadoFeriado')
+              ): ?>
+                <li class="nav-item">
+                  <a href="?r=listado_feriados" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Ver Feriados</p>
+                  </a>
+                </li>
+              <?php endif; ?>
+
+              <?php if (
+                Auth::hasPermission('legajos', 'vistaGestionLegajos')
+              ): ?>
+                <li class="nav-item">
+                  <a href="?r=gestion_legajos" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Legajos</p>
+                  </a>
+                </li>
+              <?php endif; ?>
+
+              <?php if (
+                Auth::hasPermission('art', 'vistaGestionArt')
+              ): ?>
+                <li class="nav-item">
+                  <a href="?r=gestion_art" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>A.R.T.</p>
+                  </a>
+                </li>
+              <?php endif; ?>
+
+            </ul>
+          </li>
+        <?php endif; ?>
+
+
         <!-- Mensajes -->
-        <?php if ( Auth::hasPermission('mensajes', 'bandejaEntrada') || Auth::hasPermission('mensajes', 'crtNuevoMensaje') ): ?>
+        <?php if (Auth::hasPermission('mensajes', 'bandejaEntrada') || Auth::hasPermission('mensajes', 'crtNuevoMensaje')): ?>
           <li class="nav-item has-treeview">
             <a href="#" class="nav-link">
               <i class="nav-icon far fa-envelope text-info"></i>
@@ -432,6 +495,76 @@
             </ul>
           </li>
         <?php endif; ?>
+
+        <!-- Mis Datos -->
+        <?php if (
+          Auth::hasPermission('usuarios', 'vistaPerfilUsuario') ||
+          Auth::hasPermission('art', 'verCredencialArt') ||
+          Auth::hasPermission('datos_personales', 'verMisDatos') ||
+          Auth::hasPermission('salud', 'verMiSalud') ||
+          Auth::hasPermission('uniformes', 'verMiUniforme')
+        ): ?>
+          <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+              <i class="nav-icon fas fa-user-circle text-info"></i>
+              <p>
+                Mis Datos
+                <i class="fas fa-angle-left right"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <?php $id = $_SESSION['idUsuario']; ?>
+
+              <?php if (Auth::hasPermission('usuarios', 'vistaPerfilUsuario')): ?>
+                <li class="nav-item">
+                  <a href="?r=perfil-usuario&id=<?= $_SESSION['idUsuario']; ?>" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Mi Perfil</p>
+                  </a>
+                </li>
+              <?php endif; ?>
+
+              <?php if (Auth::hasPermission('datos_personales', 'verMisDatos')): ?>
+                <li class="nav-item">
+                  <a href="?r=mis_datos_personales&id=<?= $id ?>" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Datos Personales</p>
+                  </a>
+                </li>
+              <?php endif; ?>
+
+              <?php if (Auth::hasPermission('salud', 'verMiSalud')): ?>
+                <li class="nav-item">
+                  <a href="?r=mi_salud&id=<?= $id ?>" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Salud</p>
+                  </a>
+                </li>
+              <?php endif; ?>
+
+              <?php if (Auth::hasPermission('uniformes', 'verMiUniforme')): ?>
+                <li class="nav-item">
+                  <a href="?r=mi_uniforme&id=<?= $id ?>" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Uniforme</p>
+                  </a>
+                </li>
+              <?php endif; ?>
+
+              <?php if (Auth::hasPermission('art', 'verCredencialArt')): ?>
+                <li class="nav-item">
+                  <a href="?r=credencial_art&id=<?= $id ?>" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Mi A.R.T.</p>
+                  </a>
+                </li>
+              <?php endif; ?>
+
+            </ul>
+          </li>
+        <?php endif; ?>
+
+
 
         <!-- Gestión de Permisos -->
         <?php if (Auth::hasPermission('permisos', 'index')): ?>

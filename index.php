@@ -1,13 +1,18 @@
 <?php
 session_start();  // Aseguramos que la sesión esté iniciada para poder verificar $_SESSION
 //session_destroy();
+date_default_timezone_set('America/Argentina/Mendoza');
+setlocale(LC_TIME, 'es_AR.UTF-8', 'spanish');
+
 require_once __DIR__ . '/core/Auth.php';
 require_once __DIR__ . '/core/CheckPermissionMiddleware.php';
 require_once("config.php");
 require_once('controladores/alertas.controller.php');
 require_once('controladores/archivos.controller.php');
+require_once('controladores/art.controller.php');
 require_once('controladores/bajas.controller.php');
 require_once('controladores/cronograma.controller.php');
+require_once('controladores/datospersonales.controller.php');
 require_once("controladores/directivas.controller.php");
 require_once("controladores/escaneos.controller.php");
 require_once("controladores/feriados.controller.php");
@@ -24,8 +29,10 @@ require_once("controladores/puestos.controller.php");
 require_once("controladores/qr.controller.php");
 require_once("controladores/rondas.controller.php");
 require_once("controladores/rutas.controller.php");
+require_once("controladores/salud.controller.php");
 require_once("controladores/toastify.controller.php");
 require_once("controladores/turnos.controller.php");
+require_once("controladores/uniformes.controller.php");
 require_once("controladores/usuarios.controller.php");
 
 

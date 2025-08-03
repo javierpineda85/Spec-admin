@@ -325,6 +325,62 @@ class RutasController
             LegajosController::vistaLegajos();
             return;
         }
+        // ==== RUTAS FERIADOS ====
+        if (isset($_GET['r']) && $_GET['r'] === 'crear_feriados') {
+            FeriadosController::vistaCrearFeriados();
+            return;
+        }
+
+        if (isset($_GET['r']) && $_GET['r'] === 'listado_feriados') {
+            FeriadosController::vistaListadoFeriados();
+            return;
+        }
+
+        if (isset($_GET['r']) && $_GET['r'] === 'editar_feriado') {
+            FeriadosController::vistaEditarFeriado();
+            return;
+        }
+
+        if (isset($_GET['r']) && $_GET['r'] === 'eliminar_feriado') {
+            FeriadosController::ctrEliminarFeriado();
+            return;
+        }
+
+        // ==== RUTAS ART ====
+        if (isset($_GET['r']) && $_GET['r'] === 'credencial_art') {
+            ArtController::vistaCredencialArt();
+            return;
+        }
+
+        if (isset($_GET['r']) && $_GET['r'] === 'listado_art') {
+            ArtController::vistaListadoArt();
+            return;
+        }
+
+        if (isset($_GET['r']) && $_GET['r'] === 'crear_art') {
+            ArtController::vistaCrearArt();
+            return;
+        }
+
+        if (isset($_GET['r']) && $_GET['r'] === 'editar_art') {
+            ArtController::vistaEditarArt();
+            return;
+        }
+
+        // ========= Datos personales=========
+        if (isset($_GET['r']) && $_GET['r'] === 'mis_datos_personales') {
+            DatosPersonalesController::vistaMisDatosPersonales();
+            return;
+        }
+
+        if (isset($_GET['r']) && $_GET['r'] === 'mi_salud') {
+            SaludController::vistaMiSalud();
+            return;
+        }
+        if (isset($_GET['r']) && $_GET['r'] === 'mi_uniforme') {
+            UniformesController::vistaMiUniforme();
+            return;
+        }
 
 
         // ========= MAPEO DE RUTAS A VISTAS =========
@@ -337,7 +393,7 @@ class RutasController
             "nuevo-mensaje"     => "mensajes/nuevo-mensaje.php",
             "mensajes-enviados" => "mensajes/mensajes-enviados.php",
 
- 
+
             "imprimir_qr"     => "rondas/imprimir_qr.php",
 
 
