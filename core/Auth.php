@@ -75,45 +75,54 @@ class Auth
      */
     public static function check(string $controller, string $action)
     {
-        // arrancar sesión si no está
         if (session_status() !== PHP_SESSION_ACTIVE) {
             session_start();
         }
 
-        // usa tu middleware genérico bajo el capó
+        // Evitar bucles infinitos al validar ciertas rutas
+        $rutaActual = "$controller/$action";
+        $rutasIgnoradas = [
+            'login/crtMostrarLogin',
+            'login/crtProcesarLogin',
+            'login/crtLogout',
+            'acceso_denegado/crtAccesoDenegado'
+        ];
+        if (in_array($rutaActual, $rutasIgnoradas)) {
+            return;
+        }
+
         CheckPermissionMiddleware::handle($controller, $action);
     }
-public static function hasPermission(string $controller, string $action): bool
-{
-    if (session_status() !== PHP_SESSION_ACTIVE) {
-        session_start();
-    }
+    public static function hasPermission(string $controller, string $action): bool
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
 
-    // Si aún no hemos precargado los permisos en sesión, los cargamos ahora
-    if (!isset($_SESSION['permisos_usuario'])) {
-        $rol = $_SESSION['rol'] ?? '';
-        if (!$rol) {
-            // Sin rol, sin permisos
-            $_SESSION['permisos_usuario'] = [];
-        } else {
-            $db = new Conexion();
-            $res = $db->consultas(
-                "SELECT p.controlador, p.accion
+        // Si aún no hemos precargado los permisos en sesión, los cargamos ahora
+        if (!isset($_SESSION['permisos_usuario'])) {
+            $rol = $_SESSION['rol'] ?? '';
+            if (!$rol) {
+                // Sin rol, sin permisos
+                $_SESSION['permisos_usuario'] = [];
+            } else {
+                $db = new Conexion();
+                $res = $db->consultas(
+                    "SELECT p.controlador, p.accion
                    FROM role_permissions rp
                    JOIN permissions p ON rp.permission_id = p.id
                   WHERE rp.role = ?",
-                [$rol]
-            );
-            // Formateamos como “controlador/accion”
-            $_SESSION['permisos_usuario'] = array_map(
-                fn($r) => "{$r['controlador']}/{$r['accion']}",
-                $res
-            );
+                    [$rol]
+                );
+                // Formateamos como “controlador/accion”
+                $_SESSION['permisos_usuario'] = array_map(
+                    fn($r) => "{$r['controlador']}/{$r['accion']}",
+                    $res
+                );
+            }
         }
+
+        // Y comprobamos si existe en el array precargado
+        return in_array("$controller/$action", $_SESSION['permisos_usuario'], true);
     }
-
-    // Y comprobamos si existe en el array precargado
-    return in_array("$controller/$action", $_SESSION['permisos_usuario'], true);
-}
-
 }

@@ -208,12 +208,12 @@
 
       <!-- Cronogramas -->
       <?php if (
-        Auth::hasPermission('cronograma', 'vistaCrearCronograma')
-        || Auth::hasPermission('cronograma', 'vistaListadoCronogramas')
-        || Auth::hasPermission('cronograma', 'vistaListadoCronogramaPorVigilador')
-        || Auth::hasPermission('cronograma', 'vistaJornadasPorObjetivo')
-        || Auth::hasPermission('cronograma', 'crtBuscarResumenHoras')
-        || Auth::hasPermission('cronograma', 'vistaHorasPorVigilador')
+        Auth::hasPermission('cronogramas', 'vistaCrearCronograma')
+        || Auth::hasPermission('cronogramas', 'vistaListadoCronogramas')
+        || Auth::hasPermission('cronogramas', 'vistaListadoCronogramaPorVigilador')
+        || Auth::hasPermission('cronogramas', 'vistaJornadasPorObjetivo')
+        || Auth::hasPermission('cronogramas', 'crtBuscarResumenHoras')
+        || Auth::hasPermission('cronogramas', 'vistaHorasPorVigilador')
       ): ?>
         <div class="col-lg-3 col-md-6 col-sm-12">
           <div class="info-box shadow">
@@ -229,22 +229,22 @@
               <!-- Sección colapsable para los botones -->
               <div id="collapseCronogramas" class="collapse">
                 <div class="mt-2">
-                  <?php if (Auth::hasPermission('cronograma', 'vistaCrearCronograma')): ?>
+                  <?php if (Auth::hasPermission('cronogramas', 'vistaCrearCronograma')): ?>
                     <a href="?r=crear_cronograma" class="btn btn-block btn-primary btn-sm text-white">Crear</a>
                   <?php endif; ?>
-                  <?php if (Auth::hasPermission('cronograma', 'vistaListadoCronogramas')): ?>
+                  <?php if (Auth::hasPermission('cronogramas', 'vistaListadoCronogramas')): ?>
                     <a href="?r=listado_cronogramas" class="btn btn-block btn-primary btn-sm text-white">Por Objetivo</a>
                   <?php endif; ?>
-                  <?php if (Auth::hasPermission('cronograma', 'vistaListadoCronogramaPorVigilador')): ?>
+                  <?php if (Auth::hasPermission('cronogramas', 'vistaListadoCronogramaPorVigilador')): ?>
                     <a href="?r=listado_porVigilador" class="btn btn-block btn-primary btn-sm text-white">Por Vigilador</a>
                   <?php endif; ?>
-                  <?php if (Auth::hasPermission('cronograma', 'vistaJornadasPorObjetivo')): ?>
+                  <?php if (Auth::hasPermission('cronogramas', 'vistaJornadasPorObjetivo')): ?>
                     <a href="?r=listado_resumen_diario" class="btn btn-block btn-primary btn-sm text-white">Jornadas por Objetivo</a>
                   <?php endif; ?>
-                  <?php if (Auth::hasPermission('cronograma', 'crtBuscarResumenHoras')): ?>
+                  <?php if (Auth::hasPermission('cronogramas', 'crtBuscarResumenHoras')): ?>
                     <a href="?r=reporte_porHoras" class="btn btn-block btn-primary btn-sm text-white">Horas por Objetivo</a>
                   <?php endif; ?>
-                  <?php if (Auth::hasPermission('cronograma', 'vistaHorasPorVigilador')): ?>
+                  <?php if (Auth::hasPermission('cronogramas', 'vistaHorasPorVigilador')): ?>
                     <a href="?r=reporte_porVigilador" class="btn btn-block btn-primary btn-sm text-white">Horas por Vigilador</a>
                   <?php endif; ?>
                 </div>

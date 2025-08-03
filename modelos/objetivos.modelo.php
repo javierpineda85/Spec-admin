@@ -78,7 +78,7 @@ class ModeloObjetivos
         $stmt = Conexion::conectar()->prepare("DELETE FROM objetivo_referentes WHERE objetivo_id = ?");
         return $stmt->execute([$idObjetivo]);
     }
-    // Obtener IDs de vigiladores por objetivo
+    // Obtener IDs de vigiladores por objetivo // vista de objetivos
     static public function mdlObtenerVigiladoresPorObjetivo($idObjetivo)
     {
         $stmt = Conexion::conectar()->prepare("SELECT vigilador_id FROM objetivo_vigiladores WHERE objetivo_id = ?");
@@ -86,12 +86,32 @@ class ModeloObjetivos
         return $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
     }
 
-    // Obtener IDs de referentes por objetivo
+    // Obtener IDs de referentes por objetivo // vista de objetivos
     static public function mdlObtenerReferentesPorObjetivo($idObjetivo)
     {
         $stmt = Conexion::conectar()->prepare("SELECT referente_id FROM objetivo_referentes WHERE objetivo_id = ?");
         $stmt->execute([$idObjetivo]);
         return $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
+    }
+
+    //Obtener los vigiladores para las vistas de cronogramas
+    static public function mdlObtenerVigiladoresParaCronograma($idObjetivo)
+    {
+        $stmt = Conexion::conectar()->prepare("SELECT ov.vigilador_id AS idUsuario
+        FROM objetivo_vigiladores ov
+        WHERE ov.objetivo_id = ?");
+        $stmt->execute([$idObjetivo]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    //Obtner los referentes para Cronogramas
+    static public function mdlObtenerReferentesParaCronograma($idObjetivo)
+    {
+        $stmt = Conexion::conectar()->prepare(" SELECT orf.referente_id AS idUsuario
+        FROM objetivo_referentes orf
+        WHERE orf.objetivo_id = ?");
+        $stmt->execute([$idObjetivo]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     /** DESACTIVAR (soft-delete) UN OBJETIVO **/
     static public function mdlDesactivarObjetivo($tabla, $idObjetivo)

@@ -10,6 +10,7 @@ require_once('controladores/bajas.controller.php');
 require_once('controladores/cronograma.controller.php');
 require_once("controladores/directivas.controller.php");
 require_once("controladores/escaneos.controller.php");
+require_once("controladores/feriados.controller.php");
 require_once('controladores/hvivo.controller.php');
 require_once('controladores/legajos.controller.php');
 require_once('controladores/login.controller.php');
