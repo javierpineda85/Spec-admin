@@ -56,7 +56,7 @@ $rows = $_SESSION['reporte_vigilador'] ?? [];
               <?php endforeach; ?>
             <?php else: ?>
               <tr>
-                <td colspan="4" class="text-center text-muted">
+                <td colspan="6" class="text-center text-muted">
                   No hay datos en ese período
                 </td>
               </tr>
