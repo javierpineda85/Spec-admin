@@ -436,15 +436,15 @@
                   <?php endif; ?>
 
                   <?php if (Auth::hasPermission('datos_personales', 'verMisDatos')): ?>
-                    <a href="?r=mis_datos_personales&id=<?= $id ?>" class="btn btn-block btn-info btn-sm text-white">Datos Personales</a>
+                    <a href="?r=mis_datos_personales&id=<?= $id ?>" class="btn btn-block btn-info btn-sm text-white">Mis Datos Personales</a>
                   <?php endif; ?>
 
-                  <?php if (Auth::hasPermission('salud', 'verMiSalud')): ?>
-                    <a href="?r=mi_salud&id=<?= $id ?>" class="btn btn-block btn-info btn-sm text-white">Salud</a>
+                  <?php if (Auth::hasPermission('salud', 'vistaMiSalud')): ?>
+                    <a href="?r=mi_salud&id=<?= $id ?>" class="btn btn-block btn-info btn-sm text-white">Mi Salud</a>
                   <?php endif; ?>
 
                   <?php if (Auth::hasPermission('uniformes', 'verMiUniforme')): ?>
-                    <a href="?r=mi_uniforme&id=<?= $id ?>" class="btn btn-block btn-info btn-sm text-white">Uniforme</a>
+                    <a href="?r=mi_uniforme&id=<?= $id ?>" class="btn btn-block btn-info btn-sm text-white">Mi Uniforme</a>
                   <?php endif; ?>
 
                   <?php if (Auth::hasPermission('art', 'verCredencialArt')): ?>
@@ -457,7 +457,6 @@
           </div>
         </div>
       <?php endif; ?>
-
 
     </div>
   </div>
