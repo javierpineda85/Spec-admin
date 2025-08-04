@@ -432,8 +432,8 @@ if (!isset($_SESSION['idUsuario'])) {
 
       <!-- Mensajería -->
       <?php if (
-        Auth::hasPermission('mensajes', 'bandejaEntrada')
-        || Auth::hasPermission('mensajes', 'crtNuevoMensaje')
+        Auth::hasPermission('mensajes', 'crtMostrarMensajes') ||
+        Auth::hasPermission('mensajes', 'crtGuardarMensaje')
       ): ?>
         <div class="col-lg-3 col-md-6 col-sm-12">
           <div class="info-box shadow">
@@ -449,10 +449,10 @@ if (!isset($_SESSION['idUsuario'])) {
               <!-- Sección colapsable para los botones -->
               <div id="collapseMensajeria" class="collapse">
                 <div class="mt-2">
-                  <?php if (Auth::hasPermission('mensajes', 'bandejaEntrada')): ?>
+                  <?php if (Auth::hasPermission('mensajes', 'crtMostrarMensajes')): ?>
                     <a href="?r=bandeja-entrada" class="btn btn-block btn-info btn-sm text-white">Ver mensajes</a>
                   <?php endif; ?>
-                  <?php if (Auth::hasPermission('mensajes', 'crtNuevoMensaje')): ?>
+                  <?php if (Auth::hasPermission('mensajes', 'crtGuardarMensaje')): ?>
                     <a href="?r=nuevo-mensaje" class="btn btn-block btn-info btn-sm text-white">Enviar mensaje</a>
                   <?php endif; ?>
                 </div>

@@ -387,6 +387,24 @@ class RutasController
             NoticiasController::vistaCumple();
             exit;
         }
+        // ==================== MENSAJES ====================
+        if (isset($_GET['r']) && $_GET['r'] === 'bandeja-entrada') {
+            require_once 'controladores/mensajes.controller.php';
+            require_once 'vistas/paginas/mensajes/bandeja-entrada.php';
+            exit;
+        }
+
+        if (isset($_GET['r']) && $_GET['r'] === 'mensajes-enviados') {
+            require_once 'controladores/mensajes.controller.php';
+            require_once 'vistas/paginas/mensajes/mensajes-enviados.php';
+            exit;
+        }
+
+        if (isset($_GET['r']) && $_GET['r'] === 'nuevo-mensaje') {
+            require_once 'controladores/mensajes.controller.php';
+            require_once 'vistas/paginas/mensajes/nuevo-mensaje.php';
+            exit;
+        }
 
 
         // ========= MAPEO DE RUTAS A VISTAS =========

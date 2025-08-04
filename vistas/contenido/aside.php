@@ -455,7 +455,10 @@
 
 
         <!-- Mensajes -->
-        <?php if (Auth::hasPermission('mensajes', 'bandejaEntrada') || Auth::hasPermission('mensajes', 'crtNuevoMensaje')): ?>
+        <?php if (
+          Auth::hasPermission('mensajes', 'crtMostrarMensajes') ||
+          Auth::hasPermission('mensajes', 'crtGuardarMensaje')
+        ): ?>
           <li class="nav-item has-treeview">
             <a href="#" class="nav-link">
               <i class="nav-icon far fa-envelope text-info"></i>
@@ -465,7 +468,7 @@
               </p>
             </a>
             <ul class="nav nav-treeview">
-              <?php if (Auth::hasPermission('mensajes', 'bandejaEntrada')): ?>
+              <?php if (Auth::hasPermission('mensajes', 'crtMostrarMensajes')): ?>
                 <li class="nav-item">
                   <a href="?r=bandeja-entrada" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
@@ -473,7 +476,7 @@
                   </a>
                 </li>
               <?php endif; ?>
-              <?php if (Auth::hasPermission('mensajes', 'crtNuevoMensaje')): ?>
+              <?php if (Auth::hasPermission('mensajes', 'crtGuardarMensaje')): ?>
                 <li class="nav-item">
                   <a href="?r=nuevo-mensaje" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>

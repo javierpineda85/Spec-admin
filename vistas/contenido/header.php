@@ -1,3 +1,9 @@
+<?php
+$mensajes = ControladorMensajes::crtMostrarMensajes('destinatario_id', $_SESSION['idUsuario']);
+$mensajesNoLeidos = array_filter($mensajes, fn($m) => $m['leido'] == 0);
+$cantidadNoLeidos = count($mensajesNoLeidos);
+?>
+
 <nav class="main-header navbar navbar-expand navbar-white navbar-light">
   <!-- Left navbar links -->
   <ul class="navbar-nav">
@@ -24,6 +30,14 @@
       <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
         <span class="dropdown-header">Notificaciones</span>
         <div class="dropdown-divider"></div>
+        <!--Alertas de mensajes-->
+        <?php if ($cantidadNoLeidos > 0): ?>
+          <a href="index.php?r=bandeja-entrada&c=mensajes" class="dropdown-item">
+            <i class="fas fa-envelope text-info mr-2"></i>
+            <?= $cantidadNoLeidos ?> mensaje<?= $cantidadNoLeidos > 1 ? 's' : '' ?> sin leer
+          </a>
+          <div class="dropdown-divider"></div>
+        <?php endif; ?>
 
         <!-- Aquí se cargan las alertas -->
         <div id="dropdown-alertas-preview">
@@ -52,68 +66,69 @@
 <!-- Script de alertas dinámicas -->
 <script>
   let ultimaCantidadAlertas = 0;
-function actualizarContadorAlertas() {
-  //console.log("🔄 Verificando alertas en header.php...");
 
-  fetch('ajax/ver_alertas.php')
-    .then(res => res.json())
-    .then(alertas => {
-      //console.log("📬 Alertas recibidas:", alertas);
+  function actualizarContadorAlertas() {
+    //console.log("🔄 Verificando alertas en header.php...");
 
-      const badge = document.getElementById('badge-alertas');
-      const contenedor = document.getElementById('dropdown-alertas-preview');
+    fetch('ajax/ver_alertas.php')
+      .then(res => res.json())
+      .then(alertas => {
+        //console.log("📬 Alertas recibidas:", alertas);
 
-      if (!badge || !contenedor) {
-        console.warn('⚠️ No se encontró la campana o el contenedor');
-        return;
-      }
+        const badge = document.getElementById('badge-alertas');
+        const contenedor = document.getElementById('dropdown-alertas-preview');
 
-      if (alertas.length > 0) {
-        badge.innerText = alertas.length;
-        badge.style.display = 'inline-block';
-
-        // 🔔 Solo suena si la cantidad de alertas aumentó
-        const cantidadAnterior = parseInt(localStorage.getItem('alertas_previas')) || 0;
-        const pathname = window.location.pathname + window.location.search;
-        const estoyEnAlertasSupervisor = pathname.includes('r=alertas_supervisor');
-
-        if (!estoyEnAlertasSupervisor && alertas.length > cantidadAnterior) {
-          document.getElementById('sonido-alerta-global').play().catch(err => {
-            console.warn('🔇 Sonido bloqueado por navegador:', err);
-          });
+        if (!badge || !contenedor) {
+          console.warn('⚠️ No se encontró la campana o el contenedor');
+          return;
         }
 
-        localStorage.setItem('alertas_previas', alertas.length);
+        if (alertas.length > 0) {
+          badge.innerText = alertas.length;
+          badge.style.display = 'inline-block';
 
-        contenedor.innerHTML = '';
-        alertas.slice(0, 3).forEach(a => {
-          const icono = {
-            'hombre_vivo': 'fas fa-user-clock',
-            'mensaje': 'fas fa-envelope',
-            'directiva': 'fas fa-bullhorn'
-          }[a.tipo] || 'fas fa-bell';
+          // 🔔 Solo suena si la cantidad de alertas aumentó
+          const cantidadAnterior = parseInt(localStorage.getItem('alertas_previas')) || 0;
+          const pathname = window.location.pathname + window.location.search;
+          const estoyEnAlertasSupervisor = pathname.includes('r=alertas_supervisor');
 
-          const item = document.createElement('a');
-          item.href = (a.tipo === 'directiva')
-            ? 'index.php?r=listado_directivas'
-            : 'index.php?r=alertas_supervisor';
-          item.className = 'dropdown-item';
-          item.innerHTML = `
+          if (!estoyEnAlertasSupervisor && alertas.length > cantidadAnterior) {
+            document.getElementById('sonido-alerta-global').play().catch(err => {
+              console.warn('🔇 Sonido bloqueado por navegador:', err);
+            });
+          }
+
+          localStorage.setItem('alertas_previas', alertas.length);
+
+          contenedor.innerHTML = '';
+          alertas.slice(0, 3).forEach(a => {
+            const icono = {
+              'hombre_vivo': 'fas fa-user-clock',
+              'mensaje': 'fas fa-envelope',
+              'directiva': 'fas fa-bullhorn'
+            } [a.tipo] || 'fas fa-bell';
+
+            const item = document.createElement('a');
+            item.href = (a.tipo === 'directiva') ?
+              'index.php?r=listado_directivas' :
+              'index.php?r=alertas_supervisor';
+            item.className = 'dropdown-item';
+            item.innerHTML = `
             <i class="${icono} mr-2"></i> ${a.tipo.toUpperCase()}
             <span class="float-right text-muted text-sm">${a.creada_en.slice(11, 16)}</span>
             <div class="text-sm">${a.mensaje}</div>
           `;
-          contenedor.appendChild(item);
-          contenedor.appendChild(document.createElement('div')).className = 'dropdown-divider';
-        });
-      } else {
-        badge.style.display = 'none';
-        contenedor.innerHTML = '<span class="dropdown-item text-muted">Sin alertas activas</span>';
-        localStorage.setItem('alertas_previas', 0);
-      }
-    })
-    .catch(e => console.error('❌ Error al obtener alertas:', e));
-}
+            contenedor.appendChild(item);
+            contenedor.appendChild(document.createElement('div')).className = 'dropdown-divider';
+          });
+        } else {
+          badge.style.display = 'none';
+          contenedor.innerHTML = '<span class="dropdown-item text-muted">Sin alertas activas</span>';
+          localStorage.setItem('alertas_previas', 0);
+        }
+      })
+      .catch(e => console.error('❌ Error al obtener alertas:', e));
+  }
 
 
   actualizarContadorAlertas();

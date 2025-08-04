@@ -1,6 +1,9 @@
 <?php
 
 $mensajes = ControladorMensajes::crtMostrarMensajesEnviados('remitente_id', $_SESSION['idUsuario']);
+$recibidos = ControladorMensajes::crtMostrarMensajes('destinatario_id', $_SESSION['idUsuario']);
+$mensajesNoLeidos = array_filter($recibidos, fn($m) => $m['leido'] == 0);
+$cantidadNoLeidos = count($mensajesNoLeidos);
 
 ?>
 
@@ -38,9 +41,11 @@ $mensajes = ControladorMensajes::crtMostrarMensajesEnviados('remitente_id', $_SE
               <div class="card-body p-0">
                 <ul class="nav nav-pills flex-column">
                   <li class="nav-item active">
-                    <a href="index.php?r=bandeja-entrada&c=mensajes" class="nav-link">
+                    <a href="index.php?r=bandeja-entrada" class="nav-link">
                       <i class="fas fa-inbox"></i> Bandeja de entrada
-                      <span class="badge bg-primary float-right">12</span>
+                      <?php if ($cantidadNoLeidos > 0): ?>
+                        <span class="badge bg-danger float-right"><?php echo $cantidadNoLeidos; ?></span>
+                      <?php endif; ?>
                     </a>
                   </li>
                   <li class="nav-item">
