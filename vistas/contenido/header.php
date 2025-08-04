@@ -1,8 +1,19 @@
 <?php
-$mensajes = ControladorMensajes::crtMostrarMensajes('destinatario_id', $_SESSION['idUsuario']);
+if (!isset($_SESSION)) session_start();
+
+require_once realpath(__DIR__ . '/../../modelos/mensajes.modelo.php');
+require_once realpath(__DIR__ . '/../../modelos/conexion.php');
+
+$idUsuario = $_SESSION['idUsuario'] ?? null;
+$cantidadNoLeidos = 0;
+
+$mensajes = ModeloMensajes::mdlMostrarMensajes('destinatario_id', $idUsuario);
+
 $mensajesNoLeidos = array_filter($mensajes, fn($m) => $m['leido'] == 0);
 $cantidadNoLeidos = count($mensajesNoLeidos);
+
 ?>
+
 
 <nav class="main-header navbar navbar-expand navbar-white navbar-light">
   <!-- Left navbar links -->
@@ -30,14 +41,7 @@ $cantidadNoLeidos = count($mensajesNoLeidos);
       <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
         <span class="dropdown-header">Notificaciones</span>
         <div class="dropdown-divider"></div>
-        <!--Alertas de mensajes-->
-        <?php if ($cantidadNoLeidos > 0): ?>
-          <a href="index.php?r=bandeja-entrada&c=mensajes" class="dropdown-item">
-            <i class="fas fa-envelope text-info mr-2"></i>
-            <?= $cantidadNoLeidos ?> mensaje<?= $cantidadNoLeidos > 1 ? 's' : '' ?> sin leer
-          </a>
-          <div class="dropdown-divider"></div>
-        <?php endif; ?>
+
 
         <!-- Aquí se cargan las alertas -->
         <div id="dropdown-alertas-preview">
@@ -50,7 +54,13 @@ $cantidadNoLeidos = count($mensajesNoLeidos);
         </a>
       </div>
     </li>
-
+    <!--Alertas de mensajes-->
+    <?php if ($cantidadNoLeidos > 0): ?>
+      <a href="index.php?r=bandeja-entrada&c=mensajes" class="dropdown-item mt-1">
+        <i class="fas fa-envelope text-info mr-2"></i>
+        <?= $cantidadNoLeidos ?> 
+      </a>
+    <?php endif; ?>
     <!-- Botón de pantalla completa -->
     <li class="nav-item">
       <a class="nav-link" data-widget="fullscreen" href="#" role="button">

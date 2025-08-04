@@ -86,7 +86,7 @@ $cantidadNoLeidos = count($mensajesNoLeidos);
                                     <?php endif; ?>
 
                                     <div class="form-group">
-                                        <select class="custom-select" name="id_destinatario" <?php echo ($_GET['t'] == 'reply') ? 'disabled' : ''; ?>>
+                                        <select class="form-control select2" name="id_destinatario" <?php echo ($_GET['t'] == 'reply') ? 'disabled' : ''; ?>>
                                             <option value="" disabled selected>Para:</option>
                                             <?php if ($_GET['t'] == 'reply') : ?>
                                                 <option value="<?php echo $mensaje[0]["remitente_id"]; ?>" selected>
@@ -95,7 +95,7 @@ $cantidadNoLeidos = count($mensajesNoLeidos);
                                             <?php else : ?>
                                                 <?php foreach ($usuarios as $usuario) : ?>
                                                     <option value="<?php echo $usuario["idUsuario"]; ?>">
-                                                        <?php echo $usuario['nombre'] . " " . $usuario['apellido'] . " (" . ucfirst($usuario['rol']) . ")"; ?>
+                                                        <?php echo $usuario['apellido'] . " " . $usuario['nombre'] . " (" . ucfirst($usuario['rol']) . ")"; ?>
                                                     </option>
                                                 <?php endforeach; ?>
                                             <?php endif; ?>
@@ -143,3 +143,12 @@ $cantidadNoLeidos = count($mensajesNoLeidos);
     <!-- /.card -->
 </section>
 <!-- /.content -->
+ <script>
+  $(document).ready(function() {
+    $('#id_destinatario').select2({
+      theme: 'bootstrap4',
+      placeholder: 'Buscar usuario...',
+      width: '100%'
+    });
+  });
+</script>

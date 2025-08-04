@@ -1,4 +1,11 @@
-<?php include __DIR__ . '/contenido/head.php'; ?>
+<?php include __DIR__ . '/contenido/head.php'; 
+
+if (!isset($_SESSION)) {
+  session_start();
+}
+?>
+
+
 
 <body class="hold-transition sidebar-mini sidebar-collapse">
   <style>
