@@ -58,7 +58,7 @@ if (isset($_POST['Registrar'])) {
           </div>
 
 
-          <div class="form-group col-sm-12 col-md-2">
+          <div class="form-group col-sm-12 col-md-3">
             <label class="form-label">Teléfono de Emergencia</label>
             <input type="text" class="form-control" placeholder="2612223333" name="tel_emergencia" required>
           </div>

@@ -21,6 +21,7 @@ require_once('controladores/legajos.controller.php');
 require_once('controladores/login.controller.php');
 require_once('controladores/marcaciones.controller.php');
 require_once("controladores/mensajes.controller.php");
+require_once("controladores/noticias.controller.php");
 require_once("controladores/novedades.controller.php");
 require_once("controladores/objetivos.controller.php");
 require_once("controladores/permisos.controller.php");

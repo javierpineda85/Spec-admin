@@ -2,16 +2,7 @@
 if (isset($_POST['idReactivar'])) {
     ControladorUsuarios::crtReactivarUsuario();
 }
-/*
-$db = new Conexion;
-$sql = "SELECT u.idUsuario, CONCAT(u.apellido, ' ', u.nombre) AS empleado, b.motivo, b.fecha, CONCAT(e.apellido, ' ', e.nombre) AS eliminado_por
-                FROM usuarios u
-                JOIN bajas b ON u.idUsuario = b.usuario_id
-                JOIN usuarios e ON b.eliminado_por = e.idUsuario
-                WHERE u.activo = 0
-                ORDER BY empleado ";
-$usuarios = $db->consultas($sql);
-*/
+
 
 ?>
 

@@ -1,3 +1,15 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+  session_start();
+}
+
+
+if (!isset($_SESSION['idUsuario'])) {
+  header("Location: ?r=login");
+  exit();
+}
+?>
+
 <div class="card">
   <div class="card-header bg-info">
     <h3 class="card-title">Panel de Control</h3>

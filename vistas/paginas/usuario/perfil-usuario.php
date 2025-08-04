@@ -39,7 +39,7 @@ $usuario = $db->consultas($sql);
 
                     <h5>Foto de Perfil</h5>
                     <div class="text-center">
-                        <img class="profile-user-img img-fluid img-circle w-50" src="<?php echo $usuario[0]['imgPerfil']; ?>" alt="Foto de perfil" data-toggle="modal" data-target="#imagenModal" style="cursor:pointer;">
+                        <img class="profile-user-img img-fluid w-50" src="<?php echo $usuario[0]['imgPerfil']; ?>" alt="Foto de perfil" data-toggle="modal" data-target="#imagenModal" style="cursor:pointer;">
                     </div>
                     <h5 class="mt-5">Foto Carnet Repriv</h5>
                     <div class="text-center">
