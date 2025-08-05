@@ -35,6 +35,7 @@ class ModeloPuestos
             $stmt->bindParam(":puesto", $datos["puesto"], PDO::PARAM_STR);
             $stmt->bindParam(":objetivo_id", $datos["objetivo_id"], PDO::PARAM_INT);
             $stmt->bindParam(":tipo", $datos["tipo"], PDO::PARAM_STR);
+            
 
             if ($stmt->execute()) {
                 return "ok";

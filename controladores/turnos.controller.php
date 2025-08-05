@@ -79,7 +79,6 @@ class ControladorTurnos
             // Mensaje opcional
             $_SESSION['success_message'] =
                 "Se encontraron " . count($_SESSION['turnos']) . " registros.";
-                
         }
         // Volvemos al listado
         header("Location: index.php?r=listado_cronogramas");
@@ -89,29 +88,66 @@ class ControladorTurnos
     static public function crtBuscarPorVigilador()
     {
         Auth::check('turnos', 'crtBuscarPorVigilador');
-        if (isset($_POST['buscar_por_vigilador'])) {
-            // Guardamos filtros en sesión
-            $_SESSION['filtros_vigilador'] = [
-                'vigilador' => $_POST['vigilador'],
-                'desde'     => $_POST['desde'],
-                'hasta'     => $_POST['hasta']
-            ];
-            $f = $_SESSION['filtros_vigilador'];
-            // Traemos los turnos para ese vigilador y rango
-            $_SESSION['turnos_porVigilador'] =
-                ModeloTurnos::mdlObtenerPorVigiladorYRango(
-                    'turnos',
-                    $f['vigilador'],
-                    $f['desde'],
-                    $f['hasta']
-                );
-            $_SESSION['success_message'] =
-                "Se encontraron " .
-                count($_SESSION['turnos_porVigilador']) .
-                " registros para el vigilador.";
+        if (!isset($_POST['vigilador'], $_POST['desde'], $_POST['hasta'])) {
+            ToastifyController::error('Faltan datos para buscar');
+            header('Location: index.php?r=listado_porVigilador');
+            exit;
         }
-        // Redirigimos a la vista
-        header("Location: index.php?r=listado_porVigilador");
+
+        $usuarioId = intval($_POST['vigilador']);
+        $desde     = $_POST['desde'];
+        $hasta     = $_POST['hasta'];
+
+        // Guardamos los filtros en sesión
+        $_SESSION['filtros_vigilador'] = [
+            'vigilador' => $usuarioId,
+            'desde'     => $desde,
+            'hasta'     => $hasta
+        ];
+        // Generar días del rango (array de fechas Y-m-d)
+        $diasRango = [];
+        $actual = new DateTime($desde);
+        $fin    = new DateTime($hasta);
+        while ($actual <= $fin) {
+            $diasRango[] = $actual->format('Y-m-d');
+            $actual->modify('+1 day');
+        }
+        // Obtenemos los turnos
+        $turnos = ModeloTurnos::mdlObtenerPorVigiladorYRango('turnos', $usuarioId, $desde, $hasta);
+
+        
+        foreach ($turnos as &$t) {
+
+            // También renombramos campos para compatibilidad con la vista
+            $t['tipo_jornada'] = $t['tipo_turno']; // por compatibilidad con la vista actual
+            $t['turno'] = $t['codigo_turno'];     // por compatibilidad con la vista actual
+        }
+        // Consulta de feriados
+        $feriados = [];
+        $stmt2 = Conexion::conectar()->prepare("SELECT fecha FROM feriados WHERE fecha BETWEEN :desde AND :hasta");
+        $stmt2->bindParam(':desde', $desde, PDO::PARAM_STR);
+        $stmt2->bindParam(':hasta', $hasta, PDO::PARAM_STR);
+        $stmt2->execute();
+        foreach ($stmt2->fetchAll(PDO::FETCH_ASSOC) as $f) {
+            $feriados[] = $f['fecha'];
+        }
+
+        // Guardamos en sesión
+        $_SESSION['filtros_vigilador']      = ['vigilador' => $usuarioId, 'desde' => $desde, 'hasta' => $hasta];
+        $_SESSION['dias_rango']             = $diasRango;
+        $_SESSION['feriados_rango']         = $feriados;
+        // Lo mandamos a sesión
+        $turnosPorFecha = [];
+        foreach ($turnos as $t) {
+            $fecha = $t['fecha'];
+            $turnosPorFecha[$fecha] = [
+                'turno'  => $t['codigo_turno'],
+                'puesto' => $t['puesto']
+            ];
+        }
+        $_SESSION['turnos_porVigilador'] = $turnosPorFecha;
+
+        header('Location: index.php?r=listado_porVigilador');
         exit;
     }
 }

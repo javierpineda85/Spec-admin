@@ -6,53 +6,53 @@ class ControladorPuestos
     public static function ctrGuardarPuesto()
     {
         Auth::check('puestos', 'ctrGuardarPuesto');
-        if (isset($_POST["puesto"])) {
 
-            try {
-                $conexion = Conexion::conectar();
+        if (empty($_POST['puesto']) || empty($_POST['objetivo_id']) || empty($_POST['tipo'])) {
+            ToastifyController::error('Faltan campos obligatorios.');
+            return;
+        }
 
-                // Verificar si ya hay una transacción activa
-                if (!$conexion->inTransaction()) {
-                    // Si no hay una transacción activa, iniciar una nueva
-                    $conexion->beginTransaction();
-                }
+        $db = new Conexion;
 
-                $tabla = "puestos";
+        // 1. Insertar puesto principal
+        $sql = "INSERT INTO puestos (puesto, objetivo_id, tipo)
+            VALUES (:puesto, :objetivo_id, :tipo)";
+        $stmt = $db->conectar()->prepare($sql);
+        $stmt->bindParam(':puesto', $_POST['puesto'], PDO::PARAM_STR);
+        $stmt->bindParam(':objetivo_id', $_POST['objetivo_id'], PDO::PARAM_INT);
+        $stmt->bindParam(':tipo', $_POST['tipo'], PDO::PARAM_STR);
 
-                $puesto = trim($_POST["puesto"]);
-                $objetivo_id = $_POST["objetivo_id"];
-                $tipo = $_POST["tipo"];
+        if (!$stmt->execute()) {
+            ToastifyController::error('No se pudo registrar el puesto.');
+            return;
+        }
 
+        $idPuesto = $db->conectar()->lastInsertId();
 
-                $datos = array(
-                    "puesto" => $puesto,
-                    "objetivo_id" => $objetivo_id,
-                    "tipo" => $tipo
-                );
+        // 2. Insertar turnos si están cargados
+        $turnos = $_POST['turnos'] ?? [];
 
-                $respuesta = ModeloPuestos::mdlGuardarPuesto($tabla, $datos);
+        $sqlTurno = "INSERT INTO puestos_turnos (puesto_id, numero_turno, hora_entrada, hora_salida)
+                 VALUES (:puesto_id, :numero_turno, :hora_entrada, :hora_salida)";
+        $stmtTurno = $db->conectar()->prepare($sqlTurno);
 
-                // Confirmar la transacción si no hay errores
+        foreach ($turnos as $turno) {
+            $entrada = $turno['hora_entrada'] ?? '';
+            $salida  = $turno['hora_salida'] ?? '';
 
-                if ($respuesta == "ok") {
-                    $conexion->commit();
-                    ToastifyController::success('Puesto registrado correctamente');
-                    header("Location:?r=listado_puestos");
-                    exit;
-                } else {
-                    throw new Exception("Error al guardar en la base de datos.");
-                }
-            } catch (Exception $e) {
-                // Revertir la transacción en caso de error
-                $conexion->rollBack();
-
-                // Manejar el error según sea necesario
-                ToastifyController::error('Error: ' . $e->getMessage());
-
-                return false;
+            // Validamos que ambos campos estén completos
+            if ($entrada && $salida) {
+                $stmtTurno->bindParam(':puesto_id', $idPuesto, PDO::PARAM_INT);
+                $stmtTurno->bindParam(':numero_turno', $turno['numero_turno'], PDO::PARAM_INT);
+                $stmtTurno->bindParam(':hora_entrada', $entrada, PDO::PARAM_STR);
+                $stmtTurno->bindParam(':hora_salida', $salida, PDO::PARAM_STR);
+                $stmtTurno->execute();
             }
         }
+
+        ToastifyController::success('Puesto y turnos registrados correctamente.');
     }
+
 
     static public function crtModificarPuesto()
     {
@@ -62,44 +62,69 @@ class ControladorPuestos
             try {
                 $conexion = Conexion::conectar();
 
-                // Iniciar una transacción
+                // Iniciar transacción
                 if (!$conexion->inTransaction()) {
                     $conexion->beginTransaction();
                 }
 
+                // 1. Actualizar datos del puesto
                 $tabla = "puestos";
 
                 $datos = array(
-                    "idPuesto"  => $_POST["idPuesto"],
-                    "puesto"      => $_POST["puesto"],
-                    "objetivo_id"   => $_POST["objetivo_id"],
-                    "tipo"        => $_POST["tipo"]
+                    "idPuesto"     => $_POST["idPuesto"],
+                    "puesto"       => $_POST["puesto"],
+                    "objetivo_id"  => $_POST["objetivo_id"],
+                    "tipo"         => $_POST["tipo"]
+                    // "duracion_turno" eliminado porque ya no se usa
                 );
 
                 $respuesta = ModeloPuestos::mdlModificarPuesto($tabla, $datos);
 
-                if ($respuesta === "ok") {
-                    // Confirmar la transacción
-                    $conexion->commit();
-                    ToastifyController::success('Puesto actualizado correctamente');
-                    header("Location:?r=listado_puestos");
-                    exit;
-                } else {
-                    // Si algo falla, hacer rollback
+                if ($respuesta !== "ok") {
                     $conexion->rollBack();
                     ToastifyController::error('Error al modificar el puesto');
                     header("Location: ?r=editar_puesto&id=" . $_POST["idPuesto"]);
                     exit;
                 }
+
+                // 2. Eliminar los turnos anteriores del puesto
+                $sqlDel = "DELETE FROM puestos_turnos WHERE puesto_id = ?";
+                $stmtDel = $conexion->prepare($sqlDel);
+                $stmtDel->execute([$_POST["idPuesto"]]);
+
+                // 3. Insertar los nuevos turnos enviados en el formulario
+                $turnos = $_POST['turnos'] ?? [];
+                $sqlIns = "INSERT INTO puestos_turnos (puesto_id, numero_turno, hora_entrada, hora_salida)
+                       VALUES (:puesto_id, :numero_turno, :hora_entrada, :hora_salida)";
+                $stmtIns = $conexion->prepare($sqlIns);
+
+                foreach ($turnos as $turno) {
+                    $entrada = $turno['hora_entrada'] ?? '';
+                    $salida  = $turno['hora_salida'] ?? '';
+
+                    if ($entrada && $salida) {
+                        $stmtIns->bindParam(':puesto_id', $_POST["idPuesto"], PDO::PARAM_INT);
+                        $stmtIns->bindParam(':numero_turno', $turno['numero_turno'], PDO::PARAM_INT);
+                        $stmtIns->bindParam(':hora_entrada', $entrada, PDO::PARAM_STR);
+                        $stmtIns->bindParam(':hora_salida', $salida, PDO::PARAM_STR);
+                        $stmtIns->execute();
+                    }
+                }
+
+                // 4. Confirmar transacción
+                $conexion->commit();
+                ToastifyController::success('Puesto y turnos actualizados correctamente');
+                header("Location:?r=listado_puestos");
+                exit;
             } catch (Exception $e) {
-                // En caso de error, revertir la transacción
                 $conexion->rollBack();
                 ToastifyController::error('Error: ' . $e->getMessage());
-                header("Location: ?r=editar_puesto.php&id=" . $_POST["idPuesto"]);
+                header("Location: ?r=editar_puesto&id=" . $_POST["idPuesto"]);
                 exit;
             }
         }
     }
+
 
     /** DESACTIVAR UN PUESTO **/
     static public function crtDesactivarPuesto()

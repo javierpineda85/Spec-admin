@@ -175,7 +175,9 @@ class RutasController
             return;
         }
         if (isset($_GET['r']) && $_GET['r'] === 'buscar_resumen_horas_por_vigilador') {
-            ControladorCronograma::crtBuscarResumenHorasPorVigilador();
+            $desde = $_POST['desde'] ?? null;
+            $hasta = $_POST['hasta'] ?? null;
+            ControladorCronograma::crtBuscarResumenHorasPorVigilador($desde,$hasta);
             return;
         }
 

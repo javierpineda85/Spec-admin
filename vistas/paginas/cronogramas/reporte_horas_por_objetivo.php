@@ -48,7 +48,7 @@
                                     <th>Objetivo</th>
                                     <th class="text-center">Horas Diurnas</th>
                                     <th class="text-center">Horas Nocturnas</th>
-                                    <th class="text-center">Totals Horas</th>
+                                    <th class="text-center">Total Horas</th>
                                 </tr>
                             </thead>
                             <tbody>

@@ -309,7 +309,6 @@ class ControladorCronograma
             // 2) obtengo datos del modelo
             $f = $_SESSION['filtros_resumen'];
             $_SESSION['resumen_diario'] = ModeloCronograma::mdlResumenDiarioJornadas(
-                'turnos',
                 $f['objetivo'],
                 $f['desde'],
                 $f['hasta']
@@ -330,6 +329,7 @@ class ControladorCronograma
     static public function crtBuscarResumenHoras()
     {
         Auth::check('cronogramas', 'crtBuscarResumenHoras');
+
         $desde = $_POST['desde'] ?? null;
         $hasta = $_POST['hasta'] ?? null;
 
@@ -339,50 +339,93 @@ class ControladorCronograma
         }
 
         $db = new Conexion;
-        $sql = "SELECT idObjetivo, nombre FROM objetivos ORDER BY nombre";
-        $objetivos = $db->consultas($sql);
+        $objetivos = $db->consultas("SELECT idObjetivo, nombre FROM objetivos ORDER BY nombre");
+
+        // 1. Traemos TODAS las marcaciones del período
+        $marcaciones = $db->consultas("SELECT vigilador_id, objetivo_id, tipo_evento, fecha_hora
+                FROM marcaciones_servicio
+                WHERE fecha_hora BETWEEN ? AND ?
+                ORDER BY vigilador_id, objetivo_id, fecha_hora
+            ", ["$desde 00:00:00", "$hasta 23:59:59"]);
+
+        // 2. Armamos jornadas reales
+        $jornadas = [];
+        $entradaPendiente = [];
+
+        foreach ($marcaciones as $m) {
+            $key = "{$m['vigilador_id']}_{$m['objetivo_id']}";
+
+            if ($m['tipo_evento'] === 'entrada') {
+                $entradaPendiente[$key] = $m['fecha_hora'];
+            } elseif ($m['tipo_evento'] === 'salida' && isset($entradaPendiente[$key])) {
+                $jornadas[] = [
+                    'vigilador_id' => $m['vigilador_id'],
+                    'objetivo_id'  => $m['objetivo_id'],
+                    'entrada'      => $entradaPendiente[$key],
+                    'salida'       => $m['fecha_hora']
+                ];
+                unset($entradaPendiente[$key]);
+            }
+        }
 
         $reporte = [];
 
         foreach ($objetivos as $o) {
-            $sql = "SELECT 
-                    m1.vigilador_id,
-                    m1.objetivo_id,
-                    m1.fecha_hora AS entrada,
-                    m2.fecha_hora AS salida
-                FROM marcaciones_servicio m1
-                JOIN marcaciones_servicio m2
-                    ON m1.vigilador_id = m2.vigilador_id
-                    AND m1.objetivo_id = m2.objetivo_id
-                    AND m1.tipo_evento = 'entrada'
-                    AND m2.tipo_evento = 'salida'
-                    AND m2.fecha_hora > m1.fecha_hora
-                WHERE m1.objetivo_id = ?
-                    AND DATE(m1.fecha_hora) BETWEEN ? AND ?
-                GROUP BY m1.idMarcacion
-                ORDER BY m1.fecha_hora";
-
-            $params = [$o['idObjetivo'], $desde, $hasta];
-            $jornadas = $db->consultas($sql, $params);
-
+            $idObjetivo = $o['idObjetivo'];
             $sumDiur = 0.0;
             $sumNoct = 0.0;
 
             foreach ($jornadas as $j) {
-                $start = new DateTime($j['entrada']);
-                $end   = new DateTime($j['salida']);
+                if ($j['objetivo_id'] != $idObjetivo) continue;
 
-                // Si la salida es menor, asumimos turno nocturno cruzando la medianoche
-                if ($end <= $start) {
-                    $end->modify('+1 day');
+                $entrada = new DateTime($j['entrada']);
+                $salida  = new DateTime($j['salida']);
+                if ($salida <= $entrada) $salida->modify('+1 day');
+
+                // Evitamos horas antes del turno, pero permitimos salidas posteriores
+                // Buscar el turno para obtener la fecha de referencia
+                $sqlTurno = "SELECT puesto_id, codigo_turno, fecha
+                         FROM turnos
+                         WHERE usuario_id = ? AND objetivo_id = ?
+                           AND fecha BETWEEN DATE(?) AND DATE_ADD(?, INTERVAL 1 DAY)
+                         ORDER BY ABS(DATEDIFF(fecha, ?))
+                         LIMIT 1";
+                $turno = $db->consultas($sqlTurno, [
+                    $j['vigilador_id'],
+                    $idObjetivo,
+                    $entrada->format('Y-m-d'),
+                    $entrada->format('Y-m-d'),
+                    $entrada->format('Y-m-d')
+                ])[0] ?? null;
+
+                if (!$turno) continue;
+
+                // Si tiene código de turno, lo usamos para buscar el rango (pero sin recortar)
+                $mapaTurno = ['D' => 1, 'N' => 2, 'I' => 3];
+                $numeroTurno = $mapaTurno[strtoupper($turno['codigo_turno'])] ?? 1;
+
+                $sqlHorario = "SELECT hora_entrada
+                           FROM puestos_turnos
+                           WHERE puesto_id = ? AND numero_turno = ?
+                           LIMIT 1";
+                $horaEntradaTurno = $db->consultas($sqlHorario, [$turno['puesto_id'], $numeroTurno])[0]['hora_entrada'] ?? null;
+
+                if ($horaEntradaTurno) {
+                    $inicioTeorico = new DateTime("{$turno['fecha']} $horaEntradaTurno");
+                    if ($inicioTeorico > $entrada) {
+                        // El vigilador entró antes de su turno → no se cuenta
+                        $entrada = $inicioTeorico;
+                    }
                 }
 
-                $hDiur = self::calcularHorasEnVentana($start, $end, '06:00:00', '21:00:00');
-                $hTotal = ($end->getTimestamp() - $start->getTimestamp()) / 3600;
-                $hNoct = $hTotal - $hDiur;
+                if ($salida <= $entrada) continue; // jornada inválida
 
-                $sumDiur += $hDiur;
-                $sumNoct += $hNoct;
+                // 🧠 Hasta acá tenemos la jornada real: entrada → salida
+                $hDiur = self::calcularHorasEnVentana($entrada, $salida, '06:00:00', '21:59:59');
+                $hNoct = self::calcularHorasEnVentana($entrada, $salida, '22:00:00', '05:59:59');
+
+                $sumDiur += round($hDiur, 2);
+                $sumNoct += round($hNoct, 2);
             }
 
             $reporte[] = [
@@ -393,6 +436,7 @@ class ControladorCronograma
         }
 
         $_SESSION['resumen_periodo'] = $reporte;
+        $_SESSION['filtros_resumen'] = ['desde' => $desde, 'hasta' => $hasta];
         header('Location: ?r=reporte_porHoras');
         exit;
     }
@@ -403,143 +447,276 @@ class ControladorCronograma
     static private function calcularHorasEnVentana(DateTime $start, DateTime $end, string $horaDesde, string $horaHasta): float
     {
         Auth::check('cronogramas', 'calcularHorasEnVentana');
-        $segDiurnos = 0;
+
+        if ($start >= $end) return 0;
+
+        $segundosEnVentana = 0;
         $cursor = clone $start;
 
         while ($cursor < $end) {
-            $fecha = $cursor->format('Y-m-d');
-            $ventIni = new DateTime("$fecha $horaDesde");
-            $ventFin = new DateTime("$fecha $horaHasta");
+            $fechaBase = $cursor->format('Y-m-d');
 
-            // Calculamos solape entre [$cursor, $end] y ventana
-            $solapeIni = $cursor > $ventIni ? $cursor : $ventIni;
-            $solapeFin = $end < $ventFin    ? $end    : $ventFin;
+            $inicioVentana = new DateTime("$fechaBase $horaDesde");
+            $finVentana    = new DateTime("$fechaBase $horaHasta");
 
-            if ($solapeFin > $solapeIni) {
-                $segDiurnos += $solapeFin->getTimestamp() - $solapeIni->getTimestamp();
+            // Si la ventana cruza medianoche (ej: 22:00 → 05:59)
+            if ($finVentana <= $inicioVentana) {
+                $finVentana->modify('+1 day');
             }
 
-            // Avanzamos al siguiente día
-            $cursor = (new DateTime("$fecha 23:59:59"))->modify('+1 second');
+            // Si el fin real del rango cruzado también supera el fin total
+            if ($finVentana > $end) {
+                $finVentana = clone $end;
+            }
+
+            // Calcular intersección entre la jornada y la ventana
+            $inicioSolape = max($start, $inicioVentana);
+            $finSolape    = min($end, $finVentana);
+
+            if ($finSolape > $inicioSolape) {
+                $segundosEnVentana += $finSolape->getTimestamp() - $inicioSolape->getTimestamp();
+            }
+
+            // Avanzamos el cursor al día siguiente
+            $cursor->modify('+1 day')->setTime(0, 0);
         }
 
-        return $segDiurnos / 3600;
+        return $segundosEnVentana / 3600; // devolver en horas
     }
 
     /* Calcula la cantidad de horas trabajadas por vigilador. 
     *Tiene en cuenta si ha trabajo una GP o FRANCO. VISTA: reporte_horas_vigilador 
     */
-    static public function crtBuscarResumenHorasPorVigilador()
+
+    public static function crtBuscarResumenHorasPorVigilador()
     {
-        Auth::check('cronogramas', 'crtBuscarResumenHorasPorVigilador');
-        $desde = $_POST['desde'] ?? null;
-        $hasta = $_POST['hasta'] ?? null;
+        Auth::check('cronograma', 'crtBuscarResumenHorasPorVigilador');
+
+        $desde = $_POST['desde'] ?? '';
+        $hasta = $_POST['hasta'] ?? '';
+
         if (!$desde || !$hasta) {
-            ToastifyController::error('Por favor completa los dos campos de fecha.');
+            $_SESSION['error_message'] = 'Debes indicar un rango de fechas válido';
             header('Location: ?r=reporte_porVigilador');
             exit;
         }
 
         $db = new Conexion;
-        $sql = "SELECT idUsuario, nombre, apellido
-        FROM usuarios
-        WHERE rol = 'Vigilador'
-        ORDER BY apellido DESC";
-        $vigiladores = $db->consultas($sql);
+        $usuarios = $db->consultas("SELECT idUsuario, CONCAT(apellido, ', ', nombre) AS vigilador FROM usuarios WHERE rol = 'Vigilador'");
 
-        $reporte = [];
+        // Obtener todos los horarios de turnos
+        $horariosTurnos = $db->consultas("SELECT puesto_id, numero_turno, hora_entrada, hora_salida FROM puestos_turnos");
 
-        foreach ($vigiladores as $v) {
+        // Mapeo de códigos de turno a números
+        $mapeoTurnos = [
+            'D' => 1,
+            'N' => 2,
+            'I' => 3
+        ];
 
-            // 1) Traemos pares entrada/salida del vigilador
-            $sql = "SELECT 
-                    m1.fecha_hora AS entrada,
-                    m2.fecha_hora AS salida
-                FROM marcaciones_servicio m1
-                JOIN marcaciones_servicio m2
-                    ON m1.vigilador_id = m2.vigilador_id
-                    AND m1.objetivo_id = m2.objetivo_id
-                    AND m1.tipo_evento = 'entrada'
-                    AND m2.tipo_evento = 'salida'
-                    AND m2.fecha_hora > m1.fecha_hora
-                WHERE m1.vigilador_id = ?
-                    AND DATE(m1.fecha_hora) BETWEEN ? AND ?
-                GROUP BY m1.idMarcacion
-                ORDER BY m1.fecha_hora";
+        $rows = [];
+        $_SESSION['diferencias_horarias'] = []; // Para registrar diferencias
 
-            $params = [$v['idUsuario'], $desde, $hasta];
-            $jornadas = $db->consultas($sql, $params);
+        foreach ($usuarios as $usuario) {
+            $id = $usuario['idUsuario'];
+            $nombre = $usuario['vigilador'];
 
-            $sumDiur = 0.0;
-            $sumNoct = 0.0;
-            $fechasTrabajadas = [];
+            // Obtener marcaciones del usuario
+            $marcaciones = $db->consultas(
+                "SELECT * 
+                    FROM marcaciones_servicio 
+                    WHERE vigilador_id = :id 
+                        AND fecha_hora BETWEEN :desde AND :hasta 
+                    ORDER BY fecha_hora",
+                [
+                    'id' => $id,
+                    'desde' => "$desde 00:00:00",
+                    'hasta' => "$hasta 23:59:59"
+                ]
+            );
 
-            foreach ($jornadas as $j) {
-                // 2) Siempre contamos la fecha como jornada
-                $fecha = substr($j['entrada'], 0, 10);
-                $fechasTrabajadas[] = $fecha;
+            // Obtener turnos asignados
+            $turnosAsignados = $db->consultas(
+                " SELECT fecha, codigo_turno, puesto_id, objetivo_id
+                        FROM turnos 
+                        WHERE usuario_id = :id 
+                            AND fecha BETWEEN :desde AND :hasta",
+                [
+                    'id' => $id,
+                    'desde' => $desde,
+                    'hasta' => $hasta
+                ]
+            );
 
-                // 3) Construimos DateTime de inicio y fin
-                $start = new DateTime($j['entrada']);
-                $end   = new DateTime($j['salida']);
+            // Combinar turnos con horarios
+            $turnosCompletos = [];
+            foreach ($turnosAsignados as $turno) {
+                $codigo = trim(strtoupper($turno['codigo_turno']));
+                $numeroTurno = $mapeoTurnos[$codigo] ?? null;
 
-                if ($end <= $start) {
-                    $end->modify('+1 day');
+                if ($numeroTurno) {
+                    foreach ($horariosTurnos as $horario) {
+                        if ($horario['puesto_id'] == $turno['puesto_id'] && $horario['numero_turno'] == $numeroTurno) {
+                            $turnosCompletos[] = [
+                                'fecha' => $turno['fecha'],
+                                'objetivo_id' => $turno['objetivo_id'],
+                                'hora_entrada' => $horario['hora_entrada'],
+                                'hora_salida' => $horario['hora_salida']
+                            ];
+                            break;
+                        }
+                    }
                 }
-
-                // 4) Calculamos horas diurnas (entre 06:00 y 21:00) y restantes como nocturnas
-                $hDiur   = self::calcularHorasEnVentana($start, $end, '06:00:00', '21:00:00');
-                $hTotal  = ($end->getTimestamp() - $start->getTimestamp()) / 3600.0;
-                $hNoct   = $hTotal - $hDiur;
-
-                $sumDiur += $hDiur;
-                $sumNoct += $hNoct;
             }
 
-            // 5) Contamos fechas únicas para obtener cantidad de jornadas
-            $jornadasCount = count(array_unique($fechasTrabajadas));
+            // Emparejar marcaciones
+            $jornadas = self::emparejarMarcaciones($marcaciones);
 
-            // 6) Contamos guardias pasivas trabajadas
-            $sqlPasivas = "SELECT COUNT(*) AS total
-            FROM turnos t
-            WHERE t.usuario_id = ?
-              AND t.tipo_turno = 'Guardia Pasiva'
-              AND t.fecha BETWEEN ? AND ?
-              AND EXISTS (
-                SELECT 1 FROM marcaciones_servicio m
-                WHERE m.vigilador_id = t.usuario_id
-                  AND DATE(m.fecha_hora) = t.fecha
-                  AND m.tipo_evento = 'entrada'
-              )";
-            $countPasivas = $db->consultas($sqlPasivas, [$v['idUsuario'], $desde, $hasta])[0]['total'];
+            $diurnas = 0;
+            $nocturnas = 0;
+            $guardiasPasivas = 0;
+            $francos = 0;
 
-            // 7) Contamos francos trabajados
-            $sqlFrancos = "SELECT COUNT(*) AS total
-            FROM turnos t
-            WHERE t.usuario_id = ?
-              AND t.tipo_turno = 'Franco'
-              AND t.fecha BETWEEN ? AND ?
-              AND EXISTS (
-                SELECT 1 FROM marcaciones_servicio m
-                WHERE m.vigilador_id = t.usuario_id
-                  AND DATE(m.fecha_hora) = t.fecha
-                  AND m.tipo_evento = 'entrada'
-              )";
-            $countFrancos = $db->consultas($sqlFrancos, [$v['idUsuario'], $desde, $hasta])[0]['total'];
+            foreach ($jornadas as $j) {
+                $fechaJ = substr($j['entrada'], 0, 10);
+                $encontrado = false;
 
-            $reporte[] = [
-                'vigilador'         => $v['apellido'] . ' ' . $v['nombre'],
-                'diurnas'           => round($sumDiur, 2),
-                'nocturnas'         => round($sumNoct, 2),
-                'jornadas'          => $jornadasCount,
-                'guardias_pasivas'  => $countPasivas,
-                'francos'           => $countFrancos
+                foreach ($turnosCompletos as $turno) {
+                    if ($turno['fecha'] === $fechaJ && $turno['objetivo_id'] == $j['objetivo_id']) {
+                        $encontrado = true;
+
+                        // Objetos DateTime
+                        $entradaReal = new DateTime($j['entrada']);
+                        $salidaReal = new DateTime($j['salida']);
+                        $entradaTurno = new DateTime("$fechaJ {$turno['hora_entrada']}");
+                        $salidaTurno = new DateTime("$fechaJ {$turno['hora_salida']}");
+
+                        // Ajustar turno nocturno
+                        if ($salidaTurno < $entradaTurno) {
+                            $salidaTurno->modify('+1 day');
+                        }
+
+                        // Margen de tolerancia (15 minutos)
+                        $margen = new DateInterval('PT15M');
+                        $entradaMin = (clone $entradaTurno)->sub($margen);
+                        $salidaMax = (clone $salidaTurno)->add($margen);
+
+                        // Recortar marcaciones al turno con margen
+                        $inicio = max($entradaReal, $entradaMin);
+                        $fin = min($salidaReal, $salidaMax);
+
+                        if ($inicio >= $fin) {
+                            continue; // Jornada inválida
+                        }
+
+                        // Registrar diferencias significativas (>15 min)
+                        if ($entradaReal < $entradaMin || $salidaReal > $salidaMax) {
+                            $diferenciaEntrada = $entradaReal->diff($entradaTurno);
+                            $diferenciaSalida = $salidaReal->diff($salidaTurno);
+
+                            if ($diferenciaEntrada->i > 15 || $diferenciaSalida->i > 15) {
+                                $_SESSION['diferencias_horarias'][] = [
+                                    'vigilador' => $nombre,
+                                    'fecha' => $fechaJ,
+                                    'entrada_real' => $entradaReal->format('H:i'),
+                                    'entrada_turno' => $entradaTurno->format('H:i'),
+                                    'salida_real' => $salidaReal->format('H:i'),
+                                    'salida_turno' => $salidaTurno->format('H:i')
+                                ];
+                            }
+                        }
+
+                        // CALCULAR HORAS USANDO EL MÉTODO QUE FUNCIONA
+                        $hDiur = self::calcularHorasEnVentana($inicio, $fin, '06:00', '21:59');
+                        $hNoct = self::calcularHorasEnVentana($inicio, $fin, '22:00', '05:59');
+
+                        $diurnas += round($hDiur, 2);
+                        $nocturnas += round($hNoct, 2);
+
+                        break;
+                    }
+                }
+
+                if (!$encontrado) {
+                    // Registrar jornada sin turno asociado
+                    $_SESSION['advertencias'][] = "Vigilador $nombre tiene jornada sin turno asignado el $fechaJ";
+
+                    // Si no hay turno, calcular horas directamente
+                    $entradaReal = new DateTime($j['entrada']);
+                    $salidaReal = new DateTime($j['salida']);
+
+                    $hDiur = self::calcularHorasEnVentana($entradaReal, $salidaReal, '06:00', '21:59');
+                    $hNoct = self::calcularHorasEnVentana($entradaReal, $salidaReal, '22:00', '05:59');
+
+                    $diurnas += round($hDiur, 2);
+                    $nocturnas += round($hNoct, 2);
+                }
+            }
+
+            $rows[] = [
+                'vigilador' => $nombre,
+                'diurnas' => $diurnas,
+                'nocturnas' => $nocturnas,
+                'guardias_pasivas' => round($guardiasPasivas, 2),
+                'francos' => $francos,
+                'jornadas' => count($jornadas)
             ];
         }
 
-        $_SESSION['reporte_vigilador'] = $reporte;
+        $_SESSION['reporte_vigilador'] = $rows;
         header('Location: ?r=reporte_porVigilador');
         exit;
+    }
+
+    private static function emparejarMarcaciones($marcaciones)
+    {
+        $jornadas = [];
+        $entradasPendientes = [];
+
+        // Ordenar marcaciones cronológicamente
+        usort($marcaciones, function ($a, $b) {
+            return strcmp($a['fecha_hora'], $b['fecha_hora']);
+        });
+
+        foreach ($marcaciones as $m) {
+            $clave = $m['vigilador_id'] . '-' . $m['objetivo_id'];
+
+            if ($m['tipo_evento'] == 'entrada') {
+                // Si ya existe una entrada para esta clave, forzar cierre
+                if (isset($entradasPendientes[$clave])) {
+                    $jornadas[] = [
+                        'entrada' => $entradasPendientes[$clave]['fecha_hora'],
+                        'salida' => $m['fecha_hora'],
+                        'objetivo_id' => $m['objetivo_id']
+                    ];
+                }
+                $entradasPendientes[$clave] = $m;
+            } elseif ($m['tipo_evento'] == 'salida' && isset($entradasPendientes[$clave])) {
+                $entrada = $entradasPendientes[$clave];
+
+                // Solo crear jornada si la salida es posterior a la entrada
+                if (strtotime($m['fecha_hora']) > strtotime($entrada['fecha_hora'])) {
+                    $jornadas[] = [
+                        'entrada' => $entrada['fecha_hora'],
+                        'salida' => $m['fecha_hora'],
+                        'objetivo_id' => $m['objetivo_id']
+                    ];
+                }
+                unset($entradasPendientes[$clave]);
+            }
+        }
+
+        // Manejar entradas sin salida
+        foreach ($entradasPendientes as $clave => $entrada) {
+            $jornadas[] = [
+                'entrada' => $entrada['fecha_hora'],
+                'salida' => date('Y-m-d H:i:s'),
+                'objetivo_id' => $entrada['objetivo_id'],
+                'incompleta' => true
+            ];
+        }
+
+        return $jornadas;
     }
 
     static public function vistaCrearCronograma()

@@ -23,26 +23,22 @@ class ModeloCronograma
         $registro = null;
     }
     /*Es funcion permite calcular la cantidad de jornadas trabajadas en un objetivo. Vista: resumen_diario_jornadas*/
-    static public function mdlResumenDiarioJornadas($tabla, $objetivoId, $desde, $hasta)
+    static public function mdlResumenDiarioJornadas($objetivoId, $desde, $hasta)
     {
         $sql = "SELECT 
-                    DATE(m.fecha_hora) AS fecha,
-                    SUM(CASE
-                    WHEN TIME(m.fecha_hora) BETWEEN '06:00:00' AND '21:59:59' THEN 1
-                        ELSE 0
-                    END) AS diurnas,
-                    SUM(CASE 
-                        WHEN TIME(m.fecha_hora) BETWEEN '22:00:00' AND '23:59:59'
-                        OR TIME(m.fecha_hora) BETWEEN '00:00:00' AND '05:59:59' THEN 1
-                        ELSE 0
-                    END) AS nocturnas
-        FROM $tabla m
-        WHERE m.tipo_evento = 'entrada'
-            AND m.objetivo_id = :objetivo_id
-            AND DATE(m.fecha_hora) BETWEEN :desde AND :hasta
-        GROUP BY DATE(m.fecha_hora)
-        ORDER BY DATE(m.fecha_hora)
-        ";
+                DATE(m.fecha_hora) AS fecha,
+                SUM(CASE WHEN t.codigo_turno = 'D' THEN 1 ELSE 0 END) AS diurnas,
+                SUM(CASE WHEN t.codigo_turno = 'N' THEN 1 ELSE 0 END) AS nocturnas
+            FROM marcaciones_servicio m
+            INNER JOIN turnos t 
+                ON t.usuario_id = m.vigilador_id
+                AND t.objetivo_id = m.objetivo_id
+                AND t.fecha = DATE(m.fecha_hora)
+            WHERE m.tipo_evento = 'entrada'
+              AND m.objetivo_id = :objetivo_id
+              AND DATE(m.fecha_hora) BETWEEN :desde AND :hasta
+            GROUP BY DATE(m.fecha_hora)
+            ORDER BY DATE(m.fecha_hora)";
 
         $stmt = Conexion::conectar()->prepare($sql);
         $stmt->bindParam(':objetivo_id', $objetivoId, PDO::PARAM_INT);

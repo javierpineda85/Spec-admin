@@ -121,4 +121,62 @@ class ModeloTurnos
             if (isset($stmt)) $stmt->closeCursor();
         }
     }
+
+    /*Esta funcion permite calcular correctamente las horas trabajadas teniendo en cuenta que
+    * si alguien ingresa antes, no cuenta como hora extra
+    * Si alguien ingresa despues, cuenta como tardanza
+    * si alguien sale antes, cuenta como que debe horas
+    * si alguien sale despues, no cuenta como hora extra    
+    */
+    public static function obtenerHorarioEsperado($usuarioId, $objetivoId, $fecha)
+    {
+        $conexion = Conexion::conectar();
+
+        // 1. Buscar el turno asignado
+        $sqlTurno = "SELECT puesto_id, codigo_turno 
+                 FROM turnos 
+                 WHERE usuario_id = :usuario_id 
+                   AND objetivo_id = :objetivo_id 
+                   AND fecha = :fecha
+                 LIMIT 1";
+
+        $stmt = $conexion->prepare($sqlTurno);
+        $stmt->bindParam(':usuario_id', $usuarioId, PDO::PARAM_INT);
+        $stmt->bindParam(':objetivo_id', $objetivoId, PDO::PARAM_INT);
+        $stmt->bindParam(':fecha', $fecha, PDO::PARAM_STR);
+        $stmt->execute();
+
+        $turno = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$turno) return null;
+
+        // 2. Buscar el número de turno asociado (D = 1, N = 2, etc.)
+        // Adaptable a tu codificación interna si usás D, N, M...
+        $mapaCodigos = [
+            'D' => 1,
+            'M' => 2,
+            'N' => 3
+        ];
+
+        $numeroTurno = $mapaCodigos[$turno['codigo_turno']] ?? 1;
+
+        // 3. Buscar el horario esperado en puestos_turnos
+        $sqlHorario = "SELECT hora_entrada, hora_salida
+                   FROM puestos_turnos
+                   WHERE puesto_id = :puesto_id AND numero_turno = :numero_turno
+                   LIMIT 1";
+
+        $stmt2 = $conexion->prepare($sqlHorario);
+        $stmt2->bindParam(':puesto_id', $turno['puesto_id'], PDO::PARAM_INT);
+        $stmt2->bindParam(':numero_turno', $numeroTurno, PDO::PARAM_INT);
+        $stmt2->execute();
+
+        $horario = $stmt2->fetch(PDO::FETCH_ASSOC);
+        if (!$horario) return null;
+
+        return [
+            'hora_entrada' => $horario['hora_entrada'],
+            'hora_salida'  => $horario['hora_salida'],
+            'numero_turno' => $numeroTurno
+        ];
+    }
 }
