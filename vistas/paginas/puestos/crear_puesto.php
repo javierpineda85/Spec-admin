@@ -1,6 +1,6 @@
 <?php
-if(isset($_POST['Registrar'])){
-ControladorPuestos::ctrGuardarPuesto();
+if (isset($_POST['Registrar'])) {
+    ControladorPuestos::ctrGuardarPuesto();
 }
 $db = new Conexion;
 $sql = "SELECT * FROM objetivos WHERE activo = 1 ORDER BY nombre ";
@@ -49,6 +49,31 @@ $objetivos = $db->consultas($sql);
                             <option value="Eventual">Eventual</option>
                         </select>
                     </div>
+                    <div class="form-group col-12">
+                        <label><strong>Turnos del puesto</strong></label>
+                        <p>Podés configurar hasta 3 turnos con hora de entrada y salida.</p>
+                    </div>
+
+                    <?php for ($i = 1; $i <= 3; $i++): ?>
+                        <div class="form-row mb-2 align-items-center border p-2 rounded">
+                            <div class="form-group col-md-2">
+                                <label>Turno <?= $i ?></label>
+                                <input type="hidden" name="turnos[<?= $i ?>][numero_turno]" value="<?= $i ?>">
+                            </div>
+                            <div class="form-group col-md-5">
+                                <label>Hora de entrada</label>
+                                <input type="time" class="form-control" name="turnos[<?= $i ?>][hora_entrada]" placeholder="Ej: 06:00" data-optional="true">
+                                <small>Ej: 06:00</small>
+                            </div>
+                            <div class="form-group col-md-5">
+                                <label>Hora de salida</label>
+                                <input type="time" class="form-control" name="turnos[<?= $i ?>][hora_salida]" placeholder="Ej: 13:59" data-optional="true">
+                                <small>Ej: 17:59</small>
+                            </div>
+                        </div>
+                    <?php endfor; ?>
+
+
                 </div>
                 <div class="card-footer">
                     <input type="submit" class="btn btn-success" value="Crear Puesto" name="Registrar">

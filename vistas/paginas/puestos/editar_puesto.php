@@ -6,6 +6,15 @@ $db = new Conexion;
 
 $sql = "SELECT p.idPuesto, p.puesto, p.objetivo_id, p.tipo, o.nombre as nombreObjetivo FROM puestos p JOIN objetivos o ON p.objetivo_id = o.idObjetivo WHERE p.idPuesto = " . $_GET['id'];
 $puesto = $db->consultas($sql);
+// Traemos los turnos del puesto actual
+$sqlTurnos = "SELECT * FROM puestos_turnos WHERE puesto_id = ?";
+$turnos = $db->consultas($sqlTurnos, [$puesto[0]['idPuesto']]);
+
+// Reorganizamos por numero_turno para acceso directo
+$turnosPorNumero = [];
+foreach ($turnos as $t) {
+    $turnosPorNumero[$t['numero_turno']] = $t;
+}
 
 ?>
 <div class="card">
@@ -31,8 +40,8 @@ $puesto = $db->consultas($sql);
                         <label class="form-label">Objetivo</label>
                         <select id="objetivo" name="objetivo_id" class="form-control">
                             <option value="<?php echo $puesto[0]['objetivo_id']; ?>" selected><?php echo $puesto[0]['nombreObjetivo']; ?></option>
-                             
-                            <?php foreach ($objetivos as $objetivo): ?>                                
+
+                            <?php foreach ($objetivos as $objetivo): ?>
                                 <option value="<?php echo $objetivo['idObjetivo'] ?>"><?php echo $objetivo['nombre'] ?></option>
                             <?php endforeach ?>
                         </select>
@@ -45,6 +54,34 @@ $puesto = $db->consultas($sql);
                             <option value="Eventual">Eventual</option>
                         </select>
                     </div>
+                    <div class="form-group col-12">
+                        <label><strong>Turnos del puesto</strong></label>
+                        <p>Podés configurar hasta 3 turnos con hora de entrada y salida.</p>
+                    </div>
+
+                    <?php for ($i = 1; $i <= 3; $i++):
+                        $horaEntrada = $turnosPorNumero[$i]['hora_entrada'] ?? '';
+                        $horaSalida  = $turnosPorNumero[$i]['hora_salida'] ?? '';
+                    ?>
+                        <div class="form-row mb-2 align-items-center border p-2 rounded">
+                            <div class="form-group col-md-2">
+                                <label>Turno <?= $i ?></label>
+                                <input type="hidden" name="turnos[<?= $i ?>][numero_turno]" value="<?= $i ?>">
+                            </div>
+                            <div class="form-group col-md-5">
+                                <label>Hora de entrada</label>
+                                <input type="time" class="form-control" name="turnos[<?= $i ?>][hora_entrada]" value="<?= $horaEntrada ?>" data-optional="true">
+                                <small>Ejemplo: 06:00</small>
+                            </div>
+                            <div class="form-group col-md-5">
+                                <label>Hora de salida</label>
+                                <input type="time" class="form-control" name="turnos[<?= $i ?>][hora_salida]" value="<?= $horaSalida ?>" data-optional="true">
+                                <small>Ejemplo: 17:59</small>
+                            </div>
+                        </div>
+                    <?php endfor; ?>
+
+
                 </div>
                 <div class="card-footer">
 
