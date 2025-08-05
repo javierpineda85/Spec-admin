@@ -69,6 +69,7 @@ $usuario = $db->consultas($sql);
                             <label class="form-label">Fecha Nac</label>
                             <input type="date" class="form-control" name="f_nac" value="<?php echo  $usuario[0]['f_nac'] ?>" required>
                         </div>
+                        <?php if (isset($_SESSION['rol']) && $_SESSION['rol'] === 'Gerencia'): ?>
                         <div class="form-group col-sm-12 col-md-4">
                             <label class="form-label">Rol de Usuario</label>
                             <select class="custom-select" name="rol" required>
@@ -81,6 +82,7 @@ $usuario = $db->consultas($sql);
                                 <option value="Gerencia">Gerencia</option>
                             </select>
                         </div>
+                        <?php endif; ?>
                         <div class="form-group col-sm-12 col-md-4">
                             <label class="form-label">Teléfono</label>
                             <input type="text" class="form-control" placeholder="2612223333" name="telefono" value="<?php echo  $usuario[0]['telefono'] ?>" required>

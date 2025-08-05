@@ -48,13 +48,12 @@ class NovedadesController
             exit;
         } catch (Exception  $e) {
             if (isset($pdo) &&  $pdo->inTransaction())  $pdo->rollBack();
-            
+
             ToastifyController::error('Error: ' . $e->getMessage());
             header('Location:?r=crear_novedad');
             exit;
         }
     }
-
     static public function vistaListadoNovedades()
     {
         Auth::check('novedades', 'vistaListadoNovedades');
@@ -94,7 +93,7 @@ class NovedadesController
         include __DIR__ . '/../vistas/paginas/novedades/listado_entradaSalidas.php';
         return;
     }
-        static public function vistaEntradaSalida()
+    static public function vistaEntradaSalida()
     {
         Auth::check('novedades', 'vistaEntradaSalida');
         include __DIR__ . '/../vistas/paginas/novedades/entradas_salidas.php';
@@ -106,5 +105,4 @@ class NovedadesController
         Auth::check('novedades', 'vistaCrearNovedades');
         include __DIR__ . '/../vistas/paginas/novedades/crear_novedades.php';
     }
-
 }

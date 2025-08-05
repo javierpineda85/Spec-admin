@@ -33,7 +33,9 @@ if (isset($_POST['idEliminar'])) {
                                     <th style="text-align: center;" width="200px">Objetivo</th>
                                     <th style="text-align: center;">Detalle</th>
                                     <th style="text-align: center;" width="120px">Adjunto</th>
+                                    <?php if (Auth::hasPermission('directivas', 'crtCrearDirectiva') || Auth::hasPermission('directivas', 'vistaCrearDirectiva')): ?>
                                     <th style="text-align: center;" width="120px">Acciones</th>
+                                    <?php endif; ?>
                                 </tr>
                             </thead>
                             <tbody>
@@ -62,7 +64,7 @@ if (isset($_POST['idEliminar'])) {
                                                 &mdash;
                                             <?php endif; ?>
                                         </td>
-
+                                        <?php if (Auth::hasPermission('directivas', 'crtCrearDirectiva') || Auth::hasPermission('directivas', 'vistaCrearDirectiva')): ?>
                                         <!-- Acciones: Editar / Eliminar -->
                                         <td style="vertical-align: middle; text-align: center;">
                                             <div class="d-flex justify-content-center">
@@ -77,17 +79,11 @@ if (isset($_POST['idEliminar'])) {
                                                 </form>
                                             </div>
                                         </td>
+                                        <?php endif;?>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
-                            <tfoot>
-                                <tr>
-                                    <th style="text-align: center;">Objetivo</th>
-                                    <th style="text-align: center;">Detalle</th>
-                                    <th style="text-align: center;">Adjunto</th>
-                                    <th style="text-align: center;">Acciones</th>
-                                </tr>
-                            </tfoot>
+                            
                         </table>
                     </div>
                     <!-- /.card-body -->

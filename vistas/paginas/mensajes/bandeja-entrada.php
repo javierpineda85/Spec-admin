@@ -169,7 +169,7 @@ $cantidadNoLeidos = count($mensajesNoLeidos);
     <div class="modal-content border-info">
       <div class="modal-header bg-info text-white">
         <h5 class="modal-title" id="modalVerMensajeLabel">Mensaje recibido</h5>
-        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar" >
           <span aria-hidden="true">&times;</span>
         </button>
       </div>

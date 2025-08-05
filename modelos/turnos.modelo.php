@@ -106,6 +106,8 @@ class ModeloTurnos
         $stmt->execute([$objetivoId, "$mes%"]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    /*Elimina los turnos al actualizar el cronograma para evitar duplicados */
     static public function mdlEliminarTurnosPorMes($objetivoId, $mes)
     {
         $db = Conexion::conectar();

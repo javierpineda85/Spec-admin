@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <div class="form-group col-md-2">
                     <label>Fecha de nacimiento</label>
-                    <input type="date" class="form-control" value="<?= $usuario['fecha_nacimiento'] ?? '' ?>" readonly data-optional="true">
+                    <input type="date" class="form-control" value="<?= $usuario['f_nac'] ?? '' ?>" readonly data-optional="true">
                 </div>
                 <div class="form-group col-md-1">
                     <label>DNI</label>

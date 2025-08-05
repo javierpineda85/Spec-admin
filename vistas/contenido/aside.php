@@ -347,8 +347,7 @@
           Auth::hasPermission('usuarios', 'vistaCrearUsuario') ||
           Auth::hasPermission('usuarios', 'vistaListadoUsuarios') ||
           Auth::hasPermission('usuarios', 'vistaListadoUsuariosInactivos') ||
-          Auth::hasPermission('usuarios', 'vistaPerfilUsuario') ||
-          Auth::hasPermission('legajos', 'vistaLegajos')
+          Auth::hasPermission('usuarios', 'vistaPerfilUsuario') 
         ): ?>
           <li class="nav-item has-treeview">
             <a href="#" class="nav-link">
@@ -383,18 +382,6 @@
                   </a>
                 </li>
               <?php endif; ?>
-
-
-              <?php //if (Auth::hasPermission('legajos', 'vistaLegajos')): 
-              ?>
-              <li class="nav-item">
-                <a href="?r=legajos" class="nav-link">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Legajos</p>
-                </a>
-              </li>
-              <?php //endif; 
-              ?>
             </ul>
           </li>
         <?php endif; ?>
@@ -434,13 +421,15 @@
                 </li>
               <?php endif; ?>
 
-              <?php if (Auth::hasPermission('art', 'vistaGestionArt')): ?>
+              <?php if (Auth::hasPermission('art', 'crtGuardarArt')): ?>
                 <li class="nav-item">
                   <a href="?r=gestion_art" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
                     <p>Crear A.R.T.</p>
                   </a>
                 </li>
+                <?php endif; ?>
+                <?php if (Auth::hasPermission('art', 'vistaListadoArt')): ?>
                 <li class="nav-item">
                   <a href="?r=listado_art" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
@@ -448,7 +437,14 @@
                   </a>
                 </li>
               <?php endif; ?>
-
+              <?php if (Auth::hasPermission('datos_personales', 'verListadoUniformes')): ?>
+                <li class="nav-item">
+                  <a href="?r=listado_uniformes" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Reporte de uniformes</p>
+                  </a>
+                </li>
+              <?php endif; ?>
             </ul>
           </li>
         <?php endif; ?>

@@ -25,9 +25,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <label for="talle_pantalon">Pantalón</label>
           <select name="talle_pantalon" id="talle_pantalon" class="form-control" required>
             <option value="">Seleccionar</option>
-            <?php for ($i = 30; $i <= 60; $i++): ?>
-              <option value="<?= $i ?>" <?= ($uniforme['talle_pantalon'] ?? '') == $i ? 'selected' : '' ?>><?= $i ?></option>
+            <?php for ($i = 34; $i <= 60; $i++): ?>
+              <?php if ($i % 2 == 0): ?>
+                <option value="<?= $i ?>" <?= ($uniforme['talle_pantalon'] ?? '') == $i ? 'selected' : '' ?>>
+                  <?= $i ?>
+                </option>
+              <?php endif; ?>
             <?php endfor; ?>
+
           </select>
         </div>
 
@@ -48,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <select name="talle_remera" id="talle_remera" class="form-control" required>
             <option value="">Seleccionar</option>
             <?php
-            $talles = ['XS','S','M','L','XL','XXL','3XL','4XL','5XL','6XL'];
+            $talles = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL', '4XL', '5XL', '6XL'];
             foreach ($talles as $t):
               $selected = ($uniforme['talle_remera'] ?? '') === $t ? 'selected' : '';
               echo "<option value=\"$t\" $selected>$t</option>";

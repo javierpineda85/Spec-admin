@@ -374,7 +374,10 @@ class RutasController
             DatosPersonalesController::vistaMisDatosPersonales();
             return;
         }
-
+        if (isset($_GET['r']) && $_GET['r'] === 'listado_uniformes') {
+            DatosPersonalesController::vistaListadoUniformes();
+            return;
+        }
         if (isset($_GET['r']) && $_GET['r'] === 'mi_salud') {
             SaludController::vistaMiSalud();
             return;
@@ -391,21 +394,18 @@ class RutasController
         }
         // ==================== MENSAJES ====================
         if (isset($_GET['r']) && $_GET['r'] === 'bandeja-entrada') {
-            require_once 'controladores/mensajes.controller.php';
             require_once 'vistas/paginas/mensajes/bandeja-entrada.php';
-            exit;
+            return;
         }
 
         if (isset($_GET['r']) && $_GET['r'] === 'mensajes-enviados') {
-            require_once 'controladores/mensajes.controller.php';
             require_once 'vistas/paginas/mensajes/mensajes-enviados.php';
-            exit;
+            return;
         }
 
         if (isset($_GET['r']) && $_GET['r'] === 'nuevo-mensaje') {
-            require_once 'controladores/mensajes.controller.php';
             require_once 'vistas/paginas/mensajes/nuevo-mensaje.php';
-            exit;
+            return;
         }
 
 

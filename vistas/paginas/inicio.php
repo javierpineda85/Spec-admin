@@ -129,7 +129,7 @@ if (!isset($_SESSION['idUsuario'])) {
               </div>
               <div id="collapseObjetivos" class="collapse">
                 <div class="mt-2">
-                  <?php if (Auth::hasPermission('objetivos', 'vistaCreaObjetivo')): ?>
+                  <?php if (Auth::hasPermission('objetivos', 'vistaCrearObjetivo')): ?>
                     <a href="?r=crear_objetivo" class="btn btn-block btn-success btn-sm text-white">Crear</a>
                   <?php endif; ?>
                   <?php if (Auth::hasPermission('objetivos', 'vistaListadoObjetivos')): ?>
@@ -386,8 +386,8 @@ if (!isset($_SESSION['idUsuario'])) {
                     <a href="?r=listado_art" class="btn btn-block btn-warning btn-sm text-white">Listado ART</a>
                   <?php endif; ?>
 
-                  <?php if (Auth::hasPermission('legajos', 'vistaGestionLegajos')): ?>
-                    <a href="?r=gestion_legajos" class="btn btn-block btn-warning btn-sm text-white">Legajos</a>
+                  <?php if (Auth::hasPermission('datos_personales', 'verListadoUniformes')): ?>
+                    <a href="?r=listado_uniformes" class="btn btn-block btn-warning btn-sm text-white">Reporte de Uniformes</a>
                   <?php endif; ?>
 
                 </div>

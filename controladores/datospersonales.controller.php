@@ -44,4 +44,13 @@ class DatosPersonalesController
         header("Location: ?r=mis_datos_personales");
         exit;
     }
+
+    public static function vistaListadoUniformes()
+    {
+        Auth::check('datos_personales', 'verListadoUniformes');
+
+        $uniformes = ModeloDatosPersonales::mdlListarUniformes();
+
+        include 'vistas/paginas/admin/uniformes/listado_uniformes.php';
+    }
 }
