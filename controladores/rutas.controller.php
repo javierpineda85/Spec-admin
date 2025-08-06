@@ -65,6 +65,13 @@ class RutasController
             EscaneosController::feedback();
             return;
         }
+
+        //Listado de escaneos
+        if (isset($_GET['r']) && $_GET['r'] === 'listado_escaneo') {
+            EscaneosController::vistaListadoEscaneos();
+            return;
+        }
+
         // Gestión de permisos
         if (isset($_GET['r']) && ($_GET['r'] === 'permisos' || $_GET['r'] === 'permisos/index')) {
             PermisosController::index();

@@ -21,7 +21,11 @@ class Conexion
         try {
             $link = new PDO("mysql:host=localhost;port=3306;dbname=spec", "root", "");
             $link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            // Configura UTF-8
             $link->exec("SET NAMES utf8");
+
+            // Establece zona horaria de MySQL para esta conexión
+            $link->exec("SET time_zone = '-03:00'");
             self::$link = $link; // ESTA LÍNEA ES FUNDAMENTAL PARA EVITAR RECURSIVIDAD
             return self::$link;
         } catch (PDOException $e) {

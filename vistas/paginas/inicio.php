@@ -210,6 +210,9 @@ if (!isset($_SESSION['idUsuario'])) {
                   <?php if (Auth::hasPermission('rondas', 'vistaEscanearRondas')): ?>
                     <a href="?r=escanear" class="btn btn-block btn-success btn-sm text-white">Escanear QR</a>
                   <?php endif; ?>
+                  <?php if (Auth::hasPermission('rondas', 'vistaListadoEscaneos')): ?>
+                    <a href="?r=listado_escaneo" class="btn btn-block btn-success btn-sm text-white">Listado de escaneo QR</a>
+                  <?php endif; ?>
                 </div>
               </div>
             </div>
@@ -297,7 +300,7 @@ if (!isset($_SESSION['idUsuario'])) {
                     <a href="?r=listado_novedades" class="btn btn-block btn-info btn-sm text-white">Mostrar Todas</a>
                   <?php endif; ?>
                   <?php if (Auth::hasPermission('novedades', 'vistaListadoEntradaSalida')): ?>
-                    <a href="?r=reporte_entradas_salidas" class="btn btn-block btn-info btn-sm text-white">Mostrar Entrada/Salida</a>
+                    <a href="?r=reporte_entradas_salidas" class="btn btn-block btn-info btn-sm text-white">Reporte Entrada/Salida</a>
                   <?php endif; ?>
                 </div>
               </div>

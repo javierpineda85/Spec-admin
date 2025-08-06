@@ -16,7 +16,7 @@ class ModeloDatosPersonales
         (usuario_id, email, estado_civil, pareja_nombre, pareja_nacimiento, pareja_dni, hijos, hijos_adoptivos, padres, hermanos, tutores_discapacidad)
         VALUES
         (:usuario_id, :email, :estado_civil, :pareja_nombre, :pareja_nacimiento, :pareja_dni, :hijos, :hijos_adoptivos, :padres, :hermanos, :tutores_discapacidad)";
-        
+
         $stmt = Conexion::conectar()->prepare($sql);
         self::bindCampos($stmt, $datos);
         return $stmt->execute();
@@ -58,9 +58,10 @@ class ModeloDatosPersonales
     }
 
     public static function mdlListarUniformes()
-{
-    $db = new Conexion;
-    $sql = "SELECT 
+    {
+        
+        $db = new Conexion;
+        $sql = "SELECT 
                 u.idUsuario,
                 CONCAT(u.apellido, ', ', u.nombre) AS nombre_completo,
                 uni.talle_pantalon,
@@ -71,7 +72,6 @@ class ModeloDatosPersonales
             FROM uniformes uni
             INNER JOIN usuarios u ON u.idUsuario = uni.usuario_id
             ORDER BY nombre_completo ASC";
-    return $db->consultas($sql);
-}
-
+        return $db->consultas($sql);
+    }
 }

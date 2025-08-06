@@ -214,6 +214,14 @@
                   </a>
                 </li>
               <?php endif; ?>
+              <?php if (Auth::hasPermission('rondas', 'vistaListadoEscaneos')): ?>
+                <li class="nav-item">
+                  <a href="?r=listadoEscaneo" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Listado de escaneo QR</p>
+                  </a>
+                </li>
+              <?php endif; ?>
             </ul>
           </li>
         <?php endif; ?>
@@ -332,7 +340,7 @@
                 <li class="nav-item">
                   <a href="?r=reporte_entradas_salidas" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
-                    <p>Mostrar Ingresos/Salidas</p>
+                    <p>Reportes Ingresos/Salidas</p>
                   </a>
                 </li>
               <?php endif; ?>

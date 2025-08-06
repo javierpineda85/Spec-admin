@@ -2,7 +2,7 @@
 
 class ModeloEscaneos
 {
- /**
+    /**
      * Inserta un escaneo y devuelve 'ok' o mensaje de error.
      */
     static public function mdlGuardarEscaneo($tabla, $datos)
@@ -18,5 +18,22 @@ class ModeloEscaneos
         } catch (Exception $e) {
             return $e->getMessage();
         }
+    }
+    public static function mdlObtenerListadoEscaneos($tabla)
+    {
+        $db = new Conexion;
+        $sql = "SELECT 
+                    e.idEscaneo,
+                    e.fecha_hora,
+                    r.puesto, 
+                    p.puesto as nombre_sector,
+                    u.nombre,
+                    u.apellido
+                FROM $tabla AS e
+                LEFT JOIN rondas r ON e.ronda_id = r.idRonda
+                LEFT JOIN puestos p ON e.sector_id = p.idPuesto
+                LEFT JOIN usuarios u ON e.vigilador_id = u.idUsuario
+                ORDER BY e.fecha_hora DESC";
+        return $db->consultas($sql);
     }
 }

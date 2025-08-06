@@ -71,4 +71,10 @@ class EscaneosController
 
         include __DIR__ . '/../vistas/paginas/rondas/feedback.php';
     }
+    public static function vistaListadoEscaneos()
+    {
+        Auth::check('rondas', 'vistaListadoEscaneos');
+        $escaneos = ModeloEscaneos::mdlObtenerListadoEscaneos('escaneos');
+        require_once 'vistas/paginas/puestos/listado_escaneos.php';
+    }
 }
