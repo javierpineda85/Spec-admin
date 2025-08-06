@@ -1,50 +1,38 @@
 <?php
+// Obtener siempre los destinatarios válidos
+$usuarios = ControladorMensajes::obtenerDestinatariosDisponibles($_SESSION['idUsuario']);
+$mensaje = [];
 
-if (isset($_GET['t'])) {
-    if ($_GET['t'] == 'reply') {
-        /*traer el msj mensaje completo e imprimir solo el contenido, fecha y hora del mensaje
-    traer tb todos los usuarios
-    */
-        $mensaje = ControladorMensajes::crtMostrarUnMensaje($_GET['idMsj']);
-        $usuarios = ControladorUsuarios::crtSeleccionarUsuario('idUsuario', $mensaje[0]['remitente_id']); /*Busca el remitente */
-    } else if ($_GET['t'] == 'share') {
-        /*Cargar solo el id del destinatario
-            y despues todos los usuarios
-        */
-        $mensaje = ControladorMensajes::crtMostrarUnMensaje($_GET['idMsj']);
-        $usuarios = ControladorUsuarios::crtSeleccionarUsuario(null, null);
-    } else {
-        $usuarios = ControladorUsuarios::crtSeleccionarUsuario(null, null);
-    }
+if (isset($_GET['t']) && in_array($_GET['t'], ['reply', 'share'])) {
+    $mensaje = ControladorMensajes::crtMostrarUnMensaje($_GET['idMsj']);
 }
-
+$recibidos = ControladorMensajes::crtMostrarMensajes('destinatario_id', $_SESSION['idUsuario']);
+$mensajesNoLeidos = array_filter($recibidos, fn($m) => $m['leido'] == 0);
+$cantidadNoLeidos = count($mensajesNoLeidos);
 ?>
 
 <!-- Main content -->
 <section class="content">
-
-    <!-- Default box -->
     <div class="card">
         <div class="card-header bg-info">
             <h3 class="card-title">Mensajes</h3>
-
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
                     <i class="fas fa-minus"></i>
                 </button>
-
             </div>
         </div>
+
         <div class="card-body">
             <section class="content">
                 <div class="row">
+                    <!-- Sidebar -->
                     <div class="col-md-3">
                         <a href="index.php?r=bandeja-entrada&c=mensajes" class="btn btn-primary btn-block mb-3">Volver a bandeja de entrada</a>
 
                         <div class="card">
                             <div class="card-header">
                                 <h3 class="card-title">Carpetas</h3>
-
                                 <div class="card-tools">
                                     <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                         <i class="fas fa-minus"></i>
@@ -54,9 +42,11 @@ if (isset($_GET['t'])) {
                             <div class="card-body p-0">
                                 <ul class="nav nav-pills flex-column">
                                     <li class="nav-item active">
-                                        <a href="index.php?r=bandeja-entrada&c=mensajes" class="nav-link">
+                                        <a href="index.php?r=bandeja-entrada" class="nav-link">
                                             <i class="fas fa-inbox"></i> Bandeja de entrada
-                                            <span class="badge bg-primary float-right">12</span>
+                                            <?php if ($cantidadNoLeidos > 0): ?>
+                                                <span class="badge bg-danger float-right"><?php echo $cantidadNoLeidos; ?></span>
+                                            <?php endif; ?>
                                         </a>
                                     </li>
                                     <li class="nav-item">
@@ -71,71 +61,94 @@ if (isset($_GET['t'])) {
                                     </li>
                                 </ul>
                             </div>
-                            <!-- /.card-body -->
                         </div>
-
                     </div>
-                    <!-- /.col -->
+
+                    <!-- Formulario -->
                     <div class="col-md-7">
                         <div class="card card-primary card-outline">
                             <div class="card-header">
-                                <?php if ($_GET['t'] == 'reply') : ?>
-                                    <h3 class="card-title">Responder mensaje</h3>
-                                <?php elseif ($_GET['t'] == 'share') : ?>
-                                    <h3 class="card-title">Compartir mensaje</h3>
-                                <?php else : ?>
-                                    <h3 class="card-title">Redactar nuevo mensaje</h3>
-                                <?php endif ?>
+                                <h3 class="card-title">
+                                    <?php
+                                    if ($_GET['t'] == 'reply') echo "Responder mensaje";
+                                    elseif ($_GET['t'] == 'share') echo "Compartir mensaje";
+                                    else echo "Redactar nuevo mensaje";
+                                    ?>
+                                </h3>
                             </div>
-                            <!-- /.card-header -->
+
                             <div class="card-body">
                                 <form action="" method="post">
+                                    <input type="hidden" name="id_remitente" value="<?php echo $_SESSION['idUsuario']; ?>">
+
+                                    <?php if ($_GET['t'] == 'reply') : ?>
+                                        <input type="hidden" name="id_destinatario" value="<?php echo $mensaje[0]["remitente_id"]; ?>">
+                                    <?php endif; ?>
+
                                     <div class="form-group">
-                                        <input type="text" name="id_remitente" value="<?php echo $_SESSION['id_usuario']; ?>" hidden>
-                                        <select class="custom-select" name="id_destinatario">
-                                            <option value="NULL" disabel selected>Para: </option>
+                                        <select class="form-control select2" name="id_destinatario" <?php echo ($_GET['t'] == 'reply') ? 'disabled' : ''; ?>>
+                                            <option value="" disabled selected>Para:</option>
                                             <?php if ($_GET['t'] == 'reply') : ?>
-                                                <option value="<?php echo $usuarios[0]["idUsuario"]; ?>" disabled selected> Para: <?php echo $usuarios[0]['nombreUsuario'] . " " . $usuarios[0]['apellidoUsuario']; ?></option>
-                                                <?php else : foreach ($usuarios as $campo => $valor) : ?>
-                                                    <option value="<?php echo $valor["idUsuario"]; ?>"><?php echo $valor['nombreUsuario'] . " " . $valor['apellidoUsuario']; ?></option>
-                                            <?php endforeach;
-                                            endif ?>
+                                                <option value="<?php echo $mensaje[0]["remitente_id"]; ?>" selected>
+                                                    <?php echo $mensaje[0]['nombre'] . " " . $mensaje[0]['apellido']; ?>
+                                                </option>
+                                            <?php else : ?>
+                                                <?php foreach ($usuarios as $usuario) : ?>
+                                                    <option value="<?php echo $usuario["idUsuario"]; ?>">
+                                                        <?php echo $usuario['apellido'] . " " . $usuario['nombre'] . " (" . ucfirst($usuario['rol']) . ")"; ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            <?php endif; ?>
                                         </select>
-
                                     </div>
+
+                                    <?php if ($_GET['t'] == 'reply') : ?>
+                                        <div class="alert alert-light small">
+                                            <strong>Mensaje anterior:</strong><br>
+                                            <?php echo nl2br(htmlspecialchars($mensaje[0]['contenido'])); ?><br>
+                                            <em class="text-muted">Enviado el <?php echo $mensaje[0]['fMensaje']; ?> a las <?php echo $mensaje[0]['horaMensaje']; ?></em>
+                                        </div>
+                                    <?php elseif ($_GET['t'] == 'share') : ?>
+                                        <div class="alert alert-light small">
+                                            <strong>Mensaje compartido:</strong><br>
+                                            <?php echo nl2br(htmlspecialchars($mensaje[0]['contenido'])); ?><br>
+                                            <em class="text-muted">Enviado el <?php echo $mensaje[0]['fMensaje']; ?> a las <?php echo $mensaje[0]['horaMensaje']; ?></em>
+                                        </div>
+                                    <?php endif; ?>
+
                                     <div class="form-group">
-                                        <?php if ($_GET['t'] == 'reply') : ?>
-                                            <textarea id="compose-textarea" class="form-control" style="height: 100px" name="contenidoMensaje" disabled> Mensaje anterior: <?php echo $mensaje[0]['contenidoMensaje'] ?>. - Enviado el: <?php echo $mensaje[0]['fMensaje'] . " - " . $mensaje[0]['horaMensaje']  ?> </textarea>
-                                            <textarea id="compose-textarea" class="form-control" style="height: 100px" name="contenidoMensaje"> <?php ?> </textarea>
-                                        <?php elseif ($_GET['t'] == 'share') : ?>
-                                            <textarea id="compose-textarea" class="form-control" style="height: 100px" name="contenidoMensaje"> <?php echo $mensaje[0]['contenidoMensaje'] ?>. - Enviado el: <?php echo $mensaje[0]['fMensaje'] . " - " . $mensaje[0]['horaMensaje']  ?> </textarea>
-                                        <?php else : ?>
-                                            <textarea id="compose-textarea" class="form-control" style="height: 100px" name="contenidoMensaje"> </textarea>
-                                        <?php endif ?>
+                                        <textarea id="compose-textarea" class="form-control" style="height: 100px" name="contenidoMensaje" required></textarea>
                                     </div>
 
-                                    <!-- /.card-body -->
                                     <div class="card-footer">
                                         <div class="float-right">
                                             <?php $registro = ControladorMensajes::crtGuardarMensaje(); ?>
-                                            <button type="submit" class="btn btn-primary"><i class="far fa-envelope"></i> Enviar</button>
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="far fa-envelope"></i> Enviar
+                                            </button>
                                         </div>
                                         <button type="reset" class="btn btn-default"><i class="fas fa-times"></i> Descartar</button>
                                     </div>
-                                    <!-- /.card-footer -->
                                 </form>
                             </div>
-                            <!-- /.card -->
                         </div>
-                        <!-- /.col -->
                     </div>
-                    <!-- /.row -->
+                    <!-- /.col -->
+                </div>
+                <!-- /.row -->
             </section>
         </div>
         <!-- /.card-body -->
-
     </div>
     <!-- /.card -->
-
 </section>
 <!-- /.content -->
+ <script>
+  $(document).ready(function() {
+    $('#id_destinatario').select2({
+      theme: 'bootstrap4',
+      placeholder: 'Buscar usuario...',
+      width: '100%'
+    });
+  });
+</script>

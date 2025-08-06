@@ -1,90 +1,120 @@
 <?php
+
 require_once('modelos/usuarios.modelo.php');
+require_once('modelos/bajas.modelo.php');
+require_once('archivos.controller.php');
 
 class ControladorUsuarios
 {
-
-    /*GUARDAR USUARIOS */
+    /* GUARDAR USUARIOS */
     static public function crtGuardarUsuario()
     {
+        Auth::check('usuarios', 'crtGuardarUsuario');
         if (isset($_POST["nombre"])) {
-
             try {
                 $conexion = Conexion::conectar();
 
-                // Verificar si ya hay una transacción activa
+                // Iniciar transacción si no hay una activa
                 if (!$conexion->inTransaction()) {
-                    // Si no hay una transacción activa, iniciar una nueva
                     $conexion->beginTransaction();
                 }
 
-                // Guardar el usuario
                 $tabla = "usuarios";
 
-                $nombre = trim($_POST["nombre"]);
+                $nombre   = trim($_POST["nombre"]);
                 $apellido = trim($_POST["apellido"]);
-                $dni = trim($_POST["dni"]);
-                $pass = password_hash($_POST["pass"], PASSWORD_DEFAULT);
-                $f_nac = $_POST["f_nac"];
+                $dni      = trim($_POST["dni"]);
+                $pass     = password_hash($_POST["pass"], PASSWORD_DEFAULT);
+                $f_nac    = $_POST["f_nac"];
                 $telefono = $_POST["telefono"];
-                $tel_emergencia = $_POST["tel_emergencia"];
-                $domicilio = $_POST["domicilio"];
-                $provincia = $_POST["provincia"];
-                $rol = $_POST["rol"];
+                $tel_emergencia  = $_POST["tel_emergencia"];
+                $nombre_contacto = $_POST["nombre_contacto"];
+                $parentesco      = $_POST["parentesco"];
+                $domicilio       = $_POST["domicilio"];
+                $provincia       = $_POST["provincia"];
+                $rol        = $_POST["rol"];
 
-                // Normalizar nombre de archivos (Ej: "JuanPerez")
+                // Normalizar nombre de archivo (sin espacios)
                 $nombreArchivo = preg_replace('/\s+/', '', $nombre . $apellido);
 
-                // Rutas de las imágenes
-                $imgPerfil = self::guardarImagen($_FILES["imgPerfil"], "img/perfil/", $nombreArchivo . "Perfil");
-                $imgRepriv = self::guardarImagen($_FILES["imgRepriv"], "img/repriv/", $nombreArchivo . "Repriv");
+                // --- Aquí llamamos a ControladorArchivos::guardarArchivo() ---
 
+                $imgPerfil = ControladorArchivos::guardarArchivo(
+                    $_FILES["imgPerfil"],
+                    "img/perfil/",
+                    $nombreArchivo . "Perfil"
+                );
+
+                $imgRepriv = ControladorArchivos::guardarArchivo(
+                    $_FILES["imgRepriv"],
+                    "img/repriv/",
+                    $nombreArchivo . "Repriv"
+                );
+                // ------------------------------------------------------------
+
+                // --- BLOQUE NUEVO: Validación opcional de imgRepriv ---
+                if (isset($_FILES['imgRepriv']) && $_FILES['imgRepriv']['error'] !== UPLOAD_ERR_NO_FILE) {
+                    $tmp  = $_FILES['imgRepriv']['tmp_name'];
+                    $name = uniqid() . '_' . basename($_FILES['imgRepriv']['name']);
+                    $dest = __DIR__ . '/../uploads/docs/' . $name;
+
+                    if (move_uploaded_file($tmp, $dest)) {
+                        // Actualizar sólo el campo imgRepriv en la BD
+                        $sql = "UPDATE usuarios SET imgRepriv = ? WHERE idUsuario = ?";
+                        // Si es un INSERT recién hecho, usamos lastInsertId(); si es UPDATE, reemplazar por el ID que corresponda
+                        $newId = $conexion->lastInsertId();
+                        $stmt = $conexion->prepare("UPDATE usuarios SET imgRepriv = ? WHERE idUsuario = ?");
+                        $stmt->execute([$dest, $newId]);
+                    } else {
+                        ToastifyController::error('No se pudo guardar el archivo');
+                    }
+                }
+                // -------------------------------------------------------
 
                 $datos = array(
-                    "nombre" => $nombre,
-                    "apellido" => $apellido,
-                    "dni" => $dni,
-                    "pass" => $pass,
-                    "f_nac" => $f_nac,
-                    "telefono" => $telefono,
+                    "nombre"         => $nombre,
+                    "apellido"       => $apellido,
+                    "dni"            => $dni,
+                    "pass"           => $pass,
+                    "f_nac"          => $f_nac,
+                    "telefono"       => $telefono,
                     "tel_emergencia" => $tel_emergencia,
-                    "domicilio" => $domicilio,
-                    "provincia" => $provincia,
-                    "rol" => $rol,
-                    "imgPerfil" => $imgPerfil,
-                    "imgRepriv" => $imgRepriv,
-                    "resetPass" => 1,
-                    "activo" =>1
+                    "nombre_contacto" => $nombre_contacto,
+                    "parentesco"     => $parentesco,
+                    "domicilio"      => $domicilio,
+                    "provincia"      => $provincia,
+                    "rol"            => $rol,
+                    "imgPerfil"      => $imgPerfil,   // puede ser null si no subieron nada
+                    "imgRepriv"      => $imgRepriv,   // idem
+                    "resetPass"      => 1,
+                    "activo"         => 1
                 );
 
                 $respuesta = ModeloUsuarios::mdlGuardarUsuario($tabla, $datos);
 
-                // Confirmar la transacción si no hay errores
-
-                if ($respuesta == "ok") {
+                if ($respuesta === "ok") {
                     $conexion->commit();
-                    $_SESSION['success_message'] = "Usuario registrado correctamente.";
-                   
+                    ToastifyController::success('Usuario registrado correctamente');
                 } else {
+                    // Si el modelo devolvió “error” u otro string, hacemos rollback
                     throw new Exception("Error al guardar en la base de datos.");
                 }
-
             } catch (Exception $e) {
-                // Revertir la transacción en caso de error
-                $conexion->rollBack();
-
-                // Manejar el error según sea necesario
-                $_SESSION['success_message'] =  $e->getMessage();
+                // Rollback y mostrar mensaje
+                if ($conexion->inTransaction()) {
+                    $conexion->rollBack();
+                }
+                ToastifyController::error('Error: ' . $e->getMessage());
 
                 return false;
             }
         }
     }
 
-    /*MODIFICAR USUARIOS */
+    /* MODIFICAR USUARIOS */
     static public function crtModificarUsuario()
     {
-       
+        Auth::check('usuarios', 'crtModificarUsuario');
         if (isset($_POST["idUsuario"])) {
             try {
                 $conexion = Conexion::conectar();
@@ -93,85 +123,162 @@ class ControladorUsuarios
                     $conexion->beginTransaction();
                 }
 
-                $tabla = "usuarios";
+                $tabla      = "usuarios";
                 $id_usuario = $_POST["idUsuario"];
-                $nombre = trim($_POST["nombre"]);
-                $apellido = trim($_POST["apellido"]);
-                $dni = trim($_POST["dni"]);
-                $f_nac = $_POST["f_nac"];
-                $telefono = $_POST["telefono"];
-                $tel_emergencia = $_POST["tel_emergencia"];
-                $domicilio = $_POST["domicilio"];
-                $provincia = $_POST["provincia"];
-                $rol = $_POST["rol"];
-                $resetPass = isset($_POST["resetPass"]) ? 0 : 1; //Cero es para NO restaurar
-                $activo = isset($_POST["activo"]) ? 1 : 0;
+                $nombre     = trim($_POST["nombre"]);
+                $apellido   = trim($_POST["apellido"]);
+                $f_nac      = $_POST["f_nac"];
+                $telefono   = $_POST["telefono"];
+                $tel_emergencia  = $_POST["tel_emergencia"];
+                $nombre_contacto = $_POST["nombre_contacto"];
+                $parentesco      = $_POST["parentesco"];
+                $domicilio       = $_POST["domicilio"];
+                $provincia       = $_POST["provincia"];
+                $rol             = $_POST["rol"];
+                $resetPass = isset($_POST["resetPass"]) ? 0 : 1; // 0: NO restaurar, 1: sí
+                $activo    = isset($_POST["activo"])    ? 0 : 1; // 0: inactivo, 1: activo
 
-                // Actualizar imágenes si se subieron nuevas
+                // Nombre base para los archivos nuevos (sin espacios)
                 $nombreArchivo = preg_replace('/\s+/', '', $nombre . $apellido);
 
-                $imgPerfil = !empty($_FILES["imgPerfil"]["name"]) ? self::guardarImagen($_FILES["imgPerfil"], "img/perfil/", $nombreArchivo . "Perfil") : $_POST["imgPerfilActual"];
-                $imgRepriv = !empty($_FILES["imgRepriv"]["name"]) ? self::guardarImagen($_FILES["imgRepriv"], "img/repriv/", $nombreArchivo . "Repriv") : $_POST["imgReprivActual"];
+                // Si suben nueva imgPerfil, la guardamos; si no, tomamos la ruta actual que venga oculta en el form
+                $imgPerfil = !empty($_FILES["imgPerfil"]["name"])
+                    ? ControladorArchivos::guardarArchivo(
+                        $_FILES["imgPerfil"],
+                        "img/perfil/",
+                        $nombreArchivo . "Perfil"
+                    )
+                    : $_POST["imgPerfilActual"];
+
+                // Lo mismo para imgRepriv
+                $imgRepriv = !empty($_FILES["imgRepriv"]["name"])
+                    ? ControladorArchivos::guardarArchivo(
+                        $_FILES["imgRepriv"],
+                        "img/repriv/",
+                        $nombreArchivo . "Repriv"
+                    )
+                    : $_POST["imgReprivActual"];
 
                 $datos = array(
-                    "id_usuario" => $id_usuario,
-                    "nombre" => $nombre,
-                    "apellido" => $apellido,
-                    "dni" => $dni,
-                    "f_nac" => $f_nac,
-                    "telefono" => $telefono,
+                    "id_usuario"     => $id_usuario,
+                    "nombre"         => $nombre,
+                    "apellido"       => $apellido,
+                    "f_nac"          => $f_nac,
+                    "telefono"       => $telefono,
                     "tel_emergencia" => $tel_emergencia,
-                    "domicilio" => $domicilio,
-                    "provincia" => $provincia,
-                    "rol" => $rol,
-                    "imgPerfil" => $imgPerfil,
-                    "imgRepriv" => $imgRepriv,
-                    "resetPass" => $resetPass,
-                    "activo" => $activo
+                    "nombre_contacto" => $nombre_contacto,
+                    "parentesco"     => $parentesco,
+                    "domicilio"      => $domicilio,
+                    "provincia"      => $provincia,
+                    "rol"            => $rol,
+                    "imgPerfil"      => $imgPerfil,
+                    "imgRepriv"      => $imgRepriv,
+                    "resetPass"      => $resetPass,
+                    "activo"         => $activo
                 );
 
                 $respuesta = ModeloUsuarios::mdlModificarUsuario($tabla, $datos);
 
-                if ($respuesta == "ok") {
+                $activo = isset($_POST["activo"]) ? 0 : 1; // 0 = inactivo (baja)
+
+
+
+                if ($respuesta === "ok") {
+                    // 2) Si marcó “dar de baja” insertamos en bajas
+                    if ($activo === 0) {
+                        // validar que haya motivo
+                        $motivo = trim($_POST['motivo'] ?? '');
+                        if ($motivo === '') {
+                            throw new Exception("Debe indicar un motivo para la baja.");
+                        }
+                        // preparar datos de baja
+                        $datosBaja = [
+                            'usuario_id'    => $datos['id_usuario'],
+                            'motivo'        => $motivo,
+                            'fecha'         => date('Y-m-d'),
+                            'eliminado_por' => $_SESSION['idUsuario']
+                        ];
+                        $resBaja = ModeloBajas::mdlCrearBaja('bajas', $datosBaja);
+                        if ($resBaja !== 'ok') {
+                            throw new Exception("Error al registrar la baja en la base de datos.");
+                        }
+                    }
                     $conexion->commit();
-                    $_SESSION['success_message'] = "Usuario modificado correctamente.";
+                    ToastifyController::success('Usuario modificado correctamente.');
                 } else {
                     throw new Exception("Error al modificar en la base de datos.");
                 }
-
             } catch (Exception $e) {
-                $conexion->rollBack();
-                $_SESSION['error_message'] = $e->getMessage();
+                if ($conexion->inTransaction()) {
+                    $conexion->rollBack();
+                }
+                ToastifyController::error('Error: ' . $e->getMessage());
+
                 return false;
             }
         }
     }
-  /* FUNCIÓN PARA GUARDAR IMÁGENES */
-  static public function guardarImagen($archivo, $directorio, $nombreArchivo)
-  {
-      if ($archivo["error"] == UPLOAD_ERR_OK) {
-          $ext = pathinfo($archivo["name"], PATHINFO_EXTENSION);
-          $ext = strtolower($ext);
 
-          // Validar formato de imagen
-          $formatosPermitidos = array("jpg", "jpeg", "png", "webp", "avif");
-          if (!in_array($ext, $formatosPermitidos)) {
-              throw new Exception("Formato de imagen no permitido.");
-          }
+    /*REACTIVAR USUARIO */
+    static public function crtReactivarUsuario()
+    {
+        Auth::check('usuarios', 'crtReactivarUsuario');
+        if (isset($_POST['idReactivar'])) {
+            $id = intval($_POST['idReactivar']);
+            try {
+                $db = Conexion::conectar();
+                if (!$db->inTransaction()) {
+                    $db->beginTransaction();
+                }
+                $res = ModeloUsuarios::mdlReactivarUsuario('usuarios', $id);
+                if ($res === 'ok') {
+                    $db->commit();
+                    ToastifyController::success('Usuario reactivado');
+                } else {
+                    $db->rollBack();
+                    ToastifyController::error('No se pudo reactivar el usuario');
+                }
+            } catch (Exception $e) {
+                if ($db->inTransaction()) $db->rollBack();
+                ToastifyController::error('Error: ' . $e->getMessage());
+            }
+        }
+    }
 
-          // Ruta completa
-          $ruta = $directorio . $nombreArchivo . "." . $ext;
+    static public function vistaListadoUsuarios()
+    {
+        Auth::check('usuarios', 'vistaListadoUsuarios');
+        $db = new Conexion;
+        $sql = "SELECT * FROM usuarios WHERE activo = 1 ORDER BY rol ";
+        $usuarios = $db->consultas($sql);
+        include __DIR__ . '/../vistas/paginas/usuario/listado-usuarios.php';
+        return;
+    }
 
-          // Mover archivo al directorio
-          if (!move_uploaded_file($archivo["tmp_name"], $ruta)) {
-              throw new Exception("Error al subir la imagen.");
-          }
-
-          return $ruta; // Devuelve la ruta para guardarla en la base de datos
-      }
-
-      return null;
-  }   
-
-
+    static public function vistaListadoUsuariosInactivos()
+    {
+        Auth::check('usuarios', 'vistaListadoUsuariosInactivos');
+        $db = new Conexion;
+        $sql = "SELECT u.idUsuario, CONCAT(u.apellido, ' ', u.nombre) AS empleado, b.motivo, b.fecha, CONCAT(e.apellido, ' ', e.nombre) AS eliminado_por
+                FROM usuarios u
+                JOIN bajas b ON u.idUsuario = b.usuario_id
+                JOIN usuarios e ON b.eliminado_por = e.idUsuario
+                WHERE u.activo = 0
+                ORDER BY empleado ";
+        $usuarios = $db->consultas($sql);
+        include __DIR__ . '/../vistas/paginas/usuario/listado-usuarios-inactivos.php';
+        return;
+    }
+    static public function vistaCrearUsuario()
+    {
+        Auth::check('usuarios', 'vistaListadoUsuariosInactivos');
+        include __DIR__ . '/../vistas/paginas/usuario/crear-usuario.php';
+        return;
+    }
+    static public function vistaPerfilUsuario()
+    {
+        Auth::check('usuarios', 'vistaPerfilUsuario');
+        include __DIR__ . '/../vistas/paginas/usuario/perfil-usuario.php';
+        return;
+    }
 }

@@ -8,89 +8,183 @@ class ControladorObjetivos
     /*GUARDAR OBJETIVOS */
     static public function crtGuardarObjetivo()
     {
-        if (isset($_POST["nombreObjetivo"])) {
+        Auth::check('objetivos', 'crtGuardarObjetivo');
+        if (isset($_POST['nombreObjetivo'])) {
+            $conexion = Conexion::conectar();
+            $conexion->beginTransaction();
+            $datos = [
+                'nombre'    => $_POST['nombreObjetivo'],
+                'latitud'   => $_POST['latitud'],
+                'longitud'  => $_POST['longitud'],
+                'radio_m'   => $_POST['radio_m'],
+                'localidad' => $_POST['localidad'],
+                'tipo'      => $_POST['tipo']
+            ];
+            // Guardar objetivo principal
+            $idObjetivo = ModeloObjetivos::mdlGuardarObjetivo('objetivos', $datos); // devuelve el ultimo id
 
+            // Guardar vigiladores si vienen
+            if (!empty($_POST['vigiladores']) && is_array($_POST['vigiladores'])) {
+                ModeloObjetivos::mdlGuardarVigiladoresObjetivo($idObjetivo, $_POST['vigiladores']);
+            }
+            if (!$idObjetivo) {
+                $conexion->rollBack();
+                ToastifyController::error('No se pudo crear el objetivo');
+                return;
+            }
+            // Guardar referentes si vienen
+            if (!empty($_POST['referentes']) && is_array($_POST['referentes'])) {
+                ModeloObjetivos::mdlGuardarReferentesObjetivo($idObjetivo, $_POST['referentes']);
+            }
+            $conexion->commit();
+            ToastifyController::success('Objetivo creado exitosamente');
+        }
+    }
+
+    /*MODIFICAR OBJETIVOS */
+    static public function crtModificarObjetivo()
+    {
+        Auth::check('objetivos', 'crtModificarObjetivo');
+
+        if (isset($_POST['idObjetivo'], $_POST['nombreObjetivo'])) {
+            $conexion = Conexion::conectar();
+            $conexion->beginTransaction();
+
+            $datos = [
+                'idObjetivo' => $_POST['idObjetivo'],
+                'nombre'     => $_POST['nombreObjetivo'],
+                'latitud'    => $_POST['latitud'],
+                'longitud'   => $_POST['longitud'],
+                'radio_m'    => $_POST['radio_m'],
+                'localidad'  => $_POST['localidad'],
+                'tipo'       => $_POST['tipo']
+            ];
+
+            ModeloObjetivos::mdlModificarObjetivo('objetivos', $datos);
+
+            // Eliminar y reinsertar relaciones
+            // === VIGILADORES ===
+            $actualesVigiladores = ModeloObjetivos::mdlObtenerVigiladoresPorObjetivo($datos['idObjetivo']);
+            $nuevosVigiladores = $_POST['vigiladores'] ?? [];
+
+            sort($actualesVigiladores);
+            sort($nuevosVigiladores);
+
+            if ($actualesVigiladores !== $nuevosVigiladores) {
+                ModeloObjetivos::mdlEliminarVigiladoresObjetivo($datos['idObjetivo']);
+                if (!empty($nuevosVigiladores)) {
+                    ModeloObjetivos::mdlGuardarVigiladoresObjetivo($datos['idObjetivo'], $nuevosVigiladores);
+                }
+            }
+
+            // === REFERENTES ===
+            $actualesReferentes = ModeloObjetivos::mdlObtenerReferentesPorObjetivo($datos['idObjetivo']);
+            $nuevosReferentes = $_POST['referentes'] ?? [];
+
+            sort($actualesReferentes);
+            sort($nuevosReferentes);
+
+            if ($actualesReferentes !== $nuevosReferentes) {
+                ModeloObjetivos::mdlEliminarReferentesObjetivo($datos['idObjetivo']);
+                if (!empty($nuevosReferentes)) {
+                    ModeloObjetivos::mdlGuardarReferentesObjetivo($datos['idObjetivo'], $nuevosReferentes);
+                }
+            }
+            if (!empty($_POST['vigiladores']) && is_array($_POST['vigiladores'])) {
+                ModeloObjetivos::mdlGuardarVigiladoresObjetivo($datos['idObjetivo'], $_POST['vigiladores']);
+            }
+
+            if (!empty($_POST['referentes']) && is_array($_POST['referentes'])) {
+                ModeloObjetivos::mdlGuardarReferentesObjetivo($datos['idObjetivo'], $_POST['referentes']);
+            }
+
+            $conexion->commit();
+            ToastifyController::success('Objetivo actualizado correctamente');
+        }
+    }
+
+    /** DESACTIVAR UN OBJETIVO **/
+    static public function crtDesactivarObjetivo()
+    {
+        Auth::check('objetivos', 'crtDesactivarObjetivo');
+        if (isset($_POST['idEliminar'])) {
+            $id = intval($_POST['idEliminar']);
             try {
-                $conexion = Conexion::conectar();
-
-                // Verificar si ya hay una transacción activa
-                if (!$conexion->inTransaction()) {
-                    // Si no hay una transacción activa, iniciar una nueva
-                    $conexion->beginTransaction();
+                $db = Conexion::conectar();
+                if (!$db->inTransaction()) {
+                    $db->beginTransaction();
                 }
 
-                $tabla = "objetivos";
-
-                $datos = array(
-                    "nombre" => $_POST["nombreObjetivo"],
-                    "localidad" => $_POST["localidad"],
-                    "referente" => $_POST["referente"],
-                    "tipo" => $_POST["tipo"]
-                );
-
-                ModeloObjetivos::mdlGuardarObjetivo($tabla, $datos);
-
-                // Confirmar la transacción si no hay errores
-                Conexion::conectar()->commit();
-
-                $_SESSION['success_message'] = 'Objetivo creado exitosamente';
+                $res = ModeloObjetivos::mdlDesactivarObjetivo('objetivos', $id);
+                if ($res === 'ok') {
+                    $db->commit();
+                    ToastifyController::success('Objetivo desactivado');
+                } else {
+                    $db->rollBack();
+                    ToastifyController::error('No se pudo desactivar');
+                }
             } catch (Exception $e) {
-                // Revertir la transacción en caso de error
-                Conexion::conectar()->rollBack();
+                if ($db->inTransaction()) $db->rollBack();
+                ToastifyController::error('Error: ' . $e->getMessage());
+            }
+        }
+    }
+    /** REACTIVAR UN OBJETIVO **/
+    static public function crtReactivarObjetivo()
+    {
+        Auth::check('objetivos', 'crtReactivarObjetivo');
+        if (isset($_POST['idReactivar'])) {
+            $id = intval($_POST['idReactivar']);
+            try {
+                $db = Conexion::conectar();
+                if (!$db->inTransaction()) {
+                    $db->beginTransaction();
+                }
 
-                // Manejar el error según sea necesario
-                $_SESSION['success_message'] =  $e->getMessage();
-
-                return false;
+                $res = ModeloObjetivos::mdlReactivarObjetivo('objetivos', $id);
+                if ($res === 'ok') {
+                    $db->commit();
+                    ToastifyController::success('Objetivo activado');
+                } else {
+                    $db->rollBack();
+                    ToastifyController::error('No se pudo activar el objetivo');
+                }
+            } catch (Exception $e) {
+                if ($db->inTransaction()) $db->rollBack();
+                ToastifyController::error('Error: ' . $e->getMessage());
             }
         }
     }
 
-    /* MODIFICAR OBJETIVO */
-    static public function crtModificarObjetivo()
+    static public function vistaListadoObjetivos()
     {
-        if (isset($_POST["nombre"])) {
+        Auth::check('objetivos', 'vistaListadoObjetivos');
+        $db = new Conexion;
+        $sql = "SELECT * FROM objetivos WHERE activo = 1 ORDER BY nombre";
+        $objetivos = $db->consultas($sql);
 
-            try {
-                $conexion = Conexion::conectar();
-
-                // Iniciar una transacción
-                if (!$conexion->inTransaction()) {
-                    $conexion->beginTransaction();
-                }
-
-                $tabla = "objetivos";
-
-                $datos = array(
-                    "idObjetivo"  => $_POST["idObjetivo"],
-                    "nombre"      => $_POST["nombre"],
-                    "localidad"   => $_POST["localidad"],
-                    "referente"   => $_POST["referente"],
-                    "tipo"        => $_POST["tipo"]
-                );
-
-                $respuesta = ModeloObjetivos::mdlModificarObjetivo($tabla, $datos);
-
-                if ($respuesta === "ok") {
-                    // Confirmar la transacción
-                    $conexion->commit();
-                    $_SESSION['success_message'] = 'Objetivo modificado exitosamente';
-                    header("Location:?r=listado_objetivos");
-                    exit;
-                } else {
-                    // Si algo falla, hacer rollback
-                    $conexion->rollBack();
-                    $_SESSION['error_message'] = 'Error al modificar el objetivo';
-                    header("Location: ?r=editar_objetivo&id=" . $_POST["idObjetivo"]);
-                    exit;
-                }
-            } catch (Exception $e) {
-                // En caso de error, revertir la transacción
-                $conexion->rollBack();
-                $_SESSION['error_message'] = "Error: " . $e->getMessage();
-                header("Location: ?r=editar_objetivo.php&id=" . $_POST["idObjetivo"]);
-                exit;
-            }
-        }
+        include __DIR__ . '/../vistas/paginas/objetivos/listado_objetivos.php';
+        return;
+    }
+    static public function vistaListadoObjetivosInactivos()
+    {
+        Auth::check('objetivos', 'vistaListadoObjetivosInactivos');
+        $db = new Conexion;
+        $sql = "SELECT * FROM objetivos WHERE activo = 0 ORDER BY nombre";
+        $objetivos = $db->consultas($sql);
+        include __DIR__ . '/../vistas/paginas/objetivos/listado_objetivos_desactivados.php';
+        return;
+    }
+    static public function vistaCrearObjetivo()
+    {
+        Auth::check('objetivos', 'vistaCrearObjetivo');
+        include __DIR__ . '/../vistas/paginas/objetivos/crear_objetivo.php';
+        return;
+    }
+    static public function vistaEditarObjetivo()
+    {
+        Auth::check('objetivos', 'vistaEditarObjetivo');
+        include __DIR__ . '/../vistas/paginas/objetivos/editar_objetivo.php';
+        return;
     }
 }

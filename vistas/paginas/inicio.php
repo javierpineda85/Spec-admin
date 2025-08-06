@@ -1,226 +1,519 @@
-<!-- Default box -->
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+  session_start();
+}
+
+
+if (!isset($_SESSION['idUsuario'])) {
+  header("Location: ?r=login");
+  exit();
+}
+?>
+
 <div class="card">
   <div class="card-header bg-info">
     <h3 class="card-title">Panel de Control</h3>
 
   </div>
   <div class="card-body">
-    <?php
-      if (isset($_SESSION['success_message'])) {
-        echo '<div class="alert alert-success alert-dismissible">
-                  <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                  <p><i class="icon fas fa-check"></i>' . $_SESSION['success_message'] . '</p>
-              </div>';
-        // Elimina el mensaje después de mostrarlo
-        unset($_SESSION['success_message']);
-      };
-    ?>
+    <?php if (!empty($_SESSION['success_message'])): ?>
+      <div class="alert alert-success alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <i class="icon fas fa-check"></i>
+        <?= $_SESSION['success_message'];
+        unset($_SESSION['success_message']); ?>
+      </div>
+    <?php endif; ?>
+    <?php if (!empty($_SESSION['success_error'])): ?>
+      <div class="alert alert-danger alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <i class="fas fa-exclamation-triangle"></i>
+        <?= $_SESSION['success_error'];
+        unset($_SESSION['success_error']); ?>
+      </div>
+    <?php endif; ?>
+    <?php if (!empty($_SESSION['sinAsignaciones'])): ?>
+      <div class="alert alert-success text-center mt-3">
+        <strong>Bienvenido.</strong> Aún no tienes objetivos asignados.
+      </div>
+      <?php unset($_SESSION['sinAsignaciones']); ?>
+    <?php endif; ?>
     <!-- Small boxes (Stat box) -->
     <div class="row">
       <!-- hombre vivo -->
-      <div class="col-lg-3 col-md-6 col-sm-12">
-        <div class="info-box shadow">
-          <span class="info-box-icon bg-danger"><i class="far fa-life-ring"></i></span>
-          <div class="info-box-content">
-            <!-- Fila para el título y botón de colapsar -->
-            <div class="d-flex justify-content-between align-items-center">
-              <span class="info-box-number">Hombre Vivo</span>
-              <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapsHvivo" aria-expanded="false" aria-controls="collapsHvivo">
-                <i class="fas fa-plus"></i>
-              </button>
-            </div>
-            <!-- Sección colapsable para los botones -->
-            <div id="collapsHvivo" class="collapse">
-              <div class="mt-2">
-                <button class="btn btn-block btn-danger btn-sm"><a href="tel:911" class="text-white">Llamar 911</a></button>
-                <button class="btn btn-block btn-info btn-sm"><a href="?r=reporte" class="text-white">Registrar</a> </button>
+      <?php if (
+        Auth::hasPermission('hvivo', 'registrar')
+        || Auth::hasPermission('hvivo', 'listar')
+      ): ?>
+        <!-- Hombre Vivo -->
+        <div class="col-lg-3 col-md-6 col-sm-12">
+          <div class="info-box shadow">
+            <span class="info-box-icon bg-danger"><i class="far fa-life-ring"></i></span>
+            <div class="info-box-content">
+              <!-- Fila para el título y botón de colapsar -->
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="info-box-number">Hombre Vivo</span>
+                <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapsHvivo" aria-expanded="false" aria-controls="collapsHvivo">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+              <!-- Sección colapsable para los botones -->
+              <div id="collapsHvivo" class="collapse">
+                <div class="mt-2">
+                  <?php if (Auth::hasPermission('hvivo', 'registrar')): ?>
+                    <a href="tel:911" class="btn btn-block btn-danger btn-sm text-white">Llamar 911</a>
+                    <a href="?r=reporte_hombre_vivo" class="btn btn-block btn-info btn-sm text-white">Reportar</a>
+                  <?php endif; ?>
+                  <?php if (Auth::hasPermission('hvivo', 'vistaListadoReportesHombreVivo')): ?>
+                    <a href="?r=listado_reportes" class="btn btn-block btn-info btn-sm text-white">Ver reportes</a>
+                  <?php endif; ?>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+        <!-- ./Hombre Vivo -->
+      <?php endif; ?>
       <!-- ./hombre vivo-->
 
-      <!-- directivas -->
-      <div class="col-lg-3 col-md-6 col-sm-12">
-        <div class="info-box shadow">
-          <span class="info-box-icon bg-warning"><i class="fas fa-list-ul"></i></span>
-          <div class="info-box-content">
-            <!-- Fila para el título y botón de colapsar -->
-            <div class="d-flex justify-content-between align-items-center">
-              <span class="info-box-number">Directivas</span>
-              <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapsDirectivas" aria-expanded="false" aria-controls="collapsDirectivas">
-                <i class="fas fa-plus"></i>
-              </button>
-            </div>
-            <!-- Sección colapsable para los botones -->
-            <div id="collapsDirectivas" class="collapse">
-              <div class="mt-2">
-                <button class="btn btn-block btn-warning btn-sm"><a href="?r=crear_directivas" class="text-dark">Crear</a></button>
-                <button class="btn btn-block btn-warning btn-sm"><a href="?r=listado_directivas" class="text-dark">Mostrar todas</a></button>
+      <!-- Directivas -->
+      <?php if (
+        Auth::hasPermission('directivas', 'crtCrearDirectiva')
+        || Auth::hasPermission('directivas', 'crtListarDirectivas')
+        || Auth::hasPermission('directivas', 'vistaCrearDirectivas')
+      ): ?>
+        <div class="col-lg-3 col-md-6 col-sm-12">
+          <div class="info-box shadow">
+            <span class="info-box-icon bg-warning"><i class="fas fa-list-ul"></i></span>
+            <div class="info-box-content">
+              <!-- Fila para el título y botón de colapsar -->
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="info-box-number">Directivas</span>
+                <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapsDirectivas" aria-expanded="false" aria-controls="collapsDirectivas">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+              <!-- Sección colapsable para los botones -->
+              <div id="collapsDirectivas" class="collapse">
+                <div class="mt-2">
+                  <?php if (Auth::hasPermission('directivas', 'crtCrearDirectiva') || Auth::hasPermission('directivas', 'vistaCrearDirectiva')): ?>
+                    <a href="?r=vistaCrearDirectiva" class="btn btn-block btn-warning btn-sm text-dark">Crear</a>
+                  <?php endif; ?>
+                  <?php if (Auth::hasPermission('directivas', 'crtListarDirectivas')): ?>
+                    <a href="?r=listado_directivas" class="btn btn-block btn-warning btn-sm text-dark">Mostrar todas</a>
+                  <?php endif; ?>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      <?php endif; ?>
       <!-- ./directivas -->
 
-      <!-- rondas -->
-      <div class="col-lg-3 col-md-6 col-sm-12">
-        <div class="info-box shadow">
-          <span class="info-box-icon bg-success"><i class="nav-icon fas fa-sync-alt"></i></span>
-          <div class="info-box-content">
-            <!-- Fila para el título y botón de colapsar -->
-            <div class="d-flex justify-content-between align-items-center">
-              <span class="info-box-number">Rondas</span>
-              <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapseRondas" aria-expanded="false" aria-controls="collapseRondas">
-                <i class="fas fa-plus"></i>
-              </button>
-            </div>
-            <!-- Sección colapsable para los botones -->
-            <div id="collapseRondas" class="collapse">
-              <div class="mt-2">
-                <button class="btn btn-block btn-success btn-sm"><a href="?r=crear_rondas" class="text-white">Nueva</a></button>
-                <button class="btn btn-block btn-success btn-sm"><a href="?r=listado_rondas" class="text-white">Mostrar todas</a></button>
+      <!-- Objetivos -->
+      <?php if (
+        Auth::hasPermission('objetivos', 'vistaCreaObjetivo')
+        || Auth::hasPermission('objetivos', 'vistaListadoObjetivos')
+        || Auth::hasPermission('objetivos', 'vistaListadoObjetivosInactivos')
+        || Auth::hasPermission('objetivos', 'vistaEditarObjetivo')
+      ): ?>
+        <div class="col-lg-3 col-md-6 col-sm-12">
+          <div class="info-box shadow">
+            <span class="info-box-icon bg-success"><i class="fas fa-map-marker-alt"></i></span>
+            <div class="info-box-content">
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="info-box-number">Objetivos</span>
+                <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapseObjetivos" aria-expanded="false" aria-controls="collapseObjetivos">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+              <div id="collapseObjetivos" class="collapse">
+                <div class="mt-2">
+                  <?php if (Auth::hasPermission('objetivos', 'vistaCreaObjetivo')): ?>
+                    <a href="?r=crear_objetivo" class="btn btn-block btn-success btn-sm text-white">Crear</a>
+                  <?php endif; ?>
+                  <?php if (Auth::hasPermission('objetivos', 'vistaListadoObjetivos')): ?>
+                    <a href="?r=listado_objetivos" class="btn btn-block btn-success btn-sm text-white">Mostrar Activos</a>
+                  <?php endif; ?>
+                  <?php if (Auth::hasPermission('objetivos', 'vistaListadoObjetivosInactivos')): ?>
+                    <a href="?r=listado_objetivos_inactivos" class="btn btn-block btn-success btn-sm text-white">Mostrar Inactivos</a>
+                  <?php endif; ?>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      <?php endif; ?>
+      <!-- ./objetivos -->
+
+      <!-- Puestos -->
+
+      <?php if (
+        Auth::hasPermission('puestos', 'vistaCrearPuestos') ||
+        Auth::hasPermission('puestos', 'vistaListadoPuestos') ||
+        Auth::hasPermission('puestos', 'vistaListadoPuestosDesactivados')
+      ): ?>
+
+        <div class="col-lg-3 col-md-6 col-sm-12">
+          <div class="info-box shadow">
+            <span class="info-box-icon bg-success"><i class="fas fa-eye"></i></span>
+            <div class="info-box-content">
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="info-box-number">Puestos</span>
+                <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapsePuestos" aria-expanded="false" aria-controls="collapseObjetivos">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+              <div id="collapsePuestos" class="collapse">
+                <div class="mt-2">
+                  <?php if (Auth::hasPermission('puestos', 'vistaCrearPuestos')): ?>
+                    <a href="?r=crear_puesto" class="btn btn-block btn-success btn-sm text-white">Crear</a>
+                  <?php endif; ?>
+                  <?php if (Auth::hasPermission('puestos', 'vistaListadoPuestos')): ?>
+                    <a href="?r=listado_puestos" class="btn btn-block btn-success btn-sm text-white">Mostrar Activos</a>
+                  <?php endif; ?>
+                  <?php if (Auth::hasPermission('puestos', 'vistaListadoPuestosDesactivados')): ?>
+                    <a href="?r=listado_puestos_inactivos" class="btn btn-block btn-success btn-sm text-white">Mostrar Inactivos</a>
+                  <?php endif; ?>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <?php endif; ?>
+      <!-- ./objetivos -->
+
+      <!-- Rondas -->
+      <?php if (
+        Auth::hasPermission('rondas', 'vistaCrearRondas')
+        || Auth::hasPermission('rondas', 'vistaListadoRondas')
+        || Auth::hasPermission('rondas', 'vistaEscanearRondas')
+      ): ?>
+        <div class="col-lg-3 col-md-6 col-sm-12">
+          <div class="info-box shadow">
+            <span class="info-box-icon bg-success"><i class="nav-icon fas fa-sync-alt"></i></span>
+            <div class="info-box-content">
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="info-box-number">Rondas</span>
+                <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapseRondas" aria-expanded="false" aria-controls="collapseRondas">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+              <div id="collapseRondas" class="collapse">
+                <div class="mt-2">
+                  <?php if (Auth::hasPermission('rondas', 'vistaCrearRondas')): ?>
+                    <a href="?r=crear_rondas" class="btn btn-block btn-success btn-sm text-white">Crear</a>
+                  <?php endif; ?>
+                  <?php if (Auth::hasPermission('rondas', 'vistaListadoRondas')): ?>
+                    <a href="?r=listado_rondas" class="btn btn-block btn-success btn-sm text-white">Mostrar Todas</a>
+                  <?php endif; ?>
+                  <?php if (Auth::hasPermission('rondas', 'vistaEscanearRondas')): ?>
+                    <a href="?r=escanear" class="btn btn-block btn-success btn-sm text-white">Escanear QR</a>
+                  <?php endif; ?>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <?php endif; ?>
       <!-- ./rondas -->
 
-      <!-- cronograma -->
-      <div class="col-lg-3 col-md-6 col-sm-12">
-        <div class="info-box shadow">
-          <span class="info-box-icon bg-primary"><i class="fas fa-calendar-alt"></i></span>
-          <div class="info-box-content">
-            <!-- Fila para el título y botón de colapsar -->
-            <div class="d-flex justify-content-between align-items-center">
-              <span class="info-box-number">Cronogramas</span>
-              <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapseCronogramas" aria-expanded="false" aria-controls="collapseCronogramas">
-                <i class="fas fa-plus"></i>
-              </button>
-            </div>
-            <!-- Sección colapsable para los botones -->
-            <div id="collapseCronogramas" class="collapse">
-              <div class="mt-2">
-                <button class="btn btn-block btn-primary btn-sm"><a href="?r=crear_cronograma" class="text-white">Subir</a></button>
-                <button class="btn btn-block btn-primary btn-sm"><a href="?r=listado_cronogramas" class="text-white">Mostrar todos</a></button>
+      <!-- Cronogramas -->
+      <?php if (
+        Auth::hasPermission('cronogramas', 'vistaCrearCronograma')
+        || Auth::hasPermission('cronogramas', 'vistaListadoCronogramas')
+        || Auth::hasPermission('cronogramas', 'vistaListadoCronogramaPorVigilador')
+        || Auth::hasPermission('cronogramas', 'vistaJornadasPorObjetivo')
+        || Auth::hasPermission('cronogramas', 'crtBuscarResumenHoras')
+        || Auth::hasPermission('cronogramas', 'vistaHorasPorVigilador')
+      ): ?>
+        <div class="col-lg-3 col-md-6 col-sm-12">
+          <div class="info-box shadow">
+            <span class="info-box-icon bg-primary"><i class="fas fa-calendar-alt"></i></span>
+            <div class="info-box-content">
+              <!-- Fila para el título y botón de colapsar -->
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="info-box-number">Cronogramas</span>
+                <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapseCronogramas" aria-expanded="false" aria-controls="collapseCronogramas">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+              <!-- Sección colapsable para los botones -->
+              <div id="collapseCronogramas" class="collapse">
+                <div class="mt-2">
+                  <?php if (Auth::hasPermission('cronogramas', 'vistaCrearCronograma')): ?>
+                    <a href="?r=crear_cronograma" class="btn btn-block btn-primary btn-sm text-white">Crear</a>
+                  <?php endif; ?>
+                  <?php if (Auth::hasPermission('cronogramas', 'vistaListadoCronogramas')): ?>
+                    <a href="?r=listado_cronogramas" class="btn btn-block btn-primary btn-sm text-white">Por Objetivo</a>
+                  <?php endif; ?>
+                  <?php if (Auth::hasPermission('cronogramas', 'vistaListadoCronogramaPorVigilador')): ?>
+                    <a href="?r=listado_porVigilador" class="btn btn-block btn-primary btn-sm text-white">Por Vigilador</a>
+                  <?php endif; ?>
+                  <?php if (Auth::hasPermission('cronogramas', 'vistaJornadasPorObjetivo')): ?>
+                    <a href="?r=listado_resumen_diario" class="btn btn-block btn-primary btn-sm text-white">Jornadas por Objetivo</a>
+                  <?php endif; ?>
+                  <?php if (Auth::hasPermission('cronogramas', 'crtBuscarResumenHoras')): ?>
+                    <a href="?r=reporte_porHoras" class="btn btn-block btn-primary btn-sm text-white">Horas por Objetivo</a>
+                  <?php endif; ?>
+                  <?php if (Auth::hasPermission('cronogramas', 'vistaHorasPorVigilador')): ?>
+                    <a href="?r=reporte_porVigilador" class="btn btn-block btn-primary btn-sm text-white">Horas por Vigilador</a>
+                  <?php endif; ?>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      <?php endif; ?>
       <!-- ./cronograma -->
 
       <!-- Novedades -->
-      <div class="col-lg-3 col-md-6 col-sm-12">
-        <div class="info-box shadow">
-          <span class="info-box-icon bg-info"><i class="far fa-newspaper"></i></span>
-          <div class="info-box-content">
-            <!-- Fila para el título y botón de colapsar -->
-            <div class="d-flex justify-content-between align-items-center">
-              <span class="info-box-number">Novedades</span>
-              <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapseNovedades" aria-expanded="false" aria-controls="collapseNovedades">
-                <i class="fas fa-plus"></i>
-              </button>
-            </div>
-            <!-- Sección colapsable para los botones -->
-            <div id="collapseNovedades" class="collapse">
-              <div class="mt-2">
-                <button class="btn btn-block btn-info btn-sm">Nueva</button>
-                <button class="btn btn-block btn-info btn-sm">Mostrar todos</button>
-                <button class="btn btn-block btn-info btn-sm"><a href="?r=entradas_salidas" class="text-white">Entrada / Salida</a></button>
+      <?php if (
+        Auth::hasPermission('novedades', 'vistaCrearNovedades')
+        || Auth::hasPermission('novedades', 'vistaListadoNovedades')
+        || Auth::hasPermission('novedades', 'vistaListadoEntradaSalida')
+      ): ?>
+        <div class="col-lg-3 col-md-6 col-sm-12">
+          <div class="info-box shadow">
+            <span class="info-box-icon bg-info"><i class="far fa-newspaper"></i></span>
+            <div class="info-box-content">
+              <!-- Fila para el título y botón de colapsar -->
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="info-box-number">Novedades</span>
+                <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapseNovedades" aria-expanded="false" aria-controls="collapseNovedades">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+              <!-- Sección colapsable para los botones -->
+              <div id="collapseNovedades" class="collapse">
+                <div class="mt-2">
+                  <?php if (Auth::hasPermission('novedades', 'vistaEntradaSalida')): ?>
+                    <a href="?r=entradas_salidas" class="btn btn-block btn-info btn-sm text-white">Marcar Entrada/Salida</a>
+                  <?php endif; ?>
+                  <?php if (Auth::hasPermission('novedades', 'vistaCrearNovedades')): ?>
+                    <a href="?r=crear_novedad" class="btn btn-block btn-info btn-sm text-white">Crear</a>
+                  <?php endif; ?>
+                  <?php if (Auth::hasPermission('novedades', 'vistaListadoNovedades')): ?>
+                    <a href="?r=listado_novedades" class="btn btn-block btn-info btn-sm text-white">Mostrar Todas</a>
+                  <?php endif; ?>
+                  <?php if (Auth::hasPermission('novedades', 'vistaListadoEntradaSalida')): ?>
+                    <a href="?r=reporte_entradas_salidas" class="btn btn-block btn-info btn-sm text-white">Mostrar Entrada/Salida</a>
+                  <?php endif; ?>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-
+      <?php endif; ?>
       <!-- ./novedades -->
 
-      <!-- Objetivos-->
-      <div class="col-lg-3 col-md-6 col-sm-12">
-        <div class="info-box shadow">
-          <span class="info-box-icon bg-info"><i class="fas fa-map-marker-alt"></i></span>
-          <div class="info-box-content">
-            <!-- Fila para el título y botón de colapsar -->
-            <div class="d-flex justify-content-between align-items-center">
-              <span class="info-box-number">Objetivos</span>
-              <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapseObjetivos" aria-expanded="false" aria-controls="collapseObjetivos">
-                <i class="fas fa-plus"></i>
-              </button>
-            </div>
-            <!-- Sección colapsable para los botones -->
-            <div id="collapseObjetivos" class="collapse">
-              <div class="mt-2">
-                <button class="btn btn-block btn-info btn-sm"><a href="?r=crear_objetivo" class="text-white">Nuevo</a> </button>
-                <button class="btn btn-block btn-info btn-sm"><a href="?r=listado_objetivos" class="text-white">Mostrar todos</a></button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- ./objetivos -->
 
       <!-- Usuarios -->
-      <div class="col-lg-3 col-md-6 col-sm-12">
-        <div class="info-box shadow">
-          <span class="info-box-icon bg-info"><i class="fas fa-users"></i></span>
-          <div class="info-box-content">
-            <!-- Fila para el título y botón de colapsar -->
-            <div class="d-flex justify-content-between align-items-center">
-              <span class="info-box-number">Usuarios</span>
-              <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapseUsuarios" aria-expanded="false" aria-controls="collapseUsuarios">
-                <i class="fas fa-plus"></i>
-              </button>
-            </div>
-            <!-- Sección colapsable para los botones -->
-            <div id="collapseUsuarios" class="collapse">
-              <div class="mt-2">
-                <button class="btn btn-block btn-info btn-sm"><a href="?r=crear-usuario" class="text-white">Nuevo</a> </button>
-                <button class="btn btn-block btn-info btn-sm"><a href="?r=listado-usuarios" class="text-white">Mostrar todos</a></button>
+      <?php if (
+        Auth::hasPermission('usuarios', 'vistaCrearUsuario')
+        || Auth::hasPermission('usuarios', 'vistaListadoUsuarios')
+        || Auth::hasPermission('usuarios', 'vistaListadoUsuariosInactivos')
+      ): ?>
+        <div class="col-lg-3 col-md-6 col-sm-12">
+          <div class="info-box shadow">
+            <span class="info-box-icon bg-info"><i class="fas fa-users"></i></span>
+            <div class="info-box-content">
+              <!-- Fila para el título y botón de colapsar -->
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="info-box-number">Usuarios</span>
+                <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapseUsuarios" aria-expanded="false" aria-controls="collapseUsuarios">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+              <!-- Sección colapsable para los botones -->
+              <div id="collapseUsuarios" class="collapse">
+                <div class="mt-2">
+                  <?php if (Auth::hasPermission('usuarios', 'vistaCrearUsuario')): ?>
+                    <a href="?r=crear-usuario" class="btn btn-block btn-info btn-sm text-white">Crear</a>
+                  <?php endif; ?>
+                  <?php if (Auth::hasPermission('usuarios', 'vistaListadoUsuarios')): ?>
+                    <a href="?r=listado-usuarios" class="btn btn-block btn-info btn-sm text-white">Mostrar Activos</a>
+                  <?php endif; ?>
+                  <?php if (Auth::hasPermission('usuarios', 'vistaListadoUsuariosInactivos')): ?>
+                    <a href="?r=listado-usuarios-inactivos" class="btn btn-block btn-info btn-sm text-white">Mostrar Inactivos</a>
+                  <?php endif; ?>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-
+      <?php endif; ?>
       <!-- ./usuarios -->
 
-      <!-- Mensajeria -->
-      <div class="col-lg-3 col-md-6 col-sm-12">
-        <div class="info-box shadow">
-          <span class="info-box-icon bg-info">
-            <i class="far fa-envelope"></i>
-          </span>
-          <div class="info-box-content">
-            <!-- Fila para el título y botón de colapsar -->
-            <div class="d-flex justify-content-between align-items-center">
-              <span class="info-box-number">Mensajería</span>
-              <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapseMensajeria" aria-expanded="false" aria-controls="collapseMensajeria">
-                <i class="fas fa-plus"></i>
-              </button>
+      <!-- Administración -->
+      <?php if (
+        Auth::hasPermission('feriados', 'vistaCrearFeriado') ||
+        Auth::hasPermission('feriados', 'vistaListadoFeriado') ||
+        Auth::hasPermission('legajos', 'vistaGestionLegajos') ||
+        Auth::hasPermission('art', 'crtGuardarArt') ||
+        Auth::hasPermission('art', 'vistaListadoArt')
+      ): ?>
+        <div class="col-lg-3 col-md-6 col-sm-12">
+          <div class="info-box shadow">
+            <span class="info-box-icon bg-warning"><i class="fas fa-cogs"></i></span>
+            <div class="info-box-content">
+
+              <!-- Fila para el título y botón de colapsar -->
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="info-box-number">Administración</span>
+                <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapseAdministracion" aria-expanded="false" aria-controls="collapseAdministracion">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+
+              <!-- Sección colapsable para los botones -->
+              <div id="collapseAdministracion" class="collapse">
+                <div class="mt-2">
+
+                  <?php if (Auth::hasPermission('feriados', 'vistaCrearFeriado')): ?>
+                    <a href="?r=crear_feriados" class="btn btn-block btn-warning btn-sm text-white">Crear Feriados</a>
+                  <?php endif; ?>
+
+                  <?php if (Auth::hasPermission('feriados', 'vistaListadoFeriado')): ?>
+                    <a href="?r=listado_feriados" class="btn btn-block btn-warning btn-sm text-white">Ver Feriados</a>
+                  <?php endif; ?>
+
+                  <?php if (Auth::hasPermission('art', 'crtGuardarArt')): ?>
+                    <a href="?r=crear_art" class="btn btn-block btn-warning btn-sm text-white">Crear ART</a>
+                  <?php endif; ?>
+
+                  <?php if (Auth::hasPermission('art', 'vistaListadoArt')): ?>
+                    <a href="?r=listado_art" class="btn btn-block btn-warning btn-sm text-white">Listado ART</a>
+                  <?php endif; ?>
+
+                  <?php if (Auth::hasPermission('legajos', 'vistaGestionLegajos')): ?>
+                    <a href="?r=gestion_legajos" class="btn btn-block btn-warning btn-sm text-white">Legajos</a>
+                  <?php endif; ?>
+
+                </div>
+              </div>
+
             </div>
-            <!-- Sección colapsable para los botones -->
-            <div id="collapseMensajeria" class="collapse">
-              <div class="mt-2">
-                <button class="btn btn-block btn-info btn-sm"><a href="?r=bandeja-entrada" class="text-white">Ver mensajes</button>
-                <button class="btn btn-block btn-info btn-sm"><a href="?r=nuevo-mensaje" class="text-white">Enviar mensaje</button>
+          </div>
+        </div>
+      <?php endif; ?>
+
+
+      <!-- ./administracion -->
+
+      <!-- Noticias -->
+      <?php if (Auth::hasPermission('noticias', 'verCumples')): ?>
+        <div class="col-lg-3 col-md-6 col-sm-12">
+          <div class="info-box shadow">
+            <span class="info-box-icon bg-info"><i class="fas fa-bullhorn"></i></span>
+            <div class="info-box-content">
+
+              <!-- Fila para el título y botón de colapsar -->
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="info-box-number">Noticias</span>
+                <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapseNoticias" aria-expanded="false" aria-controls="collapseNoticias">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+
+              <!-- Sección colapsable para los botones -->
+              <div id="collapseNoticias" class="collapse">
+                <div class="mt-2">
+                  <a href="?r=cumpleanos" class="btn btn-block btn-info btn-sm text-white">Cumpleaños del Mes</a>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      <?php endif; ?>
+
+      <!-- /Noticias -->
+
+      <!-- Mensajería -->
+      <?php if (
+        Auth::hasPermission('mensajes', 'crtMostrarMensajes') ||
+        Auth::hasPermission('mensajes', 'crtGuardarMensaje')
+      ): ?>
+        <div class="col-lg-3 col-md-6 col-sm-12">
+          <div class="info-box shadow">
+            <span class="info-box-icon bg-info"><i class="far fa-envelope"></i></span>
+            <div class="info-box-content">
+              <!-- Fila para el título y botón de colapsar -->
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="info-box-number">Mensajería</span>
+                <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapseMensajeria" aria-expanded="false" aria-controls="collapseMensajeria">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+              <!-- Sección colapsable para los botones -->
+              <div id="collapseMensajeria" class="collapse">
+                <div class="mt-2">
+                  <?php if (Auth::hasPermission('mensajes', 'crtMostrarMensajes')): ?>
+                    <a href="?r=bandeja-entrada" class="btn btn-block btn-info btn-sm text-white">Ver mensajes</a>
+                  <?php endif; ?>
+                  <?php if (Auth::hasPermission('mensajes', 'crtGuardarMensaje')): ?>
+                    <a href="?r=nuevo-mensaje" class="btn btn-block btn-info btn-sm text-white">Enviar mensaje</a>
+                  <?php endif; ?>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      <?php endif; ?>
       <!-- ./mensajeria -->
 
-      <!-- Main content -->
-      <section class="content">
-        <div class="container-fluid">
+      <!-- Mis Datos -->
+      <?php if (
+        Auth::hasPermission('usuarios', 'vistaPerfilUsuario') ||
+        Auth::hasPermission('art', 'verCredencialArt') ||
+        Auth::hasPermission('datos_personales', 'verMisDatos') ||
+        Auth::hasPermission('salud', 'vistaMiSalud') ||
+        Auth::hasPermission('uniformes', 'verMiUniforme')
+      ): ?>
+        <div class="col-lg-3 col-md-6 col-sm-12">
+          <div class="info-box shadow">
+            <span class="info-box-icon bg-info"><i class="fas fa-user-circle"></i></span>
+            <div class="info-box-content">
+              <!-- Título y botón colapsar -->
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="info-box-number">Mis Datos</span>
+                <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapseMisDatos" aria-expanded="false" aria-controls="collapseMisDatos">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+              <!-- Contenido colapsable -->
+              <div id="collapseMisDatos" class="collapse">
+                <div class="mt-2">
+                  <?php $id = $_SESSION['idUsuario']; ?>
 
+                  <?php if (Auth::hasPermission('usuarios', 'vistaPerfilUsuario')): ?>
+                    <a href="?r=perfil-usuario&id=<?= $id ?>" class="btn btn-block btn-info btn-sm text-white">Mi Perfil</a>
+                  <?php endif; ?>
 
-        </div><!-- /.container-fluid -->
-      </section>
-      <!-- /.content -->
+                  <?php if (Auth::hasPermission('datos_personales', 'verMisDatos')): ?>
+                    <a href="?r=mis_datos_personales&id=<?= $id ?>" class="btn btn-block btn-info btn-sm text-white">Mis Datos Personales</a>
+                  <?php endif; ?>
+
+                  <?php if (Auth::hasPermission('salud', 'vistaMiSalud')): ?>
+                    <a href="?r=mi_salud&id=<?= $id ?>" class="btn btn-block btn-info btn-sm text-white">Mi Salud</a>
+                  <?php endif; ?>
+
+                  <?php if (Auth::hasPermission('uniformes', 'verMiUniforme')): ?>
+                    <a href="?r=mi_uniforme&id=<?= $id ?>" class="btn btn-block btn-info btn-sm text-white">Mi Uniforme</a>
+                  <?php endif; ?>
+
+                  <?php if (Auth::hasPermission('art', 'verCredencialArt')): ?>
+                    <a href="?r=credencial_art&id=<?= $id ?>" class="btn btn-block btn-info btn-sm text-white">Mi A.R.T.</a>
+                  <?php endif; ?>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <?php endif; ?>
+
     </div>
   </div>
+</div>

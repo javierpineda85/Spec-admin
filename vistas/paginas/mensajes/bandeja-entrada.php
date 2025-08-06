@@ -1,6 +1,8 @@
 <?php
 
 $mensajes = ControladorMensajes::crtMostrarMensajes('destinatario_id', $_SESSION['idUsuario']);
+$mensajesNoLeidos = array_filter($mensajes, fn($m) => $m['leido'] == 0);
+$cantidadNoLeidos = count($mensajesNoLeidos);
 
 ?>
 
@@ -38,13 +40,16 @@ $mensajes = ControladorMensajes::crtMostrarMensajes('destinatario_id', $_SESSION
               <div class="card-body p-0">
                 <ul class="nav nav-pills flex-column">
                   <li class="nav-item active">
-                    <a href="index.php?r=bandeja-entrada&c=mensajes" class="nav-link">
+                    <a href="index.php?r=bandeja-entrada" class="nav-link">
                       <i class="fas fa-inbox"></i> Bandeja de entrada
-                      <span class="badge bg-primary float-right">12</span>
+                      <?php if ($cantidadNoLeidos > 0): ?>
+                        <span class="badge bg-danger float-right"><?php echo $cantidadNoLeidos; ?></span>
+                      <?php endif; ?>
                     </a>
                   </li>
+
                   <li class="nav-item">
-                    <a href="index.php?r=mensajes-enviados&c=mensajes" class="nav-link">
+                    <a href="index.php?r=mensajes-enviados" class="nav-link">
                       <i class="far fa-envelope"></i> Enviados
                     </a>
                   </li>
@@ -94,31 +99,46 @@ $mensajes = ControladorMensajes::crtMostrarMensajes('destinatario_id', $_SESSION
                 <table class="table table-hover table-striped">
                   <tbody>
                     <tr>
-                      <?php foreach ($mensajes as $campo => $valor) : ?>
-                        <td>
-                          <div class="icheck-primary">
-                            <input type="checkbox" value="" id="check1">
-                            <label for="check1"></label>
-                          </div>
-                        </td>
-                        <td class="mailbox-name">De: <a href="index.php?r=nuevo-mensaje&c=mensajes&idMsj=<?php echo $valor['idMensaje'] ?>&t=reply"><?php echo $valor['nombre'] . " " . $valor['apellido'];  ?></a></td>
-                        <td class="mailbox-subject"> <?php echo $valor['contenido'] ?></td>
-                        <td class="mailbox-date"><?php echo $valor['fMensaje'] ?></td>
-                        <td class="mailbox-date"><?php echo $valor['horaMensaje'] ?></td>
-                        <td>
-                          <div class="btn-group">
-                            <button type="button" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Eliminar">
-                              <a href="#=<?php echo $valor['idMensaje'] ?>" class="text-dark"><i class="far fa-trash-alt"></i></a>
-                            </button>
-                            <button type="button" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Responder">
-                              <a href="index.php?r=nuevo-mensaje&c=mensajes&idMsj=<?php echo $valor['idMensaje'] ?>&t=reply" class="text-dark"><i class="fas fa-reply"></i></a>
-                            </button>
-                            <button type="button" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Reenviar">
-                              <a href="index.php?r=nuevo-mensaje&c=mensajes&idMsj=<?php echo $valor['idMensaje'] ?>&t=share" class="text-dark"><i class="fas fa-share"></i></a>
-                            </button>
-                        </td>
+                      <?php foreach ($mensajes as $mensaje) : ?>
+                    <tr class="<?php echo $mensaje['leido'] == 0 ? 'font-weight-bold bg-light' : ''; ?>">
+                      <td>
+                        <div class="icheck-primary">
+                          <input type="checkbox" value="" id="check<?php echo $mensaje['idMensaje']; ?>">
+                          <label for="check<?php echo $mensaje['idMensaje']; ?>"></label>
+                        </div>
+                      </td>
+                      <td class="mailbox-name">
+                        De:
+                        <a href="index.php?r=nuevo-mensaje&idMsj=<?php echo $mensaje['idMensaje']; ?>&t=reply">
+                          <?php echo $mensaje['nombre'] . " " . $mensaje['apellido']; ?>
+                        </a>
+                      </td>
+                      <td class="mailbox-subject"><?php echo $mensaje['contenido']; ?></td>
+                      <td class="mailbox-date"><?php echo $mensaje['fMensaje']; ?></td>
+                      <td class="mailbox-date"><?php echo $mensaje['horaMensaje']; ?></td>
+                      <td>
+                        <div class="btn-group">
+                          <!-- botones eliminar, responder, reenviar, ver -->
+                          <button
+                            type="button"
+                            class="btn btn-default btn-sm ver-mensaje"
+                            data-id="<?php echo $mensaje['idMensaje']; ?>"
+                            data-toggle="modal"
+                            data-target="#modalVerMensaje"
+                            title="Ver mensaje">
+                            <i class="fas fa-eye"></i>
+                          </button>
+                          <button type="button" class="btn btn-default btn-sm" title="Responder">
+                            <a href="index.php?r=nuevo-mensaje&idMsj=<?php echo $mensaje['idMensaje']; ?>&t=reply" class="text-dark">
+                              <i class="fas fa-reply"></i>
+                            </a>
+                          </button>
+
+                        </div>
+                      </td>
                     </tr>
-                  <?php endforeach ?>
+                  <?php endforeach; ?>
+
 
 
                   </tbody>
@@ -143,10 +163,71 @@ $mensajes = ControladorMensajes::crtMostrarMensajes('destinatario_id', $_SESSION
 
 </section>
 <!-- /.content -->
+<!-- Modal para ver mensaje -->
+<div class="modal fade" id="modalVerMensaje" tabindex="-1" role="dialog" aria-labelledby="modalVerMensajeLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content border-info">
+      <div class="modal-header bg-info text-white">
+        <h5 class="modal-title" id="modalVerMensajeLabel">Mensaje recibido</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="contenido-mensaje">
+        <p class="text-muted">Cargando mensaje...</p>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
   function actualizar() {
     location.reload();
 
+  }
+
+  $(document).on('click', '.ver-mensaje', function() {
+    const idMensaje = $(this).data('id');
+    console.log("🧪 ID que se enviará:", idMensaje);
+
+    $('#contenido-mensaje').html('<p class="text-muted">Cargando mensaje...</p>');
+
+    $.ajax({
+      url: 'ajax/ver_mensaje.php',
+      type: 'POST',
+      data: {
+        idMensaje: idMensaje
+      },
+      dataType: 'json',
+      success: function(respuesta) {
+        if (respuesta && respuesta.exito) {
+          let html = `
+        <p><strong>De:</strong> ${respuesta.nombre} ${respuesta.apellido}</p>
+        <p><strong>Fecha:</strong> ${respuesta.fecha} ${respuesta.hora}</p>
+        <hr>
+        <p>${respuesta.contenido}</p>
+      `;
+          $('#contenido-mensaje').html(html);
+          $('#modalVerMensaje').modal('show'); // 👈 Abrir el modal
+        } else {
+          $('#contenido-mensaje').html(`<p class="text-danger">${respuesta.error ?? 'Error al cargar el mensaje.'}</p>`);
+        }
+      },
+      error: function(xhr, status, error) {
+        console.error("❌ Error en AJAX:", status, error);
+        $('#contenido-mensaje').html('<p class="text-danger">Error de conexión con el servidor.</p>');
+      }
+    });
+
+  });
+</script>
+<!-- Carga explícita de Bootstrap JS si no está definido -->
+<script>
+  if (typeof $.fn.modal === 'undefined') {
+    console.warn('⚠️ Bootstrap modal no está definido. Se intenta cargar manualmente...');
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js';
+    script.onload = () => console.log('✅ Bootstrap JS cargado manualmente');
+    document.body.appendChild(script);
   }
 </script>

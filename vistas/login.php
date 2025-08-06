@@ -27,7 +27,7 @@
                                     <input type="text" class="form-control" placeholder="Ingresá tu DNI" name="dni">
                                     <div class="input-group-append">
                                         <div class="input-group-text">
-                                            <span class="fas fa-envelope"></span>
+                                            <span class="far fa-id-card"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -42,7 +42,7 @@
                                 <div class="row">
 
                                     <!-- /.col -->
-                                    <div class="col-4">
+                                    <div class="col-12">
                                         <button type="submit" class="btn btn-primary btn-block">Ingresar</button>
                                         <?php $registro = LoginController::procesarLogin() ; ?>
                                     </div>

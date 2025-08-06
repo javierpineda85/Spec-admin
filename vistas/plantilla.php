@@ -1,4 +1,11 @@
-<?php include_once('contenido/head.php'); ?>
+<?php include __DIR__ . '/contenido/head.php'; 
+
+if (!isset($_SESSION)) {
+  session_start();
+}
+?>
+
+
 
 <body class="hold-transition sidebar-mini sidebar-collapse">
   <style>
@@ -28,12 +35,12 @@
 
     <!-- Navbar -->
 
-    <?php include_once('contenido/header.php'); ?>
+    <?php include __DIR__ . '/contenido/header.php'; ?>
 
     <!-- /.navbar -->
 
     <!-- Main Sidebar Container -->
-    <?php include_once('contenido/aside.php'); ?>
+    <?php include __DIR__ . '/contenido/aside.php'; ?>
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
@@ -42,9 +49,9 @@
       <!-- Main content -->
       <section class="content mt-2">
 
-        <!--AQUI VAN LAS VISTAS DEPENDIENDO DE LA RUTA -->
+
         <?php
-        // Se instancia el objeto de ruta para cargar la vista correspondiente
+
         RutasController::cargarVista();
         ?>
 
@@ -54,14 +61,72 @@
     <!-- /.content-wrapper -->
 
     <footer class="main-footer">
-      <?php include_once('contenido/footer.php'); ?>
+      <?php include __DIR__ . '/contenido/footer.php'; ?>
     </footer>
 
 
+
+    <!-- Toast reutilizable -->
+    <div aria-live="polite" aria-atomic="true" style="position: fixed; top: 1rem; right: 1rem; z-index: 1050;">
+      <div id="toast-alerta" class="toast" role="alert" data-delay="7000" style="min-width: 300px;">
+        <div class="toast-header bg-info text-white">
+          <strong class="mr-auto"><i class="fas fa-info-circle"></i> Notificación</strong>
+          <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Cerrar">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="toast-body" id="toast-msg">
+          <!-- mensaje dinámico -->
+        </div>
+      </div>
+    </div>
+    <?php if (!empty($_SESSION['toast'])): ?>
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          mostrarToast("<?= addslashes($_SESSION['toast']['mensaje']) ?>", "<?= $_SESSION['toast']['tipo'] ?>");
+        });
+      </script>
+      <?php unset($_SESSION['toast']); ?>
+    <?php endif; ?>
     <!-- scripts -->
-    <?php include_once('contenido/scripts.php'); ?>
+    <script>
+      function mostrarToast(mensaje, tipo = 'info') {
+        const $toast = $('#toast-alerta');
+        const $header = $toast.find('.toast-header');
+        const $icon = $header.find('i');
 
+        // Limpiar clases anteriores
+        $toast.removeClass('bg-success bg-warning bg-danger bg-info');
+        $header.removeClass('bg-success bg-warning bg-danger bg-info text-white text-dark');
 
+        // Configurar por tipo
+        switch (tipo) {
+          case 'success':
+            $toast.addClass('bg-success');
+            $header.addClass('bg-success text-white');
+            $icon.removeClass().addClass('fas fa-check-circle');
+            break;
+          case 'warning':
+            $toast.addClass('bg-warning');
+            $header.addClass('bg-warning text-dark');
+            $icon.removeClass().addClass('fas fa-exclamation-triangle');
+            break;
+          case 'danger':
+            $toast.addClass('bg-danger');
+            $header.addClass('bg-danger text-white');
+            $icon.removeClass().addClass('fas fa-times-circle');
+            break;
+          default:
+            $toast.addClass('bg-info');
+            $header.addClass('bg-info text-white');
+            $icon.removeClass().addClass('fas fa-info-circle');
+        }
+
+        $('#toast-msg').text(mensaje);
+        $toast.toast('show');
+      }
+    </script>
+    <?php include __DIR__ . '/contenido/scripts.php'; ?>
 </body>
 
 </html>

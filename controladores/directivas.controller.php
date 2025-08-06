@@ -1,95 +1,238 @@
 <?php
-ob_start(); //permite enviar los headers sin interferencias
+ob_start(); // permite enviar headers sin interferencias
 require_once('modelos/directivas.modelo.php');
 
 class ControladorDirectivas
 {
 
-    /*GUARDAR DIRECTIVAS */
+    /* GUARDAR DIRECTIVAS */
     static public function crtGuardarDirectiva()
     {
-        
+        Auth::check('directivas', 'crtGuardarDirectiva');
         if (isset($_POST["id_objetivo"])) {
+            if (session_status() !== PHP_SESSION_ACTIVE) {
+                session_start();
+            }
 
             try {
                 $conexion = Conexion::conectar();
 
-                // Verificar si ya hay una transacción activa
                 if (!$conexion->inTransaction()) {
-                    // Si no hay una transacción activa, iniciar una nueva
                     $conexion->beginTransaction();
+                }
+
+                // 1. Procesar adjunto
+                $rutaAdjunto = null;
+                if (isset($_FILES["adjunto"]) && $_FILES["adjunto"]["error"] !== UPLOAD_ERR_NO_FILE) {
+                    $nombreBase = "directiva_" . date("YmdHis");
+                    $rutaAdjunto = ControladorArchivos::guardarArchivo(
+                        $_FILES["adjunto"],
+                        "img/directivas/",
+                        $nombreBase
+                    );
                 }
 
                 $tabla = "directivas";
 
+                // 2. Datos a insertar
                 $datos = array(
                     "id_objetivo" => $_POST["id_objetivo"],
-                    "detalle" => $_POST["detalle"]
+                    "detalle"     => $_POST["detalle"],
+                    "adjunto"     => $rutaAdjunto
                 );
 
-                ModeloDirectivas::mdlGuardarDirectiva($tabla, $datos);
+                // 3. Guardar directiva
+                $respuesta = ModeloDirectivas::mdlGuardarDirectiva($tabla, $datos);
 
-                // Confirmar la transacción si no hay errores
-                Conexion::conectar()->commit();
+                if ($respuesta === "ok") {
+                    // ✅ Insertar alertas para supervisores y vigiladores activos
+                    $sqlUsuarios = "SELECT idUsuario FROM usuarios 
+                                WHERE rol IN ('Vigilador', 'Supervisor I', 'Supervisor II') 
+                                  AND activo = 1";
+                    $usuarios = $conexion->query($sqlUsuarios)->fetchAll(PDO::FETCH_ASSOC);
 
-                $_SESSION['success_message'] = 'Directiva creada exitosamente';
+                    $sqlAlerta = "INSERT INTO alertas (tipo, mensaje, usuario_id, objetivo_id, leida, creada_en)
+                              VALUES ('directiva', :mensaje, :uid, :oid, 0, NOW())";
+                    $stmt = $conexion->prepare($sqlAlerta);
+                    foreach ($usuarios as $u) {
+                        $stmt->execute([
+                            ':mensaje' => 'Se ha publicado una nueva directiva.',
+                            ':uid' => $u['idUsuario'],
+                            ':oid' => $_POST["id_objetivo"]
+                        ]);
+                    }
+
+                    // Confirmar todo
+                    $conexion->commit();
+
+                    ToastifyController::success("Directiva creada exitosamente.");
+                } else {
+                    $conexion->rollBack();
+                    ToastifyController::error("Error al guardar la directiva.");
+                }
             } catch (Exception $e) {
-                // Revertir la transacción en caso de error
-                Conexion::conectar()->rollBack();
-
-                // Manejar el error según sea necesario
-                $_SESSION['success_message'] =  $e->getMessage();
-
+                if ($conexion->inTransaction()) {
+                    $conexion->rollBack();
+                }
+                if (!empty($rutaAdjunto) && file_exists($rutaAdjunto)) {
+                    unlink($rutaAdjunto);
+                }
+                ToastifyController::error("Error: " . $e->getMessage());
                 return false;
             }
         }
     }
 
-        /* MODIFICAR DIRECTIVAS */
-        static public function crtModificarDirectiva()
-        {
-            if (isset($_POST["idDirectiva"])) {
-  
-                try {
-                    $conexion = Conexion::conectar();
-    
-                    // Iniciar una transacción
-                    if (!$conexion->inTransaction()) {
-                        $conexion->beginTransaction();
-                    }
-    
-                    $tabla = "directivas";
-    
-                    $datos = array(
-                        "idDirectiva"  => $_POST["idDirectiva"],
-                        "id_objetivo"  => $_POST["id_objetivo"],
-                        "detalle"      => $_POST["detalle"]
+
+    /* MODIFICAR DIRECTIVAS */
+    static public function crtModificarDirectiva()
+    {
+        Auth::check('directivas', 'crtModificarDirectiva');
+        if (isset($_POST["idDirectiva"])) {
+            try {
+                $conexion = Conexion::conectar();
+                if (!$conexion->inTransaction()) {
+                    $conexion->beginTransaction();
+                }
+
+                // 1) Obtener los valores que vienen del form
+                $idDirectiva  = intval($_POST["idDirectiva"]);
+                $id_objetivo  = intval($_POST["id_objetivo"]);
+                $detalle      = $_POST["detalle"];
+                // Ruta actual en BD (hidden input)
+                $rutaAdjuntoViejo = $_POST["adjuntoActual"];
+
+                // 2) Procesar posible nuevo archivo
+                if (
+                    isset($_FILES["adjunto"]) &&
+                    $_FILES["adjunto"]["error"] !== UPLOAD_ERR_NO_FILE
+                ) {
+                    // Generar un nombre base único para este archivo
+                    $nombreBase = "directiva_"  . date("YmdHis");
+                    $rutaAdjuntoNuevo = ControladorArchivos::guardarArchivo(
+                        $_FILES["adjunto"],
+                        "img/directivas/",
+                        $nombreBase
                     );
-    
-                    $respuesta = ModeloDirectivas::mdlModificarDirectiva($tabla, $datos);
-    
-                    if ($respuesta === "ok") {
-                        // Confirmar la transacción
-                        $conexion->commit();
-                        $_SESSION['success_message'] = 'Directiva modificada exitosamente';
-                        header("Location:?r=listado_directivas");
-                        exit;
-                    } else {
-                        // Si algo falla, hacer rollback
-                        $conexion->rollBack();
-                        $_SESSION['error_message'] = 'Error al modificar la directiva';
-                        header("Location: ?r=modificar_directivas&id=" . $_POST["idDirectiva"]);
-                        exit;
+                    // Si se guardó bien, borramos el antiguo (opcional)
+                    if (!empty($rutaAdjuntoViejo) && file_exists($rutaAdjuntoViejo)) {
+                        unlink($rutaAdjuntoViejo);
                     }
-                } catch (Exception $e) {
-                    // En caso de error, revertir la transacción
+                    $rutaAdjuntoFinal = $rutaAdjuntoNuevo;
+                } else {
+                    // No subió nada: quedamos con la ruta vieja
+                    $rutaAdjuntoFinal = $rutaAdjuntoViejo;
+                }
+
+                // 3) Preparar array para el modelo
+                $datos = [
+                    "idDirectiva" => $idDirectiva,
+                    "id_objetivo" => $id_objetivo,
+                    "detalle"     => $detalle,
+                    "adjunto"     => $rutaAdjuntoFinal   // puede ser cadena vacía o NULL
+                ];
+
+                // 4) Llamar al modelo para actualizar
+                $respuesta = ModeloDirectivas::mdlModificarDirectiva("directivas", $datos);
+
+                if ($respuesta === "ok") {
+                    $conexion->commit();
+                    ToastifyController::success("Directiva modificada exitosamente.");
+                    header("Location:?r=listado_directivas");
+                    exit;
+                } else {
                     $conexion->rollBack();
-                    $_SESSION['error_message'] = "Error: " . $e->getMessage();
-                    header("Location: ?r=editar_objetivo.php&id=" . $_POST["idObjetivo"]);
+                    ToastifyController::error("Error al modificar la directiva.");
+                    header("Location: ?r=modificar_directivas&id=" . $idDirectiva);
                     exit;
                 }
+            } catch (Exception $e) {
+                if ($conexion->inTransaction()) {
+                    $conexion->rollBack();
+                }
+                ToastifyController::error("Error: " . $e->getMessage());
+                header("Location: ?r=modificar_directivas&id=" . intval($_POST["idDirectiva"]));
+                exit;
             }
         }
+    }
+
+    static public function crtEliminarDirectiva()
+    {
+        Auth::check('directivas', 'crtEliminarDirectiva');
+        if (isset($_POST['idEliminar'])) {
+            // Convertimos a entero para sanear
+            $idDirectiva = intval($_POST['idEliminar']);
+
+            try {
+                $conexion = Conexion::conectar();
+                // Iniciamos transacción
+                if (!$conexion->inTransaction()) {
+                    $conexion->beginTransaction();
+                }
+
+                // Llamamos al modelo para borrar
+                $respuesta = ModeloDirectivas::mdlEliminarDirectiva('directivas', $idDirectiva);
+
+                if ($respuesta === 'ok') {
+                    $conexion->commit();
+                    ToastifyController::success("Directiva eliminada correctamente.");
+                } else {
+                    $conexion->rollBack();
+                    ToastifyController::error("No se pudo eliminar la directiva.");
+                }
+            } catch (Exception $e) {
+                if ($conexion->inTransaction()) {
+                    $conexion->rollBack();
+                }
+                ToastifyController::error('Error: ' . $e->getMessage());
+            }
+        }
+    }
+    static public function vistaListadoDirectivas()
+    {
+        Auth::check('directivas', 'vistaListadoDirectivas');
+        $db = new Conexion();
 
 
+        // Recupero rol y, en caso de Vigilador, su objetivo
+        $rol = $_SESSION['rol'] ?? '';
+
+        if ($rol === 'Vigilador') {
+            // Opción A: lo sacas directo de sesión
+            $objetivoId = $_SESSION['objetivo_id'] ?? null;
+
+            if ($objetivoId) {
+                $sql = "SELECT d.*, o.nombre FROM directivas d JOIN objetivos o ON d.id_objetivo = o.idObjetivo WHERE d.id_objetivo = :obj ORDER BY d.id_objetivo ";
+                $params = [':obj' => $objetivoId];
+            } else {
+                // Si no tiene objetivo asignado, devolvemos vacío
+                $directivas = [];
+                include __DIR__ . '/../vistas/paginas/directivas/listado_directivas.php';
+                return;
+            }
+        } else {
+            // Para todos los demás roles, sin filtro
+            $sql = " SELECT d.*, o.nombre FROM directivas d JOIN objetivos o ON d.id_objetivo = o.idObjetivo ORDER BY d.id_objetivo ";
+            $params = [];
+        }
+
+        // Ejecuto la consulta
+        $directivas = $db->consultas($sql, $params);
+
+        // Cargo la vista
+        include __DIR__ . '/../vistas/paginas/directivas/listado_directivas.php';
+    }
+
+
+    static public function vistaCrearDirectiva()
+    {
+        Auth::check('directivas', 'vistaCrearDirectiva');
+        include __DIR__ . '/../vistas/paginas/directivas/crear_directivas.php';
+    }
+    static public function vistaEditarDirectiva()
+    {
+        Auth::check('directivas', 'vistaEditarDirectiva');
+        include __DIR__ . '/../vistas/paginas/directivas/modificar_directivas.php';
+    }
 }

@@ -71,7 +71,7 @@ $objetivos = $db->consultas($sql);
                         <table id="example1" class="table table-bordered table-striped table-sm">
                             <thead>
                                 <tr>
-                                    <th rowspan="2" class="text-center">Puesto</th>
+                                    <th rowspan="2" class="text-center">Resumen</th>
                                     <?php foreach ($fechas as $f): ?>
                                         <th colspan="2" class="text-center"><?= date('d/m/Y', strtotime($f)) ?></th>
                                     <?php endforeach; ?>

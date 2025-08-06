@@ -2,13 +2,16 @@
 /* esto lo usamos para usar la rutas correctamentes sin .php  y que tome siempre el index
 al no colocar nada en la url*/
 
-$folderPath = dirname($_SERVER['SCRIPT_NAME']);
-$urlPath =$_SERVER['REQUEST_URI'];
-$url =substr($urlPath,strlen($folderPath)); //esto extrae el nombre de la carpeta raiz
+// Obtiene algo como “/Spec-admin” o “” si estás en la raíz
+$baseUrl = rtrim(
+    str_replace('\\','/', dirname($_SERVER['SCRIPT_NAME'])),
+    '/\\'
+);
 
-define('URL', $url);
+// Define la constante que usarás en tus plantillas
+define('BASE_URL', $baseUrl);
 
-//$_SESSION['id_usuario']=5;
-date_default_timezone_set('America/Argentina/Mendoza'); 
+// Zona horaria
+date_default_timezone_set('America/Argentina/Mendoza');
 
 ?>

@@ -1,5 +1,7 @@
 <?php
 $rows = $_SESSION['reporte_vigilador'] ?? [];
+
+
 ?>
 <section class="content">
   <div class="container-fluid">
@@ -7,6 +9,7 @@ $rows = $_SESSION['reporte_vigilador'] ?? [];
       <div class="card-header bg-info text-white">
         <h3 class="card-title">Resumen de Horas por Vigilador</h3>
       </div>
+
       <div class="card-body">
         <form action="?r=buscar_resumen_horas_por_vigilador" method="POST" class="card p-4 mb-4 shadow-sm">
           <div class="form-row">
@@ -37,6 +40,8 @@ $rows = $_SESSION['reporte_vigilador'] ?? [];
               <th>Vigilador</th>
               <th class="text-center">Horas Diurnas</th>
               <th class="text-center">Horas Nocturnas</th>
+              <th class="text-center">Guardias Pasivas</th>
+              <th class="text-center">Francos</th>
               <th class="text-center">Total Jornadas</th>
             </tr>
           </thead>
@@ -47,12 +52,14 @@ $rows = $_SESSION['reporte_vigilador'] ?? [];
                   <td><?= htmlspecialchars($r['vigilador']) ?></td>
                   <td class="text-center"><?= number_format($r['diurnas'], 2) ?></td>
                   <td class="text-center"><?= number_format($r['nocturnas'], 2) ?></td>
+                  <td class="text-center"><?= number_format($r['guardias_pasivas'], 2) ?></td>
+                  <td class="text-center"><?= $r['francos'] ?></td>
                   <td class="text-center"><?= $r['jornadas'] ?></td>
                 </tr>
               <?php endforeach; ?>
             <?php else: ?>
               <tr>
-                <td colspan="4" class="text-center text-muted">
+                <td colspan="6" class="text-center text-muted">
                   No hay datos en ese período
                 </td>
               </tr>
@@ -63,17 +70,58 @@ $rows = $_SESSION['reporte_vigilador'] ?? [];
             $totD = array_sum(array_column($rows, 'diurnas'));
             $totN = array_sum(array_column($rows, 'nocturnas'));
             $totJ = array_sum(array_column($rows, 'jornadas'));
+            $totGP = array_sum(array_column($rows, 'guardias_pasivas'));
+            $totF = array_sum(array_column($rows, 'francos'));
             ?>
             <tr>
               <td><strong>Totales:</strong></td>
               <td class="text-center"><?= number_format($totD, 2) ?></td>
               <td class="text-center"><?= number_format($totN, 2) ?></td>
+              <td class="text-center"><?= number_format($totGP, 2) ?></td>
+              <td class="text-center"><?= $totF ?></td>
               <td class="text-center"><?= $totJ ?></td>
             </tr>
           </tfoot>
         </table>
 
         <?php unset($_SESSION['reporte_vigilador']); ?>
+        <!-- Después de la tabla principal -->
+        <?php if (!empty($_SESSION['diferencias_horarias'])): ?>
+          <div class="card mt-4 border-warning">
+            <div class="card-header bg-warning">
+              <h4 class="card-title">Discrepancias Horarias</h4>
+            </div>
+            <div class="card-body">
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Vigilador</th>
+                    <th>Entrada Real</th>
+                    <th>Entrada Turno</th>
+                    <th>Salida Real</th>
+                    <th>Salida Turno</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <?php foreach ($_SESSION['diferencias_horarias'] as $d): ?>
+                    <tr>
+                      <td><?= $d['fecha'] ?></td>
+                      <td><?= $d['vigilador'] ?></td>
+                      <td><?= $d['entrada_real'] ?></td>
+                      <td><?= $d['entrada_turno'] ?></td>
+                      <td><?= $d['salida_real'] ?></td>
+                      <td><?= $d['salida_turno'] ?></td>
+                    </tr>
+                  <?php endforeach; ?>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        <?php
+          unset($_SESSION['diferencias_horarias']);
+        endif;
+        ?>
       </div>
     </div>
   </div>

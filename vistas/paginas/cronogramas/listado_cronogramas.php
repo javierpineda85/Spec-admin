@@ -14,7 +14,7 @@ $objetivos = $db->consultas($sql);
             <div class="col-12">
                 <div class="card">
                     <div class="card-header bg-info text-white">
-                        <h3 class="card-title">Buscar cronogramas por fechas</h3>
+                        <h3 class="card-title">Buscar cronogramas por objetivos y fechas</h3>
 
                     </div>
                     <div class="card-body">
@@ -58,16 +58,13 @@ $objetivos = $db->consultas($sql);
                                 </div>
                             </div>
                         </form>
-
                         <table id="example1" class="table table-bordered table-striped table-sm">
                             <thead>
                                 <tr>
                                     <th>Puesto</th>
                                     <th>Turno</th>
                                     <th>Vigilador</th>
-                                    <th>Actividad</th>
-                                    <th>Entrada</th>
-                                    <th>Salida</th>
+                                    <th>Tipo de Jornada</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -88,13 +85,11 @@ $objetivos = $db->consultas($sql);
                                         <?php
                                         endif;
                                         ?>
-                                        <tr style="background-color: <?= htmlspecialchars($t['color']) ?>;">
+                                        <tr >
                                             <td class="text-center"><?= htmlspecialchars($t['puesto']) ?></td>
-                                            <td class="text-center"><?= htmlspecialchars($t['turno']) ?></td>
-                                            <td class="text-center"><?= htmlspecialchars($t['vigilador']) ?></td>
-                                            <td class="text-center"><?= htmlspecialchars($t['actividad']) ?></td>
-                                            <td class="text-center"><?= htmlspecialchars($t['entrada']) ?></td>
-                                            <td class="text-center"><?= htmlspecialchars($t['salida']) ?></td>
+                                            <td class="text-center"><?= htmlspecialchars($t['codigo_turno']) ?></td>
+                                            <td class="text-center"><?= htmlspecialchars($t['usuario']) ?></td>
+                                            <td class="text-center"><?= htmlspecialchars($t['tipo_turno']) ?></td>
                                         </tr>
                                     <?php endforeach;
                                     // limpiamos si no queremos persistir al recargar
