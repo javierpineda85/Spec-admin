@@ -19,7 +19,7 @@ class PermisosController
         );
 
         // 3) Rol seleccionado (GET o primer rol)
-        $selectedRole = $_GET['role'] 
+        $selectedRole = $_GET['role']
             ?? ($roles[0]['rol'] ?? '');
 
         // 4) Permisos ya asignados al rol
@@ -53,6 +53,10 @@ class PermisosController
             }
         }
 
+        // Limpia la cache de permisos si el rol modificado es el del usuario actual
+        if ($_SESSION['rol'] === $role) {
+            unset($_SESSION['permisos_usuario']);
+        }
         ToastifyController::success('Permisos actualizados correctamente');
 
         header("Location: ?r=permisos&role={$role}");

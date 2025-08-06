@@ -382,7 +382,7 @@ class RutasController
             return;
         }
         if (isset($_GET['r']) && $_GET['r'] === 'listado_uniformes') {
-            DatosPersonalesController::vistaListadoUniformes();
+            UniformesController::vistaListadoUniformes();
             return;
         }
         if (isset($_GET['r']) && $_GET['r'] === 'mi_salud') {

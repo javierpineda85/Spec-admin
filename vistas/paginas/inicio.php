@@ -389,7 +389,7 @@ if (!isset($_SESSION['idUsuario'])) {
                     <a href="?r=listado_art" class="btn btn-block btn-warning btn-sm text-white">Listado ART</a>
                   <?php endif; ?>
 
-                  <?php if (Auth::hasPermission('datos_personales', 'verListadoUniformes')): ?>
+                  <?php if (Auth::hasPermission('uniformes', 'vistaListadoUniformes')): ?>
                     <a href="?r=listado_uniformes" class="btn btn-block btn-warning btn-sm text-white">Reporte de Uniformes</a>
                   <?php endif; ?>
 

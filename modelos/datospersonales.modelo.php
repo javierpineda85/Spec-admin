@@ -57,21 +57,5 @@ class ModeloDatosPersonales
         $stmt->bindParam(':tutores_discapacidad', $datos['tutores_discapacidad']);
     }
 
-    public static function mdlListarUniformes()
-    {
-        
-        $db = new Conexion;
-        $sql = "SELECT 
-                u.idUsuario,
-                CONCAT(u.apellido, ', ', u.nombre) AS nombre_completo,
-                uni.talle_pantalon,
-                uni.talle_calzado,
-                uni.talle_remera,
-                uni.talle_polar,
-                uni.talle_campera
-            FROM uniformes uni
-            INNER JOIN usuarios u ON u.idUsuario = uni.usuario_id
-            ORDER BY nombre_completo ASC";
-        return $db->consultas($sql);
-    }
+
 }

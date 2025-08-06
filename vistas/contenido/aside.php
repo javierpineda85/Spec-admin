@@ -216,7 +216,7 @@
               <?php endif; ?>
               <?php if (Auth::hasPermission('rondas', 'vistaListadoEscaneos')): ?>
                 <li class="nav-item">
-                  <a href="?r=listadoEscaneo" class="nav-link">
+                  <a href="?r=listado_escaneo" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
                     <p>Listado de escaneo QR</p>
                   </a>
@@ -399,7 +399,8 @@
           Auth::hasPermission('feriados', 'vistaCrearFeriado') ||
           Auth::hasPermission('feriados', 'vistaListadoFeriado') ||
           Auth::hasPermission('legajos', 'vistaGestionLegajos') ||
-          Auth::hasPermission('art', 'vistaGestionArt')
+          Auth::hasPermission('art', 'vistaGestionArt') || 
+          Auth::hasPermission('uniformes', 'verListadoUniformes')
         ): ?>
           <li class="nav-item has-treeview">
             <a href="#" class="nav-link">
@@ -445,7 +446,7 @@
                   </a>
                 </li>
               <?php endif; ?>
-              <?php if (Auth::hasPermission('datos_personales', 'verListadoUniformes')): ?>
+              <?php if (Auth::hasPermission('uniformes', 'vistaListadoUniformes')): ?>
                 <li class="nav-item">
                   <a href="?r=listado_uniformes" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>

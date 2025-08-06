@@ -37,4 +37,12 @@ class UniformesController
         header("Location: ?r=mi_uniforme");
         exit;
     }
+        public static function vistaListadoUniformes()
+    {
+        Auth::check('uniformes', 'vistaListadoUniformes');
+
+        $uniformes = ModeloUniformes::mdlListarUniformes();
+
+        include 'vistas/paginas/admin/uniformes/listado_uniformes.php';
+    }
 }
