@@ -17,7 +17,7 @@ require_once("controladores/directivas.controller.php");
 require_once("controladores/escaneos.controller.php");
 require_once("controladores/feriados.controller.php");
 require_once('controladores/hvivo.controller.php');
-require_once('controladores/legajos.controller.php');
+//require_once('controladores/legajos.controller.php');
 require_once('controladores/login.controller.php');
 require_once('controladores/marcaciones.controller.php');
 require_once("controladores/mensajes.controller.php");

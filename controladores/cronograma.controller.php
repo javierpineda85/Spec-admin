@@ -40,91 +40,60 @@ class ControladorCronograma
             foreach (['vigilador', 'referente'] as $rol) {
                 if (!isset($_POST[$rol])) continue;
 
-                // ===================== VIGILADORES =====================
-                if ($rol === 'vigilador') {
-                    /**
-                     * Estructura esperada:
-                     * $_POST['vigilador'][idPuesto][Diurno|Nocturno|Licencias][día] = código_turno
-                     * También incluye: [usuario] dentro de uno de esos bloques
-                     */
-                    foreach ($_POST[$rol] as $puestoId => $tiposTurno) {
-                        // Buscamos el usuario_id en cualquiera de los tipos de turno
-                        $usuarioId = null;
-                        foreach ($tiposTurno as $datosTurno) {
-                            if (isset($datosTurno['usuario']) && is_numeric($datosTurno['usuario'])) {
-                                $usuarioId = intval($datosTurno['usuario']);
-                                break;
+                // ===================== VIGILADORES (1 fila por usuario) =====================
+                if (isset($_POST['vigilador']) && is_array($_POST['vigilador'])) {
+                    foreach ($_POST['vigilador'] as $usuarioId => $dias) {
+                        $usuarioId = intval($usuarioId);
+                        if (!$usuarioId) continue;
+
+                        foreach ($dias as $dia => $codigo) {
+                            if ($dia === 'usuario') continue;
+                            $codigo = trim((string)$codigo);
+                            if ($codigo === '') continue;
+
+                            $fecha = $mes . '-' . str_pad($dia, 2, '0', STR_PAD_LEFT);
+
+                            // Para validaciones
+                            if (in_array($codigo, ['D', 'N'])) {
+                                $guardiasPorDia[$fecha][] = $codigo;
+                                $horasPorUsuario[$usuarioId] = ($horasPorUsuario[$usuarioId] ?? 0) + 12;
                             }
-                        }
 
-                        if (!$usuarioId) continue; // No procesamos si no hay usuario seleccionado
+                            $tipo = self::esLicencia($codigo) ? 'Licencia' : 'Normal';
 
-                        foreach ($tiposTurno as $tipoTurno => $datosTurno) {
-                            foreach ($datosTurno as $dia => $codigo) {
-                                if ($dia === 'usuario' || trim($codigo) === '') continue;
-
-                                $fecha = $mes . '-' . str_pad($dia, 2, '0', STR_PAD_LEFT);
-
-                                // Guardias válidas para validación (D y N)
-                                if (in_array($codigo, ['D', 'N'])) {
-                                    $guardiasPorDia[$fecha][] = $codigo;
-                                }
-
-                                // Acumulamos horas si es D o N
-                                $hs = in_array($codigo, ['D', 'N']) ? 12 : 0;
-                                $horasPorUsuario[$usuarioId] = ($horasPorUsuario[$usuarioId] ?? 0) + $hs;
-
-                                // Determinamos tipo de turno
-                                $tipo = ($tipoTurno === 'Licencias') ? 'Licencia' : 'Normal';
-
-                                $turnosProcesados[] = [
-                                    'usuario_id'   => $usuarioId,
-                                    'puesto_id'    => $puestoId,
-                                    'objetivo_id'  => $objetivoId,
-                                    'fecha'        => $fecha,
-                                    'rol'          => ucfirst($rol),
-                                    'tipo_turno'   => $tipo,
-                                    'codigo_turno' => $codigo
-                                ];
-                            }
+                            $turnosProcesados[] = [
+                                'usuario_id'   => $usuarioId,
+                                'puesto_id'    => null,          // ahora no se asigna acá
+                                'objetivo_id'  => $objetivoId,
+                                'fecha'        => $fecha,
+                                'rol'          => 'Vigilador',
+                                'tipo_turno'   => $tipo,
+                                'codigo_turno' => $codigo
+                            ];
                         }
                     }
                 }
 
-                // ===================== REFERENTES =====================
-                elseif ($rol === 'referente') {
-                    /**
-                     * Estructura esperada:
-                     * $_POST['referente'][Diurno|Nocturno|Licencias][día] = código_turno
-                     * El usuario puede estar en cualquiera de esos bloques, según cuál se tocó primero.
-                     */
+                // ===================== REFERENTES (1 fila por usuario) =====================
+                if (isset($_POST['referente']) && is_array($_POST['referente'])) {
+                    foreach ($_POST['referente'] as $usuarioId => $dias) {
+                        $usuarioId = intval($usuarioId);
+                        if (!$usuarioId) continue;
 
-                    // Intentamos detectar el usuario desde cualquier bloque disponible
-                    $usuarioId = 0;
-                    foreach (['Diurno', 'Nocturno', 'Licencias'] as $tipo) {
-                        if (isset($_POST['referente'][$tipo]['usuario']) && is_numeric($_POST['referente'][$tipo]['usuario'])) {
-                            $usuarioId = intval($_POST['referente'][$tipo]['usuario']);
-                            break;
-                        }
-                    }
-
-
-                    if (!$usuarioId) continue; // Si no encontramos usuario en ningún bloque, salteamos
-
-                    foreach ($_POST[$rol] as $tipoTurno => $datosTurno) {
-
-                        foreach ($datosTurno as $dia => $codigo) {
-                            if ($dia === 'usuario' || trim($codigo) === '') continue;
+                        foreach ($dias as $dia => $codigo) {
+                            if ($dia === 'usuario') continue;
+                            $codigo = trim((string)$codigo);
+                            if ($codigo === '') continue;
 
                             $fecha = $mes . '-' . str_pad($dia, 2, '0', STR_PAD_LEFT);
-                            $tipo = ($tipoTurno === 'Licencias') ? 'Licencia' : 'Normal';
+                            $tipo = self::esLicencia($codigo) ? 'Licencia' : 'Normal';
 
                             $turnosProcesados[] = [
                                 'usuario_id'   => $usuarioId,
-                                'puesto_id'    => null, // Los referentes no tienen puesto
+                                'puesto_id'    => null,
                                 'objetivo_id'  => $objetivoId,
                                 'fecha'        => $fecha,
-                                'rol'          => ucfirst($rol),
+                                'rol'          => 'Referente',
                                 'tipo_turno'   => $tipo,
                                 'codigo_turno' => $codigo
                             ];
@@ -187,6 +156,116 @@ class ControladorCronograma
             self::vistaCrearCronograma();
             return;
         }
+    }
+    private static function esLicencia(string $codigo): bool
+    {
+        // Tratamos GP/D y GP/N como licencias “laborables” para KPI,
+        // pero acá el tipo se guarda igual como 'Licencia'
+        $licencias = ['F', 'GP/D', 'GP/N', 'E', 'P', 'L', 'S'];
+        return in_array(strtoupper($codigo), $licencias, true);
+    }
+
+    /*Funcion para mantener la escala de 4x2 en el cronograma al cargar un nuevo mes*/
+    public static function generarSimulacionVacia(int $objetivoId, string $mes): array
+    {
+        $db = new Conexion;
+
+        // Vigiladores y referentes vinculados al objetivo
+        $vigiladores = $db->consultas("SELECT u.idUsuario FROM usuarios u
+        INNER JOIN objetivo_vigiladores ov ON ov.vigilador_id = u.idUsuario
+        WHERE ov.objetivo_id = $objetivoId AND u.activo = 1 AND u.rol='Vigilador'");
+
+        $referentes = $db->consultas("SELECT u.idUsuario FROM usuarios u
+        INNER JOIN objetivo_referentes orf ON orf.referente_id = u.idUsuario
+        WHERE orf.objetivo_id = $objetivoId AND u.activo = 1 AND u.rol='Referente'");
+
+        $post = [
+            'objetivo' => $objetivoId,
+            'mes'      => $mes,
+            'vigilador' => [],
+            'referente' => []
+        ];
+
+        // Patrón base y normalización
+        $patternBase = ['D', 'D', 'N', 'N', 'F', 'F'];
+
+        // Rango del mes
+        $dt = DateTime::createFromFormat('Y-m', $mes);
+        if (!$dt) return $post;
+        $year = (int)$dt->format('Y');
+        $month = (int)$dt->format('m');
+        $daysInMonth = (int)date('t', strtotime("$mes-01"));
+
+        // Mes anterior
+        $dtPrev = clone $dt;
+        $dtPrev->modify('-1 month');
+        $mesAnterior = $dtPrev->format('Y-m');
+        $iniPrev = $mesAnterior . '-01';
+        $finPrev = $mesAnterior . '-' . date('t', strtotime($iniPrev));
+
+        // Helper: normalizar código a D/N/F
+        $norm = function (string $c): string {
+            $c = strtoupper(trim($c));
+            if ($c === 'D' || preg_match('/^D\//', $c) || in_array($c, ['6H', '7H', '8H', '9H', '9RF', '9HEX', '13H', '14H', 'BE'], true)) return 'D';
+            if ($c === 'N' || $c === 'N15' || preg_match('/^N\//', $c)) return 'N';
+            // Licencias y GP => OFF
+            if (in_array($c, ['F', 'GP/D', 'GP/N', 'E', 'P', 'L', 'S'], true)) return 'F';
+            // Referencias las consideramos trabajo en franco -> OFF a nivel patrón
+            if (in_array($c, ['SALA', 'MIC', 'F/JUS', 'NOTT', 'GUE', 'PER', 'PAL', 'BOS', 'OFI'], true)) return 'F';
+            return 'F';
+        };
+
+        // Rotar patrón partiendo del último estado
+        $rotarDesde = function (array $base, string $start) {
+            // Queremos que base[0] == start
+            for ($i = 0; $i < count($base); $i++) {
+                if ($base[$i] === $start) {
+                    return array_merge(array_slice($base, $i), array_slice($base, 0, $i));
+                }
+            }
+            return $base;
+        };
+
+        // Último código del mes anterior por usuario+objetivo
+        $ultimoCodigo = function (int $usuarioId) use ($db, $objetivoId, $iniPrev, $finPrev) {
+            $sql = "SELECT codigo_turno FROM turnos
+                WHERE objetivo_id = :obj AND usuario_id = :uid
+                  AND fecha BETWEEN :ini AND :fin
+                ORDER BY fecha DESC LIMIT 1";
+            $stmt = Conexion::conectar()->prepare($sql);
+            $stmt->execute([':obj' => $objetivoId, ':uid' => $usuarioId, ':ini' => $iniPrev, ':fin' => $finPrev]);
+            $row = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $row['codigo_turno'] ?? null;
+        };
+
+        // Precarga filas para cada vigilador
+        foreach ($vigiladores as $v) {
+            $uid = (int)$v['idUsuario'];
+            $last = $ultimoCodigo($uid);
+            $start = $norm($last ?? 'D'); // si no hay historial, arrancamos D
+
+            $patron = $rotarDesde($patternBase, $start);
+            $post['vigilador'][$uid]['usuario'] = $uid;
+
+            for ($d = 1; $d <= $daysInMonth; $d++) {
+                $post['vigilador'][$uid][$d] = $patron[($d - 1) % 6];
+            }
+        }
+
+        // Precarga para referentes (si aplicara el mismo patrón)
+        foreach ($referentes as $r) {
+            $uid = (int)$r['idUsuario'];
+            $last = $ultimoCodigo($uid);
+            $start = $norm($last ?? 'D');
+            $patron = $rotarDesde($patternBase, $start);
+
+            $post['referente'][$uid]['usuario'] = $uid;
+            for ($d = 1; $d <= $daysInMonth; $d++) {
+                $post['referente'][$uid][$d] = $patron[($d - 1) % 6];
+            }
+        }
+
+        return $post;
     }
 
     /*Funcion para precargar cronograma del mes anterior */
@@ -253,43 +332,6 @@ class ControladorCronograma
         return ['origen' => 'vacio', 'turnos' => []];
     }
 
-    public static function generarSimulacionVacia($objetivoId, $mes)
-    {
-        $vigiladores = ModeloObjetivos::mdlObtenerVigiladoresParaCronograma($objetivoId); // trae idUsuario
-        $referentes  = ModeloObjetivos::mdlObtenerReferentesParaCronograma($objetivoId);  // trae solo IDs
-
-        $post = [];
-
-        // Detectamos cuántos días tiene el mes seleccionado
-        $anioMes = explode('-', $mes);
-        $anio = intval($anioMes[0]);
-        $mesNum = intval($anioMes[1]);
-        $cantidadDias = cal_days_in_month(CAL_GREGORIAN, $mesNum, $anio);
-
-        // ===================== VIGILADORES =====================
-        foreach ($vigiladores as $index => $v) {
-            $puestoId = 'ficticio_' . $index;
-            foreach (['Diurno', 'Nocturno', 'Licencias'] as $tipo) {
-                $post['vigilador'][$puestoId][$tipo]['usuario'] = $v['idUsuario'];
-                for ($dia = 1; $dia <= $cantidadDias; $dia++) {
-                    $post['vigilador'][$puestoId][$tipo][$dia] = '';
-                }
-            }
-        }
-
-        // ===================== REFERENTES =====================
-        foreach ($referentes as $r) {
-            foreach (['Diurno', 'Nocturno', 'Licencias'] as $tipo) {
-                $post['referente'][$tipo]['usuario'] = $r['idUsuario']; // ← valor escalar
-                for ($dia = 1; $dia <= $cantidadDias; $dia++) {
-                    $post['referente'][$tipo][$dia] = '';
-                }
-            }
-        }
-
-
-        return $post;
-    }
 
     /*Funcion para buscar por resumen diario de jornadas trabajadas*/
     static public function crtBuscarResumenDiario()

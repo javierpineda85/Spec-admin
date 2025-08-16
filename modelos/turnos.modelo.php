@@ -7,16 +7,20 @@ class ModeloTurnos
         $db = Conexion::conectar();
 
         try {
-
-            // 1) Insert en tabla turnos
             $sql = "INSERT INTO $tabla 
-                (usuario_id, puesto_id, objetivo_id, fecha, rol, tipo_turno, codigo_turno)
-                VALUES 
-                (:usuario_id, :puesto_id, :objetivo_id, :fecha, :rol, :tipo_turno, :codigo_turno)";
+            (usuario_id, puesto_id, objetivo_id, fecha, rol, tipo_turno, codigo_turno)
+            VALUES 
+            (:usuario_id, :puesto_id, :objetivo_id, :fecha, :rol, :tipo_turno, :codigo_turno)";
 
             $stmt = $db->prepare($sql);
             $stmt->bindParam(":usuario_id",   $datos["usuario_id"],   PDO::PARAM_INT);
-            $stmt->bindParam(":puesto_id",    $datos["puesto_id"],    PDO::PARAM_INT);
+
+            if (is_null($datos["puesto_id"])) {
+                $stmt->bindValue(":puesto_id", null, PDO::PARAM_NULL);
+            } else {
+                $stmt->bindParam(":puesto_id", $datos["puesto_id"], PDO::PARAM_INT);
+            }
+
             $stmt->bindParam(":objetivo_id",  $datos["objetivo_id"],  PDO::PARAM_INT);
             $stmt->bindParam(":fecha",        $datos["fecha"],        PDO::PARAM_STR);
             $stmt->bindParam(":rol",          $datos["rol"],          PDO::PARAM_STR); // Vigilador o Referente
@@ -24,10 +28,8 @@ class ModeloTurnos
             $stmt->bindParam(":codigo_turno", $datos["codigo_turno"], PDO::PARAM_STR); // D, N, etc.
             $stmt->execute();
 
-
             return "ok";
         } catch (PDOException $e) {
-
             return $e->getMessage();
         } finally {
             if (isset($stmt)) $stmt->closeCursor();
