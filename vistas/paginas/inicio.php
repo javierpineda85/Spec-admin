@@ -151,7 +151,8 @@ if (!isset($_SESSION['idUsuario'])) {
       <?php if (
         Auth::hasPermission('puestos', 'vistaCrearPuestos') ||
         Auth::hasPermission('puestos', 'vistaListadoPuestos') ||
-        Auth::hasPermission('puestos', 'vistaListadoPuestosDesactivados')
+        Auth::hasPermission('puestos', 'vistaListadoPuestosDesactivados') ||
+        Auth::hasPermission('puestos', 'gestionarRotaciones')
       ): ?>
 
         <div class="col-lg-3 col-md-6 col-sm-12">
@@ -168,6 +169,9 @@ if (!isset($_SESSION['idUsuario'])) {
                 <div class="mt-2">
                   <?php if (Auth::hasPermission('puestos', 'vistaCrearPuestos')): ?>
                     <a href="?r=crear_puesto" class="btn btn-block btn-success btn-sm text-white">Crear</a>
+                  <?php endif; ?>
+                  <?php if (Auth::hasPermission('puestos', 'gestionarRotaciones')): ?>
+                    <a href="?r=rotaciones_puestos" class="btn btn-block btn-success btn-sm text-white">Asignar Puestos</a>
                   <?php endif; ?>
                   <?php if (Auth::hasPermission('puestos', 'vistaListadoPuestos')): ?>
                     <a href="?r=listado_puestos" class="btn btn-block btn-success btn-sm text-white">Mostrar Activos</a>
@@ -349,9 +353,9 @@ if (!isset($_SESSION['idUsuario'])) {
       <?php if (
         Auth::hasPermission('feriados', 'vistaCrearFeriado') ||
         Auth::hasPermission('feriados', 'vistaListadoFeriado') ||
-        Auth::hasPermission('legajos', 'vistaGestionLegajos') ||
         Auth::hasPermission('art', 'crtGuardarArt') ||
-        Auth::hasPermission('art', 'vistaListadoArt')
+        Auth::hasPermission('art', 'vistaListadoArt')||
+        Auth::hasPermission('uniformes', 'verListadoUniformes')
       ): ?>
         <div class="col-lg-3 col-md-6 col-sm-12">
           <div class="info-box shadow">
@@ -386,10 +390,9 @@ if (!isset($_SESSION['idUsuario'])) {
                     <a href="?r=listado_art" class="btn btn-block btn-warning btn-sm text-white">Listado ART</a>
                   <?php endif; ?>
 
-                  <?php if (Auth::hasPermission('legajos', 'vistaGestionLegajos')): ?>
-                    <a href="?r=gestion_legajos" class="btn btn-block btn-warning btn-sm text-white">Legajos</a>
+                  <?php if (Auth::hasPermission('uniformes', 'verListadoUniformes')): ?>
+                    <a href="?r=listado_uniformes" class="btn btn-block btn-warning btn-sm text-white">Listado Uniformes</a>
                   <?php endif; ?>
-
                 </div>
               </div>
 
