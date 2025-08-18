@@ -180,54 +180,47 @@ class ControladorCronograma
         WHERE orf.objetivo_id = $objetivoId AND u.activo = 1 AND u.rol='Referente'");
 
         $post = [
-            'objetivo' => $objetivoId,
-            'mes'      => $mes,
+            'objetivo'  => $objetivoId,
+            'mes'       => $mes,
             'vigilador' => [],
             'referente' => []
         ];
 
-        // Patrón base y normalización
+        // Patrón base 4x2
         $patternBase = ['D', 'D', 'N', 'N', 'F', 'F'];
 
         // Rango del mes
         $dt = DateTime::createFromFormat('Y-m', $mes);
         if (!$dt) return $post;
-        $year = (int)$dt->format('Y');
-        $month = (int)$dt->format('m');
         $daysInMonth = (int)date('t', strtotime("$mes-01"));
 
-        // Mes anterior
+        // Mes anterior (solo para elegir con qué bloque empezar)
         $dtPrev = clone $dt;
         $dtPrev->modify('-1 month');
         $mesAnterior = $dtPrev->format('Y-m');
         $iniPrev = $mesAnterior . '-01';
         $finPrev = $mesAnterior . '-' . date('t', strtotime($iniPrev));
 
-        // Helper: normalizar código a D/N/F
+        // Normalizador D/N/F
         $norm = function (string $c): string {
             $c = strtoupper(trim($c));
             if ($c === 'D' || preg_match('/^D\//', $c) || in_array($c, ['6H', '7H', '8H', '9H', '9RF', '9HEX', '13H', '14H', 'BE'], true)) return 'D';
             if ($c === 'N' || $c === 'N15' || preg_match('/^N\//', $c)) return 'N';
-            // Licencias y GP => OFF
             if (in_array($c, ['F', 'GP/D', 'GP/N', 'E', 'P', 'L', 'S'], true)) return 'F';
-            // Referencias las consideramos trabajo en franco -> OFF a nivel patrón
             if (in_array($c, ['SALA', 'MIC', 'F/JUS', 'NOTT', 'GUE', 'PER', 'PAL', 'BOS', 'OFI'], true)) return 'F';
             return 'F';
         };
 
-        // Rotar patrón partiendo del último estado
+        // Rotar patrón para que el PRIMER par (2 días) sea el bloque $start
         $rotarDesde = function (array $base, string $start) {
-            // Queremos que base[0] == start
-            for ($i = 0; $i < count($base); $i++) {
-                if ($base[$i] === $start) {
-                    return array_merge(array_slice($base, $i), array_slice($base, 0, $i));
-                }
-            }
-            return $base;
+            // base = [D,D,N,N,F,F] → D:0, N:2, F:4
+            $map = ['D' => 0, 'N' => 2, 'F' => 4];
+            $offset = $map[$start] ?? 0;
+            return array_merge(array_slice($base, $offset), array_slice($base, 0, $offset));
         };
 
         // Último código del mes anterior por usuario+objetivo
-        $ultimoCodigo = function (int $usuarioId) use ($db, $objetivoId, $iniPrev, $finPrev) {
+        $ultimoCodigo = function (int $usuarioId) use ($objetivoId, $iniPrev, $finPrev) {
             $sql = "SELECT codigo_turno FROM turnos
                 WHERE objetivo_id = :obj AND usuario_id = :uid
                   AND fecha BETWEEN :ini AND :fin
@@ -238,28 +231,27 @@ class ControladorCronograma
             return $row['codigo_turno'] ?? null;
         };
 
-        // Precarga filas para cada vigilador
+        // ===== Vigiladores: 4x2 puro =====
         foreach ($vigiladores as $v) {
             $uid = (int)$v['idUsuario'];
-            $last = $ultimoCodigo($uid);
-            $start = $norm($last ?? 'D'); // si no hay historial, arrancamos D
-
-            $patron = $rotarDesde($patternBase, $start);
             $post['vigilador'][$uid]['usuario'] = $uid;
+
+            $start  = $norm($ultimoCodigo($uid) ?? 'D');   // si no hay, arranca en D
+            $patron = $rotarDesde($patternBase, $start);
 
             for ($d = 1; $d <= $daysInMonth; $d++) {
                 $post['vigilador'][$uid][$d] = $patron[($d - 1) % 6];
             }
         }
 
-        // Precarga para referentes (si aplicara el mismo patrón)
+        // ===== Referentes: 4x2 puro =====
         foreach ($referentes as $r) {
             $uid = (int)$r['idUsuario'];
-            $last = $ultimoCodigo($uid);
-            $start = $norm($last ?? 'D');
+            $post['referente'][$uid]['usuario'] = $uid;
+
+            $start  = $norm($ultimoCodigo($uid) ?? 'D');
             $patron = $rotarDesde($patternBase, $start);
 
-            $post['referente'][$uid]['usuario'] = $uid;
             for ($d = 1; $d <= $daysInMonth; $d++) {
                 $post['referente'][$uid][$d] = $patron[($d - 1) % 6];
             }
@@ -270,7 +262,7 @@ class ControladorCronograma
 
     /*Funcion para precargar cronograma del mes anterior */
     /*MOdelo: turnos */
-    public static function precargarCronogramaAnterior($objetivoId, $mes)
+    /*public static function precargarCronogramaAnterior($objetivoId, $mes)
     {
         // Obtener mes anterior en formato YYYY-MM
         $dt = DateTime::createFromFormat('Y-m', $mes);
@@ -299,37 +291,252 @@ class ControladorCronograma
         }
 
         return $postSimulado;
-    }
-
+    }*/
+    /*Funcion para precargar cronograma del mes anterior */
+    /*MOdelo: turnos */
     public static function precargarCronogramaSiExiste($objetivoId, $mes)
     {
-        // 1. Buscar turnos del mes actual
+        // 1) Mes actual
         $actual = ModeloTurnos::mdlBuscarTurnosPorMes($objetivoId, $mes);
         if ($actual && count($actual)) {
-            return ['origen' => 'actual', 'turnos' => $actual];
+            $post = self::armarPostSimuladoDesdeTurnos($actual, $objetivoId, $mes);
+            $_SESSION['cronograma_post'] = $post; // ✅ mantener consistencia
+            return [
+                'origen'       => 'actual',
+                'turnos'       => $actual,
+                'postSimulado' => $post,
+                'mesAnterior'  => null
+            ];
         }
 
-        // 2. Si no hay datos del mes actual, buscamos el mes anterior
+        // 2) Mes anterior
         $dt = DateTime::createFromFormat('Y-m', $mes);
-        if (!$dt) return ['origen' => 'ninguno', 'turnos' => []];
+        if (!$dt) {
+            $vacio = self::generarSimulacionVacia($objetivoId, $mes);
+            $_SESSION['cronograma_post'] = $vacio;
+            return ['origen' => 'ninguno', 'turnos' => [], 'postSimulado' => $vacio];
+        }
 
         $dt->modify('-1 month');
         $mesAnterior = $dt->format('Y-m');
 
         $anterior = ModeloTurnos::mdlBuscarTurnosPorMes($objetivoId, $mesAnterior);
         if ($anterior && count($anterior)) {
+            // 👉 Continuidad 4×2 basada en el último día del mes anterior
+            $postContinuado = self::continuar4x2DesdeTurnosAnteriores($anterior, $objetivoId, $mes);
+            $_SESSION['cronograma_post'] = $postContinuado;
+
             return [
-                'origen' => 'anterior',
-                'turnos' => $anterior,
-                'mesAnterior' => $dt->format('F')
+                'origen'       => 'anterior',
+                'turnos'       => $anterior,
+                'postSimulado' => $postContinuado,
+                'mesAnterior'  => $dt->format('F')
             ];
         }
 
-        // 3. Si tampoco hay del mes anterior, generamos cronograma vacío
-        $datosPrevios = self::generarSimulacionVacia($objetivoId, $mes);
-        $_SESSION['cronograma_post'] = $datosPrevios;
+        // 3) Vacío
+        $vacio = self::generarSimulacionVacia($objetivoId, $mes);
+        $_SESSION['cronograma_post'] = $vacio;
+        return ['origen' => 'vacio', 'turnos' => [], 'postSimulado' => $vacio, 'mesAnterior' => null];
+    }
 
-        return ['origen' => 'vacio', 'turnos' => []];
+
+    /*Esta funcion genera la escala 4x2 respetando la correlación del mes anterior */
+    private static function continuar4x2DesdeTurnosAnteriores(array $turnosPrev, int $objetivoId, string $mes): array
+    {
+        $post = [
+            'objetivo'  => $objetivoId,
+            'mes'       => $mes,
+            'vigilador' => [],
+            'referente' => []
+        ];
+
+        $norm = function (string $c): string {
+            $c = strtoupper(trim($c));
+            if ($c === 'D' || preg_match('/^D\//', $c) || in_array($c, ['6H', '7H', '8H', '9H', '9RF', '9HEX', '13H', '14H', 'BE'], true)) return 'D';
+            if ($c === 'N' || $c === 'N15' || preg_match('/^N\//', $c)) return 'N';
+            if (in_array($c, ['F', 'GP/D', 'GP/N', 'E', 'P', 'L', 'S'], true)) return 'F';
+            if (in_array($c, ['SALA', 'MIC', 'F/JUS', 'NOTT', 'GUE', 'PER', 'PAL', 'BOS', 'OFI'], true)) return 'F';
+            return 'F';
+        };
+
+        $daysInMonth = (int)date('t', strtotime("$mes-01"));
+
+        // Agrupar historial por vigilador
+        $porUsuario = [];
+        foreach ($turnosPrev as $t) {
+            if (strtolower($t['rol']) !== 'vigilador') continue;
+            $uid  = (int)$t['usuario_id'];
+            $fec  = $t['fecha'];
+            $code = $norm($t['codigo_turno'] ?? '');
+            $porUsuario[$uid][] = ['fecha' => $fec, 'norm' => $code];
+        }
+        foreach ($porUsuario as &$arr) {
+            usort($arr, fn($a, $b) => strcmp($a['fecha'], $b['fecha']));
+        }
+
+        $order = ['D', 'N', 'F'];
+        $nextBlock = function (string $c) use ($order) {
+            $i = array_search($c, $order, true);
+            return $order[($i === false ? 0 : ($i + 1) % 3)];
+        };
+
+        // Vigiladores vinculados al objetivo
+        $db = new Conexion;
+        $vigiladores = $db->consultas("SELECT u.idUsuario FROM usuarios u
+        INNER JOIN objetivo_vigiladores ov ON ov.vigilador_id = u.idUsuario
+        WHERE ov.objetivo_id = $objetivoId AND u.activo = 1 AND u.rol='Vigilador'");
+        $uidsV = array_map(fn($r) => (int)$r['idUsuario'], $vigiladores);
+
+        foreach ($uidsV as $uid) {
+            $post['vigilador'][$uid]['usuario'] = $uid;
+
+            $hist = $porUsuario[$uid] ?? [];
+            if (!empty($hist)) {
+                $last = end($hist);
+                $c_last = $last['norm'];
+
+                // ✅ racha de cola solo con días consecutivos
+                $racha = 1;
+                $lastDate = DateTime::createFromFormat('Y-m-d', $last['fecha']);
+                for ($i = count($hist) - 2; $i >= 0 && $racha < 2; $i--) {
+                    if ($hist[$i]['norm'] !== $c_last) break;
+
+                    $currDate = DateTime::createFromFormat('Y-m-d', $hist[$i]['fecha']);
+                    $prevOfLast = clone $lastDate;
+                    $prevOfLast->modify('-1 day');
+
+                    if ($currDate->format('Y-m-d') !== $prevOfLast->format('Y-m-d')) break;
+
+                    $racha++;
+                    $lastDate = $currDate;
+                }
+
+                // si racha==1 → completar par con c_last; si racha==2 → siguiente bloque
+                $bloque = ($racha === 1) ? $c_last : $nextBlock($c_last);
+                $posPar = ($racha === 1) ? 1 : 0;
+                $diasRest = 2 - $posPar;
+            } else {
+                // sin historial: arrancar en D y completar par normalmente
+                $bloque = 'D';
+                $diasRest = 2;
+            }
+
+
+            for ($d = 1; $d <= $daysInMonth; $d++) {
+                $post['vigilador'][$uid][$d] = $bloque;
+                if (--$diasRest === 0) {
+                    $bloque = $nextBlock($bloque);
+                    $diasRest = 2;
+                }
+            }
+        }
+
+        // Referentes: copiar tal cual el mismo día si existía en el mes anterior
+        $referentes = $db->consultas("SELECT u.idUsuario FROM usuarios u
+        INNER JOIN objetivo_referentes orf ON orf.referente_id = u.idUsuario
+        WHERE orf.objetivo_id = $objetivoId AND u.activo = 1 AND u.rol='Referente'");
+        $uidsR = array_map(fn($r) => (int)$r['idUsuario'], $referentes);
+
+        // map día => código del mes anterior
+        $mapPrevR = [];
+        foreach ($turnosPrev as $t) {
+            if (strtolower($t['rol']) !== 'referente') continue;
+            $uid = (int)$t['usuario_id'];
+            $dia = (int)substr($t['fecha'], 8, 2);
+            $mapPrevR[$uid][$dia] = $t['codigo_turno'];
+        }
+
+        // ===================== REFERENTES con continuidad 4×2 =====================
+
+        // 1) Armar historial normalizado por referente (solo mes anterior)
+        $porReferente = []; // uid => [ ['fecha'=>'YYYY-MM-DD','norm'=>'D|N|F'], ... asc ]
+        foreach ($turnosPrev as $t) {
+            if (strtolower($t['rol']) !== 'referente') continue;
+            $uid  = (int)$t['usuario_id'];
+            $fec  = $t['fecha'];
+            $code = $norm($t['codigo_turno'] ?? '');
+            $porReferente[$uid][] = ['fecha' => $fec, 'norm' => $code];
+        }
+        foreach ($porReferente as &$arrR) {
+            usort($arrR, fn($a, $b) => strcmp($a['fecha'], $b['fecha']));
+        }
+
+        // 2) Traer referentes vinculados al objetivo
+        $referentes = $db->consultas("SELECT u.idUsuario FROM usuarios u
+    INNER JOIN objetivo_referentes orf ON orf.referente_id = u.idUsuario
+    WHERE orf.objetivo_id = $objetivoId AND u.activo = 1 AND u.rol='Referente'");
+        $uidsR = array_map(fn($r) => (int)$r['idUsuario'], $referentes);
+
+        // 3) Generar mes con la continuidad 4×2 (D,D → N,N → F,F → ...)
+        foreach ($uidsR as $uid) {
+            $post['referente'][$uid]['usuario'] = $uid;
+
+            $hist = $porReferente[$uid] ?? [];
+            if (!empty($hist)) {
+                $last = end($hist);
+                $c_last = $last['norm'];
+
+                // racha final del mismo código SOLO si los días son consecutivos (máx 2)
+                $racha = 1;
+                $lastDate = DateTime::createFromFormat('Y-m-d', $last['fecha']);
+                for ($i = count($hist) - 2; $i >= 0 && $racha < 2; $i--) {
+                    if ($hist[$i]['norm'] !== $c_last) break;
+
+                    $currDate = DateTime::createFromFormat('Y-m-d', $hist[$i]['fecha']);
+                    $prevOfLast = clone $lastDate;
+                    $prevOfLast->modify('-1 day');
+
+                    if ($currDate->format('Y-m-d') !== $prevOfLast->format('Y-m-d')) break;
+
+                    $racha++;
+                    $lastDate = $currDate;
+                }
+
+                // racha==1 → completar par con c_last; racha==2 → pasar al siguiente bloque
+                $bloque  = ($racha === 1) ? $c_last : $nextBlock($c_last);
+                $posPar  = ($racha === 1) ? 1 : 0;
+                $diasRest = 2 - $posPar;
+            } else {
+                // sin historial → iniciar en D
+                $bloque  = 'D';
+                $diasRest = 2;
+            }
+
+            for ($d = 1; $d <= $daysInMonth; $d++) {
+                $post['referente'][$uid][$d] = $bloque;
+                if (--$diasRest === 0) {
+                    $bloque   = $nextBlock($bloque);
+                    $diasRest = 2;
+                }
+            }
+        }
+
+
+        return $post;
+    }
+
+    private static function armarPostSimuladoDesdeTurnos(array $turnos, int $objetivoId, string $mes): array
+    {
+        $post = [
+            'objetivo'  => $objetivoId,
+            'mes'       => $mes,
+            'vigilador' => [],
+            'referente' => []
+        ];
+
+        foreach ($turnos as $t) {
+            $dia       = (int)substr($t['fecha'], 8, 2);
+            $usuarioId = (int)$t['usuario_id'];
+            $rol       = strtolower($t['rol']); // 'vigilador' | 'referente'
+
+            if (!isset($post[$rol][$usuarioId]['usuario'])) {
+                $post[$rol][$usuarioId]['usuario'] = $usuarioId;
+            }
+            $post[$rol][$usuarioId][$dia] = $t['codigo_turno']; // D, N, F, GP/D, etc.
+        }
+
+        return $post;
     }
 
 

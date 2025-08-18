@@ -74,17 +74,16 @@ class ModeloTurnos
         $sql = "SELECT
                     t.fecha,
                     o.nombre         AS objetivo,
-                    p.puesto         AS puesto,
+                   /* p.puesto         AS puesto,*/
                     t.rol,
                     t.tipo_turno,
                     t.codigo_turno
                 FROM $tabla t
                 JOIN objetivos o ON t.objetivo_id = o.idObjetivo
-                JOIN puestos   p ON t.puesto_id   = p.idPuesto
+                /*JOIN puestos   p ON t.puesto_id   = p.idPuesto*/
                 WHERE t.usuario_id = :usuario_id
                     AND t.fecha BETWEEN :desde AND :hasta
-                ORDER BY t.fecha, p.puesto
-                    ";
+                ORDER BY t.fecha";
 
         $stmt = Conexion::conectar()->prepare($sql);
         $stmt->bindParam(':usuario_id', $usuarioId, PDO::PARAM_INT);

@@ -115,7 +115,7 @@ class ControladorTurnos
         // Obtenemos los turnos
         $turnos = ModeloTurnos::mdlObtenerPorVigiladorYRango('turnos', $usuarioId, $desde, $hasta);
 
-        
+    
         foreach ($turnos as &$t) {
 
             // También renombramos campos para compatibilidad con la vista

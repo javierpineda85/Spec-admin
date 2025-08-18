@@ -14,42 +14,33 @@ if (isset($_POST['cargar'])) {
 
 //traemos los datos del mes que hayan cargados
 if (isset($_POST['cargar']) && empty($datosPrevios)) {
-  $info = ControladorCronograma::precargarCronogramaSiExiste($_POST['objetivo'], $_POST['mes']);
+  $objetivoReq = (int)($_POST['objetivo'] ?? 0);
+  $mesReq      = $_POST['mes'] ?? date('Y-m');
 
-  if ($info['origen'] === 'anterior') {
-    ToastifyController::info("Precargando datos del mes anterior ({$info['mesAnterior']})");
+  $info = ControladorCronograma::precargarCronogramaSiExiste($objetivoReq, $mesReq);
+
+  if (($info['origen'] ?? null) === 'anterior' && !empty($info['mesAnterior'])) {
+    ToastifyController::info("Precargando datos del mes anterior ({$info['mesAnterior']}) con continuidad 4×2");
   }
 
-  $turnos = $info['turnos'] ?? [];
-  $postSimulado = [];
+  // ✅ Usar SIEMPRE el postSimulado armado por el controlador
+  $datosPrevios = $info['postSimulado'] ?? [];
 
-  if (!empty($turnos)) {
-    foreach ($turnos as $t) {
-      $dia       = intval(substr($t['fecha'], 8, 2));
-      $usuarioId = (int)$t['usuario_id'];
-      $rol       = strtolower($t['rol']); // 'vigilador' | 'referente'
-
-      if (!isset($postSimulado[$rol][$usuarioId]['usuario'])) {
-        $postSimulado[$rol][$usuarioId]['usuario'] = $usuarioId;
-      }
-      $postSimulado[$rol][$usuarioId][$dia] = $t['codigo_turno']; // D, N, F, GP/D, GP/N, etc.
-    }
-  } else {
-    // Si no hay turnos en BD, generar simulación vacía
-    $postSimulado = ControladorCronograma::generarSimulacionVacia($_POST['objetivo'], $_POST['mes']);
-    $_SESSION['cronograma_post'] = $postSimulado;
-    $datosPrevios = $postSimulado;
+  // fallback extremo (no debería ocurrir, pero por las dudas)
+  if (empty($datosPrevios)) {
+    $datosPrevios = ControladorCronograma::generarSimulacionVacia($objetivoReq, $mesReq);
   }
 
-  // Guardamos info de origen para mostrar Toastify
-  $_SESSION['cronograma_origen'] = $info['origen'] ?? null;
+  $_SESSION['cronograma_post']       = $datosPrevios;
+  $_SESSION['cronograma_origen']     = $info['origen'] ?? null;
   $_SESSION['cronograma_mes_anterior'] = $info['mesAnterior'] ?? null;
 }
 
 
-
 // Al final del archivo PHP (después de usarse en el HTML):
-$datosPrevios = $_SESSION['cronograma_post'] ?? [];
+if (empty($datosPrevios)) {
+  $datosPrevios = $_SESSION['cronograma_post'] ?? [];
+}
 //unset($_SESSION['cronograma_post']); // Limpiamos solo después de traer los datos
 
 // ===================== CARGAS INICIALES =====================
@@ -130,7 +121,7 @@ $feriadosDelMes = array_filter($feriados, function ($f) use ($mesSeleccionado) {
   @media (max-width: 767px) {
     :root {
       --w-rol: 60px;
-      --w-usuario: 180px;
+      --w-usuario: 200px;
     }
   }
 
@@ -217,8 +208,8 @@ $feriadosDelMes = array_filter($feriados, function ($f) use ($mesSeleccionado) {
         </div>
         <div class="form-group col-md-2">
           <label>Mes</label>
-          <?php $mes = $datosPrevios['mes'] ?? date('Y-m'); ?>
-          <input type="month" class="form-control" name="mes" id="mes" value="<?= $_POST['mes'] ?? '' ?>">
+          <?php $mes = $_POST['mes'] ?? ($datosPrevios['mes'] ?? date('Y-m')); ?>
+          <input type="month" class="form-control" name="mes" id="mes" value="<?= htmlspecialchars($mes) ?>">
         </div>
         <div class="form-group col-md-2 align-self-end">
           <button type="submit" name="cargar" id="btnCargarTabla" class="btn btn-primary">Cargar Cronograma</button>
@@ -226,7 +217,7 @@ $feriadosDelMes = array_filter($feriados, function ($f) use ($mesSeleccionado) {
       </div>
       <div class="row">
         <div class="form-group">
-          <label for="">Referencias:</label>
+          <label>Licencias:</label>
           <label class="btn bg-dark btn-sm disabled"><b>F:</b> Franco</label>
           <label class="btn bg-dark btn-sm disabled"><b>G:</b> Guardia Pasiva</label>
           <label class="btn bg-dark btn-sm disabled"><b>E:</b> Parte de Enfermo</label>
