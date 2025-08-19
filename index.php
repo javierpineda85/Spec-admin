@@ -28,6 +28,7 @@ require_once("controladores/permisos.controller.php");
 require_once("controladores/plantilla.controller.php");
 require_once("controladores/puestos.controller.php");
 require_once("controladores/qr.controller.php");
+require_once("controladores/roles.controller.php");
 require_once("controladores/rondas.controller.php");
 require_once("controladores/rutas.controller.php");
 require_once("controladores/salud.controller.php");

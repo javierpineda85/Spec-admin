@@ -1,0 +1,29 @@
+<?php if (
+    Auth::hasPermission('hvivo', 'registrar') ||
+    Auth::hasPermission('hvivo', 'listar')
+): ?>
+    <div class="col-lg-3 col-md-6 col-sm-12">
+        <div class="info-box shadow">
+            <span class="info-box-icon bg-danger"><i class="far fa-life-ring"></i></span>
+            <div class="info-box-content">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="info-box-number">Hombre Vivo</span>
+                    <button type="button" class="btn btn-tool" data-toggle="collapse" data-target="#collapsHvivo" aria-expanded="false" aria-controls="collapsHvivo">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+                <div id="collapsHvivo" class="collapse">
+                    <div class="mt-2">
+                        <?php if (Auth::hasPermission('hvivo', 'registrar')): ?>
+                            <a href="tel:911" class="btn btn-block btn-danger btn-sm text-white">Llamar 911</a>
+                            <a href="?r=reporte_hombre_vivo" class="btn btn-block btn-info btn-sm text-white">Reportar</a>
+                        <?php endif; ?>
+                        <?php if (Auth::hasPermission('hvivo', 'vistaListadoReportesHombreVivo')): ?>
+                            <a href="?r=listado_reportes" class="btn btn-block btn-info btn-sm text-white">Ver reportes</a>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
