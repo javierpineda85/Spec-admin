@@ -12,6 +12,9 @@ class CheckPermissionMiddleware
     {
         //session_start();
         // Evitar bucles infinitos o validaciones innecesarias
+        // BYPASS: Programador
+        if (Auth::isSuperRole($_SESSION['rol'] ?? null)) return;
+        
         $rutaActual = "$controlador/$accion";
         $rutasIgnoradas = [
             'login/crtMostrarLogin',
@@ -40,7 +43,7 @@ class CheckPermissionMiddleware
                  WHERE rp.role = ?
                    AND p.controlador = ?
                    AND p.accion = ?";
-        
+
         $res = $db->consultas($sql, [$role, $controlador, $accion]);
         if (!$res || $res[0]['cnt'] == 0) {
             $_SESSION['success_error'] = "¡ACCESO RESTRINGIDO! No posee autorización para acceder al recurso. Si creés que se trata de un error, por favor contactá al proveedor del sistema.";

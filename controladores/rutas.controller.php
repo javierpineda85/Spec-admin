@@ -65,7 +65,7 @@ class RutasController
             EscaneosController::feedback();
             return;
         }
-        // Gestión de permisos
+        //============== Gestión de permisos (permisos controller y roles controller)=============
         if (isset($_GET['r']) && ($_GET['r'] === 'permisos' || $_GET['r'] === 'permisos/index')) {
             PermisosController::index();
             return;
@@ -74,6 +74,76 @@ class RutasController
             PermisosController::update();
             return;
         }
+
+        // ===== Roles: listado =====
+        if (isset($_GET['r']) && $_GET['r'] === 'roles/listado') {
+            RolesController::vistaListadoRoles();
+            return;
+        }
+
+        // ===== Roles: crear =====
+        if (isset($_GET['r']) && $_GET['r'] === 'roles/crear') {
+            RolesController::vistaCrearRol();
+            return;
+        }
+
+        if (isset($_GET['r']) && $_GET['r'] === 'roles/ctrGuardarRol') {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                RolesController::ctrGuardarRol();
+            } else {
+                header('Location: ?r=roles/listado');
+                exit;
+            }
+            return;
+        }
+
+        // ===== Roles: editar =====
+        if (isset($_GET['r']) && $_GET['r'] === 'roles/editar') {
+            RolesController::vistaEditarRol();
+            return;
+        }
+
+        if (isset($_GET['r']) && $_GET['r'] === 'roles/ctrActualizarRol') {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                RolesController::ctrActualizarRol();
+            } else {
+                header('Location: ?r=roles/listado');
+                exit;
+            }
+            return;
+        }
+
+        if (isset($_GET['r']) && $_GET['r'] === 'roles/ctrDesactivarRol') {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                RolesController::ctrDesactivarRol();
+            } else {
+                header('Location: ?r=roles/listado');
+                exit;
+            }
+            return;
+        }
+
+        // ===== Roles: permisos (gestión de permisos por rol) =====
+        if (isset($_GET['r']) && $_GET['r'] === 'roles/permisos') {
+            // acepta ?rol=... (nuevo). Si viniera ?role=... desde lo viejo, lo normalizamos:
+            if (!isset($_GET['rol']) && isset($_GET['role'])) {
+                header('Location: ?r=roles/permisos&rol=' . urlencode($_GET['role']));
+                exit;
+            }
+            RolesController::vistaPermisosRol();
+            return;
+        }
+
+        if (isset($_GET['r']) && $_GET['r'] === 'roles/ctrGuardarPermisosRol') {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                RolesController::ctrGuardarPermisosRol();
+            } else {
+                header('Location: ?r=roles/listado');
+                exit;
+            }
+            return;
+        }
+
         // Mostrar QR dinámico
         if (isset($_GET['r']) && $_GET['r'] === 'mostrar_qr') {
             QrController::mostrar();

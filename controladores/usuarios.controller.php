@@ -249,7 +249,7 @@ class ControladorUsuarios
     {
         Auth::check('usuarios', 'vistaListadoUsuarios');
         $db = new Conexion;
-        $sql = "SELECT * FROM usuarios WHERE activo = 1 ORDER BY rol ";
+        $sql = "SELECT * FROM usuarios WHERE activo = 1 AND rol <> 'Programador' ORDER BY rol ";
         $usuarios = $db->consultas($sql);
         include __DIR__ . '/../vistas/paginas/usuario/listado-usuarios.php';
         return;
@@ -264,6 +264,7 @@ class ControladorUsuarios
                 JOIN bajas b ON u.idUsuario = b.usuario_id
                 JOIN usuarios e ON b.eliminado_por = e.idUsuario
                 WHERE u.activo = 0
+                AND rol <> 'Programador'
                 ORDER BY empleado ";
         $usuarios = $db->consultas($sql);
         include __DIR__ . '/../vistas/paginas/usuario/listado-usuarios-inactivos.php';

@@ -23,12 +23,17 @@ class Auth
         }
 
         $userRole = $_SESSION['rol'] ?? null;
+
+        // BYPASS: Programador
+        if (self::isSuperRole($userRole)) return;
+
         if (!$userRole || !in_array($userRole, $roles)) {
             http_response_code(403);
             include __DIR__ . '/../vistas/paginas/403.php';
             exit;
         }
     }
+
 
     /**
      * Verifica que el usuario tenga asignada una ronda (solo Vigilador/Referente).
@@ -78,6 +83,8 @@ class Auth
         if (session_status() !== PHP_SESSION_ACTIVE) {
             session_start();
         }
+        // BYPASS: Programador
+        if (self::isSuperRole($_SESSION['rol'] ?? null)) return;
 
         // Evitar bucles infinitos al validar ciertas rutas
         $rutaActual = "$controller/$action";
@@ -98,7 +105,9 @@ class Auth
         if (session_status() !== PHP_SESSION_ACTIVE) {
             session_start();
         }
-
+        // BYPASS: Programador
+        if (self::isSuperRole($_SESSION['rol'] ?? null)) return true;
+        
         // Si aún no hemos precargado los permisos en sesión, los cargamos ahora
         if (!isset($_SESSION['permisos_usuario'])) {
             $rol = $_SESSION['rol'] ?? '';
@@ -124,5 +133,12 @@ class Auth
 
         // Y comprobamos si existe en el array precargado
         return in_array("$controller/$action", $_SESSION['permisos_usuario'], true);
+    }
+
+    // Logica para saltear el rol programador
+
+    public static function isSuperRole(?string $rol): bool
+    {
+        return in_array($rol, ['Programador'], true);
     }
 }
