@@ -1,9 +1,38 @@
 <?php
 session_start();  // Aseguramos que la sesión esté iniciada para poder verificar $_SESSION
 //session_destroy();
+//Evitar problemas con la caché en el navegador
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Cache-Control: post-check=0, pre-check=0', false);
+header('Pragma: no-cache');
+
+//Para rutas amigables sin index.php?r=crearAlgo en la URL
+$base = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/\\'); // ej: /Spec-admin
+$uriPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH); // lo que ve el navegador (sin query)
+
+// Si vino con ?r=..., armamos la URL "bonita"
+if (isset($_GET['r'])) {
+    $ruta = trim($_GET['r'], '/');
+
+    // reconstruir el resto de parámetros (excepto r)
+    $qs = $_GET;
+    unset($qs['r']);
+    $suffix = '';
+    if (!empty($qs)) {
+        $suffix = '?' . http_build_query($qs);
+    }
+
+    // URL bonita objetivo
+    $pretty = rtrim($base, '/') . '/' . $ruta;
+
+    // **Clave**: solo redirigimos si el path *visible* NO es ya la URL bonita
+    if ($uriPath !== $pretty) {
+        header('Location: ' . $pretty . $suffix, true, 301);
+        exit;
+    }
+}
 date_default_timezone_set('America/Argentina/Mendoza');
 setlocale(LC_TIME, 'es_AR.UTF-8', 'spanish');
-
 require_once __DIR__ . '/core/Auth.php';
 require_once __DIR__ . '/core/CheckPermissionMiddleware.php';
 require_once("config.php");
@@ -41,6 +70,10 @@ require_once("controladores/usuarios.controller.php");
 
 // Si no es la ruta de login (GET o POST), exigimos autenticación
 $r = $_GET['r'] ?? '';
+if ($r === '') {
+    header('Location:index.php?r=login', true, 302);
+    exit;
+}
 if ($r !== 'login') {
     Auth::requireLogin();
 }
@@ -69,11 +102,11 @@ if (!isset($_SESSION['idUsuario']) || empty($_SESSION['idUsuario'])) {
     if (isset($_GET['r'])) {
         // Si hay una ruta específica
         $plantilla = new PlantillaController();
-        $plantilla ->crtGetPlantilla();
+        $plantilla->crtGetPlantilla();
     } else {
         // Si no se especifica ruta, cargar la vista predeterminada (inicio)
-        
+
         $plantilla = new PlantillaController();
-        $plantilla ->crtGetPlantilla();
+        $plantilla->crtGetPlantilla();
     }
 }
