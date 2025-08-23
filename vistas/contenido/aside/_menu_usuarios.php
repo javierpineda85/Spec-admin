@@ -36,12 +36,6 @@
                 </li>
             <?php endif; ?>
 
-            <li class="nav-item">
-                <a href="?r=legajos" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Legajos</p>
-                </a>
-            </li>
         </ul>
     </li>
 <?php endif; ?>

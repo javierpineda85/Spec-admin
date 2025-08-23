@@ -219,7 +219,6 @@ $feriadosDelMes = array_filter($feriados, function ($f) use ($mesSeleccionado) {
         <div class="form-group">
           <label>Licencias:</label>
           <label class="btn bg-dark btn-sm disabled"><b>F:</b> Franco</label>
-          <label class="btn bg-dark btn-sm disabled"><b>G:</b> Guardia Pasiva</label>
           <label class="btn bg-dark btn-sm disabled"><b>E:</b> Parte de Enfermo</label>
           <label class="btn bg-dark btn-sm disabled"><b>P:</b> Permiso especial</label>
           <label class="btn bg-dark btn-sm disabled"><b>L:</b> Licencia</label>

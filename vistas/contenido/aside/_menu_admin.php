@@ -1,7 +1,6 @@
 <?php if (
     Auth::hasPermission('feriados', 'vistaCrearFeriado') ||
     Auth::hasPermission('feriados', 'vistaListadoFeriado') ||
-    Auth::hasPermission('legajos', 'vistaGestionLegajos') ||
     Auth::hasPermission('art', 'vistaGestionArt')
 ): ?>
     <li class="nav-item has-treeview">

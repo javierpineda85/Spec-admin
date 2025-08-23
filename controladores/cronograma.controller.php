@@ -463,9 +463,9 @@ class ControladorCronograma
         }
 
         // 2) Traer referentes vinculados al objetivo
-        $referentes = $db->consultas("SELECT u.idUsuario FROM usuarios u
-    INNER JOIN objetivo_referentes orf ON orf.referente_id = u.idUsuario
-    WHERE orf.objetivo_id = $objetivoId AND u.activo = 1 AND u.rol='Referente'");
+       $referentes = $db->consultas("SELECT u.idUsuario FROM usuarios u
+        INNER JOIN objetivo_referentes orf ON orf.referente_id = u.idUsuario
+        WHERE orf.objetivo_id = $objetivoId AND u.activo = 1 AND u.rol='Referente'");
         $uidsR = array_map(fn($r) => (int)$r['idUsuario'], $referentes);
 
         // 3) Generar mes con la continuidad 4×2 (D,D → N,N → F,F → ...)
