@@ -46,6 +46,7 @@ $objetivos = $db->consultas($sql);
                         <select name="tipo" id="" class="form-control">
                             <option value="" selected disabled>Elige una opción</option>
                             <option value="Fijo">Fijo</option>
+                            <option value="Rotativo">Rotativo</option>
                             <option value="Eventual">Eventual</option>
                         </select>
                     </div>
