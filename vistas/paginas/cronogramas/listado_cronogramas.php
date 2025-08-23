@@ -85,11 +85,12 @@ $objetivos = $db->consultas($sql);
                                         <?php
                                         endif;
                                         ?>
-                                        <tr >
-                                            <td class="text-center"><?= htmlspecialchars($t['puesto']) ?></td>
-                                            <td class="text-center"><?= htmlspecialchars($t['codigo_turno']) ?></td>
-                                            <td class="text-center"><?= htmlspecialchars($t['usuario']) ?></td>
-                                            <td class="text-center"><?= htmlspecialchars($t['tipo_turno']) ?></td>
+                                        <tr>
+                                            <td class="text-center"><?= htmlspecialchars(!empty($t['puesto']) ? $t['puesto'] : ' - ') ?></td>
+                                            <td class="text-center"><?= htmlspecialchars(!empty($t['codigo_turno']) ? $t['codigo_turno'] : ' - ') ?></td>
+                                            <td class="text-center"><?= htmlspecialchars(!empty($t['usuario']) ? $t['usuario'] : ' - ') ?></td>
+                                            <td class="text-center"><?= htmlspecialchars(!empty($t['tipo_turno']) ? $t['tipo_turno'] : ' - ') ?></td>
+
                                         </tr>
                                     <?php endforeach;
                                     // limpiamos si no queremos persistir al recargar
