@@ -97,7 +97,7 @@ class MarcacionesController
             // Commit
             $pdo->commit();
 
-            ToastifyController::error(ucfirst($tipo_evento) . ' registrada correctamente.');
+            ToastifyController::success(ucfirst($tipo_evento) . ' registrada correctamente.');
             header('Location: ?r=entradas_salidas');
             exit;
         } catch (Exception $e) {

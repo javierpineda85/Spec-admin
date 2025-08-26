@@ -50,7 +50,7 @@ class LoginController
                     $modelo = new ModeloUsuarios();
                     $asig   = $modelo->getAsignacionHoy($_SESSION['idUsuario']);
                     if ($asig) {
-                        $_SESSION['ronda_id']    = intval($asig['ronda_id']);
+                        $_SESSION['puesto_id']    = intval($asig['puesto_id']);
                         $_SESSION['objetivo_id'] = intval($asig['objetivo_id']);
                         // Convertir 0/1 a booleano
                         $_SESSION['isReferente'] = !empty($asig['is_referente']);
@@ -58,7 +58,7 @@ class LoginController
                         unset($_SESSION['sinAsignaciones']);
                     } else {
                         // No tiene asignación hoy
-                        $_SESSION['ronda_id']    = 0;
+                        $_SESSION['puesto_id']    = 0;
                         $_SESSION['objetivo_id'] = 0;
                         $_SESSION['isReferente'] = false;
                         $_SESSION['sinAsignaciones'] = true;
