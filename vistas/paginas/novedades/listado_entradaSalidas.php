@@ -1,3 +1,14 @@
+<?php
+function obtenerCoordenadasDesdeMapData(string $mapData)
+{
+    $coords = json_decode($mapData, true);
+    return [
+        'lat' => isset($coords['lat']) ? floatval($coords['lat']) : null,
+        'lng' => isset($coords['lng']) ? floatval($coords['lng']) : null
+    ];
+}
+
+?>
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
@@ -26,8 +37,7 @@
                                 <th style="text-align:center;">Fecha</th>
                                 <th style="text-align:center;">Hora</th>
                                 <th style="text-align:center;">Estado</th>
-                                <th style="text-align:center;">Latitud</th>
-                                <th style="text-align:center;">Longitud</th>
+                                <th style="text-align:center;">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -55,12 +65,28 @@
                                             </span>
                                         <?php endif; ?>
                                     </td>
-                                    <td style="vertical-align:middle; text-align:center;">
-                                        <?= htmlspecialchars($m['latitud']) ?>
+                                    <td style="text-align:center;">
+                                        <?php
+
+                                        // Extraer coordenadas desde map_data
+                                        $coordenadas = obtenerCoordenadasDesdeMapData($m['map_data']);
+                                        $lat = $coordenadas['lat'];
+                                        $lng = $coordenadas['lng'];
+
+                                        if ($lat !== null && $lng !== null): ?>
+                                            <button class="btn btn-sm btn-outline-primary ver-mapa-btn"
+                                                data-lat="<?= htmlspecialchars($lat) ?>"
+                                                data-lng="<?= htmlspecialchars($lng) ?>"
+                                                data-objetivo="<?= htmlspecialchars($m['objetivo']) ?>"
+                                                data-evento="<?= htmlspecialchars(ucfirst($m['tipo_evento'])) ?>"
+                                                data-fecha="<?= htmlspecialchars(date('d-m-Y H:i', strtotime($m['fecha_hora']))) ?>">
+                                                📍 Ver mapa
+                                            </button>
+                                        <?php else: ?>
+                                            <span class="text-muted">Sin ubicación</span>
+                                        <?php endif; ?>
                                     </td>
-                                    <td style="vertical-align:middle; text-align:center;">
-                                        <?= htmlspecialchars($m['longitud']) ?>
-                                    </td>
+
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -83,3 +109,55 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="modalMapa" tabindex="-1" role="dialog" aria-labelledby="modalMapaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="modalMapaLabel">Ubicación de la Marcación</h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body p-0">
+                <div id="mapaMarcacion" style="height: 400px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    let mapa = null;
+    let marcador = null;
+
+    function verMapa(data) {
+        $('#modalMapa').modal('show');
+
+        setTimeout(() => {
+            if (!mapa) {
+                mapa = L.map('mapaMarcacion').setView([data.lat, data.lng], 17);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(mapa);
+            } else {
+                mapa.setView([data.lat, data.lng], 17);
+                if (marcador) mapa.removeLayer(marcador);
+            }
+
+            marcador = L.marker([data.lat, data.lng])
+                .addTo(mapa)
+                .bindPopup(`<strong>${data.evento}</strong><br>${data.objetivo}<br>${data.fecha}`)
+                .openPopup();
+        }, 300); // Esperamos a que el modal se renderice
+    }
+    document.querySelectorAll('.ver-mapa-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const data = {
+                lat: parseFloat(this.dataset.lat),
+                lng: parseFloat(this.dataset.lng),
+                objetivo: this.dataset.objetivo,
+                evento: this.dataset.evento,
+                fecha: this.dataset.fecha
+            };
+            verMapa(data);
+        });
+    });
+</script>
