@@ -301,6 +301,12 @@ class RutasController
             return;
         }
 
+        // Vista Historial por vigilador de ingreso / salida en el mapa
+        if (isset($_GET['r']) && $_GET['r'] === 'historialMarcaciones') {
+            NovedadesController::vistaHistorialMarcaciones();
+            return;
+        }
+
         // ========= OBJETIVOS =========
         //Listado de objetivos
         if (isset($_GET['r']) && $_GET['r'] === 'listado_objetivos') {

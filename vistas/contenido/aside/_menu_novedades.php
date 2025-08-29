@@ -37,7 +37,15 @@
                 <li class="nav-item">
                     <a href="?r=reporte_entradas_salidas" class="nav-link">
                         <i class="far fa-circle nav-icon"></i>
-                        <p>Mostrar Ingresos/Salidas</p>
+                        <p>Reporte Ingresos/Salidas</p>
+                    </a>
+                </li>
+            <?php endif; ?>
+            <?php if (Auth::hasPermission('novedades', 'vistaHistorialMarcaciones')): ?>
+                <li class="nav-item">
+                    <a href="?r=historialMarcaciones" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Historial Ingresos/Salidas</p>
                     </a>
                 </li>
             <?php endif; ?>

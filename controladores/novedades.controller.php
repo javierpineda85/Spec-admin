@@ -102,23 +102,52 @@ class NovedadesController
         $db = new Conexion();
 
         $sql = "SELECT 
-                m.idMarcacion,
-                m.objetivo_id,
-                m.puesto_id,
-                CONCAT(u.apellido, ' ', u.nombre) AS vigilador,
-                o.nombre AS objetivo,
-                m.tipo_evento,
-                m.fecha_hora,
-                m.latitud,
-                m.longitud,
-                m.created_at,
-                pt.hora_entrada,
-                pt.hora_salida
-            FROM marcaciones_servicio m
-            JOIN usuarios u ON m.vigilador_id = u.idUsuario
-            LEFT JOIN objetivos o ON m.objetivo_id = o.idObjetivo
-            LEFT JOIN puestos_turnos pt ON pt.puesto_id = m.puesto_id
-            ORDER BY m.fecha_hora DESC";
+                    m.idMarcacion,
+                    m.objetivo_id,
+                    m.puesto_id,
+                    CONCAT(u.apellido, ' ', u.nombre) AS vigilador,
+                    o.nombre AS objetivo,
+                    m.tipo_evento,
+                    m.fecha_hora,
+                    pt.hora_entrada,
+                    pt.hora_salida,
+                    pt.numero_turno,
+                    -- Coordenadas en formato JSON para el front
+                    JSON_OBJECT(
+                        'lat', m.latitud,
+                        'lng', m.longitud
+                    ) AS map_data,
+                    -- URL directa a OpenStreetMap (opcional)
+                    CONCAT(
+                        'https://www.openstreetmap.org/?mlat=',
+                        m.latitud,
+                        '&mlon=',
+                        m.longitud,
+                        '#map=18/',
+                        m.latitud,
+                        '/',
+                        m.longitud
+                    ) AS osm_url
+                FROM marcaciones_servicio m
+                JOIN usuarios u 
+                ON m.vigilador_id = u.idUsuario
+                LEFT JOIN objetivos o 
+                ON m.objetivo_id = o.idObjetivo
+                LEFT JOIN puestos_turnos pt
+                ON pt.idPuestoTurno = (
+                    SELECT pt2.idPuestoTurno
+                    FROM puestos_turnos pt2
+                    WHERE pt2.puesto_id = m.puesto_id
+                    ORDER BY
+                        CASE 
+                        WHEN m.tipo_evento = 'entrada' 
+                            THEN ABS(TIME_TO_SEC(TIMEDIFF(TIME(m.fecha_hora), pt2.hora_entrada)))
+                        ELSE 
+                            ABS(TIME_TO_SEC(TIMEDIFF(TIME(m.fecha_hora), pt2.hora_salida)))
+                        END ASC
+                    LIMIT 1
+                    )
+                ORDER BY m.fecha_hora DESC";
 
         $marcaciones = $db->consultas($sql);
 
@@ -184,5 +213,45 @@ class NovedadesController
     {
         Auth::check('novedades', 'vistaCrearNovedades');
         include __DIR__ . '/../vistas/paginas/novedades/crear_novedades.php';
+    }
+    static public function vistaHistorialMarcaciones()
+    {
+        Auth::check('novedades', 'vistaHistorialMarcaciones');
+        $db = new Conexion();
+
+        // Siempre cargamos vigiladores
+        if (($_SESSION['rol'] ?? '') === 'Vigilador') {
+            $vigiladores = $db->consultas(
+                "SELECT idUsuario, apellido, nombre FROM usuarios WHERE idUsuario = ?",
+                [$_SESSION['idUsuario']]
+            );
+        } else {
+            $vigiladores = $db->consultas(
+                "SELECT idUsuario, apellido, nombre FROM usuarios WHERE rol = 'Vigilador' ORDER BY apellido, nombre"
+            );
+        }
+
+        $filtros = [
+            'vigilador' => $_POST['vigilador'] ?? '',
+            'desde'     => $_POST['desde'] ?? '',
+            'hasta'     => $_POST['hasta'] ?? ''
+        ];
+
+        $marcaciones = [];
+        if ($filtros['vigilador'] && $filtros['desde'] && $filtros['hasta']) {
+            $sql = "SELECT m.*, o.nombre AS objetivo
+                FROM marcaciones_servicio m
+                JOIN objetivos o ON m.objetivo_id = o.idObjetivo
+                WHERE m.vigilador_id = ?
+                AND DATE(m.fecha_hora) BETWEEN ? AND ?
+                ORDER BY m.fecha_hora ASC";
+            $marcaciones = $db->consultas($sql, [
+                $filtros['vigilador'],
+                $filtros['desde'],
+                $filtros['hasta']
+            ]);
+        }
+
+        include __DIR__ . '/../vistas/paginas/novedades/historialMarcaciones.php';
     }
 }

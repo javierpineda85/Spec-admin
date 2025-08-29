@@ -27,7 +27,10 @@
                                   <a href="?r=listado_novedades" class="btn btn-block btn-info btn-sm text-white">Mostrar Todas</a>
                               <?php endif; ?>
                               <?php if (Auth::hasPermission('novedades', 'vistaListadoEntradaSalida')): ?>
-                                  <a href="?r=reporte_entradas_salidas" class="btn btn-block btn-info btn-sm text-white">Mostrar Entrada/Salida</a>
+                                  <a href="?r=reporte_entradas_salidas" class="btn btn-block btn-primary btn-sm text-white">Reporte Entrada/Salida</a>
+                              <?php endif; ?>
+                              <?php if (Auth::hasPermission('novedades', 'vistaHistorialMarcaciones')): ?>
+                                  <a href="?r=historialMarcaciones" class="btn btn-block btn-primary btn-sm text-white">Historial Entrada/Salida</a>
                               <?php endif; ?>
                           </div>
                       </div>
