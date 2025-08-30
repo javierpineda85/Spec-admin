@@ -463,7 +463,7 @@ class ControladorCronograma
         }
 
         // 2) Traer referentes vinculados al objetivo
-       $referentes = $db->consultas("SELECT u.idUsuario FROM usuarios u
+        $referentes = $db->consultas("SELECT u.idUsuario FROM usuarios u
         INNER JOIN objetivo_referentes orf ON orf.referente_id = u.idUsuario
         WHERE orf.objetivo_id = $objetivoId AND u.activo = 1 AND u.rol='Referente'");
         $uidsR = array_map(fn($r) => (int)$r['idUsuario'], $referentes);
@@ -752,31 +752,27 @@ class ControladorCronograma
 
         $db = new Conexion;
         $usuarios = $db->consultas("SELECT idUsuario, CONCAT(apellido, ', ', nombre) AS vigilador FROM usuarios WHERE rol = 'Vigilador'");
-
-        // Obtener todos los horarios de turnos
         $horariosTurnos = $db->consultas("SELECT puesto_id, numero_turno, hora_entrada, hora_salida FROM puestos_turnos");
 
-        // Mapeo de códigos de turno a números
         $mapeoTurnos = [
-            'D' => 1,
-            'N' => 2,
-            'I' => 3
+            'D'     => 1,
+            'N'     => 2,
+            'I'     => 3
         ];
 
         $rows = [];
-        $_SESSION['diferencias_horarias'] = []; // Para registrar diferencias
+        $_SESSION['diferencias_horarias'] = [];
 
         foreach ($usuarios as $usuario) {
             $id = $usuario['idUsuario'];
             $nombre = $usuario['vigilador'];
 
-            // Obtener marcaciones del usuario
             $marcaciones = $db->consultas(
                 "SELECT * 
-                    FROM marcaciones_servicio 
-                    WHERE vigilador_id = :id 
-                        AND fecha_hora BETWEEN :desde AND :hasta 
-                    ORDER BY fecha_hora",
+             FROM marcaciones_servicio 
+             WHERE vigilador_id = :id 
+               AND fecha_hora BETWEEN :desde AND :hasta 
+             ORDER BY fecha_hora",
                 [
                     'id' => $id,
                     'desde' => "$desde 00:00:00",
@@ -784,12 +780,11 @@ class ControladorCronograma
                 ]
             );
 
-            // Obtener turnos asignados
             $turnosAsignados = $db->consultas(
-                " SELECT fecha, codigo_turno, puesto_id, objetivo_id
-                        FROM turnos 
-                        WHERE usuario_id = :id 
-                            AND fecha BETWEEN :desde AND :hasta",
+                "SELECT fecha, codigo_turno, puesto_id, objetivo_id
+             FROM turnos 
+             WHERE usuario_id = :id 
+               AND fecha BETWEEN :desde AND :hasta",
                 [
                     'id' => $id,
                     'desde' => $desde,
@@ -797,12 +792,39 @@ class ControladorCronograma
                 ]
             );
 
-            // Combinar turnos con horarios
             $turnosCompletos = [];
+            $francos = 0;
+            $guardiasPasivasDiurnas = 0;
+            $guardiasPasivasNocturnas = 0;
+
             foreach ($turnosAsignados as $turno) {
                 $codigo = trim(strtoupper($turno['codigo_turno']));
-                $numeroTurno = $mapeoTurnos[$codigo] ?? null;
 
+                // Verificar si ese día tiene marcaciones
+                $tieneMarcaciones = false;
+                foreach ($marcaciones as $m) {
+                    if (substr($m['fecha_hora'], 0, 10) === $turno['fecha']) {
+                        $tieneMarcaciones = true;
+                        break;
+                    }
+                }
+
+                // Si es F, GP/D o GP/N y hay marcaciones → contar como jornada extra
+                if ($codigo === 'F' && $tieneMarcaciones) {
+                    $francos++;
+                    continue;
+                }
+                if ($codigo === 'GP/D' && $tieneMarcaciones) {
+                    $guardiasPasivasDiurnas++;
+                    continue;
+                }
+                if ($codigo === 'GP/N' && $tieneMarcaciones) {
+                    $guardiasPasivasNocturnas++;
+                    continue;
+                }
+
+                // Turnos normales
+                $numeroTurno = $mapeoTurnos[$codigo] ?? null;
                 if ($numeroTurno) {
                     foreach ($horariosTurnos as $horario) {
                         if ($horario['puesto_id'] == $turno['puesto_id'] && $horario['numero_turno'] == $numeroTurno) {
@@ -818,13 +840,10 @@ class ControladorCronograma
                 }
             }
 
-            // Emparejar marcaciones
             $jornadas = self::emparejarMarcaciones($marcaciones);
 
             $diurnas = 0;
             $nocturnas = 0;
-            $guardiasPasivas = 0;
-            $francos = 0;
 
             foreach ($jornadas as $j) {
                 $fechaJ = substr($j['entrada'], 0, 10);
@@ -834,48 +853,41 @@ class ControladorCronograma
                     if ($turno['fecha'] === $fechaJ && $turno['objetivo_id'] == $j['objetivo_id']) {
                         $encontrado = true;
 
-                        // Objetos DateTime
                         $entradaReal = new DateTime($j['entrada']);
                         $salidaReal = new DateTime($j['salida']);
                         $entradaTurno = new DateTime("$fechaJ {$turno['hora_entrada']}");
                         $salidaTurno = new DateTime("$fechaJ {$turno['hora_salida']}");
 
-                        // Ajustar turno nocturno
                         if ($salidaTurno < $entradaTurno) {
                             $salidaTurno->modify('+1 day');
                         }
 
-                        // Margen de tolerancia (15 minutos)
                         $margen = new DateInterval('PT15M');
                         $entradaMin = (clone $entradaTurno)->sub($margen);
                         $salidaMax = (clone $salidaTurno)->add($margen);
 
-                        // Recortar marcaciones al turno con margen
                         $inicio = max($entradaReal, $entradaMin);
                         $fin = min($salidaReal, $salidaMax);
 
                         if ($inicio >= $fin) {
-                            continue; // Jornada inválida
+                            continue;
                         }
 
-                        // Registrar diferencias significativas (>15 min)
-                        if ($entradaReal < $entradaMin || $salidaReal > $salidaMax) {
-                            $diferenciaEntrada = $entradaReal->diff($entradaTurno);
-                            $diferenciaSalida = $salidaReal->diff($salidaTurno);
+                        // Diferencia total en minutos
+                        $minDifEntrada = ($entradaReal->getTimestamp() - $entradaTurno->getTimestamp()) / 60;
+                        $minDifSalida  = ($salidaReal->getTimestamp() - $salidaTurno->getTimestamp()) / 60;
 
-                            if ($diferenciaEntrada->i > 15 || $diferenciaSalida->i > 15) {
-                                $_SESSION['diferencias_horarias'][] = [
-                                    'vigilador' => $nombre,
-                                    'fecha' => $fechaJ,
-                                    'entrada_real' => $entradaReal->format('H:i'),
-                                    'entrada_turno' => $entradaTurno->format('H:i'),
-                                    'salida_real' => $salidaReal->format('H:i'),
-                                    'salida_turno' => $salidaTurno->format('H:i')
-                                ];
-                            }
+                        if (abs($minDifEntrada) > 15 || abs($minDifSalida) > 15) {
+                            $_SESSION['diferencias_horarias'][] = [
+                                'vigilador' => $nombre,
+                                'fecha' => $fechaJ,
+                                'entrada_real' => $entradaReal->format('H:i'),
+                                'entrada_turno' => $entradaTurno->format('H:i'),
+                                'salida_real' => $salidaReal->format('H:i'),
+                                'salida_turno' => $salidaTurno->format('H:i')
+                            ];
                         }
 
-                        // CALCULAR HORAS USANDO EL MÉTODO QUE FUNCIONA
                         $hDiur = self::calcularHorasEnVentana($inicio, $fin, '06:00', '21:59');
                         $hNoct = self::calcularHorasEnVentana($inicio, $fin, '22:00', '05:59');
 
@@ -887,10 +899,6 @@ class ControladorCronograma
                 }
 
                 if (!$encontrado) {
-                    // Registrar jornada sin turno asociado
-                    $_SESSION['advertencias'][] = "Vigilador $nombre tiene jornada sin turno asignado el $fechaJ";
-
-                    // Si no hay turno, calcular horas directamente
                     $entradaReal = new DateTime($j['entrada']);
                     $salidaReal = new DateTime($j['salida']);
 
@@ -906,9 +914,10 @@ class ControladorCronograma
                 'vigilador' => $nombre,
                 'diurnas' => $diurnas,
                 'nocturnas' => $nocturnas,
-                'guardias_pasivas' => round($guardiasPasivas, 2),
+                'guardias_diurnas' => $guardiasPasivasDiurnas,
+                'guardias_nocturnas' => $guardiasPasivasNocturnas,
                 'francos' => $francos,
-                'jornadas' => count($jornadas)
+                'jornadas' => count($jornadas) + $francos + $guardiasPasivasDiurnas + $guardiasPasivasNocturnas
             ];
         }
 
