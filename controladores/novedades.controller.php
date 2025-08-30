@@ -102,52 +102,47 @@ class NovedadesController
         $db = new Conexion();
 
         $sql = "SELECT 
-                    m.idMarcacion,
-                    m.objetivo_id,
-                    m.puesto_id,
-                    CONCAT(u.apellido, ' ', u.nombre) AS vigilador,
-                    o.nombre AS objetivo,
-                    m.tipo_evento,
-                    m.fecha_hora,
-                    pt.hora_entrada,
-                    pt.hora_salida,
-                    pt.numero_turno,
-                    -- Coordenadas en formato JSON para el front
-                    JSON_OBJECT(
-                        'lat', m.latitud,
-                        'lng', m.longitud
-                    ) AS map_data,
-                    -- URL directa a OpenStreetMap (opcional)
-                    CONCAT(
-                        'https://www.openstreetmap.org/?mlat=',
-                        m.latitud,
-                        '&mlon=',
-                        m.longitud,
-                        '#map=18/',
-                        m.latitud,
-                        '/',
-                        m.longitud
-                    ) AS osm_url
-                FROM marcaciones_servicio m
-                JOIN usuarios u 
-                ON m.vigilador_id = u.idUsuario
-                LEFT JOIN objetivos o 
-                ON m.objetivo_id = o.idObjetivo
-                LEFT JOIN puestos_turnos pt
-                ON pt.idPuestoTurno = (
-                    SELECT pt2.idPuestoTurno
-                    FROM puestos_turnos pt2
-                    WHERE pt2.puesto_id = m.puesto_id
-                    ORDER BY
-                        CASE 
-                        WHEN m.tipo_evento = 'entrada' 
-                            THEN ABS(TIME_TO_SEC(TIMEDIFF(TIME(m.fecha_hora), pt2.hora_entrada)))
-                        ELSE 
-                            ABS(TIME_TO_SEC(TIMEDIFF(TIME(m.fecha_hora), pt2.hora_salida)))
-                        END ASC
-                    LIMIT 1
-                    )
-                ORDER BY m.fecha_hora DESC";
+                        m.idMarcacion,
+                        m.objetivo_id,
+                        m.puesto_id,
+                        CONCAT(u.apellido, ' ', u.nombre) AS vigilador,
+                        o.nombre AS objetivo,
+                        m.tipo_evento,
+                        m.fecha_hora,
+                        pt.hora_entrada,
+                        pt.hora_salida,
+                        pt.numero_turno,
+                        JSON_OBJECT('lat', m.latitud, 'lng', m.longitud) AS map_data,
+                        CONCAT(
+                            'https://www.openstreetmap.org/?mlat=',
+                            m.latitud, '&mlon=', m.longitud,
+                            '#map=18/', m.latitud, '/', m.longitud
+                        ) AS osm_url
+                    FROM marcaciones_servicio m
+                    JOIN usuarios u 
+                        ON m.vigilador_id = u.idUsuario
+                    LEFT JOIN objetivos o 
+                        ON m.objetivo_id = o.idObjetivo
+                    LEFT JOIN rotaciones_puestos rp
+                        ON rp.usuario_id = m.vigilador_id
+                        AND rp.fecha = DATE(m.fecha_hora)
+                        AND rp.puesto_id = m.puesto_id
+                    -- Deducción de numero_turno
+                    LEFT JOIN puestos_turnos pt
+                        ON pt.puesto_id = m.puesto_id
+                        AND pt.numero_turno = COALESCE(
+                            CASE rp.codigo_turno
+                                WHEN 'D' THEN 1
+                                WHEN 'N' THEN 2
+                            END,
+                            CASE 
+                                WHEN TIME(m.fecha_hora) BETWEEN '05:00:00' AND '12:00:00' THEN 1 -- Día
+                                WHEN TIME(m.fecha_hora) >= '17:00:00' OR TIME(m.fecha_hora) <= '02:00:00' THEN 2 -- Noche
+                                ELSE NULL
+                            END
+                        )
+                    ORDER BY m.fecha_hora DESC;
+                    ";
 
         $marcaciones = $db->consultas($sql);
 
@@ -159,48 +154,68 @@ class NovedadesController
         include __DIR__ . '/../vistas/paginas/novedades/listado_entradaSalidas.php';
     }
 
-    private static function calcularBadge($m)
+    public static function calcularBadge($m)
     {
-        if (empty($m['hora_entrada']) || empty($m['hora_salida'])) {
-            return ['Sin horario', 'badge-secondary'];
+        $toleranciaMin   = 10; // minutos de tolerancia
+        $tardeHastaMin   = 30; // minutos para "Tarde ≤ 30 min"
+
+        // Determinar si es entrada o salida de forma segura
+        $evento = '';
+        if (!empty($m['evento'])) {
+            $evento = strtolower($m['evento']);
+        } elseif (!empty($m['tipo_evento'])) {
+            $evento = strtolower($m['tipo_evento']);
         }
 
-        $horaEvento = strtotime($m['fecha_hora']);
-        $fechaBase  = date('Y-m-d', $horaEvento);
+        $esEntrada = (strpos($evento, 'entrada') !== false);
 
-        $inicio = strtotime("$fechaBase {$m['hora_entrada']}");
-        $fin    = strtotime("$fechaBase {$m['hora_salida']}");
+        // Validar horas
+        $horaEntrada = !empty($m['hora_entrada']) ? $m['hora_entrada'] : null;
+        $horaSalida  = !empty($m['hora_salida'])  ? $m['hora_salida']  : null;
 
-        // Si el turno cruza medianoche
-        if ($fin <= $inicio) {
-            $fin = strtotime("$fechaBase {$m['hora_salida']} +1 day");
+        if ($horaEntrada === null || $horaSalida === null) {
+            return ['estado' => 'Sin horario', 'color' => 'bg-secondary'];
         }
 
-        if ($m['tipo_evento'] === 'entrada') {
-            $diffMin = ($horaEvento - $inicio) / 60;
-            if ($diffMin >= -15 && $diffMin <= 0) {
-                return ['En rango', 'badge-success'];
-            } elseif ($diffMin > 0 && $diffMin <= 30) {
-                return ['Tarde ≤ 30 min', 'badge-warning'];
-            } elseif ($diffMin > 30) {
-                return ['Fuera de rango', 'badge-danger'];
-            } else { // $diffMin < -15
-                return ['Muy temprano', 'badge-secondary'];
+        $fechaMarcacion = date('Y-m-d', strtotime($m['fecha_hora']));
+
+        // Calcular referencia
+        if ($esEntrada) {
+            $fechaBase = $fechaMarcacion;
+            $tsReferencia = strtotime("$fechaBase $horaEntrada");
+        } else {
+            $fechaBase = date('Y-m-d', strtotime($fechaMarcacion . ' -1 day'));
+            if (strtotime($horaSalida) <= strtotime($horaEntrada)) {
+                $tsReferencia = strtotime("$fechaBase $horaSalida +1 day");
+            } else {
+                $tsReferencia = strtotime("$fechaBase $horaSalida");
             }
         }
 
-        if ($m['tipo_evento'] === 'salida') {
-            $diffMin = ($horaEvento - $fin) / 60;
-            if ($diffMin >= 0 && $diffMin <= 15) {
-                return ['En rango', 'badge-success'];
-            } elseif ($diffMin < 0) {
-                return ['Salida anticipada', 'badge-danger'];
-            } else { // $diffMin > 15
-                return ['Extra no remunerado', 'badge-info'];
+        // Diferencia en minutos
+        $tsMarcacion = strtotime($m['fecha_hora']);
+        $diffMin = (int)round(($tsMarcacion - $tsReferencia) / 60);
+
+        // Clasificación
+        if ($esEntrada) {
+            if ($diffMin > 0 && $diffMin <= $tardeHastaMin) {
+                return ['estado' => 'Tarde ≤ 30 min', 'color' => 'bg-warning'];
+            } elseif ($diffMin > $tardeHastaMin) {
+                return ['estado' => 'Fuera de rango', 'color' => 'bg-danger'];
+            } elseif ($diffMin >= -$toleranciaMin) {
+                return ['estado' => 'En rango', 'color' => 'bg-success'];
+            } else {
+                return ['estado' => 'Muy temprano', 'color' => 'bg-info'];
+            }
+        } else {
+            if ($diffMin < -$toleranciaMin) {
+                return ['estado' => 'Salida anticipada', 'color' => 'bg-danger'];
+            } elseif (abs($diffMin) <= $toleranciaMin) {
+                return ['estado' => 'En rango', 'color' => 'bg-success'];
+            } else {
+                return ['estado' => 'Extra no remunerado', 'color' => 'bg-primary'];
             }
         }
-
-        return ['', ''];
     }
 
     static public function vistaEntradaSalida()
