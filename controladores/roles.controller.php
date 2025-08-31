@@ -19,12 +19,35 @@ class RolesController
     {
         Auth::check('roles', 'ctrGuardarRol');
         try {
-            $nombre = trim($_POST['nombre'] ?? '');
-            $alias  = trim($_POST['alias'] ?? '') ?: null;
-            $tipo   = $_POST['tipo'] ?? 'fijo';
+            $nombre    = trim($_POST['nombre'] ?? '');
+            $alias     = trim($_POST['alias'] ?? '') ?: null;
+            $tipo      = $_POST['tipo'] ?? 'fijo';
+            $categoria = $_POST['categoria'] ?? '';
 
-            if (!$nombre) throw new Exception('El nombre de rol es obligatorio');
-            ModeloRoles::crear($nombre, $alias, $tipo);
+            if (!$nombre || !$categoria) {
+                throw new Exception('El nombre y la categoría son obligatorios');
+            }
+
+            // Mapeo automático de nivel según categoría
+            $nivelesPorCategoria = [
+                'operativo'      => 1,
+                'referente'      => 2,
+                'supervisor'     => 3,
+                'administrativo' => 4,
+                'direccion'      => 5,
+                'reservado'      => 99
+            ];
+
+            // Si intentan mandar "reservado" desde el frontend y no es programador, forzar error
+            $soyProgramador = isset($_SESSION['nivel']) && $_SESSION['nivel'] == 99 && $_SESSION['reservado'] == 1;
+            if ($categoria === 'reservado' && !$soyProgramador) {
+                throw new Exception('No tienes permiso para crear roles reservados');
+            }
+
+            $nivel = $nivelesPorCategoria[$categoria] ?? 1;
+            $reservado = ($categoria === 'reservado') ? 1 : 0;
+
+            ModeloRoles::crear($nombre, $alias, $tipo, $nivel, $categoria, $reservado);
 
             ToastifyController::success('Rol creado');
             header('Location: ?r=roles/listado');
@@ -33,7 +56,6 @@ class RolesController
             header('Location: ?r=roles/crear');
         }
     }
-
     public static function vistaEditarRol()
     {
         Auth::check('roles', 'vistaEditarRol');
@@ -52,14 +74,36 @@ class RolesController
         Auth::check('roles', 'ctrActualizarRol');
 
         try {
-            $id     = (int)($_POST['id'] ?? 0);
-            $nombre = trim($_POST['nombre'] ?? '');
-            $alias  = trim($_POST['alias'] ?? '') ?: null;
-            $tipo   = $_POST['tipo'] ?? 'fijo';
-            $activo = isset($_POST['activo']) ? 1 : 0;
+            $id        = (int)($_POST['id'] ?? 0);
+            $nombre    = trim($_POST['nombre'] ?? '');
+            $alias     = trim($_POST['alias'] ?? '') ?: null;
+            $tipo      = $_POST['tipo'] ?? 'fijo';
+            $activo    = isset($_POST['activo']) ? 1 : 0;
+            $categoria = $_POST['categoria'] ?? '';
 
-            if (!$id || !$nombre) throw new Exception('Datos incompletos');
-            ModeloRoles::actualizar($id, $nombre, $alias, $tipo, $activo);
+            if (!$id || !$nombre || !$categoria) {
+                throw new Exception('Datos incompletos');
+            }
+
+            // Mapeo automático de nivel según categoría
+            $nivelesPorCategoria = [
+                'operativo'      => 1,
+                'referente'      => 2,
+                'supervisor'     => 3,
+                'administrativo' => 4,
+                'direccion'      => 5,
+                'reservado'      => 99
+            ];
+
+            $soyProgramador = isset($_SESSION['nivel']) && $_SESSION['nivel'] == 99 && $_SESSION['reservado'] == 1;
+            if ($categoria === 'reservado' && !$soyProgramador) {
+                throw new Exception('No tienes permiso para asignar categoría reservada');
+            }
+
+            $nivel = $nivelesPorCategoria[$categoria] ?? 1;
+            $reservado = ($categoria === 'reservado') ? 1 : 0;
+
+            ModeloRoles::actualizar($id, $nombre, $alias, $tipo, $activo, $nivel, $categoria, $reservado);
 
             ToastifyController::success('Rol actualizado');
             header('Location: ?r=roles/listado');

@@ -24,34 +24,40 @@ class ModeloRoles
         return $res[0] ?? null;
     }
 
-    public static function crear(string $nombre, ?string $alias, string $tipo = 'fijo')
+    public static function crear(string $nombre, ?string $alias, string $tipo = 'fijo', int $nivel = 1, string $categoria = 'operativo', int $reservado = 0)
     {
         if (mb_strtolower(trim($nombre)) === 'programador') {
             throw new Exception('El rol "Programador" está reservado.');
         }
+
         $db = new Conexion;
         return $db->consultas(
-            "INSERT INTO roles (nombre, alias, tipo, reservado, activo) VALUES (?, ?, ?, 0, 1)",
-            [$nombre, $alias, $tipo]
+            "INSERT INTO roles (nombre, alias, tipo, nivel, categoria, reservado, activo) 
+         VALUES (?, ?, ?, ?, ?, ?, 1)",
+            [$nombre, $alias, $tipo, $nivel, $categoria, $reservado]
         );
     }
 
-    public static function actualizar(int $id, string $nombre, ?string $alias, string $tipo = 'fijo', int $activo = 1)
+    public static function actualizar(int $id, string $nombre, ?string $alias, string $tipo = 'fijo', int $activo = 1, int $nivel = 1, string $categoria = 'operativo', int $reservado = 0)
     {
         $rol = self::obtenerPorId($id);
         if (!$rol) throw new Exception('Rol no encontrado');
 
-        if ((int)$rol['reservado'] === 1) {
+        // Si el rol ya es reservado y no es programador, no permitir edición
+        if ((int)$rol['reservado'] === 1 && !(isset($_SESSION['nivel']) && $_SESSION['nivel'] == 99 && $_SESSION['reservado'] == 1)) {
             throw new Exception('Este rol es reservado y no puede editarse.');
         }
+
         if (mb_strtolower(trim($nombre)) === 'programador') {
             throw new Exception('El rol "Programador" está reservado.');
         }
 
         $db = new Conexion;
         return $db->consultas(
-            "UPDATE roles SET nombre=?, alias=?, tipo=?, activo=? WHERE id=?",
-            [$nombre, $alias, $tipo, $activo, $id]
+            "UPDATE roles 
+         SET nombre=?, alias=?, tipo=?, activo=?, nivel=?, categoria=?, reservado=? 
+         WHERE id=?",
+            [$nombre, $alias, $tipo, $activo, $nivel, $categoria, $reservado, $id]
         );
     }
 
