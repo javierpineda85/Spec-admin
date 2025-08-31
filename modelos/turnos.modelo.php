@@ -7,25 +7,36 @@ class ModeloTurnos
         $db = Conexion::conectar();
 
         try {
+            // Verificar si ya existe
+            $check = $db->prepare("SELECT COUNT(*) FROM $tabla 
+                               WHERE usuario_id = :usuario_id 
+                                 AND objetivo_id = :objetivo_id 
+                                 AND fecha = :fecha");
+            $check->execute([
+                ':usuario_id'  => $datos["usuario_id"],
+                ':objetivo_id' => $datos["objetivo_id"],
+                ':fecha'       => $datos["fecha"]
+            ]);
+
+            if ($check->fetchColumn() > 0) {
+                // Ya existe, no insertamos
+                error_log("⚠ Turno duplicado detectado y omitido: usuario {$datos['usuario_id']} fecha {$datos['fecha']}");
+                return "duplicado";
+            }
+
+            // Insertar si no existe
             $sql = "INSERT INTO $tabla 
-            (usuario_id, puesto_id, objetivo_id, fecha, rol, tipo_turno, codigo_turno)
-            VALUES 
-            (:usuario_id, :puesto_id, :objetivo_id, :fecha, :rol, :tipo_turno, :codigo_turno)";
+                (usuario_id, objetivo_id, fecha, rol, tipo_turno, codigo_turno)
+                VALUES 
+                (:usuario_id,  :objetivo_id, :fecha, :rol, :tipo_turno, :codigo_turno)";
 
             $stmt = $db->prepare($sql);
             $stmt->bindParam(":usuario_id",   $datos["usuario_id"],   PDO::PARAM_INT);
-
-            if (is_null($datos["puesto_id"])) {
-                $stmt->bindValue(":puesto_id", null, PDO::PARAM_NULL);
-            } else {
-                $stmt->bindParam(":puesto_id", $datos["puesto_id"], PDO::PARAM_INT);
-            }
-
             $stmt->bindParam(":objetivo_id",  $datos["objetivo_id"],  PDO::PARAM_INT);
             $stmt->bindParam(":fecha",        $datos["fecha"],        PDO::PARAM_STR);
-            $stmt->bindParam(":rol",          $datos["rol"],          PDO::PARAM_STR); // Vigilador o Referente
-            $stmt->bindParam(":tipo_turno",   $datos["tipo_turno"],   PDO::PARAM_STR); // Normal o Licencia
-            $stmt->bindParam(":codigo_turno", $datos["codigo_turno"], PDO::PARAM_STR); // D, N, etc.
+            $stmt->bindParam(":rol",          $datos["rol"],          PDO::PARAM_STR);
+            $stmt->bindParam(":tipo_turno",   $datos["tipo_turno"],   PDO::PARAM_STR);
+            $stmt->bindParam(":codigo_turno", $datos["codigo_turno"], PDO::PARAM_STR);
             $stmt->execute();
 
             return "ok";
@@ -35,6 +46,7 @@ class ModeloTurnos
             if (isset($stmt)) $stmt->closeCursor();
         }
     }
+
 
     static public function mdlObtenerTurnos($tabla, $filtros)
     {
@@ -110,7 +122,7 @@ class ModeloTurnos
         $sql = "SELECT * FROM turnos 
         WHERE objetivo_id = ? 
           AND fecha LIKE ? 
-        ORDER BY fecha, puesto_id, usuario_id";
+        ORDER BY fecha, usuario_id";
         $stmt = $db->prepare($sql);
         $stmt->execute([$objetivoId, "$mes%"]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -142,7 +154,7 @@ class ModeloTurnos
         $conexion = Conexion::conectar();
 
         // 1. Buscar el turno asignado
-        $sqlTurno = "SELECT puesto_id, codigo_turno 
+        $sqlTurno = "SELECT codigo_turno 
                  FROM turnos 
                  WHERE usuario_id = :usuario_id 
                    AND objetivo_id = :objetivo_id 

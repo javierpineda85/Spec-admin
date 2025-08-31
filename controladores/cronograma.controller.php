@@ -63,7 +63,6 @@ class ControladorCronograma
 
                             $turnosProcesados[] = [
                                 'usuario_id'   => $usuarioId,
-                                'puesto_id'    => null,          // ahora no se asigna acá
                                 'objetivo_id'  => $objetivoId,
                                 'fecha'        => $fecha,
                                 'rol'          => 'Vigilador',
@@ -90,7 +89,6 @@ class ControladorCronograma
 
                             $turnosProcesados[] = [
                                 'usuario_id'   => $usuarioId,
-                                'puesto_id'    => null,
                                 'objetivo_id'  => $objetivoId,
                                 'fecha'        => $fecha,
                                 'rol'          => 'Referente',
@@ -260,38 +258,6 @@ class ControladorCronograma
         return $post;
     }
 
-    /*Funcion para precargar cronograma del mes anterior */
-    /*MOdelo: turnos */
-    /*public static function precargarCronogramaAnterior($objetivoId, $mes)
-    {
-        // Obtener mes anterior en formato YYYY-MM
-        $dt = DateTime::createFromFormat('Y-m', $mes);
-        if (!$dt) return [];
-        $dt->modify('-1 month');
-        $mesAnterior = $dt->format('Y-m');
-
-        $turnos = ModeloTurnos::mdlBuscarTurnosPorMes($objetivoId, $mesAnterior);
-        if (!$turnos) return [];
-
-        $postSimulado = [];
-
-        foreach ($turnos as $t) {
-            $dia = intval(substr($t['fecha'], 8, 2));
-            $usuarioId = $t['usuario_id'];
-            $puestoId = $t['puesto_id'] ?? '-';
-            $rol = strtolower($t['rol']);
-            $tipoTurno = ($t['tipo_turno'] === 'Licencia') ? 'Licencias' : ($t['codigo_turno'] === 'D' ? 'Diurno' : 'Nocturno');
-
-            // Armar estructura simulando $_POST['vigilador'][...][...][...]
-            if (!isset($postSimulado[$rol][$puestoId][$tipoTurno]['usuario'])) {
-                $postSimulado[$rol][$puestoId][$tipoTurno]['usuario'] = $usuarioId;
-            }
-
-            $postSimulado[$rol][$puestoId][$tipoTurno][$dia] = $t['codigo_turno'];
-        }
-
-        return $postSimulado;
-    }*/
     /*Funcion para precargar cronograma del mes anterior */
     /*MOdelo: turnos */
     public static function precargarCronogramaSiExiste($objetivoId, $mes)
@@ -633,7 +599,7 @@ class ControladorCronograma
 
                 // Evitamos horas antes del turno, pero permitimos salidas posteriores
                 // Buscar el turno para obtener la fecha de referencia
-                $sqlTurno = "SELECT puesto_id, codigo_turno, fecha
+                $sqlTurno = "SELECT codigo_turno, fecha
                          FROM turnos
                          WHERE usuario_id = ? AND objetivo_id = ?
                            AND fecha BETWEEN DATE(?) AND DATE_ADD(?, INTERVAL 1 DAY)
@@ -752,7 +718,7 @@ class ControladorCronograma
 
         $db = new Conexion;
         $usuarios = $db->consultas("SELECT idUsuario, CONCAT(apellido, ', ', nombre) AS vigilador FROM usuarios WHERE rol = 'Vigilador'");
-        $horariosTurnos = $db->consultas("SELECT puesto_id, numero_turno, hora_entrada, hora_salida FROM puestos_turnos");
+        $horariosTurnos = $db->consultas("SELECT  numero_turno, hora_entrada, hora_salida FROM puestos_turnos");
 
         $mapeoTurnos = [
             'D'     => 1,
@@ -781,7 +747,7 @@ class ControladorCronograma
             );
 
             $turnosAsignados = $db->consultas(
-                "SELECT fecha, codigo_turno, puesto_id, objetivo_id
+                "SELECT fecha, codigo_turno, objetivo_id
              FROM turnos 
              WHERE usuario_id = :id 
                AND fecha BETWEEN :desde AND :hasta",

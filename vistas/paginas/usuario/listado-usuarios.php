@@ -36,7 +36,7 @@ $usuarios = $db->consultas($sql);
                   <th style="text-align: center;">Contacto</th>
                   <th style="text-align: center;">Parentesco</th>
                   <th style="text-align: center;">Rol</th>
-                  <?php if (in_array($_SESSION['rol'], ['Gerencia', 'Administrador'], true)): ?>
+                  <?php if (in_array($_SESSION['rol'], ['Gerencia', 'Administrador','Programador'], true)): ?>
                   <th style="text-align: center;">Acciones</th>
                   <?php endif ?>
                 </tr>
@@ -51,7 +51,7 @@ $usuarios = $db->consultas($sql);
                     <td> <?php echo $valor['nombre_contacto']; ?></td>
                     <td> <?php echo $valor['parentesco']; ?></td>
                     <td> <?php echo $valor['rol']; ?></td>
-                    <?php if (in_array($_SESSION['rol'], ['Gerencia', 'Administrador'], true)): ?>
+                    <?php if (in_array($_SESSION['rol'], ['Gerencia', 'Administrador','Programador'], true)): ?>
                     <td>
                       <div class="row d-flex justify-content-around">
                         <a href="?r=perfil-usuario&id=<?php echo $valor["idUsuario"]; ?>" class="btn btn-success btn-sm"><i class="fas fa-eye"></i></a>

@@ -26,7 +26,6 @@ class ControladorTurnos
 
                     $datos = [
                         "objetivo_id"   => $t['objetivo'],
-                        "puesto_id"     => $t['puesto'],
                         "fecha"         => $t['fecha'],
                         "turno"         => $t['turno'],
                         "vigilador_id"  => $t['vigilador'],
