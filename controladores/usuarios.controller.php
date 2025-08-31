@@ -248,9 +248,29 @@ class ControladorUsuarios
     static public function vistaListadoUsuarios()
     {
         Auth::check('usuarios', 'vistaListadoUsuarios');
-        $db = new Conexion;
-        $sql = "SELECT * FROM usuarios WHERE activo = 1 AND rol <> 'Programador' ORDER BY rol ";
-        $usuarios = $db->consultas($sql);
+
+        $pdo = Conexion::conectar();
+        $sql = "SELECT 
+                    u.idUsuario,
+                    u.apellido,
+                    u.nombre,
+                    u.telefono,
+                    u.tel_emergencia,
+                    u.nombre_contacto,
+                    u.parentesco,
+                    r.nombre AS rol_nombre,
+                    r.nivel  AS rol_nivel
+                FROM usuarios u
+                JOIN roles r ON u.rol_id = r.id
+                WHERE u.activo = 1
+                AND r.nombre <> 'Programador'
+                ORDER BY r.nivel ASC, u.apellido ASC, u.nombre ASC
+            ";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
         include __DIR__ . '/../vistas/paginas/usuario/listado-usuarios.php';
         return;
     }

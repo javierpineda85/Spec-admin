@@ -23,7 +23,18 @@ class ModeloRoles
         $res = $db->consultas("SELECT * FROM roles WHERE nombre = ?", [$nombre]);
         return $res[0] ?? null;
     }
-
+    static public function mdlObtenerRolesActivos()
+    {
+        $stmt = Conexion::conectar()->prepare(
+            "SELECT id, nombre, nivel
+            FROM roles
+            WHERE activo = 1
+              AND nombre <> 'Programador'
+            ORDER BY nivel ASC, nombre ASC"
+        );
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
     public static function crear(string $nombre, ?string $alias, string $tipo = 'fijo', int $nivel = 1, string $categoria = 'operativo', int $reservado = 0)
     {
         if (mb_strtolower(trim($nombre)) === 'programador') {
