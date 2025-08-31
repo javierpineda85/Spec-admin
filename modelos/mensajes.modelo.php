@@ -43,29 +43,29 @@ class ModeloMensajes
 
         $stmt = null;
     }
-
-    static public function mdlGuardarMensaje($datos)
+    public static function mdlGuardarMensaje(array $datos)
     {
-        $stmt = Conexion::conectar()->prepare("
-        INSERT INTO mensajes (remitente_id, destinatario_id, contenido, fecha_hora)
-        VALUES (:remitente_id, :destinatario_id, :contenido, :fecha_hora)
-        ");
+        $db = new Conexion();
 
-        $stmt->bindParam(":remitente_id", $datos["id_remitente"], PDO::PARAM_INT);
-        $stmt->bindParam(":destinatario_id", $datos["id_destinatario"], PDO::PARAM_INT);
-        $stmt->bindParam(":contenido", $datos["contenidoMensaje"], PDO::PARAM_STR);
-        $stmt->bindParam(":fecha_hora", $datos["fechaMensaje"], PDO::PARAM_STR);
-
-        if ($stmt->execute()) {
-            return "ok";
-        } else {
-            print_r($stmt->errorInfo());
-            return "error";
+        // Validar datos mínimos
+        if (empty($datos['id_remitente']) || empty($datos['id_destinatario']) || empty($datos['contenidoMensaje'])) {
+            throw new Exception('Datos incompletos para guardar el mensaje.');
         }
 
-        $stmt->closeCursor();
-        $stmt = null;
+        // Insertar mensaje con objetivo_id si está disponible
+        return $db->consultas(
+            "INSERT INTO mensajes (remitente_id, destinatario_id, contenido, fecha_hora, objetivo_id)
+         VALUES (?, ?, ?, ?, ?)",
+            [
+                $datos['id_remitente'],
+                $datos['id_destinatario'],
+                $datos['contenidoMensaje'],
+                $datos['fechaMensaje'],
+                $datos['objetivo_id'] ?? null
+            ]
+        );
     }
+
     static public function mdlMarcarLeido($idMensaje)
     {
         $stmt = Conexion::conectar()->prepare("UPDATE mensajes SET leido = 1 WHERE idMensaje = :id");

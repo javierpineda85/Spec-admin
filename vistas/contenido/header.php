@@ -55,12 +55,28 @@ $cantidadNoLeidos = count($mensajesNoLeidos);
       </div>
     </li>
     <!--Alertas de mensajes-->
-    <?php if ($cantidadNoLeidos > 0): ?>
-      <a href="index.php?r=bandeja-entrada&c=mensajes" class="dropdown-item mt-1">
-        <i class="fas fa-envelope text-info mr-2"></i>
-        <?= $cantidadNoLeidos ?> 
+    <!-- Icono de mensajes -->
+    <li class="nav-item dropdown">
+      <a class="nav-link" data-toggle="dropdown" href="#">
+        <i class="far fa-envelope"></i>
+        <span id="badge-mensajes" class="badge badge-info navbar-badge" style="display:none;">0</span>
       </a>
-    <?php endif; ?>
+      <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+        <span class="dropdown-header">Mensajes</span>
+        <div class="dropdown-divider"></div>
+
+        <!-- Aquí se cargan los mensajes -->
+        <div id="dropdown-mensajes-preview">
+          <span class="dropdown-item text-muted">Sin mensajes nuevos</span>
+        </div>
+
+        <div class="dropdown-divider"></div>
+        <a href="index.php?r=bandeja-entrada&c=mensajes" class="dropdown-item dropdown-footer">
+          Ver todos los mensajes
+        </a>
+      </div>
+    </li>
+
     <!-- Botón de pantalla completa -->
     <li class="nav-item">
       <a class="nav-link" data-widget="fullscreen" href="#" role="button">
@@ -143,4 +159,50 @@ $cantidadNoLeidos = count($mensajesNoLeidos);
 
   actualizarContadorAlertas();
   setInterval(actualizarContadorAlertas, 30000);
+
+
+  function actualizarContadorMensajes() {
+    fetch('ajax/ver_mensajes.php')
+      .then(res => res.json())
+      .then(mensajes => {
+        const badge = document.getElementById('badge-mensajes');
+        const contenedor = document.getElementById('dropdown-mensajes-preview');
+
+        if (!badge || !contenedor) return;
+
+        if (mensajes.length > 0) {
+          badge.innerText = mensajes.length;
+          badge.style.display = 'inline-block';
+
+          const prev = parseInt(localStorage.getItem('mensajes_previos')) || 0;
+          if (mensajes.length > prev && !window.location.search.includes('r=bandeja-entrada')) {
+            document.getElementById('sonido-alerta-global').play().catch(() => {});
+          }
+          localStorage.setItem('mensajes_previos', mensajes.length);
+
+          contenedor.innerHTML = '';
+          mensajes.slice(0, 3).forEach(m => {
+            contenedor.innerHTML += `
+            <a href="index.php?r=ver-mensaje&id=${m.idMensaje}" class="dropdown-item">
+              <i class="fas fa-envelope mr-2"></i> ${m.asunto || 'Sin asunto'}
+              <span class="float-right text-muted text-sm">${m.fMensaje?.slice(11, 16) || ''}</span>
+              <div class="text-sm">${(m.contenidoMensaje || '').slice(0, 40)}...</div>
+            </a>
+            <div class="dropdown-divider"></div>
+          `;
+          });
+        } else {
+          badge.style.display = 'none';
+          contenedor.innerHTML = '<span class="dropdown-item text-muted">Sin mensajes nuevos</span>';
+          localStorage.setItem('mensajes_previos', 0);
+        }
+      })
+      .catch(e => console.error('❌ Error al obtener mensajes:', e));
+  }
+
+  actualizarContadorMensajes();
+  setInterval(actualizarContadorMensajes, 30000);
+
+  actualizarContadorMensajes();
+  setInterval(actualizarContadorMensajes, 30000);
 </script>
