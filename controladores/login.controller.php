@@ -20,76 +20,74 @@ class LoginController
 
     public static function procesarLogin()
     {
-        // Auth::check('login', 'procesarLogin');
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
-        // Comprobamos si se han enviado los datos por el formulario
-        if (isset($_POST['dni']) && isset($_POST['pass'])) {
-            $dni = $_POST['dni']; // Recibimos el DNI
-            $password = $_POST['pass']; // Recibimos la contraseña
 
-            // Crear una instancia del modelo de usuarios de manera estática
+        if (isset($_POST['dni']) && isset($_POST['pass'])) {
+            $dni      = trim($_POST['dni']);
+            $password = $_POST['pass'];
+
             $modeloUsuarios = new ModeloUsuarios();
-            // Llamamos al método del modelo para autenticar al usuario
-            $esAutenticado = $modeloUsuarios->authenticate($dni, $password);
+            $esAutenticado  = $modeloUsuarios->authenticate($dni, $password);
 
             if ($esAutenticado) {
-                // Si el inicio de sesión es exitoso, guardar los datos en la sesión
-                $_SESSION['idUsuario'] = $esAutenticado[0]['idUsuario'];
-                $_SESSION['nombre'] = $esAutenticado[0]['nombre'];
-                $_SESSION['apellido'] = $esAutenticado[0]['apellido'];
-                $_SESSION['imgPerfil'] = $esAutenticado[0]['imgPerfil'];
-                $_SESSION['rol'] = $esAutenticado[0]['rol'];
+                $user = $esAutenticado[0];
+
+                // Datos básicos
+                $_SESSION['idUsuario']  = (int)$user['idUsuario'];
+                $_SESSION['nombre']     = $user['nombre'];
+                $_SESSION['apellido']   = $user['apellido'];
+                $_SESSION['imgPerfil']  = $user['imgPerfil'];
+
+                // Datos de rol
+                $_SESSION['rol_id']     = (int)$user['rol_id'];
+                $_SESSION['rol']        = $user['nombreRol']; // solo para mostrar
+                $_SESSION['nivel']      = (int)$user['nivel'];
+                $_SESSION['categoria']  = $user['categoria'];
+                $_SESSION['reservado']  = (int)$user['reservado'];
 
                 unset($_SESSION['permisos_usuario']);
 
-                // Para Vigilador o Referente, cargamos su asignación del día:
-                if (in_array($_SESSION['rol'], ['Vigilador', 'Referente'])) {
-                    // Instanciamos el modelo para consultar cronogramas
-                    $modelo = new ModeloUsuarios();
-                    $asig   = $modelo->getAsignacionHoy($_SESSION['idUsuario']);
+                // Si es vigilador o referente, cargar asignación del día
+                if (in_array($_SESSION['categoria'], ['operativo', 'referente'])) {
+                    $asig = $modeloUsuarios->getAsignacionHoy($_SESSION['idUsuario']);
                     if ($asig) {
-                        $_SESSION['puesto_id']    = intval($asig['puesto_id']);
-                        $_SESSION['objetivo_id'] = intval($asig['objetivo_id']);
-                        // Convertir 0/1 a booleano
-                        $_SESSION['isReferente'] = !empty($asig['is_referente']);
-                        // Si tiene asignación, nos aseguramos de que no quede el flag
+                        $_SESSION['puesto_id']    = (int)$asig['puesto_id'];
+                        $_SESSION['objetivo_id']  = (int)$asig['objetivo_id'];
+                        $_SESSION['isReferente']  = !empty($asig['is_referente']);
                         unset($_SESSION['sinAsignaciones']);
                     } else {
-                        // No tiene asignación hoy
                         $_SESSION['puesto_id']    = 0;
-                        $_SESSION['objetivo_id'] = 0;
-                        $_SESSION['isReferente'] = false;
+                        $_SESSION['objetivo_id']  = 0;
+                        $_SESSION['isReferente']  = false;
                         $_SESSION['sinAsignaciones'] = true;
                     }
                 }
-                // ** Aquí definimos $resultados con todos los permisos del rol **
+
+                // Cargar permisos del rol
                 $db = new Conexion();
                 $resultados = $db->consultas(
                     "SELECT p.controlador, p.accion
-                   FROM role_permissions rp
-                   JOIN permissions p ON rp.permission_id = p.id
-                  WHERE rp.role = ?",
-                    [$_SESSION['rol']]
+                 FROM role_permissions rp
+                 JOIN permissions p ON rp.permission_id = p.id
+                 WHERE rp.role_id = ?",
+                    [$_SESSION['rol_id']]
                 );
 
-                // Guardar en sesión el array de permisos para hasPermission()
                 $_SESSION['permisos_usuario'] = array_map(
                     fn($r) => "{$r['controlador']}/{$r['accion']}",
                     $resultados
                 );
-                // Esto es para compatibilidad con Auth::check()
                 $_SESSION['permisos'] = $_SESSION['permisos_usuario'];
+
                 // Redirigir al inicio
                 header('Location: index.php');
                 exit();
             } else {
-                // Si no se ha podido autenticar, mostrar un error
                 $_SESSION['success_message'] = "DNI o contraseña incorrectos.";
             }
         } else {
-            // Si no se envían los datos, redirigir al formulario de login
             $_SESSION['success_message'] = "Por favor, ingresa tu DNI y contraseña.";
         }
     }

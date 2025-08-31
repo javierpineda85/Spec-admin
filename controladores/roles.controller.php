@@ -157,19 +157,32 @@ class RolesController
             ];
         }
 
+        // Obtener el ID del rol para usarlo en role_permissions
+        $idRol = $rol['id'] ?? null;
+        if (!$idRol) {
+            // Intentar buscarlo en la tabla roles por nombre
+            $rolDb = $db->consultas("SELECT id FROM roles WHERE nombre = ?", [$nombreRol]);
+            $idRol = $rolDb[0]['id'] ?? null;
+        }
+
         // 4) Cargar permisos
         $permisos = $db->consultas(
             "SELECT id, controlador, accion, descripcion
-           FROM permissions
-       ORDER BY controlador, accion"
+         FROM permissions
+         ORDER BY controlador, accion"
         );
 
-        // 5) Permisos asignados al rol
-        $asignados = $db->consultas(
-            "SELECT permission_id FROM role_permissions WHERE role = ?",
-            [$nombreRol]
-        );
-        $idsAsignados = array_map('intval', array_column($asignados, 'permission_id'));
+        // 5) Permisos asignados al rol (usando role_id)
+        $idsAsignados = [];
+        if ($idRol) {
+            $asignados = $db->consultas(
+                "SELECT permission_id FROM role_permissions WHERE role_id = ?",
+                [$idRol]
+            );
+            if (is_array($asignados) && !empty($asignados)) {
+                $idsAsignados = array_map('intval', array_column($asignados, 'permission_id'));
+            }
+        }
 
         // 6) Pasar todo a la vista
         include 'vistas/paginas/roles/gestionar_roles.php';
@@ -178,18 +191,45 @@ class RolesController
     public static function ctrGuardarPermisosRol()
     {
         Auth::check('roles', 'ctrGuardarPermisosRol');
+
         try {
             $nombreRol = $_POST['rol'] ?? '';
             $permissionIds = array_map('intval', $_POST['permission_ids'] ?? []);
-            if (!$nombreRol) throw new Exception('Rol no especificado');
 
-            ModeloRoles::asignarPermisos($nombreRol, $permissionIds);
+            if (!$nombreRol) {
+                throw new Exception('Rol no especificado');
+            }
+
+            $db = new Conexion();
+
+            // Obtener el ID del rol a partir del nombre
+            $rolDb = $db->consultas("SELECT id FROM roles WHERE nombre = ?", [$nombreRol]);
+            $idRol = $rolDb[0]['id'] ?? null;
+
+            if (!$idRol) {
+                throw new Exception('Rol no encontrado en la base de datos');
+            }
+
+            // Limpiar permisos actuales del rol
+            $db->consultas("DELETE FROM role_permissions WHERE role_id = ?", [$idRol]);
+
+            // Insertar nuevos permisos
+            if (!empty($permissionIds)) {
+                foreach ($permissionIds as $pid) {
+                    $db->consultas(
+                        "INSERT INTO role_permissions (role_id, permission_id) VALUES (?, ?)",
+                        [$idRol, $pid]
+                    );
+                }
+            }
 
             ToastifyController::success('Permisos actualizados');
             header('Location: ?r=roles/permisos&rol=' . urlencode($nombreRol));
+            exit;
         } catch (Exception $e) {
             ToastifyController::error($e->getMessage());
             header('Location: ?r=roles/listado');
+            exit;
         }
     }
 }
