@@ -95,44 +95,39 @@ class ControladorDirectivas
                     $conexion->beginTransaction();
                 }
 
-                // 1) Obtener los valores que vienen del form
                 $idDirectiva  = intval($_POST["idDirectiva"]);
                 $id_objetivo  = intval($_POST["id_objetivo"]);
                 $detalle      = $_POST["detalle"];
-                // Ruta actual en BD (hidden input)
+                $tipo         = $_POST["tipo"]; // nuevo campo
                 $rutaAdjuntoViejo = $_POST["adjuntoActual"];
 
-                // 2) Procesar posible nuevo archivo
+                // Procesar nuevo archivo si existe
                 if (
                     isset($_FILES["adjunto"]) &&
                     $_FILES["adjunto"]["error"] !== UPLOAD_ERR_NO_FILE
                 ) {
-                    // Generar un nombre base único para este archivo
                     $nombreBase = "directiva_"  . date("YmdHis");
                     $rutaAdjuntoNuevo = ControladorArchivos::guardarArchivo(
                         $_FILES["adjunto"],
                         "img/directivas/",
                         $nombreBase
                     );
-                    // Si se guardó bien, borramos el antiguo (opcional)
                     if (!empty($rutaAdjuntoViejo) && file_exists($rutaAdjuntoViejo)) {
                         unlink($rutaAdjuntoViejo);
                     }
                     $rutaAdjuntoFinal = $rutaAdjuntoNuevo;
                 } else {
-                    // No subió nada: quedamos con la ruta vieja
                     $rutaAdjuntoFinal = $rutaAdjuntoViejo;
                 }
 
-                // 3) Preparar array para el modelo
                 $datos = [
                     "idDirectiva" => $idDirectiva,
                     "id_objetivo" => $id_objetivo,
                     "detalle"     => $detalle,
-                    "adjunto"     => $rutaAdjuntoFinal   // puede ser cadena vacía o NULL
+                    "tipo"        => $tipo,
+                    "adjunto"     => $rutaAdjuntoFinal
                 ];
 
-                // 4) Llamar al modelo para actualizar
                 $respuesta = ModeloDirectivas::mdlModificarDirectiva("directivas", $datos);
 
                 if ($respuesta === "ok") {
@@ -157,6 +152,7 @@ class ControladorDirectivas
         }
     }
 
+
     static public function crtEliminarDirectiva()
     {
         Auth::check('directivas', 'crtEliminarDirectiva');
@@ -177,6 +173,9 @@ class ControladorDirectivas
                 if ($respuesta === 'ok') {
                     $conexion->commit();
                     ToastifyController::success("Directiva eliminada correctamente.");
+                } elseif ($respuesta === 'no_permitido') {
+                    $conexion->rollBack();
+                    ToastifyController::error("No se puede eliminar una directiva general.");
                 } else {
                     $conexion->rollBack();
                     ToastifyController::error("No se pudo eliminar la directiva.");
