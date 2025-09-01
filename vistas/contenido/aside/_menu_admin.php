@@ -1,7 +1,8 @@
 <?php if (
-    Auth::hasPermission('feriados', 'vistaCrearFeriado') ||
-    Auth::hasPermission('feriados', 'vistaListadoFeriado') ||
-    Auth::hasPermission('art', 'vistaGestionArt')
+    Auth::hasPermission('feriados', 'vistaCrearFeriados') ||
+    Auth::hasPermission('feriados', 'vistaListadoFeriados') ||
+    Auth::hasPermission('art', 'vistaCrearArt') ||
+    Auth::hasPermission('art', 'vistaListadoArt')
 ): ?>
     <li class="nav-item has-treeview">
         <a href="#" class="nav-link">
@@ -10,7 +11,7 @@
         </a>
         <ul class="nav nav-treeview">
 
-            <?php if (Auth::hasPermission('feriados', 'vistaCrearFeriado')): ?>
+            <?php if (Auth::hasPermission('feriados', 'vistaCrearFeriados')): ?>
                 <li class="nav-item">
                     <a href="?r=crear_feriados" class="nav-link">
                         <i class="far fa-circle nav-icon"></i>
@@ -19,7 +20,7 @@
                 </li>
             <?php endif; ?>
 
-            <?php if (Auth::hasPermission('feriados', 'vistaListadoFeriado')): ?>
+            <?php if (Auth::hasPermission('feriados', 'vistaListadoFeriados')): ?>
                 <li class="nav-item">
                     <a href="?r=listado_feriados" class="nav-link">
                         <i class="far fa-circle nav-icon"></i>
@@ -28,13 +29,16 @@
                 </li>
             <?php endif; ?>
 
-            <?php if (Auth::hasPermission('art', 'vistaGestionArt')): ?>
+            <?php if (Auth::hasPermission('art', 'vistaCrearArt')): ?>
                 <li class="nav-item">
                     <a href="?r=gestion_art" class="nav-link">
                         <i class="far fa-circle nav-icon"></i>
                         <p>Crear A.R.T.</p>
                     </a>
                 </li>
+            <?php endif; ?>
+
+            <?php if (Auth::hasPermission('art', 'vistaListadoArt')): ?>
                 <li class="nav-item">
                     <a href="?r=listado_art" class="nav-link">
                         <i class="far fa-circle nav-icon"></i>

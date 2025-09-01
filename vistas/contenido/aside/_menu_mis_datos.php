@@ -1,9 +1,9 @@
 <?php if (
     Auth::hasPermission('usuarios', 'vistaPerfilUsuario') ||
-    Auth::hasPermission('art', 'verCredencialArt') ||
-    Auth::hasPermission('datos_personales', 'verMisDatos') ||
+    Auth::hasPermission('art', 'vistaCredencialArt') ||
     Auth::hasPermission('salud', 'vistaMiSalud') ||
-    Auth::hasPermission('uniformes', 'verMiUniforme')
+    Auth::hasPermission('uniformes', 'vistaMiUniforme')
+    // Nota: 'datos_personales' aún no existe en permisos. Agregar cuando lo definas.
 ): ?>
     <li class="nav-item has-treeview">
         <a href="#" class="nav-link">
@@ -22,7 +22,8 @@
                 </li>
             <?php endif; ?>
 
-            <?php if (Auth::hasPermission('datos_personales', 'verMisDatos')): ?>
+            <?php /* Espera a crear permisos 'datos_personales' en la BD
+            <?php if (Auth::hasPermission('datos_personales', 'vistaMisDatosPersonales')): ?>
                 <li class="nav-item">
                     <a href="?r=mis_datos_personales&id=<?= $id ?>" class="nav-link">
                         <i class="far fa-circle nav-icon"></i>
@@ -30,6 +31,7 @@
                     </a>
                 </li>
             <?php endif; ?>
+            */ ?>
 
             <?php if (Auth::hasPermission('salud', 'vistaMiSalud')): ?>
                 <li class="nav-item">
@@ -40,7 +42,7 @@
                 </li>
             <?php endif; ?>
 
-            <?php if (Auth::hasPermission('uniformes', 'verMiUniforme')): ?>
+            <?php if (Auth::hasPermission('uniformes', 'vistaMiUniforme')): ?>
                 <li class="nav-item">
                     <a href="?r=mi_uniforme&id=<?= $id ?>" class="nav-link">
                         <i class="far fa-circle nav-icon"></i>
@@ -49,7 +51,7 @@
                 </li>
             <?php endif; ?>
 
-            <?php if (Auth::hasPermission('art', 'verCredencialArt')): ?>
+            <?php if (Auth::hasPermission('art', 'vistaCredencialArt')): ?>
                 <li class="nav-item">
                     <a href="?r=credencial_art&id=<?= $id ?>" class="nav-link">
                         <i class="far fa-circle nav-icon"></i>

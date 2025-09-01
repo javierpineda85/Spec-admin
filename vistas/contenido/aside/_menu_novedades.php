@@ -1,7 +1,9 @@
 <?php if (
     Auth::hasPermission('novedades', 'vistaCrearNovedades') ||
     Auth::hasPermission('novedades', 'vistaListadoNovedades') ||
-    Auth::hasPermission('novedades', 'vistaListadoEntradaSalida')
+    Auth::hasPermission('novedades', 'vistaListadoEntradaSalida') ||
+    Auth::hasPermission('novedades', 'vistaEntradaSalida') ||
+    Auth::hasPermission('novedades', 'vistaHistorialMarcaciones')
 ): ?>
     <li class="nav-item has-treeview">
         <a href="#" class="nav-link">

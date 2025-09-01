@@ -1,15 +1,15 @@
-<?php if (Auth::hasPermission('mensajes', 'crtMostrarMensajes') || Auth::hasPermission('mensajes', 'crtGuardarMensaje')): ?>
+<?php if (Auth::hasPermission('mensajes', 'crtMostrarMensajesEnviados') || Auth::hasPermission('mensajes', 'crtGuardarMensaje')): ?>
     <li class="nav-item has-treeview">
         <a href="#" class="nav-link">
             <i class="nav-icon far fa-envelope text-info"></i>
             <p>Mensajes <i class="fas fa-angle-left right"></i></p>
         </a>
         <ul class="nav nav-treeview">
-            <?php if (Auth::hasPermission('mensajes', 'crtMostrarMensajes')): ?>
+            <?php if (Auth::hasPermission('mensajes', 'crtMostrarMensajesEnviados')): ?>
                 <li class="nav-item">
-                    <a href="?r=bandeja-entrada" class="nav-link">
+                    <a href="?r=mensajes-enviados" class="nav-link">
                         <i class="far fa-circle nav-icon"></i>
-                        <p>Bandeja de entrada</p>
+                        <p>Mensajes enviados</p>
                     </a>
                 </li>
             <?php endif; ?>

@@ -1,4 +1,4 @@
-<?php if (Auth::hasPermission('noticias', 'verCumples')): ?>
+<?php if (Auth::hasPermission('noticias', 'vistaCumple')): ?>
     <li class="nav-item has-treeview">
         <a href="#" class="nav-link">
             <i class="nav-icon fas fa-bullhorn text-info"></i>

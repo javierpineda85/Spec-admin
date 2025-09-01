@@ -1,5 +1,5 @@
 <?php if (
-    Auth::hasPermission('objetivos', 'vistaCreaObjetivo') ||
+    Auth::hasPermission('objetivos', 'vistaCrearObjetivo') ||
     Auth::hasPermission('objetivos', 'vistaListadoObjetivos') ||
     Auth::hasPermission('objetivos', 'vistaListadoObjetivosInactivos') ||
     Auth::hasPermission('objetivos', 'vistaEditarObjetivo')
