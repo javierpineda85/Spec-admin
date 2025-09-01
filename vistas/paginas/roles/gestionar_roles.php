@@ -96,29 +96,38 @@ $esReservado  = ((int)($rol['reservado'] ?? 0) === 1) || (mb_strtolower($selecte
                             <tbody>
                                 <?php foreach ($permissions as $p): ?>
                                     <?php
-                                    $id   = (int)($p['id'] ?? 0);
-                                    $ctrl = $p['controlador'] ?? '';
-                                    $acc  = $p['accion'] ?? '';
-                                    // Mostramos descripcion si existe; si no, alias; si no, vacío
-                                    $desc = $p['descripcion'] ?? ($p['alias'] ?? '');
-                                    $checked = in_array($id, $assignedIds, true) ? 'checked' : '';
+                                    // ID, controlador y acción
+                                    $id   = (int) ($p['id'] ?? 0);
+                                    $ctrl = htmlspecialchars($p['controlador']  ?? '', ENT_QUOTES, 'UTF-8');
+                                    $acc  = htmlspecialchars($p['accion']        ?? '', ENT_QUOTES, 'UTF-8');
+
+                                    // Alias amigable: usamos alias si existe, si no descripción, si no cadena vacía
+                                    $rawAlias   = trim((string) ($p['alias'] ?? ''));
+                                    $fallback   = $p['descripcion'] ?? '';
+                                    $textoDesc  = $rawAlias !== '' ? $rawAlias : $fallback;
+                                    $desc       = htmlspecialchars($textoDesc, ENT_QUOTES, 'UTF-8');
+
+                                    // Estado del checkbox
+                                    $checked  = in_array($id, $assignedIds, true) ? 'checked'  : '';
+                                    $disabled = $esReservado                     ? 'disabled' : '';
                                     ?>
                                     <tr>
-                                        <td><?= htmlspecialchars($ctrl, ENT_QUOTES, 'UTF-8'); ?></td>
-                                        <td><?= htmlspecialchars($acc, ENT_QUOTES, 'UTF-8'); ?></td>
-                                        <td><?= htmlspecialchars($desc, ENT_QUOTES, 'UTF-8'); ?></td>
-                                        <td style="text-align:center;">
+                                        <td><?= $ctrl; ?></td>
+                                        <td><?= $acc;  ?></td>
+                                        <td><?= $desc; ?></td>
+                                        <td class="text-center">
                                             <input
                                                 type="checkbox"
                                                 name="permission_ids[]"
                                                 value="<?= $id; ?>"
                                                 <?= $checked; ?>
-                                                <?= $esReservado ? 'disabled' : ''; ?>>
+                                                <?= $disabled; ?>>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
+
 
                         <button type="submit" class="btn btn-primary" <?= $esReservado ? 'disabled' : ''; ?>>
                             Guardar cambios

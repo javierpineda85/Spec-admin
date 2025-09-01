@@ -167,9 +167,13 @@ class RolesController
 
         // 4) Cargar permisos
         $permisos = $db->consultas(
-            "SELECT id, controlador, accion, descripcion
-         FROM permissions
-         ORDER BY controlador, accion"
+            "SELECT id, 
+                    controlador, 
+                    accion, 
+                    COALESCE(alias, descripcion) AS alias, 
+                    descripcion
+                    FROM permissions
+                    ORDER BY controlador, accion"
         );
 
         // 5) Permisos asignados al rol (usando role_id)
@@ -191,7 +195,6 @@ class RolesController
     public static function ctrGuardarPermisosRol()
     {
         Auth::check('roles', 'ctrGuardarPermisosRol');
-
         try {
             $nombreRol = $_POST['rol'] ?? '';
             $permissionIds = array_map('intval', $_POST['permission_ids'] ?? []);
@@ -231,5 +234,7 @@ class RolesController
             header('Location: ?r=roles/listado');
             exit;
         }
+        unset($_SESSION['permisos_usuario']);
+        Auth::reloadPermisosUsuario();
     }
 }

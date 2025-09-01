@@ -83,22 +83,39 @@ class ModeloRoles
 
     public static function asignarPermisos(string $nombreRol, array $permissionIds)
     {
-        // Solo Programador puede tocar Programador
-        if (mb_strtolower($nombreRol) === 'programador' && !Auth::isSuperRole($_SESSION['rol'] ?? null)) {
+        // 1) Obtener el row del rol (ID, nombre, etc.)
+        $rol = self::obtenerPorNombre($nombreRol);
+        if (!$rol) {
+            throw new Exception("Rol “{$nombreRol}” no encontrado.");
+        }
+        $idRol = (int)$rol['id'];
+
+        // 2) Validación especial Programador (opcional)
+        if (
+            strtolower($nombreRol) === 'programador'
+            && !Auth::isSuperRole($_SESSION['rol'] ?? null)
+        ) {
             throw new Exception('No autorizado para modificar permisos del rol Programador.');
         }
 
-        $db = new Conexion;
-        // Limpiar asignaciones actuales
-        $db->consultas("DELETE FROM role_permissions WHERE role = ?", [$nombreRol]);
+        $db = new Conexion();
 
-        // Insert masivo
-        if (!empty($permissionIds)) {
-            foreach ($permissionIds as $pid) {
-                $db->consultas("INSERT INTO role_permissions (role, permission_id) VALUES (?, ?)", [$nombreRol, (int)$pid]);
-            }
+        // 3) Borrar asignaciones antiguas vía role_id
+        $db->consultas(
+            "DELETE FROM role_permissions WHERE role_id = ?",
+            [$idRol]
+        );
+
+        // 4) Insertar las nuevas también via role_id
+        foreach ($permissionIds as $pid) {
+            $pid = (int)$pid;
+            $db->consultas(
+                "INSERT INTO role_permissions (role_id, permission_id) VALUES (?, ?)",
+                [$idRol, $pid]
+            );
         }
-        // Invalida cache de permisos en sesión del usuario actual (solo si aplica)
+
+        // 5) Invalidate cache en sesión
         unset($_SESSION['permisos_usuario']);
     }
 }

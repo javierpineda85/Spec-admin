@@ -12,9 +12,13 @@ class PermisosController
 
         // 1) Listar permisos (con alias/descripcion si existen)
         $permissions = $db->consultas(
-            "SELECT id, controlador, accion, alias, descripcion
-               FROM permissions
-           ORDER BY controlador, accion"
+            "SELECT id,
+                    controlador,
+                    accion,
+                    COALESCE(alias, descripcion) AS alias,
+                    descripcion
+                FROM permissions
+                ORDER BY controlador, accion"
         );
 
         // 2) Listar roles desde la tabla 'roles' (fallback a usuarios si aún no migraste)

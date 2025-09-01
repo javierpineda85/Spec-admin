@@ -30,7 +30,7 @@ class LoginController
 
             $modeloUsuarios = new ModeloUsuarios();
             $esAutenticado  = $modeloUsuarios->authenticate($dni, $password);
-   
+
             if ($esAutenticado) {
                 $user = $esAutenticado[0];
 
@@ -54,7 +54,7 @@ class LoginController
                 $_SESSION['reservado']  = $user['reservado'];
 
                 unset($_SESSION['permisos_usuario']);
-
+                Auth::reloadPermisosUsuario();
                 // Si es vigilador o referente, cargar asignación del día
                 if (in_array($_SESSION['categoria'], ['operativo', 'referente'])) {
                     $asig = $modeloUsuarios->getAsignacionHoy($_SESSION['idUsuario']);
@@ -94,10 +94,8 @@ class LoginController
                 $_SESSION['success_message'] = "DNI o contraseña incorrectos.";
                 header('Location: index.php?r=login');
             }
-
         } else {
             //$_SESSION['success_message'] = "Por favor, ingresa tu DNI y contraseña.";
         }
     }
-    
 }
