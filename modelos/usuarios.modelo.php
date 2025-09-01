@@ -15,20 +15,21 @@ class ModeloUsuarios
     }
 
     // Método para obtener datos de usuario por DNI (con JOIN a roles)
-    private function getUsuarioPorDni($dni)
+    public function getUsuarioPorDni($dni)
     {
         $db = new Conexion;
         $sql = "SELECT 
-                    u.idUsuario, 
-                    u.nombre, 
-                    u.apellido, 
-                    u.pass, 
-                    u.imgPerfil, 
-                    u.rol_id, 
-                    r.nombre AS nombreRol, 
-                    r.nivel, 
-                    r.categoria, 
-                    r.reservado
+                   u.idUsuario,
+                   u.nombre,
+                   u.apellido,
+                   u.pass,
+                   u.imgPerfil,
+                   u.rol_id,
+                   u.resetPass,                     
+                   r.nombre   AS nombreRol,
+                   r.nivel,
+                   r.categoria,
+                   r.reservado
                 FROM usuarios u
                 JOIN roles r ON u.rol_id = r.id
                 WHERE u.dni = :dni
@@ -155,6 +156,18 @@ class ModeloUsuarios
         $sql = "UPDATE $tabla SET activo = 1 WHERE idUsuario = :id";
         $stmt = Conexion::conectar()->prepare($sql);
         $stmt->bindParam(':id', $idUsuario, PDO::PARAM_INT);
+        return $stmt->execute() ? 'ok' : 'error';
+    }
+
+    // nuevo método para cambiar pass y resetear flag
+    static public function mdlActualizarPassReset(int $idUsuario, string $hashPassword)
+    {
+        $sql = "UPDATE usuarios
+            SET pass = :pass, resetPass = 1
+            WHERE idUsuario = :idUsuario";
+        $stmt = Conexion::conectar()->prepare($sql);
+        $stmt->bindParam(':pass', $hashPassword, PDO::PARAM_STR);
+        $stmt->bindParam(':idUsuario', $idUsuario, PDO::PARAM_INT);
         return $stmt->execute() ? 'ok' : 'error';
     }
 }

@@ -18,6 +18,23 @@ class RutasController
 
         ini_set('display_errors', 1);
         error_reporting(E_ALL);
+        if (isset($_GET['r']) && $_GET['r'] === 'reset-password') {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                ResetPasswordController::crtResetPassword();
+            } else {
+                ResetPasswordController::vistaResetPassword();
+            }
+            return;
+        }
+        // ===== LOGIN (GET = form, POST = procesar) =====
+        if (isset($_GET['r']) && $_GET['r'] === 'login') {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                LoginController::procesarLogin();
+            } else {
+                LoginController::mostrarLogin();
+            }
+            return;
+        }
 
         //Notificaciones y alertas
         if (isset($_GET['r']) && $_GET['r'] === 'registrar_alerta_hombrevivo' && $_SERVER['REQUEST_METHOD'] === 'POST') {

@@ -293,7 +293,7 @@ $u = $usuario ?: [];
                         </div>
                     </div>
 
-                    <?php if (isset($_SESSION['rol']) && $_SESSION['rol'] === 'Gerencia'): ?>
+                    <?php if (isset($_SESSION['nivel']) && in_array((int)$_SESSION['nivel'], [5, 99], true)):?>
                         <div class="form-group col-sm-12 col-md-12 p-3 border border-secondary">
                             <label class="form-label">Estado y seguridad</label>
 
