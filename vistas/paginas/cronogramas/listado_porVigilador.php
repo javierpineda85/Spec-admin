@@ -23,7 +23,7 @@ $feriados   = $_SESSION['feriados_rango'] ?? [];
   <div class="container-fluid">
     <div class="card">
       <div class="card-header bg-info text-white">
-        <h3 class="card-title">urnos asignados</h3>
+        <h3 class="card-title">Turnos asignados</h3>
         
       </div>
 

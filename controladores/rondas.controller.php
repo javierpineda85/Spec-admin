@@ -47,7 +47,7 @@ class RondasController
     // Funciones de instancia
     public function eliminarImagenesQR()
     {
-        Auth::check('rondas', 'eliminarImagenesQR');
+        //Auth::check('rondas', 'eliminarImagenesQR');
         $directorio = __DIR__ . '/../../img/qrcodes';  // Ruta de la carpeta 'img/qrcodes'
         $archivos = glob($directorio . '/*.png');  // Obtener todos los archivos PNG
 
@@ -60,7 +60,7 @@ class RondasController
 
     public function eliminarErroresQR()
     {
-        Auth::check('rondas', 'eliminarErroresQR');
+        //Auth::check('rondas', 'eliminarErroresQR');
         $directorio = __DIR__ . '/../../libraries/phpqrcode';  // Ruta de la carpeta 'phpqrcode'
         $archivos = glob($directorio . '/*.log');  // Obtener todos los archivos de errores (si existen)
 
@@ -73,7 +73,7 @@ class RondasController
 
     public function limpiarSesionQR()
     {
-        Auth::check('rondas', 'limpiarSesionQR');
+        //Auth::check('rondas', 'limpiarSesionQR');
         if (isset($_SESSION['qr_codes'])) {
             unset($_SESSION['qr_codes']);  // Eliminar la variable de sesión 'qr_codes'
         }

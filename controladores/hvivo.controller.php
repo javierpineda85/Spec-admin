@@ -7,26 +7,42 @@ class HombreVivoController
     public static function registrar()
     {
         Auth::check('hvivo', 'registrar');
+
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
 
         header('Content-Type: application/json; charset=utf-8');
 
-        $rondaId   = intval($_GET['ronda_id']   ?? 0);
-        $usuarioId = intval($_GET['id_usuario'] ?? 0);
-        $demora    = $_GET['demora'] ?? null; // '00:02:15'
+        // Tomamos primero de la sesión (más seguro); si no, aceptamos request (GET/POST) para no romper el front actual.
+        $usuarioId  = intval($_SESSION['idUsuario']   ?? ($_POST['id_usuario']  ?? $_GET['id_usuario']  ?? 0));
+        $objetivoId = intval($_SESSION['objetivo_id'] ?? ($_POST['objetivo_id'] ?? $_GET['objetivo_id'] ?? 0));
+        $demora     = $_POST['demora'] ?? $_GET['demora'] ?? null; // esperado: 'HH:MM:SS'
 
-        if (!$rondaId || !$usuarioId || !$demora) {
+        // Validaciones mínimas
+        if ($usuarioId <= 0 || $objetivoId <= 0 || !$demora) {
             echo json_encode(['success' => false, 'error' => 'Parámetros inválidos']);
             exit;
         }
 
+        // Normalización/validación del TIME: permitir 1–3 dígitos de horas (MySQL TIME admite hasta 838:59:59)
+        $demora = trim((string)$demora);
+        if (!preg_match('/^\d{1,3}:\d{2}:\d{2}$/', $demora)) {
+            echo json_encode(['success' => false, 'error' => 'Formato de demora inválido. Use HH:MM:SS']);
+            exit;
+        }
+        // Pad de horas a dos dígitos (sin romper horas de 3 dígitos)
+        [$h, $m, $s] = array_map('intval', explode(':', $demora));
+        $demora = sprintf('%02d:%02d:%02d', $h, $m, $s);
+
+        // Armado de datos según la tabla `reporte_hombre_vivo`
         $datos = [
-            'id_usuario' => $usuarioId,
-            'ronda_id'   => $rondaId,
-            'demora'     => $demora
+            'id_usuario'  => $usuarioId,
+            'objetivo_id' => $objetivoId,
+            'demora'      => $demora
+            // fecha_hora queda por DEFAULT CURRENT_TIMESTAMP
         ];
+
         $res = ModeloReporteHombreVivo::mdlGuardarReporte('reporte_hombre_vivo', $datos);
 
         if ($res === 'ok') {

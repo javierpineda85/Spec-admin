@@ -1,6 +1,6 @@
 <?php
 
-$mensajes = ControladorMensajes::crtMostrarMensajes('destinatario_id', $_SESSION['idUsuario']);
+$mensajes = ControladorMensajes::crtMostrarMensajesEnviados('destinatario_id', $_SESSION['idUsuario']);
 $mensajesNoLeidos = array_filter($mensajes, fn($m) => $m['leido'] == 0);
 $cantidadNoLeidos = count($mensajesNoLeidos);
 

@@ -40,11 +40,13 @@ $rows = $_SESSION['reporte_vigilador'] ?? [];
               <th>Vigilador</th>
               <th class="text-center">Horas Diurnas</th>
               <th class="text-center">Horas Nocturnas</th>
-              <th class="text-center">Guardias Pasivas</th>
+              <th class="text-center">Guardias Diurnas</th>
+              <th class="text-center">Guardias Nocturnas</th>
               <th class="text-center">Francos</th>
               <th class="text-center">Total Jornadas</th>
             </tr>
           </thead>
+
           <tbody>
             <?php if (count($rows)): ?>
               <?php foreach ($rows as $r): ?>
@@ -52,14 +54,15 @@ $rows = $_SESSION['reporte_vigilador'] ?? [];
                   <td><?= htmlspecialchars($r['vigilador']) ?></td>
                   <td class="text-center"><?= number_format($r['diurnas'], 2) ?></td>
                   <td class="text-center"><?= number_format($r['nocturnas'], 2) ?></td>
-                  <td class="text-center"><?= number_format($r['guardias_pasivas'], 2) ?></td>
+                  <td class="text-center"><?= $r['guardias_diurnas'] ?></td>
+                  <td class="text-center"><?= $r['guardias_nocturnas'] ?></td>
                   <td class="text-center"><?= $r['francos'] ?></td>
                   <td class="text-center"><?= $r['jornadas'] ?></td>
                 </tr>
               <?php endforeach; ?>
             <?php else: ?>
               <tr>
-                <td colspan="6" class="text-center text-muted">
+                <td colspan="7" class="text-center text-muted">
                   No hay datos en ese período
                 </td>
               </tr>
@@ -70,14 +73,16 @@ $rows = $_SESSION['reporte_vigilador'] ?? [];
             $totD = array_sum(array_column($rows, 'diurnas'));
             $totN = array_sum(array_column($rows, 'nocturnas'));
             $totJ = array_sum(array_column($rows, 'jornadas'));
-            $totGP = array_sum(array_column($rows, 'guardias_pasivas'));
+            $totGPD = array_sum(array_column($rows, 'guardias_diurnas'));
+            $totGPN = array_sum(array_column($rows, 'guardias_nocturnas'));
             $totF = array_sum(array_column($rows, 'francos'));
             ?>
             <tr>
               <td><strong>Totales:</strong></td>
               <td class="text-center"><?= number_format($totD, 2) ?></td>
               <td class="text-center"><?= number_format($totN, 2) ?></td>
-              <td class="text-center"><?= number_format($totGP, 2) ?></td>
+              <td class="text-center"><?= number_format($totGPD, 2) ?></td>
+              <td class="text-center"><?= number_format($totGPN, 2) ?></td>
               <td class="text-center"><?= $totF ?></td>
               <td class="text-center"><?= $totJ ?></td>
             </tr>

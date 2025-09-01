@@ -1,4 +1,4 @@
 <div class="float-right d-none d-sm-block">
-  <b>Version</b> 2.1.0
+  <b>Version</b> 2.3.0825
 </div>
 <strong>Copyright &copy; 2025. Desarrollado por <a href="https://thebigtable.com.ar" target="_blank"> The Big Table</a></strong>

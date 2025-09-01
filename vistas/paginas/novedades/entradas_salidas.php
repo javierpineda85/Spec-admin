@@ -14,7 +14,7 @@ $sqlBase      = "SELECT idObjetivo, nombre
                   WHERE nombre = 'Base'
                   LIMIT 1";
 $resBase      = $db->consultas($sqlBase);
-$baseObjetivo = $resBase[0] ?? ['idObjetivo' => null, 'nombre' => 'Sin base definida'];
+$baseObjetivo = $resBase[0] ?? ['idObjetivo' => null, 'nombre' => 'Sin objetivo definido'];
 
 // Solo para Vigilador/Referente cargamos su turno
 $turnoHoy     = null;
@@ -26,7 +26,7 @@ if (in_array($rol_usuario, ['Vigilador', 'Referente'])) {
     $sqlHoy     = "SELECT o.idObjetivo, o.nombre
                      FROM turnos t
                      JOIN objetivos o ON t.objetivo_id = o.idObjetivo
-                    WHERE t.vigilador_id = ? AND t.fecha = ?
+                    WHERE t.usuario_id = ? AND t.fecha = ?
                     LIMIT 1";
     $tmpHoy     = $db->consultas($sqlHoy, [$vigilador_id, $hoy]);
     $turnoHoy   = $tmpHoy[0] ?? null;
@@ -34,7 +34,7 @@ if (in_array($rol_usuario, ['Vigilador', 'Referente'])) {
     $sqlAyer    = "SELECT o.idObjetivo, o.nombre
                      FROM turnos t
                      JOIN objetivos o ON t.objetivo_id = o.idObjetivo
-                    WHERE t.vigilador_id = ? AND t.fecha = ? AND t.turno='Nocturno'
+                    WHERE t.usuario_id = ? AND t.fecha = ? AND t.codigo_turno='N'
                     LIMIT 1";
     $tmpAyer    = $db->consultas($sqlAyer, [$vigilador_id, $ayer]);
     $turnoAyer  = $tmpAyer[0] ?? null;

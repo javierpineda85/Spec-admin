@@ -1,17 +1,18 @@
 <?php
-// Obtener siempre los destinatarios válidos
-$usuarios = ControladorMensajes::obtenerDestinatariosDisponibles($_SESSION['idUsuario']);
-$mensaje = [];
+// Obtener destinatarios válidos según reglas y contexto
+$idMensajeOriginal = (isset($_GET['t']) && $_GET['t'] === 'reply') ? ($_GET['idMsj'] ?? null) : null;
+$usuarios = ControladorMensajes::obtenerDestinatariosDisponibles($_SESSION['idUsuario'], $idMensajeOriginal);
 
+$mensaje = [];
 if (isset($_GET['t']) && in_array($_GET['t'], ['reply', 'share'])) {
     $mensaje = ControladorMensajes::crtMostrarUnMensaje($_GET['idMsj']);
 }
+
 $recibidos = ControladorMensajes::crtMostrarMensajes('destinatario_id', $_SESSION['idUsuario']);
 $mensajesNoLeidos = array_filter($recibidos, fn($m) => $m['leido'] == 0);
 $cantidadNoLeidos = count($mensajesNoLeidos);
 ?>
 
-<!-- Main content -->
 <section class="content">
     <div class="card">
         <div class="card-header bg-info">
@@ -45,7 +46,7 @@ $cantidadNoLeidos = count($mensajesNoLeidos);
                                         <a href="index.php?r=bandeja-entrada" class="nav-link">
                                             <i class="fas fa-inbox"></i> Bandeja de entrada
                                             <?php if ($cantidadNoLeidos > 0): ?>
-                                                <span class="badge bg-danger float-right"><?php echo $cantidadNoLeidos; ?></span>
+                                                <span class="badge bg-danger float-right"><?= $cantidadNoLeidos; ?></span>
                                             <?php endif; ?>
                                         </a>
                                     </li>
@@ -78,77 +79,75 @@ $cantidadNoLeidos = count($mensajesNoLeidos);
                             </div>
 
                             <div class="card-body">
-                                <form action="" method="post">
-                                    <input type="hidden" name="id_remitente" value="<?php echo $_SESSION['idUsuario']; ?>">
+                                <?php if (empty($usuarios)): ?>
+                                    <div class="alert alert-warning">
+                                        No tienes destinatarios disponibles para este tipo de mensaje o contexto.
+                                    </div>
+                                <?php else: ?>
+                                    <form action="" method="post">
+                                        <input type="hidden" name="id_remitente" value="<?= $_SESSION['idUsuario']; ?>">
 
-                                    <?php if ($_GET['t'] == 'reply') : ?>
-                                        <input type="hidden" name="id_destinatario" value="<?php echo $mensaje[0]["remitente_id"]; ?>">
-                                    <?php endif; ?>
+                                        <?php if ($_GET['t'] == 'reply'): ?>
+                                            <input type="hidden" name="id_destinatario" value="<?= $mensaje[0]["remitente_id"]; ?>">
+                                            <input type="hidden" name="idMensajeOriginal" value="<?= $_GET['idMsj']; ?>">
+                                        <?php endif; ?>
 
-                                    <div class="form-group">
-                                        <select class="form-control select2" name="id_destinatario" <?php echo ($_GET['t'] == 'reply') ? 'disabled' : ''; ?>>
-                                            <option value="" disabled selected>Para:</option>
-                                            <?php if ($_GET['t'] == 'reply') : ?>
-                                                <option value="<?php echo $mensaje[0]["remitente_id"]; ?>" selected>
-                                                    <?php echo $mensaje[0]['nombre'] . " " . $mensaje[0]['apellido']; ?>
-                                                </option>
-                                            <?php else : ?>
-                                                <?php foreach ($usuarios as $usuario) : ?>
-                                                    <option value="<?php echo $usuario["idUsuario"]; ?>">
-                                                        <?php echo $usuario['apellido'] . " " . $usuario['nombre'] . " (" . ucfirst($usuario['rol']) . ")"; ?>
+
+                                        <div class="form-group">
+                                            <select class="form-control select2" name="id_destinatario" <?= ($_GET['t'] == 'reply') ? 'disabled' : ''; ?> required>
+                                                <option value="" disabled selected>Para:</option>
+                                                <?php if ($_GET['t'] == 'reply'): ?>
+                                                    <option value="<?= $mensaje[0]["remitente_id"]; ?>" selected>
+                                                        <?= $mensaje[0]['apellido'] . " " . $mensaje[0]['nombre']; ?>
                                                     </option>
-                                                <?php endforeach; ?>
-                                            <?php endif; ?>
-                                        </select>
-                                    </div>
-
-                                    <?php if ($_GET['t'] == 'reply') : ?>
-                                        <div class="alert alert-light small">
-                                            <strong>Mensaje anterior:</strong><br>
-                                            <?php echo nl2br(htmlspecialchars($mensaje[0]['contenido'])); ?><br>
-                                            <em class="text-muted">Enviado el <?php echo $mensaje[0]['fMensaje']; ?> a las <?php echo $mensaje[0]['horaMensaje']; ?></em>
+                                                <?php else: ?>
+                                                    <?php foreach ($usuarios as $usuario): ?>
+                                                        <option value="<?= $usuario["idUsuario"]; ?>">
+                                                            <?= $usuario['apellido'] . " " . $usuario['nombre'] . " (" . ucfirst($usuario['categoria']) . ")"; ?>
+                                                        </option>
+                                                    <?php endforeach; ?>
+                                                <?php endif; ?>
+                                            </select>
                                         </div>
-                                    <?php elseif ($_GET['t'] == 'share') : ?>
-                                        <div class="alert alert-light small">
-                                            <strong>Mensaje compartido:</strong><br>
-                                            <?php echo nl2br(htmlspecialchars($mensaje[0]['contenido'])); ?><br>
-                                            <em class="text-muted">Enviado el <?php echo $mensaje[0]['fMensaje']; ?> a las <?php echo $mensaje[0]['horaMensaje']; ?></em>
-                                        </div>
-                                    <?php endif; ?>
 
-                                    <div class="form-group">
-                                        <textarea id="compose-textarea" class="form-control" style="height: 100px" name="contenidoMensaje" required></textarea>
-                                    </div>
+                                        <?php if ($_GET['t'] == 'reply' || $_GET['t'] == 'share'): ?>
+                                            <div class="alert alert-light small">
+                                                <strong><?= $_GET['t'] == 'reply' ? 'Mensaje anterior:' : 'Mensaje compartido:' ?></strong><br>
+                                                <?= nl2br(htmlspecialchars($mensaje[0]['contenido'])); ?><br>
+                                                <em class="text-muted">Enviado el <?= $mensaje[0]['fMensaje']; ?> a las <?= $mensaje[0]['horaMensaje']; ?></em>
+                                            </div>
+                                        <?php endif; ?>
 
-                                    <div class="card-footer">
-                                        <div class="float-right">
-                                            <?php $registro = ControladorMensajes::crtGuardarMensaje(); ?>
-                                            <button type="submit" class="btn btn-primary">
-                                                <i class="far fa-envelope"></i> Enviar
-                                            </button>
+                                        <div class="form-group">
+                                            <textarea id="compose-textarea" class="form-control" style="height: 100px" name="contenidoMensaje" required></textarea>
                                         </div>
-                                        <button type="reset" class="btn btn-default"><i class="fas fa-times"></i> Descartar</button>
-                                    </div>
-                                </form>
+
+                                        <div class="card-footer">
+                                            <div class="float-right">
+                                                <?php $registro = ControladorMensajes::crtGuardarMensaje(); ?>
+                                                <button type="submit" class="btn btn-primary">
+                                                    <i class="far fa-envelope"></i> Enviar
+                                                </button>
+                                            </div>
+                                            <button type="reset" class="btn btn-default"><i class="fas fa-times"></i> Descartar</button>
+                                        </div>
+                                    </form>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
-                    <!-- /.col -->
                 </div>
-                <!-- /.row -->
             </section>
         </div>
-        <!-- /.card-body -->
     </div>
-    <!-- /.card -->
 </section>
-<!-- /.content -->
- <script>
-  $(document).ready(function() {
-    $('#id_destinatario').select2({
-      theme: 'bootstrap4',
-      placeholder: 'Buscar usuario...',
-      width: '100%'
+
+<script>
+    $(document).ready(function() {
+        $('.select2').select2({
+            theme: 'bootstrap4',
+            placeholder: 'Buscar usuario...',
+            width: '100%'
+        });
     });
-  });
 </script>

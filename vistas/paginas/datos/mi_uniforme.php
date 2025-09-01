@@ -1,5 +1,5 @@
 <?php
-Auth::check('uniformes', 'verMiUniforme');
+//Auth::check('uniformes', 'verMiUniforme');
 
 $idUsuario = $_SESSION['idUsuario'] ?? 0;
 $db = new Conexion;

@@ -13,12 +13,12 @@ class AlertasController
 
         $db = new Conexion;
 
-        $sql = "SELECT o.nombre AS objetivo, CONCAT(u.apellido, ' ', u.nombre) AS usuario
-            FROM rondas r
-            JOIN objetivos o ON r.objetivo_id = o.idObjetivo
-            JOIN usuarios u ON u.idUsuario = :uid
-            WHERE r.idRonda = :rid
-            LIMIT 1";
+        $sql = "SELECT o.idObjetivo, o.nombre AS objetivo, CONCAT(u.apellido, ' ', u.nombre) AS usuario
+                FROM rondas r
+                JOIN objetivos o ON r.objetivo_id = o.idObjetivo
+                JOIN usuarios u ON u.idUsuario = :uid
+                WHERE r.idRonda = :rid
+                LIMIT 1";
 
         $stmt = $db->conectar()->prepare($sql);
         $stmt->bindParam(':uid', $usuarioId, PDO::PARAM_INT);
@@ -30,7 +30,7 @@ class AlertasController
 
         $mensaje = "El usuario {$info['usuario']} no registró el reporte en el objetivo {$info['objetivo']} desde hace {$tiempo} segundos.";
 
-        self::registrarAlertaGeneral('hombre_vivo', $mensaje, $usuarioId, $rondaId);
+        self::registrarAlertaGeneral('hombre_vivo', $mensaje, $usuarioId, $info['idObjetivo']);
     }
 
     public static function registrarAlertaGeneral(string $tipo, string $mensaje, int $usuarioId, int $objetivoId = null)
@@ -38,19 +38,20 @@ class AlertasController
         $db = new Conexion;
 
         // Evitar duplicados abiertos del mismo tipo y usuario
-        $sqlCheck = "SELECT 1 FROM alertas WHERE tipo = :tipo AND usuario_id = :uid AND leida = 0 LIMIT 1";
-        $existe = $db->consultas($sqlCheck, [':tipo' => $tipo, ':uid' => $usuarioId]);
+        $sqlCheck = "SELECT 1 FROM alertas WHERE tipo = ? AND usuario_id = ? AND leida = 0 LIMIT 1";
+        $existe = $db->consultas($sqlCheck, [$tipo, $usuarioId]);
         if ($existe) return;
 
         $sql = "INSERT INTO alertas (tipo, mensaje, usuario_id, objetivo_id)
-            VALUES (:tipo, :mensaje, :uid, :oid)";
-        $stmt = $db->conectar()->prepare($sql);
-        $stmt->execute([
-            ':tipo'    => $tipo,
-            ':mensaje' => $mensaje,
-            ':uid'     => $usuarioId,
-            ':oid'     => $objetivoId
-        ]);
+                VALUES (?, ?, ?, ?)";
+        $db->consultas($sql, [$tipo, $mensaje, $usuarioId, $objetivoId]);
+    }
+
+    public static function contarNoLeidas($usuarioId)
+    {
+        $db = new Conexion();
+        $res = $db->consultas("SELECT COUNT(*) AS total FROM alertas WHERE usuario_id = ? AND leida = 0", [$usuarioId]);
+        return $res[0]['total'] ?? 0;
     }
 
     public static function verAlertasNoLeidas()
@@ -70,9 +71,9 @@ class AlertasController
         try {
             $db = new Conexion();
             $sql = "SELECT * FROM alertas 
-                WHERE usuario_id = ? AND leida = 0 
-                ORDER BY creada_en DESC 
-                LIMIT 10";
+                    WHERE usuario_id = ? AND leida = 0 
+                    ORDER BY creada_en DESC 
+                    LIMIT 10";
 
             $alertas = $db->consultas($sql, [$usuarioId]);
 
@@ -85,8 +86,6 @@ class AlertasController
             exit;
         }
     }
-
-
 
     public static function marcarLeida()
     {
@@ -145,14 +144,14 @@ class AlertasController
         $where = implode(" AND ", $condiciones);
 
         $sql = "SELECT a.*, 
-                   CONCAT(u.apellido, ' ', u.nombre) AS usuario,
-                   o.nombre AS objetivo
-            FROM alertas a
-            LEFT JOIN usuarios u ON a.usuario_id = u.idUsuario
-            LEFT JOIN objetivos o ON a.objetivo_id = o.idObjetivo
-            WHERE $where
-            ORDER BY creada_en DESC
-            LIMIT 100";
+                       CONCAT(u.apellido, ' ', u.nombre) AS usuario,
+                       o.nombre AS objetivo
+                FROM alertas a
+                LEFT JOIN usuarios u ON a.usuario_id = u.idUsuario
+                LEFT JOIN objetivos o ON a.objetivo_id = o.idObjetivo
+                WHERE $where
+                ORDER BY creada_en DESC
+                LIMIT 100";
 
         $stmt = $db->conectar()->prepare($sql);
         foreach ($params as $k => $v) {
@@ -162,5 +161,16 @@ class AlertasController
         $stmt->execute();
         $alertas = $stmt->fetchAll(PDO::FETCH_ASSOC);
         echo json_encode($alertas);
+    }
+    public static function obtenerNoLeidas($usuarioId, $limite = 10)
+    {
+        $db = new Conexion();
+        return $db->consultas(
+            "SELECT * FROM alertas
+         WHERE usuario_id = ? AND leida = 0
+         ORDER BY creada_en DESC
+         LIMIT $limite",
+            [$usuarioId]
+        );
     }
 }

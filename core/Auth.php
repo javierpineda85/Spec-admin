@@ -23,12 +23,17 @@ class Auth
         }
 
         $userRole = $_SESSION['rol'] ?? null;
+
+        // BYPASS: Programador
+        if (self::isSuperRole($userRole)) return;
+
         if (!$userRole || !in_array($userRole, $roles)) {
             http_response_code(403);
             include __DIR__ . '/../vistas/paginas/403.php';
             exit;
         }
     }
+
 
     /**
      * Verifica que el usuario tenga asignada una ronda (solo Vigilador/Referente).
@@ -79,50 +84,96 @@ class Auth
             session_start();
         }
 
-        // Evitar bucles infinitos al validar ciertas rutas
-        $rutaActual = "$controller/$action";
-        $rutasIgnoradas = [
+        // BYPASS Programador
+        if (self::isSuperRole($_SESSION['rol'] ?? null)) {
+            return;
+        }
+
+        // Rutas que ignoramos siempre
+        $rutaActual = "{$controller}/{$action}";
+        $ignorar    = [
             'login/crtMostrarLogin',
             'login/crtProcesarLogin',
             'login/crtLogout',
             'acceso_denegado/crtAccesoDenegado'
         ];
-        if (in_array($rutaActual, $rutasIgnoradas)) {
+        if (in_array($rutaActual, $ignorar, true)) {
             return;
         }
 
-        CheckPermissionMiddleware::handle($controller, $action);
+        // Aquí reemplazamos el middleware por hasPermission directo
+        if (!self::hasPermission($controller, $action)) {
+            header('Location: ?r=acceso_denegado/crtAccesoDenegado');
+            exit;
+        }
     }
+
     public static function hasPermission(string $controller, string $action): bool
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {
             session_start();
         }
 
-        // Si aún no hemos precargado los permisos en sesión, los cargamos ahora
-        if (!isset($_SESSION['permisos_usuario'])) {
-            $rol = $_SESSION['rol'] ?? '';
-            if (!$rol) {
-                // Sin rol, sin permisos
-                $_SESSION['permisos_usuario'] = [];
-            } else {
-                $db = new Conexion();
-                $res = $db->consultas(
-                    "SELECT p.controlador, p.accion
-                   FROM role_permissions rp
-                   JOIN permissions p ON rp.permission_id = p.id
-                  WHERE rp.role = ?",
-                    [$rol]
-                );
-                // Formateamos como “controlador/accion”
-                $_SESSION['permisos_usuario'] = array_map(
-                    fn($r) => "{$r['controlador']}/{$r['accion']}",
-                    $res
-                );
-            }
+        // 1) Programador siempre pasa
+        if (self::isSuperRole($_SESSION['rol'] ?? null)) {
+            return true;
         }
 
-        // Y comprobamos si existe en el array precargado
-        return in_array("$controller/$action", $_SESSION['permisos_usuario'], true);
+        // 2) Si no hay permisos en sesión, recárgalos
+        if (!isset($_SESSION['permisos_usuario'])) {
+            self::reloadPermisosUsuario();
+        }
+
+        // 3) Verifica existencia exacta de “controlador/accion”
+        $ruta = "{$controller}/{$action}";
+        return in_array($ruta, $_SESSION['permisos_usuario'], true);
+    }
+
+    // Logica para saltear el rol programador
+
+    public static function isSuperRole(?string $rol)
+    {
+        return in_array($rol, ['Programador'], true);
+    }
+
+    public static function reloadPermisosUsuario(): void
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+
+        unset($_SESSION['permisos_usuario']);
+
+        // 1) Necesitas el ID de rol, no el nombre
+        $rolNombre = $_SESSION['rol'] ?? '';
+        $db        = new Conexion();
+
+        // 2) Busca primero el ID del rol
+        $resRol = $db->consultas(
+            "SELECT id FROM roles WHERE nombre = ?",
+            [$rolNombre]
+        );
+        $idRol = $resRol[0]['id'] ?? null;
+
+        // 3) Si no hay rol o no existe, vacío
+        if (!$idRol) {
+            $_SESSION['permisos_usuario'] = [];
+            return;
+        }
+
+        // 4) Trae todos los permisos vinculados con ese role_id
+        $permisos = $db->consultas(
+            "SELECT p.controlador, p.accion
+               FROM role_permissions rp
+               JOIN permissions p ON rp.permission_id = p.id
+              WHERE rp.role_id = ?",
+            [$idRol]
+        );
+
+        // 5) Mapea a “controlador/accion”
+        $_SESSION['permisos_usuario'] = array_map(
+            fn($r) => "{$r['controlador']}/{$r['accion']}",
+            $permisos
+        );
     }
 }

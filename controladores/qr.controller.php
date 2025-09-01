@@ -12,7 +12,7 @@ class QrController
 {
     public static function generar()
     {
-        Auth::check('qr', 'generar');
+        //Auth::check('qr', 'generar');
         // 1) Validar datos
         $puesto       = trim($_POST['puesto']        ?? '');
         $objetivoId   = intval($_POST['objetivo_id'] ?? 0);
@@ -69,7 +69,7 @@ class QrController
 
     public static function mostrar()
     {
-        Auth::check('qr', 'generar');
+        //Auth::check('qr', 'generar');
         // 1️⃣ Asegura buffer limpio
         while (ob_get_level()) {
             ob_end_clean();
@@ -106,7 +106,7 @@ class QrController
 
     public static function delete()
     {
-        Auth::check('qr', 'delete');
+        //Auth::check('qr', 'delete');
         //session_start();
         // 1️ Limpia cualquier buffer accidental
         while (ob_get_level()) {

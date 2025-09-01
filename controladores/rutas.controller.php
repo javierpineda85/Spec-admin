@@ -18,6 +18,23 @@ class RutasController
 
         ini_set('display_errors', 1);
         error_reporting(E_ALL);
+        if (isset($_GET['r']) && $_GET['r'] === 'reset-password') {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                ResetPasswordController::crtResetPassword();
+            } else {
+                ResetPasswordController::vistaResetPassword();
+            }
+            return;
+        }
+        // ===== LOGIN (GET = form, POST = procesar) =====
+        if (isset($_GET['r']) && $_GET['r'] === 'login') {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                LoginController::procesarLogin();
+            } else {
+                LoginController::mostrarLogin();
+            }
+            return;
+        }
 
         //Notificaciones y alertas
         if (isset($_GET['r']) && $_GET['r'] === 'registrar_alerta_hombrevivo' && $_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -65,7 +82,7 @@ class RutasController
             EscaneosController::feedback();
             return;
         }
-        // Gestión de permisos
+        //============== Gestión de permisos (permisos controller y roles controller)=============
         if (isset($_GET['r']) && ($_GET['r'] === 'permisos' || $_GET['r'] === 'permisos/index')) {
             PermisosController::index();
             return;
@@ -74,6 +91,76 @@ class RutasController
             PermisosController::update();
             return;
         }
+
+        // ===== Roles: listado =====
+        if (isset($_GET['r']) && $_GET['r'] === 'roles/listado') {
+            RolesController::vistaListadoRoles();
+            return;
+        }
+
+        // ===== Roles: crear =====
+        if (isset($_GET['r']) && $_GET['r'] === 'roles/crear') {
+            RolesController::vistaCrearRol();
+            return;
+        }
+
+        if (isset($_GET['r']) && $_GET['r'] === 'roles/ctrGuardarRol') {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                RolesController::ctrGuardarRol();
+            } else {
+                header('Location: ?r=roles/listado');
+                exit;
+            }
+            return;
+        }
+
+        // ===== Roles: editar =====
+        if (isset($_GET['r']) && $_GET['r'] === 'roles/editar') {
+            RolesController::vistaEditarRol();
+            return;
+        }
+
+        if (isset($_GET['r']) && $_GET['r'] === 'roles/ctrActualizarRol') {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                RolesController::ctrActualizarRol();
+            } else {
+                header('Location: ?r=roles/listado');
+                exit;
+            }
+            return;
+        }
+
+        if (isset($_GET['r']) && $_GET['r'] === 'roles/ctrDesactivarRol') {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                RolesController::ctrDesactivarRol();
+            } else {
+                header('Location: ?r=roles/listado');
+                exit;
+            }
+            return;
+        }
+
+        // ===== Roles: permisos (gestión de permisos por rol) =====
+        if (isset($_GET['r']) && $_GET['r'] === 'roles/permisos') {
+            // acepta ?rol=... (nuevo). Si viniera ?role=... desde lo viejo, lo normalizamos:
+            if (!isset($_GET['rol']) && isset($_GET['role'])) {
+                header('Location: ?r=roles/permisos&rol=' . urlencode($_GET['role']));
+                exit;
+            }
+            RolesController::vistaPermisosRol();
+            return;
+        }
+
+        if (isset($_GET['r']) && $_GET['r'] === 'roles/ctrGuardarPermisosRol') {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                RolesController::ctrGuardarPermisosRol();
+            } else {
+                header('Location: ?r=roles/listado');
+                exit;
+            }
+            return;
+        }
+
         // Mostrar QR dinámico
         if (isset($_GET['r']) && $_GET['r'] === 'mostrar_qr') {
             QrController::mostrar();
@@ -177,7 +264,7 @@ class RutasController
         if (isset($_GET['r']) && $_GET['r'] === 'buscar_resumen_horas_por_vigilador') {
             $desde = $_POST['desde'] ?? null;
             $hasta = $_POST['hasta'] ?? null;
-            ControladorCronograma::crtBuscarResumenHorasPorVigilador($desde,$hasta);
+            ControladorCronograma::crtBuscarResumenHorasPorVigilador($desde, $hasta);
             return;
         }
 
@@ -230,6 +317,14 @@ class RutasController
             NovedadesController::vistaEntradaSalida();
             return;
         }
+
+        // Vista Historial por vigilador de ingreso / salida en el mapa
+        if (isset($_GET['r']) && $_GET['r'] === 'historialMarcaciones') {
+            NovedadesController::vistaHistorialMarcaciones();
+            return;
+        }
+
+        // ========= OBJETIVOS =========
         //Listado de objetivos
         if (isset($_GET['r']) && $_GET['r'] === 'listado_objetivos') {
             ControladorObjetivos::vistaListadoObjetivos();
@@ -251,6 +346,7 @@ class RutasController
             return;
         }
 
+        // ========= PUESTOS =========
         //Guardar un puesto
         if (isset($_GET['r']) && $_GET['r'] === 'crear_puesto' && $_SERVER['REQUEST_METHOD'] === 'POST') {
             ControladorPuestos::ctrGuardarPuesto();
@@ -277,7 +373,37 @@ class RutasController
             ControladorPuestos::vistaListadoPuestosDesactivados();
             return;
         }
+        // Vista de rotaciones
+        if (isset($_GET['r']) && $_GET['r'] === 'rotaciones_puestos') {
+            ControladorPuestos::vistaRotaciones();
+            return;
+        }
 
+        // Guardar/actualizar una rotación (POST)
+        if (isset($_GET['r']) && $_GET['r'] === 'guardar_rotacion' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+            ControladorPuestos::crtGuardarRotacion();
+            return;
+        }
+
+        // Eliminar rotación (POST)
+        if (isset($_GET['r']) && $_GET['r'] === 'eliminar_rotacion' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+            ControladorPuestos::crtEliminarRotacion();
+            return;
+        }
+
+        // Intercambiar (swap) rotaciones (POST)
+        if (isset($_GET['r']) && $_GET['r'] === 'swap_rotacion' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+            ControladorPuestos::crtSwapRotacion();
+            return;
+        }
+
+        // Autollenado equitativo (round robin) (POST)
+        if (isset($_GET['r']) && $_GET['r'] === 'auto_rotar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+            ControladorPuestos::crtAutoRotarEquitativo();
+            return;
+        }
+
+        // ========= RONDAS =========
         //Crear rondas
         if (isset($_GET['r']) && $_GET['r'] === 'crear_rondas') {
             RondasController::vistaCrearRondas();
@@ -305,6 +431,8 @@ class RutasController
             ControladorUsuarios::vistaPerfilUsuario();
             return;
         }
+
+        // ========= USUARIOS=========
         //Listado de usuarios
         if (isset($_GET['r']) && $_GET['r'] === 'listado-usuarios') {
             ControladorUsuarios::vistaListadoUsuarios();
@@ -316,17 +444,7 @@ class RutasController
             return;
         }
 
-        //Archivos
-        if (isset($_GET['r']) && $_GET['r'] === 'listado-usuarios-inactivos') {
-            ControladorUsuarios::vistaListadoUsuariosInactivos();
-            return;
-        }
 
-        //Legajos
-        if (isset($_GET['r']) && $_GET['r'] === 'legajos') {
-            LegajosController::vistaLegajos();
-            return;
-        }
         // ==== RUTAS FERIADOS ====
         if (isset($_GET['r']) && $_GET['r'] === 'crear_feriados') {
             FeriadosController::vistaCrearFeriados();
@@ -369,7 +487,7 @@ class RutasController
             return;
         }
 
-        // ========= Datos personales=========
+        // ========= DATOS PERSONALES =========
         if (isset($_GET['r']) && $_GET['r'] === 'mis_datos_personales') {
             DatosPersonalesController::vistaMisDatosPersonales();
             return;
@@ -381,6 +499,12 @@ class RutasController
         }
         if (isset($_GET['r']) && $_GET['r'] === 'mi_uniforme') {
             UniformesController::vistaMiUniforme();
+            return;
+        }
+
+        //Listado de uniformes
+        if (isset($_GET['r']) && $_GET['r'] === 'listado_uniformes') {
+            UniformesController::vistaListadoUniformes();
             return;
         }
         // Noticias

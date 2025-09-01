@@ -32,7 +32,7 @@ class ControladorUsuarios
                 $parentesco      = $_POST["parentesco"];
                 $domicilio       = $_POST["domicilio"];
                 $provincia       = $_POST["provincia"];
-                $rol        = $_POST["rol"];
+                $rol_id          = $_POST["rol"];
 
                 // Normalizar nombre de archivo (sin espacios)
                 $nombreArchivo = preg_replace('/\s+/', '', $nombre . $apellido);
@@ -83,10 +83,10 @@ class ControladorUsuarios
                     "parentesco"     => $parentesco,
                     "domicilio"      => $domicilio,
                     "provincia"      => $provincia,
-                    "rol"            => $rol,
+                    "rol_id"         => $rol_id,
                     "imgPerfil"      => $imgPerfil,   // puede ser null si no subieron nada
                     "imgRepriv"      => $imgRepriv,   // idem
-                    "resetPass"      => 1,
+                    "resetPass"      => 0,
                     "activo"         => 1
                 );
 
@@ -134,7 +134,7 @@ class ControladorUsuarios
                 $parentesco      = $_POST["parentesco"];
                 $domicilio       = $_POST["domicilio"];
                 $provincia       = $_POST["provincia"];
-                $rol             = $_POST["rol"];
+                $rol_id          = $_POST["rol"];
                 $resetPass = isset($_POST["resetPass"]) ? 0 : 1; // 0: NO restaurar, 1: sí
                 $activo    = isset($_POST["activo"])    ? 0 : 1; // 0: inactivo, 1: activo
 
@@ -170,7 +170,7 @@ class ControladorUsuarios
                     "parentesco"     => $parentesco,
                     "domicilio"      => $domicilio,
                     "provincia"      => $provincia,
-                    "rol"            => $rol,
+                    "rol_id"         => $rol_id,
                     "imgPerfil"      => $imgPerfil,
                     "imgRepriv"      => $imgRepriv,
                     "resetPass"      => $resetPass,
@@ -248,9 +248,29 @@ class ControladorUsuarios
     static public function vistaListadoUsuarios()
     {
         Auth::check('usuarios', 'vistaListadoUsuarios');
-        $db = new Conexion;
-        $sql = "SELECT * FROM usuarios WHERE activo = 1 ORDER BY rol ";
-        $usuarios = $db->consultas($sql);
+
+        $pdo = Conexion::conectar();
+        $sql = "SELECT 
+                    u.idUsuario,
+                    u.apellido,
+                    u.nombre,
+                    u.telefono,
+                    u.tel_emergencia,
+                    u.nombre_contacto,
+                    u.parentesco,
+                    r.nombre AS rol_nombre,
+                    r.nivel  AS rol_nivel
+                FROM usuarios u
+                JOIN roles r ON u.rol_id = r.id
+                WHERE u.activo = 1
+                AND r.nombre <> 'Programador'
+                ORDER BY r.nivel ASC, u.apellido ASC, u.nombre ASC
+            ";
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute();
+        $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
         include __DIR__ . '/../vistas/paginas/usuario/listado-usuarios.php';
         return;
     }
@@ -259,12 +279,22 @@ class ControladorUsuarios
     {
         Auth::check('usuarios', 'vistaListadoUsuariosInactivos');
         $db = new Conexion;
-        $sql = "SELECT u.idUsuario, CONCAT(u.apellido, ' ', u.nombre) AS empleado, b.motivo, b.fecha, CONCAT(e.apellido, ' ', e.nombre) AS eliminado_por
-                FROM usuarios u
-                JOIN bajas b ON u.idUsuario = b.usuario_id
-                JOIN usuarios e ON b.eliminado_por = e.idUsuario
-                WHERE u.activo = 0
-                ORDER BY empleado ";
+        $sql = "SELECT 
+                        u.idUsuario,
+                        CONCAT(u.apellido, ' ', u.nombre) AS empleado,
+                        b.motivo,
+                        b.fecha,
+                        CONCAT(e.apellido, ' ', e.nombre) AS eliminado_por
+                    FROM usuarios u
+                    JOIN bajas b 
+                    ON u.idUsuario = b.usuario_id
+                    JOIN usuarios e 
+                    ON b.eliminado_por = e.idUsuario
+                    JOIN roles r 
+                    ON u.rol_id = r.id
+                    WHERE u.activo = 0
+                    AND r.nombre <> 'Programador'   -- <<– filtro en roles
+                    ORDER BY empleado";
         $usuarios = $db->consultas($sql);
         include __DIR__ . '/../vistas/paginas/usuario/listado-usuarios-inactivos.php';
         return;

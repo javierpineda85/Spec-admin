@@ -37,7 +37,6 @@ $usuarioId = intval($_SESSION['idUsuario'] ?? 0);
 
   <script>
     (function() {
-      //const rondaId = <?= json_encode($rondaId) ?>;
       const objetivoId = <?= json_encode($_SESSION['ultimo_objetivo'] ?? 0) ?>;
       const usuarioId = <?= json_encode($_SESSION['idUsuario']) ?>;
 
@@ -53,8 +52,40 @@ $usuarioId = intval($_SESSION['idUsuario'] ?? 0);
         localStorage.setItem(key, next);
       }
 
-      // Deshabilitar al inicio
-      btn.disabled = true;
+      // Flags y control de intervalos
+      let alertaVigiladorMostrada = false;
+      let alertaSupervisorEnviada = false;
+      let alertaIntervalo = null;
+
+      // Función híbrida: 3 pitidos rápidos + recordatorio persistente
+      function dispararAlertaSonoraHibrida() {
+        let repeticiones = 0;
+        const audio = new Audio('public/sonidos/spec_notificacion.mp3');
+
+        const pitidosRapidos = setInterval(() => {
+          audio.currentTime = 0;
+          audio.play();
+          repeticiones++;
+          if (repeticiones >= 3) {
+            clearInterval(pitidosRapidos);
+
+            // Aviso persistente cada 5 segundos
+            if (!alertaIntervalo) {
+              alertaIntervalo = setInterval(() => {
+                const audioPersistente = new Audio('public/sonidos/spec_notificacion.mp3');
+                audioPersistente.play();
+              }, 5000);
+            }
+          }
+        }, 1000);
+      }
+
+      function detenerAlertaSonora() {
+        if (alertaIntervalo) {
+          clearInterval(alertaIntervalo);
+          alertaIntervalo = null;
+        }
+      }
 
       // Formatea mm:ss
       function fmt(ms) {
@@ -69,16 +100,51 @@ $usuarioId = intval($_SESSION['idUsuario'] ?? 0);
         if (diff >= 0) {
           status.textContent = 'Próximo reporte en';
           status.style.color = '';
+          detenerAlertaSonora();
+          alertaVigiladorMostrada = false;
+
         } else if (diff >= -3 * 60 * 1000) {
           status.textContent = 'Dentro de tolerancia';
           status.style.color = 'orange';
+          detenerAlertaSonora();
+          alertaVigiladorMostrada = false;
+
+          // Alerta sonora al vigilador (una sola vez)
+          if (!alertaVigiladorMostrada) {
+            alertaVigiladorMostrada = true;
+            const audio = new Audio('public/sonidos/spec_notificacion.mp3');
+            audio.play();
+          }
+
         } else {
-          status.textContent = '¡ALERTA! Excedido >3m';
+          status.textContent = '¡ALERTA! Tiempo excedido superior a 3 minutos';
           status.style.color = 'red';
+
+          // Alerta sonora híbrida
+          if (!alertaVigiladorMostrada) {
+            alertaVigiladorMostrada = true;
+            dispararAlertaSonoraHibrida();
+          }
+
+          // Aviso al supervisor
+          if (!alertaSupervisorEnviada) {
+            alertaSupervisorEnviada = true;
+            fetch('ajax/registrar_alerta_hombrevivo.php', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                usuario_id: usuarioId,
+                objetivo_id: objetivoId,
+                tiempo: Math.floor(Math.abs(diff) / 1000)
+              })
+            });
+          }
         }
 
-        // Habilita solo en últimos 3 minutos
-        btn.disabled = !(diff <= 3 * 60 * 1000 && diff >= -3 * 60 * 1000);
+        // Habilita solo en últimos 3 minutos antes o después
+        btn.disabled = !(diff <= 3 * 60 * 1000);
         if (diff > 3 * 60 * 1000) {
           btn.innerText = `Disponible en ${Math.ceil(diff / 60000)} min`;
         } else {
@@ -87,43 +153,21 @@ $usuarioId = intval($_SESSION['idUsuario'] ?? 0);
       }
 
       tick();
-      //window.intervaloTick = setInterval(tick, 1000);
-      const iv = setInterval(tick, 1000);
+      let iv = setInterval(tick, 1000);
 
       btn.addEventListener('click', () => {
-        //clearInterval(window.intervaloTick);
         clearInterval(iv);
-        // clearInterval(window.intervaloAlerta);
-
         btn.disabled = true;
+
         const demoraMs = Date.now() - next;
         const sign = demoraMs < 0 ? '-' : '';
         const demora = sign + fmt(Math.abs(demoraMs));
-        //const base = '<?= basename($_SERVER["SCRIPT_NAME"]) ?>';
+
         const base = 'index.php';
         const url = `${base}?r=registrar_reporte&objetivo_id=${objetivoId}&id_usuario=${usuarioId}&demora=${encodeURIComponent(demora)}`;
 
         fetch(url)
-          .then(res => res.text())
-          /*.then(text => {
-            try {
-              const json = JSON.parse(text);
-              if (json.success) {
-                status.textContent = 'Reporte registrado correctamente.';
-                status.style.color = '';
-                next = Date.now() + 30 * 60 * 1000;
-                localStorage.setItem(key, next);
-                tick();
-              } else {
-                status.textContent = 'Error: ' + (json.error || 'Respuesta inválida');
-                status.style.color = 'red';
-              }
-            } catch (e) {
-              console.error("❌ Respuesta no JSON:", text);
-              status.textContent = '⚠ Error inesperado del servidor.';
-              status.style.color = 'red';
-            }
-          })*/
+          .then(res => res.json())
           .then(json => {
             if (json.success) {
               status.textContent = 'Reporte registrado correctamente.';
@@ -131,7 +175,11 @@ $usuarioId = intval($_SESSION['idUsuario'] ?? 0);
               // Nuevo ciclo
               next = Date.now() + 30 * 60 * 1000;
               localStorage.setItem(key, next);
+              alertaVigiladorMostrada = false;
+              alertaSupervisorEnviada = false;
+              detenerAlertaSonora();
               tick();
+              iv = setInterval(tick, 1000);
             } else {
               status.textContent = 'Error: ' + json.error;
               status.style.color = 'red';
@@ -144,52 +192,6 @@ $usuarioId = intval($_SESSION['idUsuario'] ?? 0);
       });
     })();
   </script>
+
+
 <?php endif; ?>
-
-
-<script>
-  //Script para emitir alertas
-  let segundosTranscurridos = 0;
-  const limiteAlerta = 180; // 3 minutos
-  const limiteSupervisor = 300; // 5 minutos
-  let alertaVigiladorMostrada = false;
-  let alertaSupervisorEnviada = false;
-
-  const intervaloAlerta = setInterval(() => {
-    // window.intervaloAlerta = setInterval(() => {
-    segundosTranscurridos++;
-
-    // Alerta sonora
-    if (segundosTranscurridos >= limiteAlerta && !alertaVigiladorMostrada) {
-      alertaVigiladorMostrada = true;
-
-      const audio = new Audio('public/sonidos/spec_notificacion.mp3');
-      audio.play();
-
-      const alerta = document.createElement('div');
-      alerta.className = 'alert alert-warning fixed-top text-center';
-      alerta.innerHTML = `
-            <strong>⚠ Atención:</strong> Han pasado más de 3 minutos sin registrar el reporte de hombre vivo.
-        `;
-      document.body.appendChild(alerta);
-      setTimeout(() => alerta.remove(), 20000);
-    }
-
-    // Alerta para supervisor
-    if (segundosTranscurridos >= limiteSupervisor && !alertaSupervisorEnviada) {
-      alertaSupervisorEnviada = true;
-
-      fetch('ajax/registrar_alerta_hombrevivo.php', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          usuario_id: <?= intval($_SESSION['idUsuario']) ?>,
-          objetivo_id: <?= intval($objetivoId) ?>,
-          tiempo: segundosTranscurridos
-        })
-      });
-    }
-  }, 1000);
-</script>

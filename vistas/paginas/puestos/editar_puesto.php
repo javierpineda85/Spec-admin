@@ -51,6 +51,7 @@ foreach ($turnos as $t) {
                         <select name="tipo" id="" class="form-control">
                             <option value="<?php echo $puesto[0]['tipo']; ?>" selected><?php echo $puesto[0]['tipo']; ?></option>
                             <option value="Fijo">Fijo</option>
+                            <option value="Rotativo">Rotativo</option>
                             <option value="Eventual">Eventual</option>
                         </select>
                     </div>

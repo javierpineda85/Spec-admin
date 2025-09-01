@@ -210,4 +210,104 @@ class ControladorPuestos
         include __DIR__ . '/../vistas/paginas/puestos/editar_puesto.php';
         return;
     }
+    /** Vista principal (micro-sección) */
+    public static function vistaRotaciones()
+    {
+        Auth::check('puestos', 'gestionarRotaciones');
+
+        $objetivo_id = (int)($_GET['objetivo_id'] ?? 0);
+        $mes = $_GET['mes'] ?? date('Y-m');
+
+        // Para el selector de objetivo
+        $db = new Conexion;
+        $objetivos  = $db->consultas("SELECT * FROM objetivos WHERE activo = 1 ORDER BY nombre");
+
+        // Datos que la vista necesita (si hay objetivo elegido)
+        $puestos = [];
+        $vigiladores = [];
+        $turnos = [];
+        $rotaciones = [];
+
+        if ($objetivo_id > 0) {
+            $puestos     = ModeloPuestos::mdlObtenerPuestosPorObjetivo($objetivo_id);
+            $vigiladores = ModeloPuestos::mdlObtenerVigiladoresElegibles($objetivo_id);
+            $turnos      = ModeloPuestos::mdlObtenerTurnosMesObjetivo($objetivo_id, $mes);
+            $rotaciones  = ModeloPuestos::mdlObtenerRotacionesMes($objetivo_id, $mes);
+        }
+
+        include 'vistas/paginas/puestos/asignar_puestos.php';
+    }
+
+
+    /** API: guardar o actualizar una rotación (AJAX) */
+    public static function crtGuardarRotacion()
+    {
+        Auth::check('puestos', 'gestionarRotaciones');
+
+        $data = [
+            'objetivo_id' => (int)($_POST['objetivo_id'] ?? 0),
+            'fecha' => $_POST['fecha'] ?? '',
+            'puesto_id' => (int)($_POST['puesto_id'] ?? 0),
+            'usuario_id' => (int)($_POST['usuario_id'] ?? 0),
+            'codigo_turno' => $_POST['codigo_turno'] ?? '',
+            'editor_id' => (int)($_SESSION['idUsuario'] ?? 0),
+            'motivo' => $_POST['motivo'] ?? null
+        ];
+
+        $res = ModeloPuestos::mdlGuardarRotacion($data);
+        header('Content-Type: application/json');
+        echo json_encode($res);
+        exit;
+    }
+
+    /** API: eliminar rotación (AJAX) */
+    public static function crtEliminarRotacion()
+    {
+        Auth::check('puestos', 'gestionarRotaciones');
+
+        $idRot = (int)($_POST['idRotacion'] ?? 0);
+        $ok = ModeloPuestos::mdlEliminarRotacion($idRot, (int)($_SESSION['idUsuario'] ?? 0));
+
+        header('Content-Type: application/json');
+        echo json_encode(['ok' => $ok]);
+        exit;
+    }
+
+    /** API: swap entre dos vigiladores en rango (AJAX) */
+    public static function crtSwapRotacion()
+    {
+        Auth::check('puestos', 'gestionarRotaciones');
+
+        $res = ModeloPuestos::mdlSwapRotaciones([
+            'objetivo_id' => (int)($_POST['objetivo_id'] ?? 0),
+            'desde' => $_POST['desde'] ?? '',
+            'hasta' => $_POST['hasta'] ?? '',
+            'usuario_a' => (int)($_POST['usuario_a'] ?? 0),
+            'usuario_b' => (int)($_POST['usuario_b'] ?? 0),
+            'codigo_turno' => $_POST['codigo_turno'] ?? '',
+            'puesto_id' => isset($_POST['puesto_id']) ? (int)$_POST['puesto_id'] : null,
+            'editor_id' => (int)($_SESSION['idUsuario'] ?? 0)
+        ]);
+
+        header('Content-Type: application/json');
+        echo json_encode($res);
+        exit;
+    }
+
+    /** API: autollenado equitativo (round-robin) */
+    public static function crtAutoRotarEquitativo()
+    {
+        Auth::check('puestos', 'gestionarRotaciones');
+
+        $res = ModeloPuestos::mdlAutoRotarEquitativo(
+            (int)($_POST['objetivo_id'] ?? 0),
+            $_POST['mes'] ?? date('Y-m'),
+            $_POST['codigo_turno'] ?? 'D',
+            (int)($_SESSION['idUsuario'] ?? 0)
+        );
+
+        header('Content-Type: application/json');
+        echo json_encode($res);
+        exit;
+    }
 }
