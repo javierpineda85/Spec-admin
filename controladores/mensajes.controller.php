@@ -53,7 +53,7 @@ class ControladorMensajes
         return null;
     }
 
-    static public function crtMostrarMensajes($item, $valor)
+    static public function crtMostrarMensajesEnviados($item, $valor)
     {
         Auth::check('mensajes', 'crtMostrarMensajesEnviados');
         $respuesta = ModeloMensajes::mdlMostrarMensajesEnviados($item, $valor);
