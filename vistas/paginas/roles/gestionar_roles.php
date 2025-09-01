@@ -99,10 +99,10 @@ $esReservado  = ((int)($rol['reservado'] ?? 0) === 1) || (mb_strtolower($selecte
                                     // ID, controlador y acción
                                     $id   = (int) ($p['id'] ?? 0);
                                     $ctrl = htmlspecialchars($p['controlador']  ?? '', ENT_QUOTES, 'UTF-8');
-                                    $acc  = htmlspecialchars($p['accion']        ?? '', ENT_QUOTES, 'UTF-8');
+                                    $acc  = htmlspecialchars($p['alias']        ?? '', ENT_QUOTES, 'UTF-8');
 
                                     // Alias amigable: usamos alias si existe, si no descripción, si no cadena vacía
-                                    $rawAlias   = trim((string) ($p['alias'] ?? ''));
+                                    $rawAlias   = trim((string) ($p['descripcion'] ?? ''));
                                     $fallback   = $p['descripcion'] ?? '';
                                     $textoDesc  = $rawAlias !== '' ? $rawAlias : $fallback;
                                     $desc       = htmlspecialchars($textoDesc, ENT_QUOTES, 'UTF-8');

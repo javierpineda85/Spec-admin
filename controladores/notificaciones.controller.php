@@ -15,14 +15,14 @@ class NotificacionesController
     /** MENSAJES **/
     public static function contarMensajesNoLeidos($usuarioId)
     {
-        $recibidos = ControladorMensajes::crtMostrarMensajes('destinatario_id', $usuarioId);
+        $recibidos = ControladorMensajes::crtMostrarMensajesEnviados('destinatario_id', $usuarioId);
         $noLeidos = array_filter($recibidos, fn($m) => $m['leido'] == 0);
         return count($noLeidos);
     }
 
     public static function obtenerMensajesNoLeidos($usuarioId, $limite = 10)
     {
-        $recibidos = ControladorMensajes::crtMostrarMensajes('destinatario_id', $usuarioId);
+        $recibidos = ControladorMensajes::crtMostrarMensajesEnviados('destinatario_id', $usuarioId);
         $noLeidos = array_filter($recibidos, fn($m) => $m['leido'] == 0);
         return array_slice($noLeidos, 0, $limite);
     }
