@@ -235,15 +235,22 @@ class NovedadesController
         $db = new Conexion();
 
         // Siempre cargamos vigiladores
-        if (($_SESSION['rol'] ?? '') === 'Vigilador') {
+        $rolCategoria = $db->consultas(
+            "SELECT categoria FROM roles WHERE id = ? LIMIT 1",
+            [$_SESSION['rol_id']]
+        )[0]['categoria'] ?? '';
+
+        if ($rolCategoria === 'operativo') {
             $vigiladores = $db->consultas(
                 "SELECT idUsuario, apellido, nombre FROM usuarios WHERE idUsuario = ?",
                 [$_SESSION['idUsuario']]
             );
         } else {
-            $vigiladores = $db->consultas(
-                "SELECT idUsuario, apellido, nombre FROM usuarios WHERE rol = 'Vigilador' ORDER BY apellido, nombre"
-            );
+            $vigiladores = $db->consultas("SELECT u.idUsuario, u.apellido, u.nombre
+                                                FROM usuarios u
+                                                INNER JOIN roles r ON u.rol_id = r.id
+                                                WHERE r.categoria = 'operativo' AND u.activo = 1
+                                                ORDER BY u.apellido, u.nombre ");
         }
 
         $filtros = [

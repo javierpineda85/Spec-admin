@@ -4,13 +4,13 @@ class UniformesController
 {
     public static function vistaMiUniforme()
     {
-        Auth::check('uniformes', 'verMiUniforme');
+        Auth::check('uniformes', 'vistaMiUniforme');
         require 'vistas/paginas/datos/mi_uniforme.php';
     }
 
     public static function guardarUniforme()
     {
-        Auth::check('uniformes', 'verMiUniforme');
+        Auth::check('uniformes', 'vistaMiUniforme');
 
         $usuario_id = $_POST['usuario_id'];
 
@@ -39,7 +39,7 @@ class UniformesController
     }
     public static function vistaListadoUniformes()
 {
-    Auth::check('uniformes', 'verListadoUniformes');
+    Auth::check('uniformes', 'vistaListadoUniformes');
 
     $uniformes = ModeloUniformes::mdlListarUniformes();
 

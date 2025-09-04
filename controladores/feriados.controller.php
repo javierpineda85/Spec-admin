@@ -74,14 +74,14 @@ class FeriadosController
     // Vista: crear_feriados
     public static function vistaCrearFeriados()
     {
-        Auth::check('feriados', 'vistaCrearFeriado');
+        Auth::check('feriados', 'vistaCrearFeriados');
         require 'vistas/paginas/admin/feriados/crear_feriados.php';
     }
 
     // Vista: listado_feriados
     public static function vistaListadoFeriados()
     {
-        Auth::check('feriados', 'vistaListadoFeriado');
+        Auth::check('feriados', 'vistaListadoFeriados');
         require 'vistas/paginas/admin/feriados/listado_feriados.php';
     }
 

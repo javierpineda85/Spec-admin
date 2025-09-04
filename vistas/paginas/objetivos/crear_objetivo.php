@@ -1,9 +1,17 @@
 <?php
 
 $db = new Conexion;
-$usuarios = $db->consultas("SELECT idUsuario, nombre, apellido FROM usuarios WHERE rol = 'Vigilador' AND activo = 1 ORDER BY apellido");
+$vigiladores = $db->consultas("SELECT u.idUsuario, u.nombre, u.apellido
+                                    FROM usuarios u
+                                    INNER JOIN roles r ON u.rol_id = r.id
+                                    WHERE r.categoria = 'operativo' AND u.activo = 1
+                                    ORDER BY u.apellido ");
 $db = new Conexion;
-$referentes = $db->consultas("SELECT idUsuario, nombre, apellido FROM usuarios WHERE rol = 'Referente' AND activo = 1 ORDER BY apellido");
+$referentes = $db->consultas("SELECT u.idUsuario, u.nombre, u.apellido
+                                      FROM usuarios u
+                                      INNER JOIN roles r ON u.rol_id = r.id
+                                      WHERE r.categoria = 'referente' AND u.activo = 1
+                                      ORDER BY u.apellido");
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   ControladorObjetivos::crtGuardarObjetivo();
 }
