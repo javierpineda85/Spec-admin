@@ -7,7 +7,8 @@ class ControladorCronograma
     public static function ctrGuardarCronograma()
     {
 
-        Auth::check('cronogramas', 'ctrGuardarCronograma');
+        //Auth::check('cronogramas', 'ctrGuardarCronograma');
+        Auth::check('cronogramas', 'vistaCrearCronograma');
 
         if (!isset($_POST['guardar_cronograma'])) return;
 
@@ -509,7 +510,8 @@ class ControladorCronograma
     /*Funcion para buscar por resumen diario de jornadas trabajadas*/
     static public function crtBuscarResumenDiario()
     {
-        Auth::check('cronogramas', 'crtBuscarResumenDiario');
+        //Auth::check('cronogramas', 'crtBuscarResumenDiario');
+        Auth::check('cronogramas', 'vistaJornadasPorObjetivo');
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
@@ -543,7 +545,8 @@ class ControladorCronograma
     /* Se emparejan entradas y salidas por vigilador y objetivo (el GROUP BY m1.idMarcacion previene múltiples pareos). */
     static public function crtBuscarResumenHoras()
     {
-        Auth::check('cronogramas', 'crtBuscarResumenHoras');
+        //Auth::check('cronogramas', 'crtBuscarResumenHoras');
+        Auth::check('cronogramas', 'vistaReporteHorasPorObjetivo');
 
         $desde = $_POST['desde'] ?? null;
         $hasta = $_POST['hasta'] ?? null;
@@ -705,7 +708,8 @@ class ControladorCronograma
 
     public static function crtBuscarResumenHorasPorVigilador()
     {
-        Auth::check('cronograma', 'crtBuscarResumenHorasPorVigilador');
+        //Auth::check('cronograma', 'crtBuscarResumenHorasPorVigilador');
+        Auth::check('cronogramas', 'vistaHorasPorVigilador');
 
         $desde = $_POST['desde'] ?? '';
         $hasta = $_POST['hasta'] ?? '';
@@ -976,7 +980,7 @@ class ControladorCronograma
     }
     public static function vistaReporteHorasPorObjetivo()
     {
-        Auth::check('cronogramas', 'crtBuscarResumenHoras');
+        Auth::check('cronogramas', 'vistaReporteHorasPorObjetivo');
         // Carga lista de objetivos
         $db = new Conexion();
         $objetivos = $db->consultas("SELECT idObjetivo, nombre FROM objetivos ORDER BY nombre");

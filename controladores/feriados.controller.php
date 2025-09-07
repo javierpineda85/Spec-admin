@@ -5,7 +5,8 @@ class FeriadosController
 {
     public static function ctrGuardarFeriados()
     {
-        Auth::check('feriados', 'ctrGuardarFeriados');
+        //Auth::check('feriados', 'ctrGuardarFeriados');
+        Auth::check('feriados', 'vistaCrearFeriados');
 
         if (!empty($_POST['feriados']) && is_array($_POST['feriados'])) {
             $db = Conexion::conectar();
@@ -29,7 +30,8 @@ class FeriadosController
 
     public static function ctrEditarFeriado()
     {
-        Auth::check('feriados', 'ctrEditarFeriado');
+        //Auth::check('feriados', 'ctrEditarFeriado');
+        Auth::check('feriados', 'vistaCrearFeriado');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $id = $_POST['idFeriado'];
@@ -88,7 +90,7 @@ class FeriadosController
     // Vista: editar_feriado
     public static function vistaEditarFeriado()
     {
-        Auth::check('feriados', 'vistaCrearFeriado'); // o un permiso especial si lo preferís
+        Auth::check('feriados', 'vistaCrearFeriado');
         require 'vistas/paginas/admin/feriados/editar_feriado.php';
     }
 

@@ -8,7 +8,8 @@ class ControladorObjetivos
     /*GUARDAR OBJETIVOS */
     static public function crtGuardarObjetivo()
     {
-        Auth::check('objetivos', 'crtGuardarObjetivo');
+        //Auth::check('objetivos', 'crtGuardarObjetivo');
+        Auth::check('objetivos', 'vistaCrearObjetivo');
         if (isset($_POST['nombreObjetivo'])) {
             $conexion = Conexion::conectar();
             $conexion->beginTransaction();
@@ -44,7 +45,8 @@ class ControladorObjetivos
     /*MODIFICAR OBJETIVOS */
     static public function crtModificarObjetivo()
     {
-        Auth::check('objetivos', 'crtModificarObjetivo');
+        //Auth::check('objetivos', 'crtModificarObjetivo');
+        Auth::check('objetivos', 'vistaEditarObjetivo');
 
         if (isset($_POST['idObjetivo'], $_POST['nombreObjetivo'])) {
             $conexion = Conexion::conectar();

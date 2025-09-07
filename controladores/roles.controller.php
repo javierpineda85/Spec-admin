@@ -17,7 +17,8 @@ class RolesController
 
     public static function ctrGuardarRol()
     {
-        Auth::check('roles', 'ctrGuardarRol');
+        //Auth::check('roles', 'ctrGuardarRol');
+        Auth::check('roles', 'vistaCrearRol');
         try {
             $nombre    = trim($_POST['nombre'] ?? '');
             $alias     = trim($_POST['alias'] ?? '') ?: null;
@@ -71,8 +72,8 @@ class RolesController
 
     public static function ctrActualizarRol()
     {
-        Auth::check('roles', 'ctrActualizarRol');
-
+        //Auth::check('roles', 'ctrActualizarRol');
+        Auth::check('roles', 'vistaEditarRol');
         try {
             $id        = (int)($_POST['id'] ?? 0);
             $nombre    = trim($_POST['nombre'] ?? '');

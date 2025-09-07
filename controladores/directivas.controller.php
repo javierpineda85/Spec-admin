@@ -8,7 +8,8 @@ class ControladorDirectivas
     /* GUARDAR DIRECTIVAS */
     static public function crtGuardarDirectiva()
     {
-        Auth::check('directivas', 'crtGuardarDirectiva');
+        //Auth::check('directivas', 'crtGuardarDirectiva');
+        Auth::check('directivas', 'vistaCrearDirectiva');
         if (isset($_POST["id_objetivo"])) {
             if (session_status() !== PHP_SESSION_ACTIVE) {
                 session_start();
@@ -87,7 +88,8 @@ class ControladorDirectivas
     /* MODIFICAR DIRECTIVAS */
     static public function crtModificarDirectiva()
     {
-        Auth::check('directivas', 'crtModificarDirectiva');
+        //Auth::check('directivas', 'crtModificarDirectiva');
+        Auth::check('directivas', 'vistaEditarDirectiva');
         if (isset($_POST["idDirectiva"])) {
             try {
                 $conexion = Conexion::conectar();

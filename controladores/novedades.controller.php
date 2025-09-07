@@ -10,7 +10,8 @@ class NovedadesController
      */
     public static function crtRegistrar()
     {
-        Auth::check('novedades', 'crtRegistrar');
+        //Auth::check('novedades', 'crtRegistrar');
+        Auth::check('novedades', 'vistaCrearNovedades');
         if (session_status() === PHP_SESSION_NONE) session_start();
         $vigilador_id =  $_POST['vigilador_id'] ?? null;
         $objetivo_id  =  $_POST['objetivo_id'] ?? null;

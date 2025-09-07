@@ -1,5 +1,5 @@
 <?php
-Auth::check('puestos', 'gestionarRotaciones');
+//Auth::check('puestos', 'gestionarRotaciones');
 
 $objetivo_id = (int)($_GET['objetivo_id'] ?? 0);
 $mes = $_GET['mes'] ?? date('Y-m');

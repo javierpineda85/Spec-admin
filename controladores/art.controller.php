@@ -4,7 +4,8 @@ class ArtController
 {
     public static function ctrGuardarArt()
     {
-        Auth::check('art', 'ctrGuardarArt');
+        //Auth::check('art', 'ctrGuardarArt');
+        Auth::check('art', 'vistaCrearArt');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $datos = [
@@ -30,7 +31,8 @@ class ArtController
     }
     public static function ctrEditarArt()
     {
-        Auth::check('art', 'ctrEditarArt');
+        //Auth::check('art', 'ctrEditarArt');
+        Auth::check('art', 'vistaEditarArt');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idArt'])) {
             $idArt = intval($_POST['idArt']);

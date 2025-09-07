@@ -5,7 +5,8 @@ class ControladorPuestos
 {
     public static function ctrGuardarPuesto()
     {
-        Auth::check('puestos', 'ctrGuardarPuesto');
+        //Auth::check('puestos', 'ctrGuardarPuesto');
+        Auth::check('puestos', 'vistaCrearPuestos');
 
         if (empty($_POST['puesto']) || empty($_POST['objetivo_id']) || empty($_POST['tipo'])) {
             ToastifyController::error('Faltan campos obligatorios.');
@@ -56,7 +57,8 @@ class ControladorPuestos
 
     static public function crtModificarPuesto()
     {
-        Auth::check('puestos', 'crtModificarPuesto');
+        //Auth::check('puestos', 'crtModificarPuesto');
+        Auth::check('puestos', 'vistaEditarPuesto');
         if (isset($_POST["puesto"])) {
 
             try {
@@ -213,7 +215,7 @@ class ControladorPuestos
     /** Vista principal (micro-sección) */
     public static function vistaRotaciones()
     {
-        Auth::check('puestos', 'gestionarRotaciones');
+        Auth::check('puestos', 'vistaRotaciones');
 
         $objetivo_id = (int)($_GET['objetivo_id'] ?? 0);
         $mes = $_GET['mes'] ?? date('Y-m');
@@ -242,8 +244,8 @@ class ControladorPuestos
     /** API: guardar o actualizar una rotación (AJAX) */
     public static function crtGuardarRotacion()
     {
-        Auth::check('puestos', 'gestionarRotaciones');
-
+        //Auth::check('puestos', 'gestionarRotaciones');
+        Auth::check('puestos', 'vistaRotaciones');
         $data = [
             'objetivo_id' => (int)($_POST['objetivo_id'] ?? 0),
             'fecha' => $_POST['fecha'] ?? '',

@@ -14,7 +14,8 @@ class RondasController
     // Guardar rondas
     static public function crtGuardarRondas($rondas)
     {
-        Auth::check('rondas', 'crtGuardarRondas');
+        //Auth::check('rondas', 'crtGuardarRondas');
+        Auth::check('rondas', 'vistaCrearRondas');
         $db = Conexion::conectar();
         try {
             $db->beginTransaction();
@@ -93,7 +94,8 @@ class RondasController
 
     static public function crtActualizarRonda()
     {
-        Auth::check('rondas', 'crtActualizarRonda');
+        //Auth::check('rondas', 'crtActualizarRonda');
+        Auth::check('rondas', 'vistaEditarRondas');
         // 1️⃣ Recoger y validar datos
         $idRonda    = intval($_POST['idRonda']     ?? 0);
         $puesto     = trim($_POST['puesto']        ?? '');
