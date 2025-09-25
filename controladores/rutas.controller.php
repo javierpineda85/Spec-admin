@@ -39,30 +39,30 @@ class RutasController
         //Notificaciones y alertas
         if (isset($_GET['r']) && $_GET['r'] === 'registrar_alerta_hombrevivo' && $_SERVER['REQUEST_METHOD'] === 'POST') {
             AlertasController::registrarDemoraHombreVivo();
-            exit;
+            return;
         }
 
         //Vista de alertas
         if (isset($_GET['r']) && $_GET['r'] === 'alertas_supervisor') {
             require_once 'vistas/paginas/supervisores/alertas_supervisor.php';
-            exit;
+            return;
         }
         //Vista publicas para ver alertas
         if (isset($_GET['r']) && $_GET['r'] === 'ver_alertas') {
             AlertasController::verAlertasNoLeidas();
-            exit;
+            return;
         }
 
         //Marcar alertas como leidas
         if (isset($_GET['r']) && $_GET['r'] === 'marcar_alerta_leida' && $_SERVER['REQUEST_METHOD'] === 'POST') {
             AlertasController::marcarLeida();
-            exit;
+            return;
         }
 
         //Historial de alertas leidas
         if (isset($_GET['r']) && $_GET['r'] === 'ver_historial_alertas') {
             AlertasController::verHistorialLeidas();
-            exit;
+            return;
         }
 
         // Registrar escaneo de ronda (AJAX o GET)
@@ -109,7 +109,7 @@ class RutasController
                 RolesController::ctrGuardarRol();
             } else {
                 header('Location: ?r=roles/listado');
-                exit;
+                return;
             }
             return;
         }
@@ -125,7 +125,7 @@ class RutasController
                 RolesController::ctrActualizarRol();
             } else {
                 header('Location: ?r=roles/listado');
-                exit;
+                return;
             }
             return;
         }
@@ -135,7 +135,7 @@ class RutasController
                 RolesController::ctrDesactivarRol();
             } else {
                 header('Location: ?r=roles/listado');
-                exit;
+                return;
             }
             return;
         }
@@ -145,7 +145,7 @@ class RutasController
             // acepta ?rol=... (nuevo). Si viniera ?role=... desde lo viejo, lo normalizamos:
             if (!isset($_GET['rol']) && isset($_GET['role'])) {
                 header('Location: ?r=roles/permisos&rol=' . urlencode($_GET['role']));
-                exit;
+                return;
             }
             RolesController::vistaPermisosRol();
             return;
@@ -156,7 +156,7 @@ class RutasController
                 RolesController::ctrGuardarPermisosRol();
             } else {
                 header('Location: ?r=roles/listado');
-                exit;
+                return;
             }
             return;
         }
@@ -202,7 +202,7 @@ class RutasController
 
         if (isset($_GET['r']) && $_GET['r'] === 'ajax_rondas') {
             require_once __DIR__ . '/../libraries/ajax/ajax_rondas.php';
-            exit;
+            return;
         }
         // Actualizar ronda (formulario de edición)
         if (isset($_GET['r']) && $_GET['r'] === 'actualizar_ronda') {
@@ -511,25 +511,25 @@ class RutasController
 
         if (isset($_GET['r']) && $_GET['r'] ===  'cumpleanos') {
             NoticiasController::vistaCumple();
-            exit;
+            return;
         }
         // ==================== MENSAJES ====================
         if (isset($_GET['r']) && $_GET['r'] === 'bandeja-entrada') {
             require_once 'controladores/mensajes.controller.php';
             require_once 'vistas/paginas/mensajes/bandeja-entrada.php';
-            exit;
+            return;
         }
 
         if (isset($_GET['r']) && $_GET['r'] === 'mensajes-enviados') {
             require_once 'controladores/mensajes.controller.php';
             require_once 'vistas/paginas/mensajes/mensajes-enviados.php';
-            exit;
+            return;
         }
 
         if (isset($_GET['r']) && $_GET['r'] === 'nuevo-mensaje') {
             require_once 'controladores/mensajes.controller.php';
             require_once 'vistas/paginas/mensajes/nuevo-mensaje.php';
-            exit;
+            return;
         }
 
 
@@ -537,12 +537,6 @@ class RutasController
         $mapeo = [
 
             "cerrar_sesion"     => "usuario/salir.php",
-
-            //Mensajes
-            "bandeja-entrada"   => "mensajes/bandeja-entrada.php",
-            "nuevo-mensaje"     => "mensajes/nuevo-mensaje.php",
-            "mensajes-enviados" => "mensajes/mensajes-enviados.php",
-
 
             "imprimir_qr"     => "rondas/imprimir_qr.php",
 

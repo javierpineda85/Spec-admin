@@ -1,9 +1,11 @@
 <?php
 
-$mensajes = ControladorMensajes::crtMostrarMensajesEnviados('remitente_id', $_SESSION['idUsuario']);
-$recibidos = ControladorMensajes::crtMostrarMensajesEnviados('destinatario_id', $_SESSION['idUsuario']);
-$mensajesNoLeidos = array_filter($recibidos, fn($m) => $m['leido'] == 0);
+$mensajes = ControladorMensajes::crtMostrarMensajesRecibidos('remitente_id', $_SESSION['idUsuario']);
+$mensajesNoLeidos = array_filter($mensajes, fn($m) => isset($m['leido']) && $m['leido'] == 0);
 $cantidadNoLeidos = count($mensajesNoLeidos);
+
+$recibidos = ControladorMensajes::crtMostrarMensajesEnviados('destinatario_id', $_SESSION['idUsuario']);
+
 
 ?>
 
@@ -98,38 +100,48 @@ $cantidadNoLeidos = count($mensajesNoLeidos);
               <div class="table-responsive mailbox-messages">
                 <table class="table table-hover table-striped">
                   <tbody>
-                    <tr>
-                      <?php foreach ($mensajes as $campo => $valor) : ?>
-                        <td>
-                          <div class="icheck-primary">
-                            <input type="checkbox" value="" id="check1">
-                            <label for="check1"></label>
-                          </div>
-                        </td>
-                        <td class="mailbox-name">Para: <a href="index.php?r=nuevo-mensaje&c=mensajes&idMsj=<?php echo $valor['idMensaje'] ?>&t=reply"><?php echo $valor['nombre'] . " " . $valor['apellido'];  ?></a></td>
-                        <td class="mailbox-subject"> <?php echo $valor['contenido'] ?></td>
-                        <td class="mailbox-date"><?php echo $valor['fMensaje'] ?></td>
-                        <td class="mailbox-date"><?php echo $valor['horaMensaje'] ?></td>
-                        <td>
-                          <div class="btn-group">
-                            <button type="button" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="top" title="Eliminar">
-                            <a href="#=<?php echo $valor['idMensaje'] ?>" class="text-dark"><i class="far fa-trash-alt"></i></a>
-                            </button>
-                            <button type="button" class="btn btn-default btn-sm"  data-toggle="tooltip" data-placement="top" title="Responder">
-                              <a href="index.php?r=nuevo-mensaje&c=mensajes&idMsj=<?php echo $valor['idMensaje'] ?>&t=reply" class="text-dark"><i class="fas fa-reply"></i></a>
-                            </button>
-                            <button type="button" class="btn btn-default btn-sm"  data-toggle="tooltip" data-placement="top" title="Reenviar">
-                              <a href="index.php?r=nuevo-mensaje&c=mensajes&idMsj=<?php echo $valor['idMensaje'] ?>&t=share" class="text-dark"><i class="fas fa-share"></i></a>
-                            </button>
-                        </td>
-                    </tr>
-                  <?php endforeach ?>
-
-
+                    <?php if (!empty($mensajes)): ?>
+                      <?php foreach ($mensajes as $mensaje): ?>
+                        <tr>
+                          <td>
+                            <div class="icheck-primary">
+                              <input type="checkbox" value="" id="check<?= $mensaje['idMensaje']; ?>">
+                              <label for="check<?= $mensaje['idMensaje']; ?>"></label>
+                            </div>
+                          </td>
+                          <td class="mailbox-name">
+                            Para:
+                            <a href="index.php?r=nuevo-mensaje&c=mensajes&idMsj=<?= $mensaje['idMensaje']; ?>&t=reply">
+                              <?= htmlspecialchars($mensaje['nombre'] . " " . $mensaje['apellido']); ?>
+                            </a>
+                          </td>
+                          <td class="mailbox-subject"><?= htmlspecialchars($mensaje['contenido']); ?></td>
+                          <td class="mailbox-date"><?= $mensaje['fMensaje']; ?></td>
+                          <td class="mailbox-date"><?= $mensaje['horaMensaje']; ?></td>
+                          <td>
+                            <div class="btn-group">
+                              <a href="index.php?r=eliminar-mensaje&id=<?= $mensaje['idMensaje']; ?>" class="btn btn-default btn-sm text-dark" title="Eliminar">
+                                <i class="far fa-trash-alt"></i>
+                              </a>
+                              <a href="index.php?r=nuevo-mensaje&c=mensajes&idMsj=<?= $mensaje['idMensaje']; ?>&t=reply" class="btn btn-default btn-sm text-dark" title="Responder">
+                                <i class="fas fa-reply"></i>
+                              </a>
+                              <a href="index.php?r=nuevo-mensaje&c=mensajes&idMsj=<?= $mensaje['idMensaje']; ?>&t=share" class="btn btn-default btn-sm text-dark" title="Reenviar">
+                                <i class="fas fa-share"></i>
+                              </a>
+                            </div>
+                          </td>
+                        </tr>
+                      <?php endforeach; ?>
+                    <?php else: ?>
+                      <tr>
+                        <td colspan="6" class="text-center text-muted">No se encontraron mensajes enviados.</td>
+                      </tr>
+                    <?php endif; ?>
                   </tbody>
                 </table>
-                <!-- /.table -->
               </div>
+
               <!-- /.mail-box-messages -->
             </div>
 
