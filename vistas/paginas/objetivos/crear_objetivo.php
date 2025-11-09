@@ -15,6 +15,7 @@ $referentes = $db->consultas("SELECT u.idUsuario, u.nombre, u.apellido
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   ControladorObjetivos::crtGuardarObjetivo();
 }
+
 ?>
 
 <div class="card">
@@ -47,9 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <option value="movil">Móvil</option>
               </select>
             </div>
-            <div class="form-group col-sm-12 col-md-3">
+            <div class="form-group col-sm-12 col-md-3" style="display: none;">
               <label for="cantidad_vigiladores">Cantidad de Vigiladores</label>
-              <input type="number" name="cantidad_vigiladores" id="cantidad_vigiladores" class="form-control" min="1" value="1" required>
+              <input type="number" name="cantidad_vigiladores" id="cantidad_vigiladores" class="form-control" min="1" value="1" data-optional="true">
             </div>
             <div class="form-group col-sm-12 col-md-3">
               <label class="form-label">Localidad</label>
@@ -92,8 +93,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <div class="row">
             <div class="form-group col-sm-12 col-md-5">
               <label for="vigiladores">Seleccionar Vigiladores</label>
-              <select name="vigiladores[]" id="vigiladores" class="form-control select2" data-optional="true" multiple >
-                <?php foreach ($usuarios as $u): ?>
+              <select name="vigiladores[]" id="vigiladores" class="form-control select2" data-optional="true" multiple>
+                <?php foreach ($vigiladores as $u): ?>
                   <option value="<?= $u['idUsuario'] ?>"><?= $u['apellido'] ?> <?= $u['nombre'] ?></option>
                 <?php endforeach; ?>
               </select>
@@ -102,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="form-group col-sm-12 col-md-5">
               <label for="referentes">Seleccionar Referentes</label>
-              <select name="referentes[]" id="referentes" class="form-control select2" data-optional="true" multiple >
+              <select name="referentes[]" id="referentes" class="form-control select2" data-optional="true" multiple>
                 <?php foreach ($referentes as $r): ?>
                   <option value="<?= $r['idUsuario'] ?>"><?= $r['apellido'] . ' ' . $r['nombre'] ?></option>
                 <?php endforeach; ?>
@@ -278,9 +279,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       const cantidadRequerida = parseInt(inputCantidad.value);
       const seleccionados = $selectVigiladores.select2('data').length;
 
-      if (seleccionados !== cantidadRequerida) {
-        e.preventDefault();
-        mostrarToast("Debes seleccionar exactamente " + cantidadRequerida + " vigilador(es). Actualmente seleccionaste " + seleccionados + ".");
+      // Solo validar si el campo tiene un valor numérico válido
+      if (!isNaN(cantidadRequerida) && cantidadRequerida > 0) {
+        if (seleccionados !== cantidadRequerida) {
+          e.preventDefault();
+          mostrarToast("Debes seleccionar exactamente " + cantidadRequerida + " vigilador(es). Actualmente seleccionaste " + seleccionados + ".");
+        }
       }
     });
   });

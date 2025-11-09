@@ -7,8 +7,17 @@ $db = new Conexion();
 $sql = "SELECT * FROM objetivos WHERE idObjetivo = ?";
 $objetivo = $db->consultas($sql, [$_GET['id']])[0];
 
-$usuarios = $db->consultas("SELECT idUsuario, nombre, apellido FROM usuarios WHERE rol = 'Vigilador' AND activo = 1 ORDER BY apellido");
-$referentes = $db->consultas("SELECT idUsuario, nombre, apellido FROM usuarios WHERE rol = 'Referente' AND activo = 1 ORDER BY apellido");
+$usuarios = $db->consultas("SELECT u.idUsuario, u.nombre, u.apellido
+                            FROM usuarios u
+                            INNER JOIN roles r ON u.rol_id = r.id
+                            WHERE r.categoria = 'operativo' AND u.activo = 1
+                            ORDER BY u.apellido");
+
+$referentes = $db->consultas("SELECT u.idUsuario, u.nombre, u.apellido
+                              FROM usuarios u
+                              INNER JOIN roles r ON u.rol_id = r.id
+                              WHERE r.categoria = 'referente' AND u.activo = 1
+                              ORDER BY u.apellido");
 
 $asignadosVigiladores = $db->consultas("SELECT vigilador_id FROM objetivo_vigiladores WHERE objetivo_id = ?", [$objetivo['idObjetivo']]);
 $asignadosReferentes = $db->consultas("SELECT referente_id FROM objetivo_referentes WHERE objetivo_id = ?", [$objetivo['idObjetivo']]);
@@ -49,9 +58,9 @@ $referentesSeleccionados = array_column($asignadosReferentes, 'referente_id');
                             </select>
                         </div>
 
-                        <div class="form-group col-sm-12 col-md-3">
+                        <div class="form-group col-sm-12 col-md-3"  style="display: none;">
                             <label for="cantidad_vigiladores">Cantidad de Vigiladores</label>
-                            <input type="number" name="cantidad_vigiladores" id="cantidad_vigiladores" class="form-control" min="1" required>
+                            <input type="number" name="cantidad_vigiladores" id="cantidad_vigiladores" class="form-control" min="1" data-optional="true">
                         </div>
 
                         <div class="form-group col-sm-12 col-md-3">
@@ -233,9 +242,12 @@ $referentesSeleccionados = array_column($asignadosReferentes, 'referente_id');
             const cantidadRequerida = parseInt(inputCantidad.value);
             const seleccionados = $selectVigiladores.select2('data').length;
 
-            if (seleccionados !== cantidadRequerida) {
-                e.preventDefault();
-                mostrarToast("Debes seleccionar exactamente " + cantidadRequerida + " vigilador(es). Actualmente seleccionaste " + seleccionados + ".");
+            // Solo validar si el campo tiene un valor numérico válido
+            if (!isNaN(cantidadRequerida) && cantidadRequerida > 0) {
+                if (seleccionados !== cantidadRequerida) {
+                    e.preventDefault();
+                    mostrarToast("Debes seleccionar exactamente " + cantidadRequerida + " vigilador(es). Actualmente seleccionaste " + seleccionados + ".");
+                }
             }
         });
     });
