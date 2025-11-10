@@ -14,53 +14,61 @@ $turnos = $turnos ?? [];
 $rotaciones = $rotaciones ?? [];
 ?>
 <style>
-  /* Mantener encabezado visible al hacer scroll vertical */
-  #tabla-rotaciones thead th {
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    background: #f8f9fa; /* coincide con .thead-light */
-  }
+    /* Mantener encabezado visible al hacer scroll vertical */
+    #tabla-rotaciones thead th {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background: #f8f9fa;
+        /* coincide con .thead-light */
+    }
 
-  /* Columna "Puesto" fija (encabezado y cuerpo) */
-  #tabla-rotaciones th:first-child,
-  #tabla-rotaciones td:first-child {
-    position: sticky;
-    left: 0;
-    z-index: 3;                 /* por encima del resto de celdas */
-    background: #fff;           /* evitar traslucir al scrollear */
-    box-shadow: inset -1px 0 0 rgba(0,0,0,.08); /* línea divisoria */
-    white-space: nowrap;        /* no cortar nombre de puesto */
-  }
+    /* Columna "Puesto" fija (encabezado y cuerpo) */
+    #tabla-rotaciones th:first-child,
+    #tabla-rotaciones td:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 3;
+        /* por encima del resto de celdas */
+        background: #fff;
+        /* evitar traslucir al scrollear */
+        box-shadow: inset -1px 0 0 rgba(0, 0, 0, .08);
+        /* línea divisoria */
+        white-space: nowrap;
+        /* no cortar nombre de puesto */
+    }
 
-  /* La celda cabecera top-left necesita mayor z-index */
-  #tabla-rotaciones thead th:first-child {
-    z-index: 4;
-    background: #f8f9fa;
-  }
+    /* La celda cabecera top-left necesita mayor z-index */
+    #tabla-rotaciones thead th:first-child {
+        z-index: 4;
+        background: #f8f9fa;
+    }
 
-  /* Ancho mínimo para las columnas de días */
-  #tabla-rotaciones th:not(:first-child),
-  #tabla-rotaciones td:not(:first-child) {
-    min-width: 120px;            /* ajustable a gusto */
-    white-space: nowrap;
-  }
+    /* Ancho mínimo para las columnas de días */
+    #tabla-rotaciones th:not(:first-child),
+    #tabla-rotaciones td:not(:first-child) {
+        min-width: 120px;
+        /* ajustable a gusto */
+        white-space: nowrap;
+    }
 
-  /* Asegurar que el select no se achique demasiado */
-  #tabla-rotaciones td:not(:first-child) .select-rotacion {
-    min-width: 100%;
-  }
+    /* Asegurar que el select no se achique demasiado */
+    #tabla-rotaciones td:not(:first-child) .select-rotacion {
+        min-width: 100%;
+    }
 
-  /* Ayuda para sticky dentro del contenedor con overflow */
-  #tabla-rotaciones {
-    border-collapse: separate;   /* mejora borde con sticky */
-    border-spacing: 0;           /* alineado prolijo */
-  }
+    /* Ayuda para sticky dentro del contenedor con overflow */
+    #tabla-rotaciones {
+        border-collapse: separate;
+        /* mejora borde con sticky */
+        border-spacing: 0;
+        /* alineado prolijo */
+    }
 
-  /* garantizamos scroll horizontal */
-  .table-responsive {
-    overflow-x: auto;
-  }
+    /* garantizamos scroll horizontal */
+    .table-responsive {
+        overflow-x: auto;
+    }
 </style>
 
 <div class="card">
@@ -110,7 +118,7 @@ $rotaciones = $rotaciones ?? [];
             </div>
             <div class="mr-2 col-md-3">
                 <label class="form-label">Auto-rotar</label><br>
-                <button id="btn-auto-rr" class="btn btn-sm btn-primary">Equitativo (Round-robin)</button>
+                <button id="btn-auto-rr" class="btn btn-sm btn-primary">Equitativo</button>
             </div>
             <div class="mr-2 col-md-3">
                 <label class="mb-0 form-label">Swap</label><br>
@@ -227,7 +235,11 @@ $rotaciones = $rotaciones ?? [];
     // - Deshabilita a los que no coinciden con el turno seleccionado (D/N)
     // - Deshabilita a los que ya están ocupados en ese día/turno (otra celda/puesto)
     function buildOptions(fecha, turnoSel) {
-        const lista = [{ id: '', txt: '—', disabled: false }];
+        const lista = [{
+            id: '',
+            txt: '—',
+            disabled: false
+        }];
         const dayMap = codByFechaUsuario[fecha] || {};
         const keyOcup = `${fecha}|${turnoSel}`;
         const usados = ocupados[keyOcup] || new Set();
@@ -284,7 +296,12 @@ $rotaciones = $rotaciones ?? [];
     }
 
     // Guardar una celda con validaciones extra de F y coincidir turno
-    async function guardarRotacion({ fecha, puesto_id, usuario_id, codigo_turno }) {
+    async function guardarRotacion({
+        fecha,
+        puesto_id,
+        usuario_id,
+        codigo_turno
+    }) {
         const uid = parseInt(usuario_id);
         const codReal = (codByFechaUsuario[fecha]?.[uid]) || '';
 
@@ -306,11 +323,16 @@ $rotaciones = $rotaciones ?? [];
         fd.append('usuario_id', usuario_id);
         fd.append('codigo_turno', codigo_turno);
 
-        const res = await fetch('?r=guardar_rotacion', { method: 'POST', body: fd });
-        const json = await res.json();
-        if (!json.ok) {
-            alert(json.msg || 'No se pudo guardar.');
-            return false;
+        const res = await fetch('?r=guardar_rotacion', {
+            method: 'POST',
+            body: fd
+        });
+        const text = await res.text();
+        try {
+            const json = JSON.parse(text);
+            // usar json normalmente
+        } catch (e) {
+            console.error('Respuesta no válida:', text);
         }
 
         // Sincronizar estado local
@@ -344,7 +366,12 @@ $rotaciones = $rotaciones ?? [];
 
         // Si eligió vacío, interpretamos como “quitar asignación”
         if (!usuarioId) {
-            const ok = await guardarRotacion({ fecha, puesto_id: puestoId, usuario_id: '', codigo_turno: turno });
+            const ok = await guardarRotacion({
+                fecha,
+                puesto_id: puestoId,
+                usuario_id: '',
+                codigo_turno: turno
+            });
             if (!ok) {
                 const k = `${fecha}|${puestoId}|${turno}`;
                 sel.value = rotByKey[k] ? String(rotByKey[k]) : '';
@@ -354,7 +381,12 @@ $rotaciones = $rotaciones ?? [];
             return;
         }
 
-        const ok = await guardarRotacion({ fecha, puesto_id: puestoId, usuario_id: usuarioId, codigo_turno: turno });
+        const ok = await guardarRotacion({
+            fecha,
+            puesto_id: puestoId,
+            usuario_id: usuarioId,
+            codigo_turno: turno
+        });
         if (!ok) {
             // revertir UI
             const k = `${fecha}|${puestoId}|${turno}`;
@@ -371,9 +403,15 @@ $rotaciones = $rotaciones ?? [];
         fd.append('objetivo_id', OBJETIVO_ID);
         fd.append('mes', MES);
         fd.append('codigo_turno', turno);
-        const res = await fetch('?r=auto_rotar', { method: 'POST', body: fd });
+        const res = await fetch('?r=auto_rotar', {
+            method: 'POST',
+            body: fd
+        });
         const json = await res.json();
-        if (!json.ok) { alert(json.msg || 'No se pudo completar.'); return; }
+        if (!json.ok) {
+            alert(json.msg || 'No se pudo completar.');
+            return;
+        }
         location.reload();
     });
 
@@ -393,9 +431,15 @@ $rotaciones = $rotaciones ?? [];
         fd.append('usuario_b', uB);
         fd.append('codigo_turno', turno);
 
-        const res = await fetch('?r=swap_rotacion', { method: 'POST', body: fd });
+        const res = await fetch('?r=swap_rotacion', {
+            method: 'POST',
+            body: fd
+        });
         const json = await res.json();
-        if (!json.ok) { alert(json.msg || 'No se pudo completar el swap.'); return; }
+        if (!json.ok) {
+            alert(json.msg || 'No se pudo completar el swap.');
+            return;
+        }
         location.reload();
     });
 

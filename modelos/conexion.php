@@ -17,7 +17,8 @@ class Conexion
         if (self::$link) return self::$link;
 
         try {
-            $link = new PDO("mysql:host=localhost;port=3306;dbname=spec", "root", "");
+            $link = new PDO("mysql:host=localhost;port=3306;dbname=argus", "root", "");
+            //$link = new PDO("mysql:host=localhost;port=3306;dbname=u515462975_spec", "u515462975_root", "Q*/CyO48j");
             $link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $link->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
             $link->exec("SET NAMES utf8");

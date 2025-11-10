@@ -31,7 +31,7 @@
 
             <?php if (Auth::hasPermission('art', 'vistaCrearArt')): ?>
                 <li class="nav-item">
-                    <a href="?r=gestion_art" class="nav-link">
+                    <a href="?r=crear_art" class="nav-link">
                         <i class="far fa-circle nav-icon"></i>
                         <p>Crear A.R.T.</p>
                     </a>

@@ -170,13 +170,24 @@ class ControladorCronograma
         $db = new Conexion;
 
         // Vigiladores y referentes vinculados al objetivo
-        $vigiladores = $db->consultas("SELECT u.idUsuario FROM usuarios u
-        INNER JOIN objetivo_vigiladores ov ON ov.vigilador_id = u.idUsuario
-        WHERE ov.objetivo_id = $objetivoId AND u.activo = 1 AND u.rol='Vigilador'");
+        $vigiladores = $db->consultas(" SELECT u.idUsuario
+                                    FROM usuarios u
+                                    INNER JOIN roles r ON u.rol_id = r.id
+                                    INNER JOIN objetivo_vigiladores ov ON ov.vigilador_id = u.idUsuario
+                                    WHERE ov.objetivo_id = $objetivoId
+                                    AND u.activo = 1
+                                    AND r.categoria = 'operativo'
+                                ");
 
-        $referentes = $db->consultas("SELECT u.idUsuario FROM usuarios u
-        INNER JOIN objetivo_referentes orf ON orf.referente_id = u.idUsuario
-        WHERE orf.objetivo_id = $objetivoId AND u.activo = 1 AND u.rol='Referente'");
+        $referentes = $db->consultas(" SELECT u.idUsuario
+                                    FROM usuarios u
+                                    INNER JOIN roles r ON u.rol_id = r.id
+                                    INNER JOIN objetivo_referentes orf ON orf.referente_id = u.idUsuario
+                                    WHERE orf.objetivo_id = $objetivoId
+                                    AND u.activo = 1
+                                    AND r.categoria = 'referente'
+                                ");
+
 
         $post = [
             'objetivo'  => $objetivoId,
@@ -350,9 +361,15 @@ class ControladorCronograma
 
         // Vigiladores vinculados al objetivo
         $db = new Conexion;
-        $vigiladores = $db->consultas("SELECT u.idUsuario FROM usuarios u
-        INNER JOIN objetivo_vigiladores ov ON ov.vigilador_id = u.idUsuario
-        WHERE ov.objetivo_id = $objetivoId AND u.activo = 1 AND u.rol='Vigilador'");
+        $vigiladores = $db->consultas("SELECT u.idUsuario
+                                        FROM usuarios u
+                                        INNER JOIN roles r ON u.rol_id = r.id
+                                        INNER JOIN objetivo_vigiladores ov ON ov.vigilador_id = u.idUsuario
+                                        WHERE ov.objetivo_id = $objetivoId
+                                        AND u.activo = 1
+                                        AND r.categoria = 'operativo'
+                                    ");
+
         $uidsV = array_map(fn($r) => (int)$r['idUsuario'], $vigiladores);
 
         foreach ($uidsV as $uid) {
@@ -400,9 +417,15 @@ class ControladorCronograma
         }
 
         // Referentes: copiar tal cual el mismo día si existía en el mes anterior
-        $referentes = $db->consultas("SELECT u.idUsuario FROM usuarios u
-        INNER JOIN objetivo_referentes orf ON orf.referente_id = u.idUsuario
-        WHERE orf.objetivo_id = $objetivoId AND u.activo = 1 AND u.rol='Referente'");
+$referentes = $db->consultas("SELECT u.idUsuario
+                                    FROM usuarios u
+                                    INNER JOIN roles r ON u.rol_id = r.id
+                                    INNER JOIN objetivo_referentes orf ON orf.referente_id = u.idUsuario
+                                    WHERE orf.objetivo_id = $objetivoId
+                                    AND u.activo = 1
+                                    AND r.categoria = 'referente'
+                                ");
+
         $uidsR = array_map(fn($r) => (int)$r['idUsuario'], $referentes);
 
         // map día => código del mes anterior
@@ -430,9 +453,15 @@ class ControladorCronograma
         }
 
         // 2) Traer referentes vinculados al objetivo
-        $referentes = $db->consultas("SELECT u.idUsuario FROM usuarios u
-        INNER JOIN objetivo_referentes orf ON orf.referente_id = u.idUsuario
-        WHERE orf.objetivo_id = $objetivoId AND u.activo = 1 AND u.rol='Referente'");
+$referentes = $db->consultas("SELECT u.idUsuario
+                                    FROM usuarios u
+                                    INNER JOIN roles r ON u.rol_id = r.id
+                                    INNER JOIN objetivo_referentes orf ON orf.referente_id = u.idUsuario
+                                    WHERE orf.objetivo_id = $objetivoId
+                                    AND u.activo = 1
+                                    AND r.categoria = 'referente'
+                                ");
+
         $uidsR = array_map(fn($r) => (int)$r['idUsuario'], $referentes);
 
         // 3) Generar mes con la continuidad 4×2 (D,D → N,N → F,F → ...)

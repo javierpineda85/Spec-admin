@@ -48,18 +48,20 @@ $db = new Conexion;
 $objetivos  = $db->consultas("SELECT * FROM objetivos ORDER BY nombre");
 $puestos    = $db->consultas("SELECT idPuesto, puesto, objetivo_id FROM puestos");
 $vigiladores = $db->consultas("SELECT DISTINCT u.idUsuario, u.nombre, u.apellido, ov.objetivo_id
-                                  FROM usuarios u
-                                  JOIN objetivo_vigiladores ov ON u.idUsuario = ov.vigilador_id
-                                  WHERE u.rol = 'Vigilador' AND u.activo = 1
-                                  ORDER BY u.apellido, u.nombre
-                              ");
+                                    FROM usuarios u
+                                    JOIN roles r ON u.rol_id = r.id
+                                    JOIN objetivo_vigiladores ov ON u.idUsuario = ov.vigilador_id
+                                    WHERE r.categoria = 'operativo' AND u.activo = 1
+                                    ORDER BY u.apellido, u.nombre
+  ");
 
 $referentes = $db->consultas("SELECT DISTINCT u.idUsuario, u.nombre, u.apellido, orf.objetivo_id
-                                  FROM usuarios u
-                                  JOIN objetivo_referentes orf ON u.idUsuario = orf.referente_id
-                                  WHERE u.rol = 'Referente' AND u.activo = 1
-                                  ORDER BY u.apellido, u.nombre
-                              ");
+                                        FROM usuarios u
+                                        JOIN roles r ON u.rol_id = r.id
+                                        JOIN objetivo_referentes orf ON u.idUsuario = orf.referente_id
+                                        WHERE r.categoria = 'referente' AND u.activo = 1
+                                        ORDER BY u.apellido, u.nombre
+                                    ");
 
 // ===================== FERIADOS DEL MES =====================
 //Para la tabla

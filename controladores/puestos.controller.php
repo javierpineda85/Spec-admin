@@ -299,17 +299,27 @@ class ControladorPuestos
     /** API: autollenado equitativo (round-robin) */
     public static function crtAutoRotarEquitativo()
     {
+        ini_set('display_errors', 1);
+        ini_set('display_startup_errors', 1);
+        error_reporting(E_ALL);
+
         Auth::check('puestos', 'gestionarRotaciones');
-
-        $res = ModeloPuestos::mdlAutoRotarEquitativo(
-            (int)($_POST['objetivo_id'] ?? 0),
-            $_POST['mes'] ?? date('Y-m'),
-            $_POST['codigo_turno'] ?? 'D',
-            (int)($_SESSION['idUsuario'] ?? 0)
-        );
-
+        try {
+            $res = ModeloPuestos::mdlAutoRotarEquitativo(
+                (int)($_POST['objetivo_id'] ?? 0),
+                $_POST['mes'] ?? date('Y-m'),
+                $_POST['codigo_turno'] ?? 'D',
+                (int)($_SESSION['idUsuario'] ?? 0)
+            );
+        } catch (Throwable $e) {
+            $res = ['ok' => false, 'msg' => 'Error interno: ' . $e->getMessage()];
+        }
+        // En lugar de var_dump, convertimos a texto y lo mostramos como JSON
         header('Content-Type: application/json');
-        echo json_encode($res);
+        echo json_encode([
+            'ok' => true,
+            'debug' => $res,
+        ]);
         exit;
     }
 }

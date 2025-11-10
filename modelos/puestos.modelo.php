@@ -35,7 +35,7 @@ class ModeloPuestos
             $stmt->bindParam(":puesto", $datos["puesto"], PDO::PARAM_STR);
             $stmt->bindParam(":objetivo_id", $datos["objetivo_id"], PDO::PARAM_INT);
             $stmt->bindParam(":tipo", $datos["tipo"], PDO::PARAM_STR);
-            
+
 
             if ($stmt->execute()) {
                 return "ok";
@@ -77,11 +77,12 @@ class ModeloPuestos
     {
         $db = new Conexion;
         // vinculados al objetivo, activos y rol vigilador
-        return $db->consultas("SELECT u.idUsuario, CONCAT(u.apellido, ', ', u.nombre) AS nombre
-                               FROM usuarios u
-                               INNER JOIN objetivo_vigiladores ov ON ov.vigilador_id = u.idUsuario
-                               WHERE ov.objetivo_id = $objetivo_id AND u.activo = 1 AND u.rol = 'Vigilador'
-                               ORDER BY u.apellido, u.nombre");
+     return $db->consultas("SELECT DISTINCT u.idUsuario, CONCAT(u.apellido, ', ', u.nombre) AS nombre
+                           FROM usuarios u
+                           INNER JOIN objetivo_vigiladores ov ON ov.vigilador_id = u.idUsuario
+                           WHERE ov.objetivo_id = $objetivo_id
+                             AND u.activo = 1
+                           ORDER BY u.apellido, u.nombre");
     }
 
     /** TURNOS del mes (para validar que el vigilador tenga turno ese día y turno) */
@@ -90,11 +91,11 @@ class ModeloPuestos
         $db = new Conexion;
         $desde = $mesYYYYMM . "-01";
         $hasta = date("Y-m-t", strtotime($desde)); // fin de mes
-        return $db->consultas("SELECT idTurno, usuario_id, puesto_id, objetivo_id, fecha, rol, tipo_turno, codigo_turno
-                               FROM turnos
-                               WHERE objetivo_id = $objetivo_id
-                                 AND fecha BETWEEN '$desde' AND '$hasta'
-                                 AND rol='Vigilador'");
+        return $db->consultas("SELECT idTurno, usuario_id, objetivo_id, fecha, rol, tipo_turno, codigo_turno
+                                    FROM turnos
+                                    WHERE objetivo_id = $objetivo_id
+                                        AND fecha BETWEEN '$desde' AND '$hasta'
+                                        AND rol='Vigilador'");
     }
 
     /** Rotaciones ya cargadas del mes */
@@ -272,6 +273,7 @@ class ModeloPuestos
         if (empty($puestos)) return ['ok' => true, 'msg' => 'Sin puestos rotativos.'];
 
         $vigs = self::mdlObtenerVigiladoresElegibles($objetivo_id);
+        
         if (empty($vigs)) return ['ok' => false, 'msg' => 'Sin vigiladores elegibles.'];
 
         $turnos = self::mdlObtenerTurnosMesObjetivo($objetivo_id, $mesYYYYMM);
