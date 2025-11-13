@@ -400,7 +400,14 @@ class RutasController
         // Autollenado equitativo (round robin) (POST)
         if (isset($_GET['r']) && $_GET['r'] === 'auto_rotar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
             ControladorPuestos::crtAutoRotarEquitativo();
-            return;
+            //return;
+            exit;
+        }
+        // Si no coincide, no devolver HTML en APIs
+        if (isset($_GET['r']) && $_GET['r'] === 'auto_rotar') {
+            header('Content-Type: application/json');
+            echo json_encode(['ok' => false, 'msg' => 'Método inválido']);
+            exit;
         }
 
         // ========= RONDAS =========

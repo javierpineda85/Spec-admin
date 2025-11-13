@@ -74,6 +74,12 @@ if ($r === 'registrar_reporte') {
     HombreVivoController::ajaxRegistrarReporte();
     exit;
 }
+// ===== 3b) AJAX – auto rotar equitativo =====
+if ($r === 'auto_rotar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    header('Content-Type: application/json; charset=utf-8');
+    ControladorPuestos::crtAutoRotarEquitativo();
+    exit;
+}
 
 // ===== 4) PROTECCIÓN GENERAL =====
 // A partir de aquí, cualquier otra ruta exige usuario autenticado

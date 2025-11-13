@@ -299,27 +299,45 @@ class ControladorPuestos
     /** API: autollenado equitativo (round-robin) */
     public static function crtAutoRotarEquitativo()
     {
-        ini_set('display_errors', 1);
-        ini_set('display_startup_errors', 1);
+        // 🔧 Configuración de errores:
+        // En producción conviene NO mostrar errores en pantalla (display_errors=0),
+        // porque cualquier warning/notice rompe el JSON. Mejor loguearlos en php_error.log.
+        ini_set('display_errors', 0);
+        ini_set('display_startup_errors', 0);
         error_reporting(E_ALL);
 
+        // 🔒 Verificación de permisos:
+        // Asegura que el usuario tenga permiso para gestionar rotaciones.
         Auth::check('puestos', 'gestionarRotaciones');
+
         try {
+            // 📥 Llamada al modelo con parámetros saneados:
             $res = ModeloPuestos::mdlAutoRotarEquitativo(
                 (int)($_POST['objetivo_id'] ?? 0),
                 $_POST['mes'] ?? date('Y-m'),
                 $_POST['codigo_turno'] ?? 'D',
                 (int)($_SESSION['idUsuario'] ?? 0)
             );
+
+            // ✅ El modelo debería devolver un array con al menos:
+            // ['ok' => true/false, 'msg' => 'texto', 'count' => número]
         } catch (Throwable $e) {
-            $res = ['ok' => false, 'msg' => 'Error interno: ' . $e->getMessage()];
+            // ⚠️ Captura cualquier excepción y devuelve JSON de error
+            $res = [
+                'ok'   => false,
+                'msg'  => 'Error interno: ' . $e->getMessage(),
+                'count' => 0
+            ];
         }
-        // En lugar de var_dump, convertimos a texto y lo mostramos como JSON
-        header('Content-Type: application/json');
-        echo json_encode([
-            'ok' => true,
-            'debug' => $res,
-        ]);
+
+        // 📤 Respuesta JSON:
+        // Cabecera explícita para que el cliente sepa que es JSON
+        header('Content-Type: application/json; charset=UTF-8');
+
+        // Codificamos el array como JSON. JSON_UNESCAPED_UNICODE evita problemas con acentos.
+        echo json_encode($res, JSON_UNESCAPED_UNICODE);
+
+        // 🚪 Exit para cortar el flujo y evitar que se renderice la plantilla HTML
         exit;
     }
 }

@@ -77,7 +77,7 @@ class ModeloPuestos
     {
         $db = new Conexion;
         // vinculados al objetivo, activos y rol vigilador
-     return $db->consultas("SELECT DISTINCT u.idUsuario, CONCAT(u.apellido, ', ', u.nombre) AS nombre
+        return $db->consultas("SELECT DISTINCT u.idUsuario, CONCAT(u.apellido, ', ', u.nombre) AS nombre
                            FROM usuarios u
                            INNER JOIN objetivo_vigiladores ov ON ov.vigilador_id = u.idUsuario
                            WHERE ov.objetivo_id = $objetivo_id
@@ -265,18 +265,22 @@ class ModeloPuestos
     public static function mdlAutoRotarEquitativo(int $objetivo_id, string $mesYYYYMM, string $codigo_turno, int $editor_id)
     {
         $db = new Conexion;
-
+        //1) Puestos
         $puestos = $db->consultas("SELECT idPuesto, puesto FROM puestos
                                    WHERE objetivo_id=$objetivo_id AND activo=1 AND tipo='Rotativo'
                                    ORDER BY puesto ASC");
+        error_log("auto_rotar puestos=" . count($puestos));
 
-        if (empty($puestos)) return ['ok' => true, 'msg' => 'Sin puestos rotativos.'];
+        if (empty($puestos)) return ['ok' => true, 'msg' => 'Sin puestos rotativos.', 'count' => 0];
 
+        //2) Vigiladores
         $vigs = self::mdlObtenerVigiladoresElegibles($objetivo_id);
-        
-        if (empty($vigs)) return ['ok' => false, 'msg' => 'Sin vigiladores elegibles.'];
+        error_log("auto_rotar vigs=" . count($vigs));
+        if (empty($vigs)) return ['ok' => false, 'msg' => 'Sin vigiladores elegibles.', 'count' => 0];
 
+        // 3) turnos
         $turnos = self::mdlObtenerTurnosMesObjetivo($objetivo_id, $mesYYYYMM);
+        error_log("auto_rotar turnos=" . count($turnos));
         // Agrupo turnos por fecha para saber quiénes PUEDEN ese día/turno
         $porFecha = [];
         foreach ($turnos as $t) {
@@ -288,8 +292,9 @@ class ModeloPuestos
         $hasta = date("Y-m-t", strtotime($desde));
         $period = new DatePeriod(new DateTime($desde), new DateInterval('P1D'), (new DateTime($hasta))->modify('+1 day'));
 
-        // Rotaciones existentes (no las pisamos salvo que se pida explícito)
+        // 4)Rotaciones existentes (no las pisamos salvo que se pida explícito)
         $exist = self::mdlObtenerRotacionesMes($objetivo_id, $mesYYYYMM);
+        error_log("auto_rotar exist rotaciones=" . count($exist));
         $ocupado = [];
         foreach ($exist as $r) {
             if ($r['codigo_turno'] !== $codigo_turno) continue;
@@ -299,14 +304,14 @@ class ModeloPuestos
             $ocupado[$k2] = true;  // usuario ya asignado ese día
         }
 
-        // Round-robin: por cada puesto rotativo y por cada día → asigno al siguiente elegible con turno ese día que aún no fue asignado ese día
+        // 5) Round-robin: por cada puesto rotativo y por cada día → asigno al siguiente elegible con turno ese día que aún no fue asignado ese día
         $cursor = 0;
         $n = count($vigs);
-
+        $asignados = 0; // contador de inserts
         foreach ($period as $d) {
             $f = $d->format('Y-m-d');
             $habilitados = $porFecha[$f] ?? []; // los que tienen turno ese día/turno
-
+            error_log("Fecha $f habilitados=" . count($habilitados));
             if (empty($habilitados)) continue;
 
             foreach ($puestos as $p) {
@@ -343,13 +348,14 @@ class ModeloPuestos
                         ]);
                         $ocupado[$k1] = true;
                         $ocupado[$k2] = true;
+                        $asignados++;
                         break;
                     }
                 }
             }
         }
-
-        return ['ok' => true];
+        error_log("auto_rotar asignados=" . $asignados);
+        return ['ok' => true, 'msg' => 'Auto-rotación completada', 'count' => $asignados];
     }
 
     /** Log */

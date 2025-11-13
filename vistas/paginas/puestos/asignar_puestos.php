@@ -159,7 +159,7 @@ $rotaciones = $rotaciones ?? [];
                                 $fecha = $d1->format('Y-m-d');
                             ?>
                                 <td class="p-1 text-center align-middle"
-                                    data-fecha="<?= $fecha ?>">
+                                    data-fecha="<?= $fecha ?>" data-puesto-id="<?= (int)$p['idPuesto'] ?>">
                                     <!-- select de vigiladores habilitados para esa fecha según turno, se llena por JS -->
                                     <select class="form-control form-control-sm select-rotacion"
                                         data-fecha="<?= $fecha ?>"
@@ -397,7 +397,7 @@ $rotaciones = $rotaciones ?? [];
     });
 
     // Auto-rotar y Swap (tus handlers, sin cambios)
-    document.getElementById('btn-auto-rr').addEventListener('click', async () => {
+    /*document.getElementById('btn-auto-rr').addEventListener('click', async () => {
         const turno = selCodigoTurno.value;
         const fd = new FormData();
         fd.append('objetivo_id', OBJETIVO_ID);
@@ -413,7 +413,39 @@ $rotaciones = $rotaciones ?? [];
             return;
         }
         location.reload();
+    });*/
+    document.getElementById('btn-auto-rr').addEventListener('click', async () => {
+        const turno = selCodigoTurno.value;
+        const fd = new FormData();
+        fd.append('objetivo_id', OBJETIVO_ID);
+        fd.append('mes', MES);
+        fd.append('codigo_turno', turno);
+
+        const res = await fetch('index.php?r=auto_rotar', {
+            method: 'POST',
+            body: fd,
+            cache: 'no-store',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+
+
+        const txt = await res.text();
+        try {
+            const json = JSON.parse(txt);
+            if (!json.ok) {
+                alert(json.msg || 'No se pudo completar.');
+                return;
+            }
+            alert(`Auto-rotación OK. Asignaciones: ${json.count ?? '—'}`);
+            location.reload();
+        } catch (e) {
+            console.error('Auto-rotar devolvió HTML/invalid JSON:', txt);
+            alert('Error: la API devolvió HTML en vez de JSON. Revisar rutas/Auth.');
+        }
     });
+
 
     document.getElementById('btn-swap').addEventListener('click', async () => {
         const turno = selCodigoTurno.value;
