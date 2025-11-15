@@ -245,9 +245,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       placeholder: "Selecciona los vigiladores asignados"
     });
   });
+  
   document.addEventListener("DOMContentLoaded", function() {
     const form = document.getElementById("formObjetivo");
-    const inputCantidad = document.getElementById("cantidad_vigiladores");
+    //const inputCantidad = document.getElementById("cantidad_vigiladores");
     const $selectVigiladores = $('#vigiladores');
 
     // Inicializar Select2
@@ -263,7 +264,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $selectVigiladores.on('select2:select', function(e) {
       const max = parseInt(inputCantidad.value) || 0;
       const seleccionados = $selectVigiladores.select2('data');
-
+/*
       if (seleccionados.length > max) {
         // Elimina el último seleccionado
         const idEliminar = e.params.data.id;
@@ -271,7 +272,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $selectVigiladores.val(opciones).trigger('change');
 
         mostrarToast('Solo puedes seleccionar hasta ' + max + ' vigilador(es).');
-      }
+      }*/
     });
 
     // Validación de respaldo al enviar
