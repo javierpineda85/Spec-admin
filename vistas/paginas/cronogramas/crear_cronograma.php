@@ -1,9 +1,11 @@
 <?php
+$_SESSION['cronograma_post'] = [];  
 //Guardar datos en la BD
 if (isset($_POST['guardar_cronograma']) && empty($_SESSION['cronograma_post'])) {
   ControladorCronograma::ctrGuardarCronograma();
 }
 
+//Vaciar el cronograma
 // Primero verificamos si hay datos previos (guardados por el controlador al fallar o precargar)
 $datosPrevios = $_SESSION['cronograma_post'] ?? [];
 // Siempre limpiamos los datos previos si se está intentando cargar un cronograma nuevo

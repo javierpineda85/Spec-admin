@@ -85,7 +85,7 @@ $rotaciones = $rotaciones ?? [];
 
             <form method="GET" class="form-inline">
                 <input type="hidden" name="r" value="rotaciones_puestos">
-                
+
                 <label class="form-label">Objetivo: </label>
                 <select name="objetivo_id" class="form-control form-control-sm mr-2" onchange="this.form.submit()">
                     <option value="0" <?= $objetivo_id === 0 ? 'selected' : '' ?>>Seleccione…</option>
@@ -109,7 +109,7 @@ $rotaciones = $rotaciones ?? [];
             </form>
             <small class="border border-warning py-1 px-4 mx-3 rounded">Antes de realizar las rotaciones, debe completar el cronograma</small>
         </div>
-        
+
         <div class="row mt-3">
 
             <div class="mb-3 col-md-2">
@@ -437,16 +437,23 @@ $rotaciones = $rotaciones ?? [];
         const txt = await res.text();
         try {
             const json = JSON.parse(txt);
+
             if (!json.ok) {
-                alert(json.msg || 'No se pudo completar.');
+                mostrarToast(json.msg || "No se pudo completar.", "danger");
                 return;
             }
-            alert(`Auto-rotación OK. Asignaciones: ${json.count ?? '—'}`);
+
+            mostrarToast(`Auto-rotación OK. Asignaciones: ${json.count ?? "—"}`, "success");
+
+            // Recargar la vista después de mostrar el toast
             location.reload();
+
         } catch (e) {
-            console.error('Auto-rotar devolvió HTML/invalid JSON:', txt);
-            alert('Error: la API devolvió HTML en vez de JSON. Revisar rutas/Auth.');
+            console.error("Auto-rotar devolvió HTML/invalid JSON:", txt);
+            mostrarToast("Error: la API devolvió HTML en vez de JSON. Revisar rutas/Auth.", "warning");
         }
+
+
     });
 
 

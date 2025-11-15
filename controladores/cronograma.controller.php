@@ -9,7 +9,7 @@ class ControladorCronograma
 
         //Auth::check('cronogramas', 'ctrGuardarCronograma');
         Auth::check('cronogramas', 'vistaCrearCronograma');
-
+       
         if (!isset($_POST['guardar_cronograma'])) return;
 
         $objetivoId = intval($_POST['objetivo'] ?? 0);
@@ -417,7 +417,7 @@ class ControladorCronograma
         }
 
         // Referentes: copiar tal cual el mismo día si existía en el mes anterior
-$referentes = $db->consultas("SELECT u.idUsuario
+        $referentes = $db->consultas("SELECT u.idUsuario
                                     FROM usuarios u
                                     INNER JOIN roles r ON u.rol_id = r.id
                                     INNER JOIN objetivo_referentes orf ON orf.referente_id = u.idUsuario
@@ -453,7 +453,7 @@ $referentes = $db->consultas("SELECT u.idUsuario
         }
 
         // 2) Traer referentes vinculados al objetivo
-$referentes = $db->consultas("SELECT u.idUsuario
+        $referentes = $db->consultas("SELECT u.idUsuario
                                     FROM usuarios u
                                     INNER JOIN roles r ON u.rol_id = r.id
                                     INNER JOIN objetivo_referentes orf ON orf.referente_id = u.idUsuario
