@@ -111,79 +111,112 @@ class ModeloPuestos
     }
 
     /** Guardar/actualizar (UPSERT) una rotación */
-    public static function mdlGuardarRotacion(array $r) // $r: objetivo_id, fecha, puesto_id, usuario_id, codigo_turno, editor_id, motivo?
+    public static function mdlGuardarRotacion(array $r)
+    // $r: objetivo_id, fecha, puesto_id, usuario_id, codigo_turno, editor_id, motivo?
     {
         $db = new Conexion;
 
-        // Validación 1: el usuario tiene turno ese día + código turno
-        $u = (int)$r['usuario_id'];
+        // ============================
+        // 1) Validación: el usuario tiene turno ese día + código turno
+        // ============================
+        $u   = (int)$r['usuario_id'];
         $obj = (int)$r['objetivo_id'];
-        $f = $r['fecha'];
-        $ct = $db->limpiar($r['codigo_turno']); // 'D' o 'N'
+        $f   = $db->limpiar($r['fecha']);
+        $ct  = $db->limpiar($r['codigo_turno']); // 'D' o 'N'
+        $puesto_id = (int)$r['puesto_id'];
 
         $turnoValido = $db->consultas("SELECT idTurno FROM turnos
-                                       WHERE objetivo_id=$obj AND usuario_id=$u AND fecha='$f'
-                                         AND codigo_turno='$ct' AND rol='Vigilador' LIMIT 1");
+                                   WHERE objetivo_id=$obj AND usuario_id=$u 
+                                     AND fecha='$f' AND codigo_turno='$ct' 
+                                     AND rol='Vigilador' LIMIT 1");
         if (empty($turnoValido)) {
             return ['ok' => false, 'msg' => 'El vigilador no tiene turno asignado en esa fecha y turno.'];
         }
 
-        // Intento de UPSERT manual (respetando unicidades)
-        $puesto_id = (int)$r['puesto_id'];
-
-        // ¿Existe ya una rotación para ese puesto y fecha/turno?
-        $existePuesto = $db->consultas("SELECT idRotacion, usuario_id FROM rotaciones_puestos
-                                        WHERE objetivo_id=$obj AND fecha='$f'
-                                          AND puesto_id=$puesto_id AND codigo_turno='$ct' LIMIT 1");
+        // ============================
+        // 2) Validación: ¿ya existe una rotación para ese puesto en esa fecha/turno?
+        // ============================
+        $existePuesto = $db->consultas("SELECT idRotacion, usuario_id 
+                                    FROM rotaciones_puestos
+                                    WHERE objetivo_id=$obj AND fecha='$f'
+                                      AND puesto_id=$puesto_id AND codigo_turno='$ct' 
+                                    LIMIT 1");
 
         if (!empty($existePuesto)) {
+            // Ya hay alguien en ese puesto → hacemos UPDATE (reemplazo)
             $idRot = (int)$existePuesto[0]['idRotacion'];
             $usrAnt = (int)$existePuesto[0]['usuario_id'];
 
-            // Actualizo (puede fallar por uq_usuario_fecha_turno si el usuario ya está en otro puesto ese día/turno)
+            // ============================
+            // 3) Validación extra: ¿el usuario ya está en otro puesto ese mismo día/turno?
+            // ============================
+            $confUsuario = $db->consultas("SELECT idRotacion FROM rotaciones_puestos
+                                       WHERE objetivo_id=$obj AND fecha='$f'
+                                         AND codigo_turno='$ct' AND usuario_id=$u 
+                                         AND idRotacion <> $idRot LIMIT 1");
+            if (!empty($confUsuario)) {
+                return ['ok' => false, 'msg' => 'El usuario ya está asignado en otro puesto ese día/turno.'];
+            }
+
+            // ============================
+            // 4) Actualización
+            // ============================
             $ok = $db->ejecutar("UPDATE rotaciones_puestos
-                                 SET usuario_id=$u
-                                 WHERE idRotacion=$idRot");
+                             SET usuario_id=$u
+                             WHERE idRotacion=$idRot");
 
             if ($ok) {
                 self::mdlLogRotacion([
-                    'rotacion_id' => $idRot,
-                    'objetivo_id' => $obj,
-                    'fecha' => $f,
-                    'puesto_id' => $puesto_id,
+                    'rotacion_id'     => $idRot,
+                    'objetivo_id'     => $obj,
+                    'fecha'           => $f,
+                    'puesto_id'       => $puesto_id,
                     'usuario_anterior' => $usrAnt,
-                    'usuario_nuevo' => $u,
-                    'codigo_turno' => $ct,
-                    'usuario_editor' => (int)$r['editor_id'],
-                    'accion' => 'update',
-                    'motivo' => $db->limpiar($r['motivo'] ?? null)
+                    'usuario_nuevo'   => $u,
+                    'codigo_turno'    => $ct,
+                    'usuario_editor'  => (int)$r['editor_id'],
+                    'accion'          => 'update',
+                    'motivo'          => $db->limpiar($r['motivo'] ?? null)
                 ]);
                 return ['ok' => true];
             }
-            return ['ok' => false, 'msg' => 'No se pudo actualizar (posible conflicto de unicidad con usuario en otro puesto).'];
+            return ['ok' => false, 'msg' => 'No se pudo actualizar (conflicto de unicidad).'];
         } else {
-            // Inserto nueva
-            $ok = $db->ejecutar("INSERT INTO rotaciones_puestos (objetivo_id, fecha, puesto_id, usuario_id, codigo_turno)
-                                 VALUES ($obj, '$f', $puesto_id, $u, '$ct')");
+            // ============================
+            // 5) Inserción nueva
+            // ============================
+            // Validación extra: ¿el usuario ya está en otro puesto ese mismo día/turno?
+            $confUsuario = $db->consultas("SELECT idRotacion FROM rotaciones_puestos
+                                       WHERE objetivo_id=$obj AND fecha='$f'
+                                         AND codigo_turno='$ct' AND usuario_id=$u 
+                                       LIMIT 1");
+            if (!empty($confUsuario)) {
+                return ['ok' => false, 'msg' => 'El usuario ya está asignado en otro puesto ese día/turno.'];
+            }
+
+            $ok = $db->ejecutar("INSERT INTO rotaciones_puestos 
+                             (objetivo_id, fecha, puesto_id, usuario_id, codigo_turno)
+                             VALUES ($obj, '$f', $puesto_id, $u, '$ct')");
             if ($ok) {
                 $idRot = $db->lastInsertId();
                 self::mdlLogRotacion([
-                    'rotacion_id' => $idRot,
-                    'objetivo_id' => $obj,
-                    'fecha' => $f,
-                    'puesto_id' => $puesto_id,
+                    'rotacion_id'     => $idRot,
+                    'objetivo_id'     => $obj,
+                    'fecha'           => $f,
+                    'puesto_id'       => $puesto_id,
                     'usuario_anterior' => null,
-                    'usuario_nuevo' => $u,
-                    'codigo_turno' => $ct,
-                    'usuario_editor' => (int)$r['editor_id'],
-                    'accion' => 'create',
-                    'motivo' => $db->limpiar($r['motivo'] ?? null)
+                    'usuario_nuevo'   => $u,
+                    'codigo_turno'    => $ct,
+                    'usuario_editor'  => (int)$r['editor_id'],
+                    'accion'          => 'create',
+                    'motivo'          => $db->limpiar($r['motivo'] ?? null)
                 ]);
                 return ['ok' => true];
             }
-            return ['ok' => false, 'msg' => 'No se pudo insertar (posible conflicto por unicidad).'];
+            return ['ok' => false, 'msg' => 'No se pudo insertar (conflicto de unicidad).'];
         }
     }
+
 
     /** Eliminar una rotación puntual */
     public static function mdlEliminarRotacion(int $idRotacion, int $editor_id)

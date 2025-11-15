@@ -111,6 +111,72 @@ class ModeloTurnos
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+        /*Trae los turnos de un mes en especifico */
+    // vista: listado_cronogramas.php
+    static public function mdlObtenerTurnosConPuestos($tabla, $filtros)
+    {
+        $sql = "SELECT 
+                t.idTurno,
+                t.fecha,
+                t.rol,
+                t.tipo_turno,
+                t.codigo_turno,
+                p.puesto AS puesto,
+                o.nombre AS objetivo,
+                CONCAT(u.apellido, ' ', u.nombre) AS usuario,
+                rp.idRotacion,
+                CONCAT(ur.apellido, ' ', ur.nombre) AS usuario_rotacion
+            FROM $tabla AS t
+            JOIN objetivos AS o 
+                ON t.objetivo_id = o.idObjetivo
+            JOIN usuarios AS u 
+                ON t.usuario_id = u.idUsuario
+            LEFT JOIN rotaciones_puestos AS rp
+                ON rp.objetivo_id  = t.objetivo_id
+               AND rp.fecha        = t.fecha
+               AND rp.codigo_turno = t.codigo_turno
+               AND rp.usuario_id   = t.usuario_id
+            LEFT JOIN puestos AS p
+                ON rp.puesto_id = p.idPuesto
+            LEFT JOIN usuarios AS ur
+                ON rp.usuario_id = ur.idUsuario
+            WHERE 1=1";
+
+        // Array para bindParam
+        $params = [];
+
+        // Filtro por objetivo
+        if (!empty($filtros['objetivo'])) {
+            $sql .= " AND t.objetivo_id = :objetivo_id";
+            $params[':objetivo_id'] = [$filtros['objetivo'], PDO::PARAM_INT];
+        }
+
+        // Filtro por usuario/vigilador
+        if (!empty($filtros['vigilador'])) {
+            $sql .= " AND t.usuario_id = :usuario_id";
+            $params[':usuario_id'] = [$filtros['vigilador'], PDO::PARAM_INT];
+        }
+
+        // Filtro por rango de fechas
+        if (!empty($filtros['desde']) && !empty($filtros['hasta'])) {
+            $sql .= " AND t.fecha BETWEEN :desde AND :hasta";
+            $params[':desde'] = [$filtros['desde'], PDO::PARAM_STR];
+            $params[':hasta'] = [$filtros['hasta'], PDO::PARAM_STR];
+        }
+
+        $sql .= " ORDER BY t.fecha, t.codigo_turno, p.puesto";
+
+        $stmt = Conexion::conectar()->prepare($sql);
+
+        // Bind dinámico
+        foreach ($params as $key => [$value, $type]) {
+            $stmt->bindValue($key, $value, $type);
+        }
+
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
 
 
     /*Funcion para traer el cronograma / turno del mes anterior */
