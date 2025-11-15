@@ -2,3 +2,13 @@ RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ index.php [QSA,L]
+
+# Aumentar el límite de inputs en formularios grandes
+php_value max_input_vars 95000
+
+# Asegurar que el POST completo se acepte
+php_value post_max_size 20M
+php_value upload_max_filesize 20M
+
+# Opcional: ajustar memoria si el formulario es muy grande
+php_value memory_limit 256M
