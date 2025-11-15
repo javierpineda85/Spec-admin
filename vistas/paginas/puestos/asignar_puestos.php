@@ -85,6 +85,7 @@ $rotaciones = $rotaciones ?? [];
 
             <form method="GET" class="form-inline">
                 <input type="hidden" name="r" value="rotaciones_puestos">
+                
                 <label class="form-label">Objetivo: </label>
                 <select name="objetivo_id" class="form-control form-control-sm mr-2" onchange="this.form.submit()">
                     <option value="0" <?= $objetivo_id === 0 ? 'selected' : '' ?>>Seleccione…</option>
@@ -106,7 +107,9 @@ $rotaciones = $rotaciones ?? [];
                 <input type="month" name="mes" class="form-control form-control-sm mr-2" value="<?= htmlspecialchars($mes) ?>">
                 <button class="btn btn-sm btn-info">Cambiar mes</button>
             </form>
+            <small class="border border-warning py-1 px-4 mx-3 rounded">Antes de realizar las rotaciones, debe completar el cronograma</small>
         </div>
+        
         <div class="row mt-3">
 
             <div class="mb-3 col-md-2">
@@ -116,11 +119,11 @@ $rotaciones = $rotaciones ?? [];
                     <option value="N">Nocturno (N)</option>
                 </select>
             </div>
-            <div class="mr-2 col-md-3">
+            <div class="mr-2 col-md-2">
                 <label class="form-label">Auto-rotar</label><br>
                 <button id="btn-auto-rr" class="btn btn-sm btn-primary">Equitativo</button>
             </div>
-            <div class="mr-2 col-md-3">
+            <div class="mr-2 col-md-2">
                 <label class="mb-0 form-label">Swap</label><br>
                 <button id="btn-swap" class="btn btn-sm btn-warning">Intercambiar</button>
             </div>
