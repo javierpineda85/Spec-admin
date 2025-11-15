@@ -45,8 +45,8 @@ if (empty($datosPrevios)) {
 
 // ===================== CARGAS INICIALES =====================
 $db = new Conexion;
-$objetivos  = $db->consultas("SELECT * FROM objetivos ORDER BY nombre");
-$puestos    = $db->consultas("SELECT idPuesto, puesto, objetivo_id FROM puestos");
+$objetivos  = $db->consultas("SELECT * FROM objetivos WHERE activo = 1 ORDER BY nombre ");
+$puestos    = $db->consultas("SELECT idPuesto, puesto, objetivo_id FROM puestos WHERE activo = 1");
 $vigiladores = $db->consultas("SELECT DISTINCT u.idUsuario, u.nombre, u.apellido, ov.objetivo_id
                                     FROM usuarios u
                                     JOIN roles r ON u.rol_id = r.id
@@ -151,7 +151,9 @@ $feriadosDelMes = array_filter($feriados, function ($f) use ($mesSeleccionado) {
     text-align: center;
     /*margin-top: -10px;*/
   }
-
+  .celda-turno:focus {
+    border:1px solid red !important;
+  }
   .celda-select {
     border: none;
     background: none;
