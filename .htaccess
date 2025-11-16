@@ -12,3 +12,6 @@ php_value upload_max_filesize 20M
 
 # Opcional: ajustar memoria si el formulario es muy grande
 php_value memory_limit 256M
+# Ajusta la hora local
+php_value date.timezone "America/Argentina/Mendoza"
+
