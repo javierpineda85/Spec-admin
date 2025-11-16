@@ -3,7 +3,7 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 $db = new Conexion;
-$sql = "SELECT * FROM objetivos ORDER BY nombre ";
+$sql = "SELECT * FROM objetivos WHERE activo = 1 ORDER BY nombre ";
 $objetivos = $db->consultas($sql);
 
 ?>

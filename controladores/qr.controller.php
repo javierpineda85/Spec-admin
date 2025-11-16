@@ -87,16 +87,16 @@ class QrController
         }
 
         //  Construye la URL que va dentro del QR
-        $proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
-        $host  = $_SERVER['HTTP_HOST'];
+        //$proto = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
+        //$host  = $_SERVER['HTTP_HOST'];
         $scanUrl = sprintf(
-            '%s://%s/index.php?r=registrar_escaneo&ronda_id=%d&sector_id=%d&vigilador_id=%d',
-            $proto,
-            $host,
+            'https://%s/index.php?r=registrar_escaneo&ronda_id=%d&sector_id=%d&vigilador_id=%d',
+            $_SERVER['HTTP_HOST'],
             $rondaId,
             $rondaId,
             intval($_GET['vigilador_id'] ?? 0)
         );
+
 
         // 5 Sirve el PNG limpio
         header('Content-Type: image/png');

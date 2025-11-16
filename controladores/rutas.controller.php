@@ -71,17 +71,6 @@ class RutasController
             return;
         }
 
-        // Vista para escanear con cámara
-        if (isset($_GET['r']) && $_GET['r'] === 'escanear') {
-            RondasController::vistaEscanearRondas();
-            return;
-        }
-
-        //Escaneo feedbak es la vista que retorna luego de escanear un QR
-        if (isset($_GET['r']) && $_GET['r'] === 'escaneo_feedback') {
-            EscaneosController::feedback();
-            return;
-        }
         //============== Gestión de permisos (permisos controller y roles controller)=============
         if (isset($_GET['r']) && ($_GET['r'] === 'permisos' || $_GET['r'] === 'permisos/index')) {
             PermisosController::index();
@@ -179,13 +168,6 @@ class RutasController
             return;
         }
 
-        // Vista para escanear con cámara
-        if (isset($_GET['r']) && $_GET['r'] === 'escanear') {
-            RondasController::vistaEscanearRondas();
-            return;
-        }
-
-
         // Vista de reporte hombre vivo (timer)
         if (isset($_GET['r']) && $_GET['r'] === 'reporte_hombre_vivo') {
             HombreVivoController::vistaHombreVivo();
@@ -198,8 +180,19 @@ class RutasController
             return;
         }
 
+        // ========= RONDAS =========
+        //
+        // Vista para escanear con cámara
+        if (isset($_GET['r']) && $_GET['r'] === 'escanear') {
+            RondasController::vistaEscanearRondas();
+            return;
+        }
 
-
+        //Escaneo feedbak es la vista que retorna luego de escanear un QR
+        if (isset($_GET['r']) && $_GET['r'] === 'escaneo_feedback') {
+            EscaneosController::feedback();
+            return;
+        }
         if (isset($_GET['r']) && $_GET['r'] === 'ajax_rondas') {
             require_once __DIR__ . '/../libraries/ajax/ajax_rondas.php';
             return;
@@ -427,19 +420,19 @@ class RutasController
             RondasController::vistaListadoRondas();
             return;
         }
-
-        //Crear rondas
+        
+        // ========= USUARIOS=========
+        //Crear usuario
         if (isset($_GET['r']) && $_GET['r'] === 'crear-usuario') {
             ControladorUsuarios::vistaCrearUsuario();
             return;
         }
-        //Crear rondas
+        //Perfil de usuario
         if (isset($_GET['r']) && $_GET['r'] === 'perfil-usuario') {
             ControladorUsuarios::vistaPerfilUsuario();
             return;
         }
 
-        // ========= USUARIOS=========
         //Listado de usuarios
         if (isset($_GET['r']) && $_GET['r'] === 'listado-usuarios') {
             ControladorUsuarios::vistaListadoUsuarios();
