@@ -11,7 +11,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
 
-  <title>S.P.E.C. </title>
+  <title>SPEC - Grupo Marsan SA</title>
 
   <link rel="manifest" href="<?= BASE_URL ?>/manifest.json">
   <meta name="theme-color" content="#007bff">

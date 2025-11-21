@@ -37,10 +37,10 @@ if (isset($_POST['idEliminar'])) {
         <tbody>
           <?php foreach ($arts as $art): ?>
             <tr>
-              <td><?= htmlspecialchars($art['razon_social']) ?></td>
+              <td><?= htmlspecialchars($art['razon_social'])?? '' ?></td>
               <td><?= $art['cuit_empresa'] ?></td>
               <td><?= $art['telefono_empresa'] ?></td>
-              <td><?= htmlspecialchars($art['empresa_aseguradora']) ?></td>
+              <td><?= htmlspecialchars($art['empresa_aseguradora'])?? '' ?></td>
               <td><?= $art['cuit_aseguradora'] ?></td>
               <td><?= $art['nro_poliza'] ?></td>
               <td><?= $art['telefono_aseguradora'] ?></td>

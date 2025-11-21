@@ -3,7 +3,7 @@ class NoticiasController
 {
     public static function vistaCumple()
     {
-        Auth::check('noticias', 'verCumples');
+        Auth::check('noticias', 'vistaCumple');
 
         $mesActual = date('m');
         $db = new Conexion;
