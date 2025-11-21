@@ -63,6 +63,7 @@ $soyProgramador = isset($_SESSION['nivel']) && $_SESSION['nivel'] == 99 && $_SES
                     <select class="form-control" name="categoria" id="categoria" <?= $esReservado ? 'disabled' : '' ?> required>
                         <option value="operativo" <?= ($rol['categoria'] === 'operativo' ? 'selected' : '') ?>>Operativo</option>
                         <option value="referente" <?= ($rol['categoria'] === 'referente' ? 'selected' : '') ?>>Referente</option>
+                        <option value="baseOperativa" <?= ($rol['categoria'] === 'baseOperativa' ? 'selected' : '') ?>>Base Operativa</option>
                         <option value="supervisor" <?= ($rol['categoria'] === 'supervisor' ? 'selected' : '') ?>>Supervisor</option>
                         <option value="administrativo" <?= ($rol['categoria'] === 'administrativo' ? 'selected' : '') ?>>Administrativo</option>
                         <option value="direccion" <?= ($rol['categoria'] === 'direccion' ? 'selected' : '') ?>>Dirección/Gerencia</option>

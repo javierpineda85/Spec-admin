@@ -52,6 +52,8 @@ class ControladorPuestos
         }
 
         ToastifyController::success('Puesto y turnos registrados correctamente.');
+        header('Location:?r=crear_puesto');
+        exit;
     }
 
 

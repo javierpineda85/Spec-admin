@@ -49,12 +49,12 @@ $puedeGestionar = in_array($nivelSesion, [3.0, 4.0, 5.0, 99.0], true);
                           <a href="?r=perfil-usuario&id=<?= (int)$valor['idUsuario']; ?>" class="btn btn-success btn-sm">
                             <i class="fas fa-eye"></i>
                           </a>
-                          <form method="post">
+                          <!--<form method="post">
                             <input type="hidden" value="<?= (int)$valor['idUsuario']; ?>" name="idEliminar">
                             <button type="submit" class="btn btn-danger btn-sm">
                               <i class="fas fa-trash-alt"></i>
                             </button>
-                          </form>
+                          </form>-->
                         </div>
                       </td>
                     <?php endif ?>

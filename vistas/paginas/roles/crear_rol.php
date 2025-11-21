@@ -52,6 +52,7 @@
                     <select class="form-control" name="categoria" id="categoria" required>
                         <option value="operativo">Operativo</option>
                         <option value="referente">Referente</option>
+                        <option value="baseOperativa">Base Operativa</option>
                         <option value="supervisor">Supervisor</option>
                         <option value="administrativo">Administrativo</option>
                         <option value="direccion">Dirección/Gerencia</option>

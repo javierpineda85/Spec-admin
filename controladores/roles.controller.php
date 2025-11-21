@@ -33,6 +33,7 @@ class RolesController
             $nivelesPorCategoria = [
                 'operativo'      => 1,
                 'referente'      => 2,
+                'baseOperativa'  => 2,
                 'supervisor'     => 3,
                 'administrativo' => 4,
                 'direccion'      => 5,
@@ -90,6 +91,7 @@ class RolesController
             $nivelesPorCategoria = [
                 'operativo'      => 1,
                 'referente'      => 2,
+                'baseOperativa'  => 2,
                 'supervisor'     => 3,
                 'administrativo' => 4,
                 'direccion'      => 5,
