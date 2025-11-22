@@ -109,7 +109,23 @@ class ModeloPuestos
                                WHERE objetivo_id = $objetivo_id
                                  AND fecha BETWEEN '$desde' AND '$hasta'");
     }
-
+    //Para rotaciones de turnos
+    public static function mdlObtenerTurnosPorPuesto($objetivo_id, $puesto_id, $mes)
+    {
+        $db = new Conexion;
+        return $db->consultas(" SELECT DISTINCT pt.numero_turno, 
+                                                CASE pt.numero_turno 
+                                                    WHEN 1 THEN 'D' 
+                                                    WHEN 2 THEN 'N' 
+                                                    ELSE pt.numero_turno 
+                                                END AS codigo_turno
+                                FROM puestos_turnos pt
+                                INNER JOIN puestos p ON p.idPuesto = pt.puesto_id
+                                WHERE p.objetivo_id = $objetivo_id
+                                AND p.idPuesto = $puesto_id
+                                ORDER BY pt.numero_turno
+    ");
+    }
     /** Guardar/actualizar (UPSERT) una rotación */
     public static function mdlGuardarRotacion(array $r)
     // $r: objetivo_id, fecha, puesto_id, usuario_id, codigo_turno, editor_id, motivo?

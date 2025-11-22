@@ -111,7 +111,7 @@ class ModeloTurnos
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-        /*Trae los turnos de un mes en especifico */
+    /*Trae los turnos de un mes en especifico */
     // vista: listado_cronogramas.php
     static public function mdlObtenerTurnosConPuestos($tabla, $filtros)
     {
@@ -176,7 +176,6 @@ class ModeloTurnos
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-
 
 
     /*Funcion para traer el cronograma / turno del mes anterior */

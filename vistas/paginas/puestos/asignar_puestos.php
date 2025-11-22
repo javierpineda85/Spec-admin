@@ -47,7 +47,7 @@ $rotaciones = $rotaciones ?? [];
     /* Ancho mínimo para las columnas de días */
     #tabla-rotaciones th:not(:first-child),
     #tabla-rotaciones td:not(:first-child) {
-        min-width: 120px;
+        min-width: 150px;
         /* ajustable a gusto */
         white-space: nowrap;
     }
@@ -69,6 +69,12 @@ $rotaciones = $rotaciones ?? [];
     .table-responsive {
         overflow-x: auto;
     }
+
+    .turnos-hint.blocked {
+        color: #dc3545 !important;
+        /* rojo Bootstrap */
+        font-weight: bold;
+    }
 </style>
 
 <div class="card">
@@ -82,12 +88,14 @@ $rotaciones = $rotaciones ?? [];
     </div>
     <div class="card-body">
         <div class="row ml-1">
-
+            <div class="col-md-12 d-flex align-items-center mb-3">
+                <small class="border border-warning py-1 px-4 rounded">Antes de realizar las rotaciones, debe completar el cronograma</small>
+            </div>
             <form method="GET" class="form-inline">
                 <input type="hidden" name="r" value="rotaciones_puestos">
 
-                <label class="form-label">Objetivo: </label>
-                <select name="objetivo_id" class="form-control form-control-sm mr-2" onchange="this.form.submit()">
+                <label class="form-label mr-2">Objetivo:</label>
+                <select name="objetivo_id" class="form-control form-control-sm mr-3" onchange="this.form.submit()">
                     <option value="0" <?= $objetivo_id === 0 ? 'selected' : '' ?>>Seleccione…</option>
                     <?php foreach ($objetivos as $o): ?>
                         <option value="<?= (int)$o['idObjetivo'] ?>" <?= $objetivo_id === (int)$o['idObjetivo'] ? 'selected' : '' ?>>
@@ -95,41 +103,27 @@ $rotaciones = $rotaciones ?? [];
                         </option>
                     <?php endforeach; ?>
                 </select>
-                <!-- si ya hay objetivo, preservamos -->
-                <?php if ($mes): ?>
-                    <input type="hidden" name="mes" value="<?= htmlspecialchars($mes) ?>">
-                <?php endif; ?>
+
+                <label class="form-label mr-2">Mes:</label>
+                <input type="month" name="mes" class="form-control form-control-sm mr-2"
+                    value="<?= htmlspecialchars($mes) ?>" onchange="this.form.submit()">
             </form>
 
-            <form method="GET" class="form-inline">
-                <input type="hidden" name="r" value="rotaciones_puestos">
-                <input type="hidden" name="objetivo_id" value="<?= $objetivo_id ?>">
-                <input type="month" name="mes" class="form-control form-control-sm mr-2" value="<?= htmlspecialchars($mes) ?>">
-                <button class="btn btn-sm btn-info">Cambiar mes</button>
-            </form>
-            <small class="border border-warning py-1 px-4 mx-3 rounded">Antes de realizar las rotaciones, debe completar el cronograma</small>
-        </div>
 
-        <div class="row mt-3">
-
-            <div class="mb-3 col-md-2">
-                <label class="form-label">Código turno</label>
+            <div class="d-flex align-items-center mb-2 mr-3">
+                <label for="rr-codigo-turno" class="form-label mb-0 mr-2" style="white-space: nowrap;">Código turno:</label>
                 <select id="rr-codigo-turno" class="form-control form-control-sm">
                     <option value="D">Diurno (D)</option>
                     <option value="N">Nocturno (N)</option>
                 </select>
             </div>
-            <div class="mr-2 col-md-2">
-                <label class="form-label">Auto-rotar</label><br>
-                <button id="btn-auto-rr" class="btn btn-sm btn-primary">Equitativo</button>
-            </div>
-            <div class="mr-2 col-md-2">
-                <label class="mb-0 form-label">Swap</label><br>
-                <button id="btn-swap" class="btn btn-sm btn-warning">Intercambiar</button>
+            <div class="d-flex align-items-center mb-2">
+                <label class="form-label">Auto-rotar </label><br>
+                <button id="btn-auto-rr" class="btn btn-sm btn-primary mx-2">Equitativo</button>
             </div>
 
         </div>
-
+        <hr class="my-3" style="border-bottom: 1px solid #ccc;">
         <div class="table-responsive">
             <table id="tabla-rotaciones" class="table table-bordered table-sm">
                 <thead class="thead-light">
@@ -192,6 +186,7 @@ $rotaciones = $rotaciones ?? [];
     const VIGILADORES = <?= json_encode($vigiladores, JSON_UNESCAPED_UNICODE) ?>;
     const TURNOS = <?= json_encode($turnos, JSON_UNESCAPED_UNICODE) ?>;
     const ROTACIONES = <?= json_encode($rotaciones, JSON_UNESCAPED_UNICODE) ?>;
+    const TURNOS_POR_PUESTO = <?= json_encode($turnosPorPuesto, JSON_UNESCAPED_UNICODE) ?>;
 
     // ===== Indexaciones =====
     // a) Código real por fecha y usuario (D/N/F/…)
@@ -274,7 +269,17 @@ $rotaciones = $rotaciones ?? [];
                 const sel = td.querySelector('select.select-rotacion');
                 const hint = td.querySelector('.turnos-hint');
 
-                // options
+                // Validar si el turno está habilitado para este puesto
+                const turnoHabilitado = (TURNOS_POR_PUESTO[puestoId] || []).some(t => t.codigo_turno === turno);
+                if (!turnoHabilitado) {
+                    sel.innerHTML = '';
+                    sel.disabled = true;
+                    hint.textContent = '⚠ Turno no habilitado';
+                    hint.classList.add('text-danger');
+                    return;
+                }
+
+                // Construir opciones
                 sel.innerHTML = '';
                 const opts = buildOptions(fecha, turno);
                 for (const o of opts) {
@@ -285,15 +290,16 @@ $rotaciones = $rotaciones ?? [];
                     sel.appendChild(op);
                 }
 
-                // valor actual (si había)
+                // Precarga de valor actual
                 const k = `${fecha}|${puestoId}|${turno}`;
                 const val = rotByKey[k] || '';
                 sel.value = val ? String(val) : '';
 
-                // hint: conteo rápido
+                // Mostrar hint visual
                 const habilCount = opts.filter(x => x.id && !x.disabled).length;
-                hint.textContent = habilCount ? `${habilCount} habilitado(s)` : 'sin habilitados';
-                sel.disabled = (habilCount === 0);
+                hint.textContent = habilCount ? `${habilCount} habilitado(s)` : '⚠ sin habilitados';
+                hint.classList.toggle('text-danger', habilCount === 0);
+                sel.disabled = false; // siempre activo
             });
         });
     }
@@ -456,34 +462,34 @@ $rotaciones = $rotaciones ?? [];
 
     });
 
+    /*
+        document.getElementById('btn-swap').addEventListener('click', async () => {
+            const turno = selCodigoTurno.value;
+            const uA = prompt('ID vigilador A:');
+            const uB = prompt('ID vigilador B:');
+            const desde = prompt('Desde (YYYY-MM-DD):', '<?= $desde ?>');
+            const hasta = prompt('Hasta (YYYY-MM-DD):', '<?= $hasta ?>');
+            if (!uA || !uB || !desde || !hasta) return;
 
-    document.getElementById('btn-swap').addEventListener('click', async () => {
-        const turno = selCodigoTurno.value;
-        const uA = prompt('ID vigilador A:');
-        const uB = prompt('ID vigilador B:');
-        const desde = prompt('Desde (YYYY-MM-DD):', '<?= $desde ?>');
-        const hasta = prompt('Hasta (YYYY-MM-DD):', '<?= $hasta ?>');
-        if (!uA || !uB || !desde || !hasta) return;
+            const fd = new FormData();
+            fd.append('objetivo_id', OBJETIVO_ID);
+            fd.append('desde', desde);
+            fd.append('hasta', hasta);
+            fd.append('usuario_a', uA);
+            fd.append('usuario_b', uB);
+            fd.append('codigo_turno', turno);
 
-        const fd = new FormData();
-        fd.append('objetivo_id', OBJETIVO_ID);
-        fd.append('desde', desde);
-        fd.append('hasta', hasta);
-        fd.append('usuario_a', uA);
-        fd.append('usuario_b', uB);
-        fd.append('codigo_turno', turno);
-
-        const res = await fetch('?r=swap_rotacion', {
-            method: 'POST',
-            body: fd
-        });
-        const json = await res.json();
-        if (!json.ok) {
-            alert(json.msg || 'No se pudo completar el swap.');
-            return;
-        }
-        location.reload();
-    });
+            const res = await fetch('?r=swap_rotacion', {
+                method: 'POST',
+                body: fd
+            });
+            const json = await res.json();
+            if (!json.ok) {
+                alert(json.msg || 'No se pudo completar el swap.');
+                return;
+            }
+            location.reload();
+        });*/
 
     // Inicial
     renderTabla();

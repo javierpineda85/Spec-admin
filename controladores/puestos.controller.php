@@ -238,7 +238,10 @@ class ControladorPuestos
             $turnos      = ModeloPuestos::mdlObtenerTurnosMesObjetivo($objetivo_id, $mes);
             $rotaciones  = ModeloPuestos::mdlObtenerRotacionesMes($objetivo_id, $mes);
         }
-
+        $turnosPorPuesto = [];
+        foreach ($puestos as $p) {
+            $turnosPorPuesto[$p['idPuesto']] = ModeloPuestos::mdlObtenerTurnosPorPuesto($objetivo_id, $p['idPuesto'], $mes);
+        }
         include 'vistas/paginas/puestos/asignar_puestos.php';
     }
 
@@ -267,7 +270,7 @@ class ControladorPuestos
     /** API: eliminar rotación (AJAX) */
     public static function crtEliminarRotacion()
     {
-        Auth::check('puestos', 'gestionarRotaciones');
+        Auth::check('puestos', 'crtEliminarRotacion');
 
         $idRot = (int)($_POST['idRotacion'] ?? 0);
         $ok = ModeloPuestos::mdlEliminarRotacion($idRot, (int)($_SESSION['idUsuario'] ?? 0));
@@ -280,7 +283,7 @@ class ControladorPuestos
     /** API: swap entre dos vigiladores en rango (AJAX) */
     public static function crtSwapRotacion()
     {
-        Auth::check('puestos', 'gestionarRotaciones');
+        Auth::check('puestos', 'crtSwapRotacion');
 
         $res = ModeloPuestos::mdlSwapRotaciones([
             'objetivo_id' => (int)($_POST['objetivo_id'] ?? 0),
@@ -301,16 +304,10 @@ class ControladorPuestos
     /** API: autollenado equitativo (round-robin) */
     public static function crtAutoRotarEquitativo()
     {
-        // 🔧 Configuración de errores:
-        // En producción conviene NO mostrar errores en pantalla (display_errors=0),
-        // porque cualquier warning/notice rompe el JSON. Mejor loguearlos en php_error.log.
-        ini_set('display_errors', 0);
-        ini_set('display_startup_errors', 0);
-        error_reporting(E_ALL);
 
         // 🔒 Verificación de permisos:
         // Asegura que el usuario tenga permiso para gestionar rotaciones.
-        Auth::check('puestos', 'gestionarRotaciones');
+        Auth::check('puestos', 'crtAutoRotarEquitativo');
 
         try {
             // 📥 Llamada al modelo con parámetros saneados:
