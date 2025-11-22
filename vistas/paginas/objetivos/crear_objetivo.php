@@ -134,53 +134,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <script>
   // Carga los departamentos en el select
-  var selectProvincia = document.getElementById("localidad");
-  var localidadJSON = {
-    "departamentos": [{
-        "nombre": "Capital"
-      }, {
-        "nombre": "Godoy Cruz"
-      }, {
-        "nombre": "Guaymallén"
-      },
-      {
-        "nombre": "Las Heras"
-      }, {
-        "nombre": "Luján de Cuyo"
-      }, {
-        "nombre": "Maipú"
-      },
-      {
-        "nombre": "San Martín"
-      }, {
-        "nombre": "Rivadavia"
-      }, {
-        "nombre": "Junín"
-      },
-      {
-        "nombre": "Santa Rosa"
-      }, {
-        "nombre": "La Paz"
-      }, {
-        "nombre": "Tunuyán"
-      },
-      {
-        "nombre": "Tupungato"
-      }, {
-        "nombre": "San Carlos"
-      }, {
-        "nombre": "General Alvear"
-      },
-      {
-        "nombre": "Malargüe"
-      }
-    ]
-  };
-  localidadJSON.departamentos.forEach(function(localidad) {
-    var option = document.createElement("option");
-    option.value = localidad.nombre;
-    option.text = localidad.nombre;
-    selectProvincia.appendChild(option);
+  // Carga los departamentos en el select
+  const deps = [
+    "Capital", "Godoy Cruz", "Guaymallén", "Las Heras", "Luján de Cuyo", "Maipú",
+    "San Martín", "Rivadavia", "Junín", "Santa Rosa", "La Paz", "Tunuyán",
+    "Tupungato", "San Carlos", "General Alvear", "Malargüe"
+  ];
+
+  const sel = document.getElementById("localidad");
+  deps.forEach(d => {
+    let o = document.createElement("option");
+    o.value = d;
+    o.text = d;
+    sel.append(o);
   });
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -245,7 +211,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       placeholder: "Selecciona los vigiladores asignados"
     });
   });
-  
+
   document.addEventListener("DOMContentLoaded", function() {
     const form = document.getElementById("formObjetivo");
     //const inputCantidad = document.getElementById("cantidad_vigiladores");
@@ -260,11 +226,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $('#toast-msg').text(mensaje);
       $('#toast-alerta').toast('show');
     }
+
+    /*
     // Validación dinámica al seleccionar
     $selectVigiladores.on('select2:select', function(e) {
       const max = parseInt(inputCantidad.value) || 0;
       const seleccionados = $selectVigiladores.select2('data');
-/*
+
       if (seleccionados.length > max) {
         // Elimina el último seleccionado
         const idEliminar = e.params.data.id;
@@ -272,21 +240,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $selectVigiladores.val(opciones).trigger('change');
 
         mostrarToast('Solo puedes seleccionar hasta ' + max + ' vigilador(es).');
-      }*/
-    });
+      }
+    });*/
 
     // Validación de respaldo al enviar
     form.addEventListener("submit", function(e) {
-      const cantidadRequerida = parseInt(inputCantidad.value);
+      //const cantidadRequerida = parseInt(inputCantidad.value);
       const seleccionados = $selectVigiladores.select2('data').length;
 
       // Solo validar si el campo tiene un valor numérico válido
-      if (!isNaN(cantidadRequerida) && cantidadRequerida > 0) {
+      /*if (!isNaN(cantidadRequerida) && cantidadRequerida > 0) {
         if (seleccionados !== cantidadRequerida) {
           e.preventDefault();
           mostrarToast("Debes seleccionar exactamente " + cantidadRequerida + " vigilador(es). Actualmente seleccionaste " + seleccionados + ".");
         }
+      }*/
+      // Validar que al menos haya uno seleccionado
+      if (seleccionados === 0) {
+        e.preventDefault();
+        mostrarToast("Debes seleccionar al menos un vigilador.");
       }
+
     });
   });
 

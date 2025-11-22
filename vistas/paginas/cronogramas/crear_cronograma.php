@@ -2,7 +2,7 @@
 $_SESSION['cronograma_post'] = [];  
 //Guardar datos en la BD
 if (isset($_POST['guardar_cronograma']) && empty($_SESSION['cronograma_post'])) {
-  ControladorCronograma::ctrGuardarCronograma();
+  ControladorCronogramas::ctrGuardarCronograma();
 }
 
 //Vaciar el cronograma
@@ -19,7 +19,7 @@ if (isset($_POST['cargar']) && empty($datosPrevios)) {
   $objetivoReq = (int)($_POST['objetivo'] ?? 0);
   $mesReq      = $_POST['mes'] ?? date('Y-m');
 
-  $info = ControladorCronograma::precargarCronogramaSiExiste($objetivoReq, $mesReq);
+  $info = ControladorCronogramas::precargarCronogramaSiExiste($objetivoReq, $mesReq);
 
   if (($info['origen'] ?? null) === 'anterior' && !empty($info['mesAnterior'])) {
     ToastifyController::info("Precargando datos del mes anterior ({$info['mesAnterior']}) con continuidad 4×2");
@@ -30,7 +30,7 @@ if (isset($_POST['cargar']) && empty($datosPrevios)) {
 
   // fallback extremo (no debería ocurrir, pero por las dudas)
   if (empty($datosPrevios)) {
-    $datosPrevios = ControladorCronograma::generarSimulacionVacia($objetivoReq, $mesReq);
+    $datosPrevios = ControladorCronogramas::generarSimulacionVacia($objetivoReq, $mesReq);
   }
 
   $_SESSION['cronograma_post']       = $datosPrevios;

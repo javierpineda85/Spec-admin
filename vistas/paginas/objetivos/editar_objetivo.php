@@ -58,7 +58,7 @@ $referentesSeleccionados = array_column($asignadosReferentes, 'referente_id');
                             </select>
                         </div>
 
-                        <div class="form-group col-sm-12 col-md-3"  style="display: none;">
+                        <div class="form-group col-sm-12 col-md-3" style="display: none;">
                             <label for="cantidad_vigiladores">Cantidad de Vigiladores</label>
                             <input type="number" name="cantidad_vigiladores" id="cantidad_vigiladores" class="form-control" min="1" data-optional="true">
                         </div>
@@ -210,7 +210,7 @@ $referentesSeleccionados = array_column($asignadosReferentes, 'referente_id');
     });
     document.addEventListener("DOMContentLoaded", function() {
         const form = document.getElementById("formObjetivo");
-        const inputCantidad = document.getElementById("cantidad_vigiladores");
+        //const inputCantidad = document.getElementById("cantidad_vigiladores");
         const $selectVigiladores = $('#vigiladores');
 
         // Inicializar Select2
@@ -222,33 +222,41 @@ $referentesSeleccionados = array_column($asignadosReferentes, 'referente_id');
             $('#toast-msg').text(mensaje);
             $('#toast-alerta').toast('show');
         }
+
+        /*
         // Validación dinámica al seleccionar
         $selectVigiladores.on('select2:select', function(e) {
-            const max = parseInt(inputCantidad.value) || 0;
-            const seleccionados = $selectVigiladores.select2('data');
+          const max = parseInt(inputCantidad.value) || 0;
+          const seleccionados = $selectVigiladores.select2('data');
 
-            if (seleccionados.length > max) {
-                // Elimina el último seleccionado
-                const idEliminar = e.params.data.id;
-                const opciones = $selectVigiladores.val().filter(val => val !== idEliminar);
-                $selectVigiladores.val(opciones).trigger('change');
+          if (seleccionados.length > max) {
+            // Elimina el último seleccionado
+            const idEliminar = e.params.data.id;
+            const opciones = $selectVigiladores.val().filter(val => val !== idEliminar);
+            $selectVigiladores.val(opciones).trigger('change');
 
-                mostrarToast('Solo puedes seleccionar hasta ' + max + ' vigilador(es).');
-            }
-        });
+            mostrarToast('Solo puedes seleccionar hasta ' + max + ' vigilador(es).');
+          }
+        });*/
 
         // Validación de respaldo al enviar
         form.addEventListener("submit", function(e) {
-            const cantidadRequerida = parseInt(inputCantidad.value);
+            //const cantidadRequerida = parseInt(inputCantidad.value);
             const seleccionados = $selectVigiladores.select2('data').length;
 
             // Solo validar si el campo tiene un valor numérico válido
-            if (!isNaN(cantidadRequerida) && cantidadRequerida > 0) {
-                if (seleccionados !== cantidadRequerida) {
-                    e.preventDefault();
-                    mostrarToast("Debes seleccionar exactamente " + cantidadRequerida + " vigilador(es). Actualmente seleccionaste " + seleccionados + ".");
-                }
+            /*if (!isNaN(cantidadRequerida) && cantidadRequerida > 0) {
+              if (seleccionados !== cantidadRequerida) {
+                e.preventDefault();
+                mostrarToast("Debes seleccionar exactamente " + cantidadRequerida + " vigilador(es). Actualmente seleccionaste " + seleccionados + ".");
+              }
+            }*/
+            // Validar que al menos haya uno seleccionado
+            if (seleccionados === 0) {
+                e.preventDefault();
+                mostrarToast("Debes seleccionar al menos un vigilador.");
             }
+
         });
     });
 

@@ -1,10 +1,10 @@
 <?php if (
-    Auth::hasPermission('cronograma', 'vistaCrearCronograma') ||
-    Auth::hasPermission('cronograma', 'vistaListadoCronogramas') ||
-    Auth::hasPermission('cronograma', 'vistaListadoCronogramaPorVigilador') ||
-    Auth::hasPermission('cronograma', 'vistaJornadasPorObjetivo') ||
-    Auth::hasPermission('cronograma', 'vistaReporteHorasPorObjetivo') ||
-    Auth::hasPermission('cronograma', 'vistaHorasPorVigilador')
+    Auth::hasPermission('cronogramas', 'vistaCrearCronograma') ||
+    Auth::hasPermission('cronogramas', 'vistaListadoCronogramas') ||
+    Auth::hasPermission('cronogramas', 'vistaListadoCronogramaPorVigilador') ||
+    Auth::hasPermission('cronogramas', 'vistaJornadasPorObjetivo') ||
+    Auth::hasPermission('cronogramas', 'vistaReporteHorasPorObjetivo') ||
+    Auth::hasPermission('cronogramas', 'vistaHorasPorVigilador')
 ): ?>
     <li class="nav-item has-treeview">
         <a href="#" class="nav-link">
@@ -12,7 +12,7 @@
             <p>Cronogramas <i class="fas fa-angle-left right"></i></p>
         </a>
         <ul class="nav nav-treeview">
-            <?php if (Auth::hasPermission('cronograma', 'vistaCrearCronograma')): ?>
+            <?php if (Auth::hasPermission('cronogramas', 'vistaCrearCronograma')): ?>
                 <li class="nav-item">
                     <a href="?r=crear_cronograma" class="nav-link">
                         <i class="far fa-circle nav-icon"></i>
@@ -21,7 +21,7 @@
                 </li>
             <?php endif; ?>
 
-            <?php if (Auth::hasPermission('cronograma', 'vistaListadoCronogramas')): ?>
+            <?php if (Auth::hasPermission('cronogramas', 'vistaListadoCronogramas')): ?>
                 <li class="nav-item">
                     <a href="?r=listado_cronogramas" class="nav-link">
                         <i class="far fa-circle nav-icon"></i>
@@ -30,7 +30,7 @@
                 </li>
             <?php endif; ?>
 
-            <?php if (Auth::hasPermission('cronograma', 'vistaListadoCronogramaPorVigilador')): ?>
+            <?php if (Auth::hasPermission('cronogramas', 'vistaListadoCronogramaPorVigilador')): ?>
                 <li class="nav-item">
                     <a href="?r=listado_porVigilador" class="nav-link">
                         <i class="far fa-circle nav-icon"></i>
@@ -39,7 +39,7 @@
                 </li>
             <?php endif; ?>
 
-            <?php if (Auth::hasPermission('cronograma', 'vistaJornadasPorObjetivo')): ?>
+            <?php if (Auth::hasPermission('cronogramas', 'vistaJornadasPorObjetivo')): ?>
                 <li class="nav-item">
                     <a href="?r=listado_resumen_diario" class="nav-link">
                         <i class="far fa-circle nav-icon"></i>
@@ -48,7 +48,7 @@
                 </li>
             <?php endif; ?>
 
-            <?php if (Auth::hasPermission('cronograma', 'vistaReporteHorasPorObjetivo')): ?>
+            <?php if (Auth::hasPermission('cronogramas', 'vistaReporteHorasPorObjetivo')): ?>
                 <li class="nav-item">
                     <a href="?r=reporte_porHoras" class="nav-link">
                         <i class="far fa-circle nav-icon"></i>
@@ -57,7 +57,7 @@
                 </li>
             <?php endif; ?>
 
-            <?php if (Auth::hasPermission('cronograma', 'vistaHorasPorVigilador')): ?>
+            <?php if (Auth::hasPermission('cronogramas', 'vistaHorasPorVigilador')): ?>
                 <li class="nav-item">
                     <a href="?r=reporte_porVigilador" class="nav-link">
                         <i class="far fa-circle nav-icon"></i>

@@ -2,7 +2,7 @@
 
 require_once('modelos/cronograma.modelo.php');
 require_once 'modelos/turnos.modelo.php';
-class ControladorCronograma
+class ControladorCronogramas
 {
     public static function ctrGuardarCronograma()
     {

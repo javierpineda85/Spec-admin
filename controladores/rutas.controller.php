@@ -223,53 +223,53 @@ class RutasController
 
         //Crear Cronograma
         if (isset($_GET['r']) && $_GET['r'] === 'crear_cronograma') {
-            ControladorCronograma::vistaCrearCronograma();
+            ControladorCronogramas::vistaCrearCronograma();
             return;
         }
         //Listado Cronogramas
         if (isset($_GET['r']) && $_GET['r'] === 'listado_cronogramas') {
-            ControladorCronograma::vistaListadoCronogramas();
+            ControladorCronogramas::vistaListadoCronogramas();
             return;
         }
         //Listado Cronogramas x vigilador VISTA
         if (isset($_GET['r']) && $_GET['r'] === 'listado_porVigilador') {
-            ControladorCronograma::vistaListadoCronogramaPorVigilador();
+            ControladorCronogramas::vistaListadoCronogramaPorVigilador();
             return;
         }
         //Listado Vista Jornadas por objetivo
         if (isset($_GET['r']) && $_GET['r'] === 'listado_resumen_diario') {
-            ControladorCronograma::vistaJornadasPorObjetivo();
+            ControladorCronogramas::vistaJornadasPorObjetivo();
             return;
         }
         //Horas por Vigilador
         if (isset($_GET['r']) && $_GET['r'] === 'reporte_porVigilador') {
-            ControladorCronograma::vistaHorasPorVigilador();
+            ControladorCronogramas::vistaHorasPorVigilador();
             return;
         }
         if (isset($_GET['r']) && $_GET['r'] === 'buscar_resumen_diario') {
-            ControladorCronograma::crtBuscarResumenDiario();
+            ControladorCronogramas::crtBuscarResumenDiario();
             return;
         }
         if (isset($_GET['r']) && $_GET['r'] === 'buscar_resumen_horas') {
-            ControladorCronograma::crtBuscarResumenHoras();
+            ControladorCronogramas::crtBuscarResumenHoras();
             return;
         }
         if (isset($_GET['r']) && $_GET['r'] === 'buscar_resumen_horas_por_vigilador') {
             $desde = $_POST['desde'] ?? null;
             $hasta = $_POST['hasta'] ?? null;
-            ControladorCronograma::crtBuscarResumenHorasPorVigilador($desde, $hasta);
+            ControladorCronogramas::crtBuscarResumenHorasPorVigilador($desde, $hasta);
             return;
         }
 
         // Procesar el POST de “Horas por Objetivo”
         if (isset($_GET['r']) && $_GET['r'] === 'reporte_porHoras' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-            ControladorCronograma::crtBuscarResumenHoras();
+            ControladorCronogramas::crtBuscarResumenHoras();
             return;
         }
 
         // Mostrar el formulario / resultado (GET)
         if (isset($_GET['r']) && $_GET['r'] === 'reporte_porHoras') {
-            ControladorCronograma::vistaReporteHorasPorObjetivo();
+            ControladorCronogramas::vistaReporteHorasPorObjetivo();
             return;
         }
 

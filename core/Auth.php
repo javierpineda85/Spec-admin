@@ -73,6 +73,7 @@ class Auth
             exit;
         }
     }
+
     /**
      * Lanza acceso denegado si el usuario no tiene permiso.
      * @param string $controller  nombre en minúsculas (p.ej. 'novedades')
@@ -119,23 +120,32 @@ class Auth
             return true;
         }
 
-        // 2) Si no hay permisos en sesión, recárgalos
+        // 2) Si no hay permisos en sesión, negar (no recalcular aquí)
         if (!isset($_SESSION['permisos_usuario'])) {
-            self::reloadPermisosUsuario();
+            return false;
         }
 
-        // 3) Verifica existencia exacta de “controlador/accion”
+        // 3) Si se guardó comodín '*', todo permitido
+        if (in_array('*', $_SESSION['permisos_usuario'], true)) {
+            return true;
+        }
+
+        // 4) Verifica existencia exacta de “controlador/accion”
         $ruta = "{$controller}/{$action}";
         return in_array($ruta, $_SESSION['permisos_usuario'], true);
     }
 
     // Logica para saltear el rol programador
-
     public static function isSuperRole(?string $rol)
     {
         return in_array($rol, ['Programador'], true);
     }
 
+    /**
+     * Método legacy: ya no se usa en el flujo normal.
+     * Los permisos se cargan una sola vez en el login.
+     * Se mantiene por compatibilidad, pero no se invoca desde hasPermission().
+     */
     public static function reloadPermisosUsuario(): void
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {
