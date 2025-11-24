@@ -141,7 +141,8 @@ class ControladorTurnos
             $fecha = $t['fecha'];
             $turnosPorFecha[$fecha] = [
                 'turno'  => $t['codigo_turno'],
-                'puesto' => $t['puesto']
+                'puesto' => $t['puesto'],
+                'objetivo' => $t['objetivo']
             ];
         }
         $_SESSION['turnos_porVigilador'] = $turnosPorFecha;

@@ -771,7 +771,10 @@ class ControladorCronogramas
         }
 
         $db = new Conexion;
-        $usuarios = $db->consultas("SELECT idUsuario, CONCAT(apellido, ', ', nombre) AS vigilador FROM usuarios WHERE rol = 'Vigilador'");
+        $usuarios = $db->consultas("SELECT u.idUsuario, CONCAT(u.apellido, ', ', u.nombre) AS vigilador
+                                            FROM usuarios u
+                                            JOIN roles r ON u.rol_id = r.id
+                                            WHERE r.nombre = 'Vigilador';");
         $horariosTurnos = $db->consultas("SELECT  numero_turno, hora_entrada, hora_salida FROM puestos_turnos");
 
         $mapeoTurnos = [

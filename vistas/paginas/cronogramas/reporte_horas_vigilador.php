@@ -1,7 +1,6 @@
 <?php
 $rows = $_SESSION['reporte_vigilador'] ?? [];
 
-
 ?>
 <section class="content">
   <div class="container-fluid">
