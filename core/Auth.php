@@ -90,47 +90,52 @@ class Auth
             return;
         }
 
-        // Rutas que ignoramos siempre
         $rutaActual = "{$controller}/{$action}";
-        $ignorar    = [
+
+        // Rutas que ignoramos siempre
+        $ignorar = [
             'login/crtMostrarLogin',
             'login/crtProcesarLogin',
             'login/crtLogout',
+            'acceso_denegado/index',
             'acceso_denegado/crtAccesoDenegado'
         ];
         if (in_array($rutaActual, $ignorar, true)) {
             return;
         }
 
-        // Aquí reemplazamos el middleware por hasPermission directo
+        // Si ya validamos permisos en este flujo, no repetir
+        if (!empty($_SESSION['permiso_validado'])) {
+            return;
+        }
+
+        // Validación normal
         if (!self::hasPermission($controller, $action)) {
-            header('Location: ?r=acceso_denegado/crtAccesoDenegado');
+            header('Location: ?r=acceso_denegado/index');
             exit;
         }
+
+        // Si pasó la validación, marcamos flag
+        $_SESSION['permiso_validado'] = true;
     }
 
     public static function hasPermission(string $controller, string $action): bool
     {
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start();
-        }
-
-        // 1) Programador siempre pasa
+        // Programador siempre pasa
         if (self::isSuperRole($_SESSION['rol'] ?? null)) {
             return true;
         }
 
-        // 2) Si no hay permisos en sesión, negar (no recalcular aquí)
-        if (!isset($_SESSION['permisos_usuario'])) {
+        // Si no hay permisos en sesión, negar
+        if (empty($_SESSION['permisos_usuario'])) {
             return false;
         }
 
-        // 3) Si se guardó comodín '*', todo permitido
+        // comodín
         if (in_array('*', $_SESSION['permisos_usuario'], true)) {
             return true;
         }
 
-        // 4) Verifica existencia exacta de “controlador/accion”
         $ruta = "{$controller}/{$action}";
         return in_array($ruta, $_SESSION['permisos_usuario'], true);
     }

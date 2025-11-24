@@ -12,7 +12,9 @@ class RutasController
             'cerrar_sesion',
             'acceso_denegado/index',
             'inicio/index',
-            'registrar_reporte/index'
+            'registrar_reporte/index',
+            'acceso_denegado/crtAccesoDenegado',
+            'acceso_denegado/index'
         ];
         // ========= RUTAS QUE LLAMAN A MÉTODOS =========
 
@@ -420,7 +422,7 @@ class RutasController
             RondasController::vistaListadoRondas();
             return;
         }
-        
+
         // ========= USUARIOS=========
         //Crear usuario
         if (isset($_GET['r']) && $_GET['r'] === 'crear-usuario') {

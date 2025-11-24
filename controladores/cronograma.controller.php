@@ -9,7 +9,7 @@ class ControladorCronogramas
 
         //Auth::check('cronogramas', 'ctrGuardarCronograma');
         Auth::check('cronogramas', 'vistaCrearCronograma');
-       
+
         if (!isset($_POST['guardar_cronograma'])) return;
 
         $objetivoId = intval($_POST['objetivo'] ?? 0);
@@ -128,12 +128,19 @@ class ControladorCronogramas
 
             // Guardar turnos
             foreach ($turnosProcesados as $t) {
-
                 $respuesta = ModeloTurnos::mdlGuardarTurno('turnos', $t);
                 if ($respuesta !== 'ok') {
-                    throw new Exception("Error al guardar turno del usuario " . $t['usuario_id'] . " " . $respuesta);
+                    /* Buscar nombre del usuario
+                    $stmt = $db->prepare("SELECT apellido, nombre FROM usuarios WHERE idUsuario = ?");
+                    $stmt->execute([$t['usuario_id']]);
+                    $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                    $nombreCompleto = $usuario ? "{$usuario['apellido']}, {$usuario['nombre']}" : "ID {$t['usuario_id']}";
+                   throw new Exception("Turno duplicado para {$nombreCompleto}. Por favor verifica el cronograma");*/
+                    throw new Exception($respuesta);
                 }
             }
+
             // Guardamos las horas en sesión para mostrarlas visualmente en la vista
             $_SESSION['horas_usuario'] = $horasPorUsuario;
             $db->commit();
@@ -149,11 +156,25 @@ class ControladorCronogramas
             if ($db && $db->inTransaction()) {
                 $db->rollBack();
             }
-            ToastifyController::error("Error al guardar: " . $e->getMessage());
+            if ($e->getMessage() !== 'duplicado') {
+                ToastifyController::error("Error al guardar turno del usuario " . $t['usuario_id'] . $e->getMessage());
+                $_SESSION['cronograma_error'] = $_POST; // guardar datos para repoblar
+                header('Location: ?r=crear_cronograma');
+                exit;
+            } else {
+                ToastifyController::success("Cronograma cargado exitosamente");
+                $_SESSION['cronograma_error'] = $_POST; // guardar datos para repoblar
+                header('Location: ?r=crear_cronograma');
+                exit;
+            }
 
-            // Reintentamos mostrando la vista ya poblada
+
+            /* Reintentamos mostrando la vista ya poblada
             self::vistaCrearCronograma();
-            return;
+            return;*/
+            /*$_SESSION['cronograma_error'] = $_POST; // guardar datos para repoblar
+            header('Location: ?r=crear_cronograma');
+            exit;*/
         }
     }
     private static function esLicencia(string $codigo): bool
@@ -1012,7 +1033,7 @@ class ControladorCronogramas
         Auth::check('cronogramas', 'vistaReporteHorasPorObjetivo');
         // Carga lista de objetivos
         $db = new Conexion();
-        $objetivos = $db->consultas("SELECT idObjetivo, nombre FROM objetivos ORDER BY nombre");
+        $objetivos = $db->consultas("SELECT idObjetivo, nombre FROM objetivos WHERE activo=1 ORDER BY nombre");
         // Recupera el reporte generado por POST (si existe)
         $reporte = $_SESSION['resumen_periodo'] ?? null;
         include __DIR__ . '/../vistas/paginas/cronogramas/reporte_horas_por_objetivo.php';
