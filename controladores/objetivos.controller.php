@@ -37,6 +37,11 @@ class ControladorObjetivos
             if (!empty($_POST['referentes']) && is_array($_POST['referentes'])) {
                 ModeloObjetivos::mdlGuardarReferentesObjetivo($idObjetivo, $_POST['referentes']);
             }
+
+            // Guardar Base Operativa
+            if (!empty($_POST['base_operativa']) && is_array($_POST['base_operativa'])) {
+                ModeloObjetivos::mdlGuardarBaseOperativaObjetivo($idObjetivo, $_POST['base_operativa']);
+            }
             $conexion->commit();
             ToastifyController::success('Objetivo creado exitosamente');
         }
@@ -99,7 +104,19 @@ class ControladorObjetivos
             if (!empty($_POST['referentes']) && is_array($_POST['referentes'])) {
                 ModeloObjetivos::mdlGuardarReferentesObjetivo($datos['idObjetivo'], $_POST['referentes']);
             }
+            // === BASE OPERATIVA ===
+            $actualesBase = ModeloObjetivos::mdlObtenerBaseOperativaPorObjetivo($datos['idObjetivo']);
+            $nuevaBase = $_POST['base_operativa'] ?? [];
 
+            sort($actualesBase);
+            sort($nuevaBase);
+
+            if ($actualesBase !== $nuevaBase) {
+                ModeloObjetivos::mdlEliminarBaseOperativaObjetivo($datos['idObjetivo']);
+                if (!empty($nuevaBase)) {
+                    ModeloObjetivos::mdlGuardarBaseOperativaObjetivo($datos['idObjetivo'], $nuevaBase);
+                }
+            }
             $conexion->commit();
             ToastifyController::success('Objetivo actualizado correctamente');
         }

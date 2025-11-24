@@ -78,6 +78,36 @@ class ModeloObjetivos
         $stmt = Conexion::conectar()->prepare("DELETE FROM objetivo_referentes WHERE objetivo_id = ?");
         return $stmt->execute([$idObjetivo]);
     }
+
+    /*GUARDAR BASE OPERATIVA */
+    static public function mdlGuardarBaseOperativaObjetivo($idObjetivo, $usuarios)
+    {
+        $db = Conexion::conectar();
+        $sql = "INSERT INTO objetivo_base_operativa (objetivo_id, base_id) VALUES (?, ?)";
+        $stmt = $db->prepare($sql);
+        foreach ($usuarios as $idUsuario) {
+            $stmt->execute([$idObjetivo, $idUsuario]);
+        }
+    }
+
+    /*ELIMINAR BASE OPERATIVA */
+    static public function mdlEliminarBaseOperativaObjetivo($idObjetivo)
+    {
+        $db = Conexion::conectar();
+        $sql = "DELETE FROM objetivo_base_operativa WHERE objetivo_id = ?";
+        $stmt = $db->prepare($sql);
+        $stmt->execute([$idObjetivo]);
+    }
+
+    
+    static public function mdlObtenerBaseOperativaPorObjetivo($idObjetivo)
+    {
+        $db = Conexion::conectar();
+        $sql = "SELECT base_id FROM objetivo_base_operativa WHERE objetivo_id = ?";
+        $res = $db->prepare($sql);
+        $res->execute([$idObjetivo]);
+        return array_column($res->fetchAll(PDO::FETCH_ASSOC), 'base_id');
+    }
     // Obtener IDs de vigiladores por objetivo // vista de objetivos
     static public function mdlObtenerVigiladoresPorObjetivo($idObjetivo)
     {

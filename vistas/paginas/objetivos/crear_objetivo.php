@@ -6,12 +6,17 @@ $vigiladores = $db->consultas("SELECT u.idUsuario, u.nombre, u.apellido
                                     INNER JOIN roles r ON u.rol_id = r.id
                                     WHERE r.categoria = 'operativo' AND u.activo = 1
                                     ORDER BY u.apellido ");
-$db = new Conexion;
+
 $referentes = $db->consultas("SELECT u.idUsuario, u.nombre, u.apellido
                                       FROM usuarios u
                                       INNER JOIN roles r ON u.rol_id = r.id
                                       WHERE r.categoria = 'referente' AND u.activo = 1
                                       ORDER BY u.apellido");
+$baseOperativa = $db->consultas("SELECT u.idUsuario, u.nombre, u.apellido
+                                FROM usuarios u
+                                INNER JOIN roles r ON u.rol_id = r.id
+                                WHERE r.categoria = 'baseOperativa' AND u.activo = 1
+                                ORDER BY u.apellido");
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   ControladorObjetivos::crtGuardarObjetivo();
 }
@@ -110,7 +115,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               </select>
               <small class="form-text text-muted">Podés seleccionar uno o varios referentes para este objetivo.</small>
             </div>
-
+            <div class="form-group col-sm-12 col-md-5">
+              <label for="base_operativa">Seleccionar Base Operativa</label>
+              <select name="base_operativa[]" id="base_operativa" class="form-control select2" data-optional="true" multiple>
+                <?php foreach ($baseOperativa as $b): ?>
+                  <option value="<?= $b['idUsuario'] ?>" <?= in_array($b['idUsuario'], $baseSeleccionados ?? []) ? 'selected' : '' ?>>
+                    <?= $b['apellido'] ?> <?= $b['nombre'] ?>
+                  </option>
+                <?php endforeach; ?>
+              </select>
+              <small class="form-text text-muted">Podés asignar responsables de base operativa para este objetivo.</small>
+            </div>
           </div>
 
 
@@ -133,7 +148,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 <script>
-  // Carga los departamentos en el select
   // Carga los departamentos en el select
   const deps = [
     "Capital", "Godoy Cruz", "Guaymallén", "Las Heras", "Luján de Cuyo", "Maipú",
@@ -205,10 +219,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .catch(() => alert('Error al buscar la dirección.'));
     });
   });
-  //Validacion de cantidad de vigiladores
+
+  // Validación de cantidad de vigiladores
   $(document).ready(function() {
     $('#vigiladores').select2({
       placeholder: "Selecciona los vigiladores asignados"
+    });
+    $('#referentes').select2({
+      placeholder: "Selecciona los referentes asignados"
+    });
+    // ✅ Nuevo campo Base Operativa
+    $('#base_operativa').select2({
+      placeholder: "Selecciona los responsables de base operativa"
     });
   });
 
@@ -216,62 +238,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     const form = document.getElementById("formObjetivo");
     //const inputCantidad = document.getElementById("cantidad_vigiladores");
     const $selectVigiladores = $('#vigiladores');
+    const $selectReferentes = $('#referentes');
+    const $selectBase = $('#base_operativa'); // ✅ Nuevo campo
 
     // Inicializar Select2
     $selectVigiladores.select2({
       placeholder: "Selecciona los vigiladores asignados"
     });
+    $selectReferentes.select2({
+      placeholder: "Selecciona los referentes asignados"
+    });
+    $selectBase.select2({
+      placeholder: "Selecciona los responsables de base operativa"
+    });
+
     // Mostrar toast
     function mostrarToast(mensaje) {
       $('#toast-msg').text(mensaje);
       $('#toast-alerta').toast('show');
     }
 
-    /*
-    // Validación dinámica al seleccionar
-    $selectVigiladores.on('select2:select', function(e) {
-      const max = parseInt(inputCantidad.value) || 0;
-      const seleccionados = $selectVigiladores.select2('data');
-
-      if (seleccionados.length > max) {
-        // Elimina el último seleccionado
-        const idEliminar = e.params.data.id;
-        const opciones = $selectVigiladores.val().filter(val => val !== idEliminar);
-        $selectVigiladores.val(opciones).trigger('change');
-
-        mostrarToast('Solo puedes seleccionar hasta ' + max + ' vigilador(es).');
-      }
-    });*/
 
     // Validación de respaldo al enviar
     form.addEventListener("submit", function(e) {
-      //const cantidadRequerida = parseInt(inputCantidad.value);
-      const seleccionados = $selectVigiladores.select2('data').length;
+      const seleccionadosVigiladores = $selectVigiladores.select2('data').length;
+      const seleccionadosBase = $selectBase.select2('data').length;
 
-      // Solo validar si el campo tiene un valor numérico válido
-      /*if (!isNaN(cantidadRequerida) && cantidadRequerida > 0) {
-        if (seleccionados !== cantidadRequerida) {
-          e.preventDefault();
-          mostrarToast("Debes seleccionar exactamente " + cantidadRequerida + " vigilador(es). Actualmente seleccionaste " + seleccionados + ".");
-        }
-      }*/
-      // Validar que al menos haya uno seleccionado
-      if (seleccionados === 0) {
+      // Si no hay vigiladores O no hay base operativa → bloquear envío
+      if (seleccionadosVigiladores === 0 && seleccionadosBase === 0) {
         e.preventDefault();
-        mostrarToast("Debes seleccionar al menos un vigilador.");
+        mostrarToast("Debes seleccionar al menos un vigilador y un responsable de base operativa.");
       }
-
-    });
-  });
-
-  //Carga de referentes
-  document.addEventListener("DOMContentLoaded", function() {
-    const form = document.getElementById("formObjetivo");
-    const $selectReferentes = $('#referentes');
-
-    // Inicializar Select2
-    $selectReferentes.select2({
-      placeholder: "Selecciona los referentes asignados"
     });
 
 
