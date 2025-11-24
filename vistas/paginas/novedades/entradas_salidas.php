@@ -26,7 +26,8 @@ if (in_array($rol_usuario, ['VIGILADOR', 'REFERENTE'])) {
     $sqlHoy = "SELECT 
               o.idObjetivo, 
               o.nombre AS nombre_objetivo, 
-              p.puesto AS nombre_puesto
+              p.puesto AS nombre_puesto,
+              p.idPuesto AS puesto_id
            FROM turnos t
            JOIN objetivos o ON t.objetivo_id = o.idObjetivo
            LEFT JOIN rotaciones_puestos rp 
@@ -104,6 +105,9 @@ $objetivoAsignado = in_array($rol_usuario, ['VIGILADOR', 'REFERENTE'])
                     </div>
                     <?php if (!empty($turnoHoy['nombre_puesto'])): ?>
                         <div class="form-group col-sm-12 col-md-3">
+                            <?php if (!empty($turnoHoy['nombre_puesto'])): ?>
+                                <input type="hidden" name="puesto_id" value="<?= htmlspecialchars($turnoHoy['puesto_id'] ?? 0) ?>">
+                            <?php endif; ?>
                             <label class="form-label fw-bold">Puesto asignado:</label>
                             <input type="text" class="form-control" value="<?= htmlspecialchars($turnoHoy['nombre_puesto']) ?>" readonly>
                         </div>

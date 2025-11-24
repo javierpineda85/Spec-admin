@@ -97,125 +97,243 @@ class NovedadesController
         include __DIR__ . '/../vistas/paginas/novedades/listado_novedades.php';
     }
 
+
     static public function vistaListadoEntradaSalida()
     {
         Auth::check('novedades', 'vistaListadoEntradaSalida');
         $db = new Conexion();
 
         $sql = "SELECT 
-                        m.idMarcacion,
-                        m.objetivo_id,
-                        m.puesto_id,
-                        CONCAT(u.apellido, ' ', u.nombre) AS vigilador,
-                        o.nombre AS objetivo,
-                        m.tipo_evento,
-                        m.fecha_hora,
-                        pt.hora_entrada,
-                        pt.hora_salida,
-                        pt.numero_turno,
-                        JSON_OBJECT('lat', m.latitud, 'lng', m.longitud) AS map_data,
-                        CONCAT(
-                            'https://www.openstreetmap.org/?mlat=',
-                            m.latitud, '&mlon=', m.longitud,
-                            '#map=18/', m.latitud, '/', m.longitud
-                        ) AS osm_url
-                    FROM marcaciones_servicio m
-                    JOIN usuarios u 
-                        ON m.vigilador_id = u.idUsuario
-                    LEFT JOIN objetivos o 
-                        ON m.objetivo_id = o.idObjetivo
-                    LEFT JOIN rotaciones_puestos rp
-                        ON rp.usuario_id = m.vigilador_id
-                        AND rp.fecha = DATE(m.fecha_hora)
-                        AND rp.puesto_id = m.puesto_id
-                    -- Deducción de numero_turno
-                    LEFT JOIN puestos_turnos pt
-                        ON pt.puesto_id = m.puesto_id
-                        AND pt.numero_turno = COALESCE(
-                            CASE rp.codigo_turno
-                                WHEN 'D' THEN 1
-                                WHEN 'N' THEN 2
-                            END,
+                    m.idMarcacion,
+                    m.vigilador_id,
+                    m.objetivo_id,
+                    m.puesto_id,
+                    CONCAT(u.apellido, ' ', u.nombre) AS vigilador,
+                    o.nombre AS objetivo,
+                    m.tipo_evento,
+                    m.fecha_hora,
+
+                    -- Turno calendarizado del mismo día
+                    (t_same.idTurno IS NOT NULL) AS turno_same_en_calendario,
+                    t_same.fecha        AS fecha_turno_same,
+                    t_same.codigo_turno AS codigo_turno_same,
+
+                    -- Turno calendarizado del día anterior (para salidas nocturnas)
+                    (t_prev.idTurno IS NOT NULL) AS turno_prev_en_calendario,
+                    t_prev.fecha        AS fecha_turno_prev,
+                    t_prev.codigo_turno AS codigo_turno_prev,
+
+                    -- Horario elegido por mejor coincidencia temporal del puesto
+                    pt.hora_entrada,
+                    pt.hora_salida,
+
+                    JSON_OBJECT('lat', m.latitud, 'lng', m.longitud) AS map_data,
+                    CONCAT(
+                        'https://www.openstreetmap.org/?mlat=',
+                        m.latitud, '&mlon=', m.longitud,
+                        '#map=18/', m.latitud, '/', m.longitud
+                    ) AS osm_url
+
+                FROM marcaciones_servicio m
+                JOIN usuarios u 
+                    ON m.vigilador_id = u.idUsuario
+                LEFT JOIN objetivos o 
+                    ON m.objetivo_id = o.idObjetivo
+
+                -- Turno del mismo día
+                LEFT JOIN turnos t_same
+                    ON t_same.usuario_id  = m.vigilador_id
+                AND t_same.objetivo_id = m.objetivo_id
+                AND t_same.fecha       = DATE(m.fecha_hora)
+                AND t_same.tipo_turno  = 'Normal'
+
+                -- Turno del día anterior (para salidas nocturnas)
+                LEFT JOIN turnos t_prev
+                    ON t_prev.usuario_id  = m.vigilador_id
+                AND t_prev.objetivo_id = m.objetivo_id
+                AND t_prev.fecha       = DATE(m.fecha_hora - INTERVAL 1 DAY)
+                AND t_prev.tipo_turno  = 'Normal'
+
+                -- Subconsulta: elegir el horario más cercano al evento
+                LEFT JOIN puestos_turnos pt
+                    ON pt.idPuestoTurno = (
+                        SELECT pt2.idPuestoTurno
+                        FROM puestos_turnos pt2
+                        WHERE pt2.puesto_id = m.puesto_id
+                        AND pt2.hora_entrada IS NOT NULL
+                        AND pt2.hora_salida IS NOT NULL
+                        ORDER BY
                             CASE 
-                                WHEN TIME(m.fecha_hora) BETWEEN '05:00:00' AND '12:00:00' THEN 1 -- Día
-                                WHEN TIME(m.fecha_hora) >= '17:00:00' OR TIME(m.fecha_hora) <= '02:00:00' THEN 2 -- Noche
-                                ELSE NULL
-                            END
-                        )
-                    ORDER BY m.fecha_hora DESC;
-                    ";
+                                WHEN m.tipo_evento LIKE '%Entrada%' 
+                                    THEN ABS(TIME_TO_SEC(TIMEDIFF(TIME(m.fecha_hora), pt2.hora_entrada)))
+                                ELSE 
+                                    ABS(TIME_TO_SEC(TIMEDIFF(TIME(m.fecha_hora), pt2.hora_salida)))
+                            END ASC,
+                            pt2.created_at DESC
+                        LIMIT 1
+                    )
+
+                -- No deducimos horarios si no hay turno calendarizado
+                WHERE (t_same.idTurno IS NOT NULL OR t_prev.idTurno IS NOT NULL)
+
+                ORDER BY m.fecha_hora DESC;
+                ";
 
         $marcaciones = $db->consultas($sql);
 
         foreach ($marcaciones as &$m) {
+            $evento = strtolower(trim($m['tipo_evento'] ?? ''));
+            $esEntrada = strpos($evento, 'entrada') !== false;
+            $esSalida  = strpos($evento, 'salida') !== false;
+
+            $tieneHorasPuesto = !empty($m['hora_entrada']) && !empty($m['hora_salida']);
+            $cruzaMedianoche  = $tieneHorasPuesto
+                ? (strtotime($m['hora_salida']) < strtotime($m['hora_entrada']))
+                : false;
+
+            // Elegir fecha base según evento y cruce
+            $fechaTurnoBase = null;
+            if ($esEntrada) {
+                $fechaTurnoBase = $m['fecha_turno_same'] ?? null;
+            } elseif ($esSalida) {
+                $fechaTurnoBase = $cruzaMedianoche
+                    ? ($m['fecha_turno_prev'] ?? null)
+                    : ($m['fecha_turno_same'] ?? null);
+            }
+
+            // Calcular hora esperada si hay fecha base y horas del puesto
+            $horaEsperada = null;
+            if ($fechaTurnoBase && $tieneHorasPuesto) {
+                $horaEsperada = self::calcularHoraEsperadaConBase(
+                    $evento,
+                    $fechaTurnoBase,
+                    $m['hora_entrada'],
+                    $m['hora_salida']
+                );
+            }
+
+            // Calcular diff si hay hora esperada
+            $diffMin = self::calcularDiffMin($m['fecha_hora'], $horaEsperada);
+
+            // Determinar si hay turno calendarizado
+            $turnoEnCalendario = !empty($m['turno_same_en_calendario']) || !empty($m['turno_prev_en_calendario']);
+            $m['turno_en_calendario'] = $turnoEnCalendario;
+
+            // Mostrar hora esperada en formato HH:mm
+            $m['hora_esperada_ts'] = $horaEsperada ? date('H:i', strtotime($horaEsperada)) : '-';
+            $m['diff_min'] = isset($diffMin) ? (int)$diffMin : null;
+
+            // ✅ Asignar badge directamente
             $m['badge'] = self::calcularBadge($m);
         }
         unset($m);
 
         include __DIR__ . '/../vistas/paginas/novedades/listado_entradaSalidas.php';
     }
+    static public function calcularHoraEsperadaConBase($evento, $fechaTurnoBase, $horaEntrada, $horaSalida)
+    {
+        $evento = strtolower(trim($evento));
+        $cruzaMedianoche = strtotime($horaSalida) < strtotime($horaEntrada);
+
+        if (strpos($evento, 'entrada') !== false) {
+            return $fechaTurnoBase . ' ' . $horaEntrada;
+        }
+
+        if (strpos($evento, 'salida') !== false) {
+            $fechaSalida = $cruzaMedianoche
+                ? date('Y-m-d', strtotime($fechaTurnoBase . ' +1 day'))
+                : $fechaTurnoBase;
+            return $fechaSalida . ' ' . $horaSalida;
+        }
+
+        return null;
+    }
+    static public function calcularDiffMin($fechaMarcacion, $horaEsperada)
+    {
+        if (!$horaEsperada) return null;
+        return (strtotime($fechaMarcacion) - strtotime($horaEsperada)) / 60;
+    }
+    static public function calcularEstado($evento, $diffMin, $turnoEnCalendario)
+    {
+        // Sin turno calendarizado → fuera de rango (no inventamos horarios)
+        if (!$turnoEnCalendario) {
+            return 'Fuera de rango';
+        }
+
+        // Con calendario pero sin horas del puesto → sin horario
+        if ($diffMin === null) {
+            return 'Sin horario';
+        }
+
+        $tolerancia = 10;
+        $tardeMax   = 30;
+        $evento = strtolower(trim($evento ?? ''));
+        $esEntrada = (strpos($evento, 'entrada') !== false);
+
+        if ($esEntrada) {
+            if (abs($diffMin) <= $tolerancia) return 'En rango';
+            if ($diffMin > $tolerancia && $diffMin <= $tardeMax) return 'Tarde ≤ 30 min';
+            if ($diffMin < -11) return 'Muy temprano';
+            if ($diffMin > $tardeMax) return 'Fuera de rango';
+            return 'En rango';
+        } else {
+            if (abs($diffMin) <= $tolerancia) return 'En rango';
+            if ($diffMin < -11) return 'Salida anticipada';
+            if ($diffMin > 11) return 'Extra no remunerado';
+            return 'En rango';
+        }
+    }
 
     public static function calcularBadge($m)
     {
-        $toleranciaMin   = 10; // minutos de tolerancia
-        $tardeHastaMin   = 30; // minutos para "Tarde ≤ 30 min"
+        // - Sin turno calendarizado → Fuera de rango
+        // - Con turno pero sin hora esperada/diff → Sin horario
+        // - En rango: ±10 min
+        // - Tarde ≤ 30 min (entradas): +11 a +30
+        // - Muy temprano (entradas): < −11
+        // - Salida anticipada (salidas): < −11
+        // - Extra no remunerado (salidas): > +11
+        $tolerancia = 10;
+        $tardeMax   = 30;
 
-        // Determinar si es entrada o salida de forma segura
-        $evento = '';
-        if (!empty($m['evento'])) {
-            $evento = strtolower($m['evento']);
-        } elseif (!empty($m['tipo_evento'])) {
-            $evento = strtolower($m['tipo_evento']);
+        $evento    = strtolower(trim($m['tipo_evento'] ?? ''));
+        $esEntrada = (strpos($evento, 'entrada') !== false);
+        $turnoEnCalendario = !empty($m['turno_en_calendario']);
+        $diffMin = isset($m['diff_min']) ? (int)$m['diff_min'] : null;
+
+        if (!$turnoEnCalendario) {
+            return ['estado' => 'Fuera de rango', 'color' => 'bg-danger'];
         }
 
-        $esEntrada = (strpos($evento, 'entrada') !== false);
-
-        // Validar horas
-        $horaEntrada = !empty($m['hora_entrada']) ? $m['hora_entrada'] : null;
-        $horaSalida  = !empty($m['hora_salida'])  ? $m['hora_salida']  : null;
-
-        if ($horaEntrada === null || $horaSalida === null) {
+        if ($diffMin === null) {
             return ['estado' => 'Sin horario', 'color' => 'bg-secondary'];
         }
 
-        $fechaMarcacion = date('Y-m-d', strtotime($m['fecha_hora']));
-
-        // Calcular referencia
         if ($esEntrada) {
-            $fechaBase = $fechaMarcacion;
-            $tsReferencia = strtotime("$fechaBase $horaEntrada");
-        } else {
-            $fechaBase = date('Y-m-d', strtotime($fechaMarcacion . ' -1 day'));
-            if (strtotime($horaSalida) <= strtotime($horaEntrada)) {
-                $tsReferencia = strtotime("$fechaBase $horaSalida +1 day");
-            } else {
-                $tsReferencia = strtotime("$fechaBase $horaSalida");
+            if ($diffMin >= -$tolerancia && $diffMin <= $tolerancia) {
+                return ['estado' => 'En rango', 'color' => 'bg-success'];
             }
-        }
-
-        // Diferencia en minutos
-        $tsMarcacion = strtotime($m['fecha_hora']);
-        $diffMin = (int)round(($tsMarcacion - $tsReferencia) / 60);
-
-        // Clasificación
-        if ($esEntrada) {
-            if ($diffMin > 0 && $diffMin <= $tardeHastaMin) {
+            if ($diffMin > $tolerancia && $diffMin <= $tardeMax) {
                 return ['estado' => 'Tarde ≤ 30 min', 'color' => 'bg-warning'];
-            } elseif ($diffMin > $tardeHastaMin) {
+            }
+            if ($diffMin < - ($tolerancia + 1)) {
+                return ['estado' => 'Muy temprano', 'color' => 'bg-secondary'];
+            }
+            if ($diffMin > $tardeMax) {
                 return ['estado' => 'Fuera de rango', 'color' => 'bg-danger'];
-            } elseif ($diffMin >= -$toleranciaMin) {
-                return ['estado' => 'En rango', 'color' => 'bg-success'];
-            } else {
-                return ['estado' => 'Muy temprano', 'color' => 'bg-info'];
             }
+            return ['estado' => 'En rango', 'color' => 'bg-success'];
         } else {
-            if ($diffMin < -$toleranciaMin) {
-                return ['estado' => 'Salida anticipada', 'color' => 'bg-danger'];
-            } elseif (abs($diffMin) <= $toleranciaMin) {
+            if (abs($diffMin) <= $tolerancia) {
                 return ['estado' => 'En rango', 'color' => 'bg-success'];
-            } else {
-                return ['estado' => 'Extra no remunerado', 'color' => 'bg-primary'];
             }
+            if ($diffMin < - ($tolerancia + 1)) {
+                return ['estado' => 'Salida anticipada', 'color' => 'bg-danger'];
+            }
+            if ($diffMin > ($tolerancia + 1)) {
+                return ['estado' => 'Extra no remunerado', 'color' => 'bg-info'];
+            }
+            return ['estado' => 'En rango', 'color' => 'bg-success'];
         }
     }
 
