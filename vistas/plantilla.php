@@ -1,4 +1,7 @@
-<?php include __DIR__ . '/contenido/head.php';
+<?php 
+global $config;
+include __DIR__ . '/contenido/head.php';
+
 
 if (!isset($_SESSION)) {
   session_start();

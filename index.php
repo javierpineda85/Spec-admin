@@ -14,6 +14,7 @@ require_once __DIR__ . '/config.php';
 require_once('controladores/alertas.controller.php');
 require_once('controladores/archivos.controller.php');
 require_once('controladores/art.controller.php');
+require_once('controladores/config.controller.php');
 require_once('controladores/cronograma.controller.php');
 require_once('controladores/datospersonales.controller.php');
 require_once("controladores/directivas.controller.php");

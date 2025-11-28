@@ -534,7 +534,21 @@ class RutasController
             return;
         }
 
+        // ===== Configuración del sistema =====
+        if (isset($_GET['r']) && $_GET['r'] === 'configuracion/panel') {
+            // Solo rol programador puede acceder
+            Auth::check('roles', 'vistaConfigSistema');
 
+            // Llamamos al controlador que renderiza la vista del panel
+            ConfigController::vistaPanel();
+            return;
+        }
+
+        // ===== Guardar configuración =====
+        if (isset($_GET['r']) && $_GET['r'] === 'configuracion/ctrGuardarConfig') {
+            ConfigController::ctrGuardarConfig();
+            return;
+        }
         // ========= MAPEO DE RUTAS A VISTAS =========
         $mapeo = [
 

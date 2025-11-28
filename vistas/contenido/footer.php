@@ -1,4 +1,11 @@
 <div class="float-right d-none d-sm-block">
-  <b>Version</b> 2.3.1125
+  <b>Versión</b> <?= htmlspecialchars($config['system_version'] ?? 'N/D') ?>
 </div>
-<strong>Copyright &copy; 2025. ARGUS es desarrollado por <a href="https://thebigtable.com.ar" target="_blank"> The Big Table</a></strong>
+
+<strong>
+  Copyright &copy; <?= date('Y') ?>.
+  <?= htmlspecialchars($config['system_name'] ?? 'Sistema') ?> es desarrollado por 
+  <a href="https://thebigtable.com.ar" target="_blank">
+    <?= htmlspecialchars($config['system_author'] ?? 'The Big Table') ?>
+  </a>
+</strong>

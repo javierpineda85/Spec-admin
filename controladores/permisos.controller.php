@@ -18,6 +18,7 @@ class PermisosController
                     COALESCE(alias, descripcion) AS alias,
                     descripcion
                 FROM permissions
+                WHERE visible = 1
                 ORDER BY controlador, accion"
         );
 
