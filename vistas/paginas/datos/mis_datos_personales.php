@@ -1,7 +1,7 @@
 <?php
-Auth::check('datos_personales', 'verMisDatos');
-
-$idUsuario   = $_SESSION['idUsuario'] ?? 0;
+//Auth::check('datos_personales', 'verMisDatos');
+//$idUsuario = $_SESSION['idUsuario'] ?? 0;
+$idUsuario = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $db           = new Conexion;
 
 // Cargar datos existentes

@@ -2,7 +2,7 @@
 $nivelSesion = isset($_SESSION['nivel']) ? (float)$_SESSION['nivel'] : 1.0;
 $puedeGestionar = in_array($nivelSesion, [3.0, 4.0, 5.0, 99.0], true);
 
- ?>
+?>
 
 <section class="content">
   <div class="container-fluid">
@@ -46,15 +46,20 @@ $puedeGestionar = in_array($nivelSesion, [3.0, 4.0, 5.0, 99.0], true);
                     <?php if ($puedeGestionar): ?>
                       <td>
                         <div class="row d-flex justify-content-around">
-                          <a href="?r=perfil-usuario&id=<?= (int)$valor['idUsuario']; ?>" class="btn btn-success btn-sm">
+                          <a href="?r=perfil-usuario&id=<?= (int)$valor['idUsuario']; ?>" class="btn btn-success btn-sm" title="Ver perfil">
                             <i class="fas fa-eye"></i>
                           </a>
-                          <!--<form method="post">
-                            <input type="hidden" value="<?= (int)$valor['idUsuario']; ?>" name="idEliminar">
-                            <button type="submit" class="btn btn-danger btn-sm">
-                              <i class="fas fa-trash-alt"></i>
-                            </button>
-                          </form>-->
+
+
+                          <a href="?r=mi_salud&id=<?= (int)$valor['idUsuario']; ?>" class="btn bg-lightblue btn-sm" title="Ver salud">
+                            <i class="fas fa-medkit"></i>
+                          </a>
+                          <a href="?r=mis_datos_personales&id=<?= (int)$valor['idUsuario']; ?>" class="btn bg-lightblue btn-sm" title="Ver datos personales">
+                            <i class="fas fa-address-card"></i>
+                          </a>
+                          <a href="?r=perfil-usuario&id=<?= (int)$valor['idUsuario']; ?>" class="btn bg-lightblue btn-sm" title="Ver documentos">
+                            <i class="fas fa-file-alt"></i>
+                          </a>
                         </div>
                       </td>
                     <?php endif ?>

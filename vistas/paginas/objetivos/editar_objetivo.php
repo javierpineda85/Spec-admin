@@ -159,11 +159,12 @@ $baseSeleccionados = array_column($asignadosBase, 'base_id');
 
 <script>
     // Carga los departamentos en el select
-    const deps = [
-        "Capital", "Godoy Cruz", "Guaymallén", "Las Heras", "Luján de Cuyo", "Maipú",
-        "San Martín", "Rivadavia", "Junín", "Santa Rosa", "La Paz", "Tunuyán",
-        "Tupungato", "San Carlos", "General Alvear", "Malargüe"
-    ];
+  const deps = [
+    "Capital", "Godoy Cruz", "Guaymallén", "Las Heras", "Luján de Cuyo","Lavalle", "Maipú",
+    "San Martín", "Rivadavia", "Junín", "Santa Rosa", "La Paz", "Tunuyán",
+    "Tupungato", "San Carlos","San Rafael", "General Alvear", "Malargüe"
+  ];
+
 
     const sel = document.getElementById("localidad");
     deps.forEach(d => {
