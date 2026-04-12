@@ -499,6 +499,8 @@ class RutasController
             SaludController::vistaMiSalud();
             return;
         }
+
+        //Vista uniformes
         if (isset($_GET['r']) && $_GET['r'] === 'mi_uniforme') {
             UniformesController::vistaMiUniforme();
             return;
@@ -509,6 +511,24 @@ class RutasController
             UniformesController::vistaListadoUniformes();
             return;
         }
+
+        // Comprobante de entrega de uniforme
+        if (isset($_GET['r']) && $_GET['r'] === 'comprobante_entrega_uniforme') {
+            UniformesController::comprobanteEntrega();
+            return;
+        }
+
+        // Registrar entrega múltiple
+        if (isset($_GET['r']) && $_GET['r'] === 'registrar_entrega_uniforme_multiple') {
+            UniformesController::registrarEntregaMultiple();
+            return;
+        }
+        // Registrar devolución de uniforme
+        if (isset($_GET['r']) && $_GET['r'] === 'registrar_devolucion_uniforme') {
+            UniformesController::registrarDevolucion();
+            return;
+        }
+
         // Noticias
 
         if (isset($_GET['r']) && $_GET['r'] ===  'cumpleanos') {

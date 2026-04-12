@@ -49,13 +49,14 @@ $puedeGestionar = in_array($nivelSesion, [3.0, 4.0, 5.0, 99.0], true);
                           <a href="?r=perfil-usuario&id=<?= (int)$valor['idUsuario']; ?>" class="btn btn-success btn-sm" title="Ver perfil">
                             <i class="fas fa-eye"></i>
                           </a>
-
-
                           <a href="?r=mi_salud&id=<?= (int)$valor['idUsuario']; ?>" class="btn bg-lightblue btn-sm" title="Ver salud">
                             <i class="fas fa-medkit"></i>
                           </a>
                           <a href="?r=mis_datos_personales&id=<?= (int)$valor['idUsuario']; ?>" class="btn bg-lightblue btn-sm" title="Ver datos personales">
                             <i class="fas fa-address-card"></i>
+                          </a>
+                          <a href="?r=mi_uniforme&id=<?= (int)$valor['idUsuario']; ?>" class="btn bg-info btn-sm" title="Ver uniforme">
+                            <i class="fas fa-user-shield"></i>
                           </a>
                           <!--<a href="?r=perfil-usuario&id=<?= (int)$valor['idUsuario']; ?>" class="btn bg-lightblue btn-sm" title="Ver documentos">
                             <i class="fas fa-file-alt"></i>
