@@ -67,7 +67,7 @@ class UniformesController
             ToastifyController::error('Error al guardar los talles');
         }
 
-        header("Location: ?r=mi_uniforme");
+        header("Location: ?r=mi_uniforme&id=" . $_POST['usuario_id']);
         exit;
     }
 
