@@ -57,9 +57,9 @@ $puedeGestionar = in_array($nivelSesion, [3.0, 4.0, 5.0, 99.0], true);
                           <a href="?r=mis_datos_personales&id=<?= (int)$valor['idUsuario']; ?>" class="btn bg-lightblue btn-sm" title="Ver datos personales">
                             <i class="fas fa-address-card"></i>
                           </a>
-                          <a href="?r=perfil-usuario&id=<?= (int)$valor['idUsuario']; ?>" class="btn bg-lightblue btn-sm" title="Ver documentos">
+                          <!--<a href="?r=perfil-usuario&id=<?= (int)$valor['idUsuario']; ?>" class="btn bg-lightblue btn-sm" title="Ver documentos">
                             <i class="fas fa-file-alt"></i>
-                          </a>
+                          </a>-->
                         </div>
                       </td>
                     <?php endif ?>
