@@ -10,25 +10,26 @@ class RutasController
         // ============================
         // 1) Cargar rutas por módulos
         // ============================
-
-        require_once __DIR__ . '/../rutas/rutas_login.php';
         require_once __DIR__ . '/../rutas/rutas_alertas.php';
-        require_once __DIR__ . '/../rutas/rutas_qr.php';
-        require_once __DIR__ . '/../rutas/rutas_rondas.php';
-        require_once __DIR__ . '/../rutas/rutas_permisos.php';
-        require_once __DIR__ . '/../rutas/rutas_roles.php';
+        require_once __DIR__ . '/../rutas/rutas_art.php';
+        require_once __DIR__ . '/../rutas/rutas_configuracion.php';
         require_once __DIR__ . '/../rutas/rutas_cronogramas.php';
+        require_once __DIR__ . '/../rutas/rutas_datos.php';
         require_once __DIR__ . '/../rutas/rutas_directivas.php';
+        require_once __DIR__ . '/../rutas/rutas_feriados.php';
+        require_once __DIR__ . '/../rutas/rutas_hvivo.php';
+        require_once __DIR__ . '/../rutas/rutas_login.php';
+        require_once __DIR__ . '/../rutas/rutas_marcaciones.php';
+        require_once __DIR__ . '/../rutas/rutas_mensajes.php';
         require_once __DIR__ . '/../rutas/rutas_novedades.php';
         require_once __DIR__ . '/../rutas/rutas_objetivos.php';
+        require_once __DIR__ . '/../rutas/rutas_permisos.php';
         require_once __DIR__ . '/../rutas/rutas_puestos.php';
-        require_once __DIR__ . '/../rutas/rutas_usuarios.php';
-        require_once __DIR__ . '/../rutas/rutas_feriados.php';
-        require_once __DIR__ . '/../rutas/rutas_art.php';
-        require_once __DIR__ . '/../rutas/rutas_datos.php';
+        require_once __DIR__ . '/../rutas/rutas_qr.php';
+        require_once __DIR__ . '/../rutas/rutas_roles.php';
+        require_once __DIR__ . '/../rutas/rutas_rondas.php';
         require_once __DIR__ . '/../rutas/rutas_uniformes.php';
-        require_once __DIR__ . '/../rutas/rutas_mensajes.php';
-        require_once __DIR__ . '/../rutas/rutas_configuracion.php';
+        require_once __DIR__ . '/../rutas/rutas_usuarios.php';
 
         // ============================
         // 2) Mapeo simple a vistas
