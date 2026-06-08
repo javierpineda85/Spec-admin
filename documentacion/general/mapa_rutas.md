@@ -162,3 +162,18 @@ A continuación, el **mapa completo de rutas**, agrupado por módulo, listo para
 ```
 
 ---
+
+# **14. Hombre Vivo**
+
+```
+?r=hombre_vivo
+?r=reporte_hombre_vivo
+?r=registrar_hvivo
+?r=listado_hvivo
+?r=listado_reportes
+?r=configuracion_hvivo
+?r=guardar_configuracion_hvivo
+?r=ajax_registrar_hvivo
+```
+
+---

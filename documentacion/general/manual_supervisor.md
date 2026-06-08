@@ -22,6 +22,8 @@ El supervisor ve:
 - Accesos rápidos a **Turnos**, **Rondas**, **Uniformes**, **Usuarios**, **Objetivos**, **Puestos**  
 - Notificaciones de Toastify  
 - Menú lateral con permisos según su rol
+- Bloques de inicio con **Alertas de Hombre Vivo** y **Guardias en Servicio** para supervisión rápida
+- En vigiladores y referentes, el inicio cambia a un bloque de **Directivas** en modo lectura
 
 ---
 

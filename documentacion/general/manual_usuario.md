@@ -17,6 +17,13 @@ Si el sistema indica que debe cambiar la contraseña:
 - Ingresá la nueva contraseña dos veces.
 - Guardá los cambios.
 
+### **1.3. Pantalla de inicio**
+Al entrar al sistema, el panel principal muestra accesos y bloques según tu rol:
+
+- Vigiladores y referentes: **Directivas** en modo lectura.
+- Supervisores, administración y gerencia: **Alertas de Hombre Vivo** y **Guardias en Servicio**.
+- En celular, los accesos del panel de control se acomodan en dos columnas para que sea más cómodo de usar.
+
 ---
 
 # 2. Mi Perfil

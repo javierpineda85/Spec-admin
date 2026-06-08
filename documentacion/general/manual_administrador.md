@@ -4,6 +4,18 @@
 
 ---
 
+# 0. Pantalla de inicio
+
+Al ingresar al sistema, este perfil ve el panel de control con accesos rápidos y bloques operativos según permisos:
+
+- **Alertas de Hombre Vivo**
+- **Guardias en Servicio** con filtro por objetivo
+- Accesos de administración, uniformes y módulos de gestión
+
+En celular, los accesos del panel se acomodan en dos columnas para una lectura más cómoda.
+
+---
+
 # 1. Gestión de Usuarios
 
 Acceso:  
