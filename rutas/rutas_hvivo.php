@@ -38,3 +38,20 @@ if (isset($_GET['r']) && $_GET['r'] === 'listado_reportes') {
     define('RUTA_EJECUTADA', true);
     return;
 }
+
+// Vista de configuracion Hombre Vivo
+if (isset($_GET['r']) && $_GET['r'] === 'configuracion_hvivo') {
+    HombreVivoController::vistaConfiguracionHombreVivo();
+    define('RUTA_EJECUTADA', true);
+    return;
+}
+
+// Guardar configuracion Hombre Vivo
+if (isset($_GET['r']) && $_GET['r'] === 'guardar_configuracion_hvivo') {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        HombreVivoController::guardarConfiguracionHombreVivo();
+    } else {
+        header('Location: ?r=configuracion_hvivo');
+    }
+    return;
+}

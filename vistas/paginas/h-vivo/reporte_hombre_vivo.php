@@ -77,12 +77,12 @@ $turnoHV = $_SESSION['hVivo_turno'] ?? 'diurno';
           if (repeticiones >= 3) {
             clearInterval(pitidosRapidos);
 
-            // Aviso persistente cada 5 segundos
+            // Aviso persistente cada 10 segundos
             if (!alertaIntervalo) {
               alertaIntervalo = setInterval(() => {
                 const audioPersistente = new Audio('public/sonidos/spec_notificacion.mp3');
                 audioPersistente.play();
-              }, 5000);
+              }, 10000);
             }
           }
         }, 1000);
