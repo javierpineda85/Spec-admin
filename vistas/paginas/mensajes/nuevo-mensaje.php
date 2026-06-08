@@ -87,8 +87,11 @@ $cantidadNoLeidos = count($mensajesNoLeidos);
                                         No tienes destinatarios disponibles para este tipo de mensaje o contexto.
                                     </div>
                                 <?php else: ?>
-                                    <form action="" method="post">
+                                    <form action="index.php?r=guardar_mensaje" method="post">
                                         <input type="hidden" name="id_remitente" value="<?= $_SESSION['idUsuario']; ?>">
+                                        <?php if (!empty($idMensajeOriginal)): ?>
+                                            <input type="hidden" name="idMensajeOriginal" value="<?= (int)$idMensajeOriginal; ?>">
+                                        <?php endif; ?>
 
                                         <?php if ($modo === 'reply' && !empty($mensaje[0]['remitente_id'])): ?>
                                             <input type="hidden" name="id_destinatario" value="<?= $mensaje[0]['remitente_id']; ?>">
@@ -125,7 +128,6 @@ $cantidadNoLeidos = count($mensajesNoLeidos);
 
                                         <div class="card-footer">
                                             <div class="float-right">
-                                                <?php $registro = ControladorMensajes::crtGuardarMensaje(); ?>
                                                 <button type="submit" class="btn btn-primary">
                                                     <i class="far fa-envelope"></i> Enviar
                                                 </button>

@@ -41,6 +41,7 @@ class ModeloMensajes
                                             ORDER BY fecha_hora DESC ");
         $stmt->bindParam(':valor', $valor, PDO::PARAM_INT);
 
+        $stmt->execute();
         return $stmt->fetchAll();
         $stmt->closeCursor();
 
@@ -67,7 +68,7 @@ class ModeloMensajes
         }
 
         // Insertar mensaje con objetivo_id si está disponible
-        $resultado = $db->consultas(
+        $resultado = $db->ejecutar(
             "INSERT INTO mensajes (remitente_id, destinatario_id, contenido, fecha_hora, objetivo_id)
      VALUES (?, ?, ?, ?, ?)",
             [

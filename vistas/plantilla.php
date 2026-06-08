@@ -105,7 +105,35 @@ if (!isset($_SESSION)) {
     <?php if (!empty($_SESSION['toast'])): ?>
       <script>
         document.addEventListener('DOMContentLoaded', function() {
-          mostrarToast("<?= addslashes($_SESSION['toast']['mensaje']) ?>", "<?= $_SESSION['toast']['tipo'] ?>");
+          const toastMsg = <?= json_encode($_SESSION['toast']['mensaje'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+          const toastType = <?= json_encode($_SESSION['toast']['tipo'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) ?>;
+
+          if (window.Toastify) {
+            const colors = {
+              success: '#28a745',
+              warning: '#f0ad4e',
+              danger: '#dc3545',
+              info: '#17a2b8'
+            };
+
+            Toastify({
+              text: toastMsg,
+              duration: 5000,
+              close: true,
+              gravity: 'top',
+              position: 'right',
+              style: {
+                background: colors[toastType] || colors.info,
+                borderRadius: '6px',
+                boxShadow: '0 6px 18px rgba(0,0,0,.18)'
+              }
+            }).showToast();
+            return;
+          }
+
+          if (typeof mostrarToast === 'function') {
+            mostrarToast(toastMsg, toastType);
+          }
         });
       </script>
       <?php unset($_SESSION['toast']); ?>

@@ -30,8 +30,14 @@ if (isset($_GET['r']) && $_GET['r'] === 'nuevo-mensaje') {
 // Guardar mensaje
 if (isset($_GET['r']) && $_GET['r'] === 'guardar_mensaje') {
     require_once 'controladores/mensajes.controller.php';
-    ControladorMensajes::crtGuardarMensaje();
-    header("Location: ?r=bandeja-entrada");
+    $resultado = ControladorMensajes::crtGuardarMensaje();
+    if ($resultado === 'ok') {
+        ToastifyController::success('Mensaje enviado con éxito');
+        header("Location: ?r=bandeja-entrada");
+    } else {
+        ToastifyController::error('No se pudo enviar el mensaje');
+        header("Location: ?r=nuevo-mensaje");
+    }
     return;
 }
 

@@ -44,7 +44,7 @@ class ControladorMensajes
             $respuesta = ModeloMensajes::mdlGuardarMensaje($datos);
 
             if ($respuesta === "ok") {
-                ToastifyController::success('Mensaje enviado exitosamente');
+                ToastifyController::success('Mensaje enviado con éxito');
             } else {
                 ToastifyController::error('Error al enviar el mensaje');
             }
