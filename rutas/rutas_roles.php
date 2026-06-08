@@ -2,11 +2,13 @@
 
 if (isset($_GET['r']) && $_GET['r'] === 'roles/listado') {
     RolesController::vistaListadoRoles();
+    define('RUTA_EJECUTADA', true);
     return;
 }
 
 if (isset($_GET['r']) && $_GET['r'] === 'roles/crear') {
     RolesController::vistaCrearRol();
+    define('RUTA_EJECUTADA', true);
     return;
 }
 
@@ -21,6 +23,7 @@ if (isset($_GET['r']) && $_GET['r'] === 'roles/ctrGuardarRol') {
 
 if (isset($_GET['r']) && $_GET['r'] === 'roles/editar') {
     RolesController::vistaEditarRol();
+    define('RUTA_EJECUTADA', true);
     return;
 }
 
@@ -48,6 +51,7 @@ if (isset($_GET['r']) && $_GET['r'] === 'roles/permisos') {
         return;
     }
     RolesController::vistaPermisosRol();
+    define('RUTA_EJECUTADA', true);
     return;
 }
 

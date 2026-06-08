@@ -2,11 +2,13 @@
 
 if (isset($_GET['r']) && $_GET['r'] === 'mi_uniforme') {
     UniformesController::vistaMiUniforme();
+    define('RUTA_EJECUTADA', true);
     return;
 }
 
 if (isset($_GET['r']) && $_GET['r'] === 'listado_uniformes') {
     UniformesController::vistaListadoUniformes();
+    define('RUTA_EJECUTADA', true);
     return;
 }
 

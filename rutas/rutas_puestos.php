@@ -7,26 +7,31 @@ if (isset($_GET['r']) && $_GET['r'] === 'crear_puesto' && $_SERVER['REQUEST_METH
 
 if (isset($_GET['r']) && $_GET['r'] === 'crear_puesto') {
     ControladorPuestos::vistaCrearPuestos();
+    define('RUTA_EJECUTADA', true);
     return;
 }
 
 if (isset($_GET['r']) && $_GET['r'] === 'editar_puesto') {
     ControladorPuestos::vistaEditarPuesto();
+    define('RUTA_EJECUTADA', true);
     return;
 }
 
 if (isset($_GET['r']) && $_GET['r'] === 'listado_puestos') {
     ControladorPuestos::vistaListadoPuestos();
+    define('RUTA_EJECUTADA', true);
     return;
 }
 
 if (isset($_GET['r']) && $_GET['r'] === 'listado_puestos_inactivos') {
     ControladorPuestos::vistaListadoPuestosDesactivados();
+    define('RUTA_EJECUTADA', true);
     return;
 }
 
 if (isset($_GET['r']) && $_GET['r'] === 'rotaciones_puestos') {
     ControladorPuestos::vistaRotaciones();
+    define('RUTA_EJECUTADA', true);
     return;
 }
 

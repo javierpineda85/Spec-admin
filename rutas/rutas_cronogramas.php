@@ -14,30 +14,35 @@ if (isset($_GET['r']) && $_GET['r'] === 'buscar_porVigilador') {
 // Crear cronograma
 if (isset($_GET['r']) && $_GET['r'] === 'crear_cronograma') {
     ControladorCronogramas::vistaCrearCronograma();
+    define('RUTA_EJECUTADA', true);
     return;
 }
 
 // Listado cronogramas
 if (isset($_GET['r']) && $_GET['r'] === 'listado_cronogramas') {
     ControladorCronogramas::vistaListadoCronogramas();
+    define('RUTA_EJECUTADA', true);
     return;
 }
 
 // Listado cronogramas por vigilador
 if (isset($_GET['r']) && $_GET['r'] === 'listado_porVigilador') {
     ControladorCronogramas::vistaListadoCronogramaPorVigilador();
+    define('RUTA_EJECUTADA', true);
     return;
 }
 
 // Jornadas por objetivo
 if (isset($_GET['r']) && $_GET['r'] === 'listado_resumen_diario') {
     ControladorCronogramas::vistaJornadasPorObjetivo();
+    define('RUTA_EJECUTADA', true);
     return;
 }
 
 // Horas por vigilador
 if (isset($_GET['r']) && $_GET['r'] === 'reporte_porVigilador') {
     ControladorCronogramas::vistaHorasPorVigilador();
+    define('RUTA_EJECUTADA', true);
     return;
 }
 
@@ -67,5 +72,6 @@ if (isset($_GET['r']) && $_GET['r'] === 'reporte_porHoras' && $_SERVER['REQUEST_
 // Vista reporte horas por objetivo
 if (isset($_GET['r']) && $_GET['r'] === 'reporte_porHoras') {
     ControladorCronogramas::vistaReporteHorasPorObjetivo();
+    define('RUTA_EJECUTADA', true);
     return;
 }

@@ -9,6 +9,7 @@ if (isset($_GET['r']) && $_GET['r'] === 'registrar_alerta_hombrevivo' && $_SERVE
 // Vista alertas supervisor
 if (isset($_GET['r']) && $_GET['r'] === 'alertas_supervisor') {
     require_once 'vistas/paginas/supervisores/alertas_supervisor.php';
+    define('RUTA_EJECUTADA', true);
     return;
 }
 

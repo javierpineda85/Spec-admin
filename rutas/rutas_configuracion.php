@@ -3,6 +3,7 @@
 if (isset($_GET['r']) && $_GET['r'] === 'configuracion/panel') {
     Auth::check('roles', 'vistaConfigSistema');
     ConfigController::vistaPanel();
+    define('RUTA_EJECUTADA', true);
     return;
 }
 

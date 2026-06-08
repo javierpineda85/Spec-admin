@@ -5,6 +5,7 @@ if (isset($_GET['r']) && $_GET['r'] === 'bandeja-entrada') {
     require_once 'controladores/mensajes.controller.php';
     $mensajes = ControladorMensajes::crtMostrarMensajesRecibidos('destinatario_id', $_SESSION['idUsuario']);
     require 'vistas/paginas/mensajes/bandeja-entrada.php';
+    define('RUTA_EJECUTADA', true);
     return;
 }
 
@@ -13,6 +14,7 @@ if (isset($_GET['r']) && $_GET['r'] === 'mensajes-enviados') {
     require_once 'controladores/mensajes.controller.php';
     $mensajes = ControladorMensajes::crtMostrarMensajesEnviados('remitente_id', $_SESSION['idUsuario']);
     require 'vistas/paginas/mensajes/mensajes-enviados.php';
+    define('RUTA_EJECUTADA', true);
     return;
 }
 
@@ -21,6 +23,7 @@ if (isset($_GET['r']) && $_GET['r'] === 'nuevo-mensaje') {
     require_once 'controladores/mensajes.controller.php';
     $destinatarios = ControladorMensajes::obtenerDestinatariosDisponibles($_SESSION['idUsuario']);
     require 'vistas/paginas/mensajes/nuevo-mensaje.php';
+    define('RUTA_EJECUTADA', true);
     return;
 }
 
@@ -37,6 +40,7 @@ if (isset($_GET['r']) && $_GET['r'] === 'ver-mensaje') {
     require_once 'controladores/mensajes.controller.php';
     $mensaje = ControladorMensajes::crtMostrarUnMensaje($_GET['id']);
     require 'vistas/paginas/mensajes/ver-mensaje.php';
+    define('RUTA_EJECUTADA', true);
     return;
 }
 

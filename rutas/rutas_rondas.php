@@ -7,6 +7,7 @@ if (isset($_GET['r']) && $_GET['r'] === 'registrar_escaneo') {
 
 if (isset($_GET['r']) && $_GET['r'] === 'escanear') {
     RondasController::vistaEscanearRondas();
+    define('RUTA_EJECUTADA', true);
     return;
 }
 
@@ -32,15 +33,18 @@ if (isset($_GET['r']) && $_GET['r'] === 'desactivar_ronda') {
 
 if (isset($_GET['r']) && $_GET['r'] === 'crear_rondas') {
     RondasController::vistaCrearRondas();
+    define('RUTA_EJECUTADA', true);
     return;
 }
 
 if (isset($_GET['r']) && $_GET['r'] === 'editar_ronda') {
     RondasController::vistaEditarRondas();
+    define('RUTA_EJECUTADA', true);
     return;
 }
 
 if (isset($_GET['r']) && $_GET['r'] === 'listado_rondas') {
     RondasController::vistaListadoRondas();
+    define('RUTA_EJECUTADA', true);
     return;
 }
