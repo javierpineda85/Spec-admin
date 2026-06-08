@@ -93,7 +93,14 @@ class ControladorTurnos
             exit;
         }
 
-        $usuarioId = intval($_POST['vigilador']);
+        $rol = $_SESSION['rol'] ?? '';
+        $categoria = $_SESSION['categoria'] ?? '';
+        $esRestringido = in_array($rol, ['Vigilador', 'Referente'], true)
+            || in_array($categoria, ['operativo', 'referente'], true);
+
+        $usuarioId = $esRestringido
+            ? (int)($_SESSION['idUsuario'] ?? 0)
+            : intval($_POST['vigilador']);
         $desde     = $_POST['desde'];
         $hasta     = $_POST['hasta'];
 

@@ -29,13 +29,14 @@ $objetivos = $db->consultas($sql);
                     <?php endif; ?>
                     <!-- /.card-header -->
                     <div class="card-body">
+                        <?php $esRestringido = in_array(($_SESSION['categoria'] ?? ''), ['operativo', 'referente'], true); ?>
                         <table id="example1" class="table table-bordered table-striped table-sm">
                             <thead>
                                 <tr>
                                     <th style="text-align: center;">Puesto</th>
                                     <th style="text-align: center;">Objetivo</th>
                                     <th style="text-align: center;">tipo</th>
-                                    <?php if ($_SESSION['nivel'] > 2): ?>
+                                    <?php if ($_SESSION['nivel'] > 2 && !$esRestringido): ?>
                                         <th style="text-align: center;">Acciones</th>
                                     <?php endif; ?>
                                 </tr>
@@ -46,7 +47,7 @@ $objetivos = $db->consultas($sql);
                                         <td> <?= $valor['puesto'] ?></td>
                                         <td> <?= $valor['objetivo'] ?></td>
                                         <td> <?= $valor['tipo'] ?></td>
-                                        <?php if ($_SESSION['nivel'] > 2): ?>
+                                        <?php if ($_SESSION['nivel'] > 2 && !$esRestringido): ?>
                                             <td style="vertical-align: middle; text-align: center;">
                                                 <div class="d-flex justify-content-center">
                                                     <!-- Editar -->

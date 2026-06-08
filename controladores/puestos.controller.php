@@ -3,6 +3,20 @@ require_once('modelos/puestos.modelo.php');
 
 class ControladorPuestos
 {
+    private static function esUsuarioRestringido(): bool
+    {
+        $rol = $_SESSION['rol'] ?? '';
+        $categoria = $_SESSION['categoria'] ?? '';
+
+        return in_array($rol, ['Vigilador', 'Referente'], true)
+            || in_array($categoria, ['operativo', 'referente'], true);
+    }
+
+    private static function objetivoAsignadoSesion(): int
+    {
+        return (int)($_SESSION['objetivo_id'] ?? 0);
+    }
+
     public static function ctrGuardarPuesto()
     {
         //Auth::check('puestos', 'ctrGuardarPuesto');
@@ -187,8 +201,28 @@ class ControladorPuestos
         Auth::check('puestos', 'vistaListadoPuestos');
 
         $db = new Conexion;
-        $sql = "SELECT p.idPuesto, p.puesto, p.objetivo_id, p.tipo, o.nombre as objetivo FROM puestos p JOIN objetivos o ON p.objetivo_id = o.idObjetivo WHERE p.activo = 1 ORDER BY p.objetivo_id ";
-        $objetivos = $db->consultas($sql);
+        $esRestringido = self::esUsuarioRestringido();
+        $objetivoId = $esRestringido ? self::objetivoAsignadoSesion() : 0;
+
+        if ($esRestringido) {
+            if ($objetivoId > 0) {
+                $sql = "SELECT p.idPuesto, p.puesto, p.objetivo_id, p.tipo, o.nombre as objetivo
+                        FROM puestos p
+                        JOIN objetivos o ON p.objetivo_id = o.idObjetivo
+                        WHERE p.activo = 1 AND p.objetivo_id = ?
+                        ORDER BY p.objetivo_id";
+                $objetivos = $db->consultas($sql, [$objetivoId]);
+            } else {
+                $objetivos = [];
+            }
+        } else {
+            $sql = "SELECT p.idPuesto, p.puesto, p.objetivo_id, p.tipo, o.nombre as objetivo
+                    FROM puestos p
+                    JOIN objetivos o ON p.objetivo_id = o.idObjetivo
+                    WHERE p.activo = 1
+                    ORDER BY p.objetivo_id";
+            $objetivos = $db->consultas($sql);
+        }
 
         include __DIR__ . '/../vistas/paginas/puestos/listado_puestos.php';
         return;
@@ -197,8 +231,28 @@ class ControladorPuestos
     {
         Auth::check('puestos', 'vistaListadoPuestosDesactivados');
         $db = new Conexion;
-        $sql = "SELECT p.idPuesto, p.puesto, p.objetivo_id, p.tipo, o.nombre as objetivo FROM puestos p JOIN objetivos o ON p.objetivo_id = o.idObjetivo WHERE p.activo = 0 ORDER BY p.objetivo_id ";
-        $objetivos = $db->consultas($sql);
+        $esRestringido = self::esUsuarioRestringido();
+        $objetivoId = $esRestringido ? self::objetivoAsignadoSesion() : 0;
+
+        if ($esRestringido) {
+            if ($objetivoId > 0) {
+                $sql = "SELECT p.idPuesto, p.puesto, p.objetivo_id, p.tipo, o.nombre as objetivo
+                        FROM puestos p
+                        JOIN objetivos o ON p.objetivo_id = o.idObjetivo
+                        WHERE p.activo = 0 AND p.objetivo_id = ?
+                        ORDER BY p.objetivo_id";
+                $objetivos = $db->consultas($sql, [$objetivoId]);
+            } else {
+                $objetivos = [];
+            }
+        } else {
+            $sql = "SELECT p.idPuesto, p.puesto, p.objetivo_id, p.tipo, o.nombre as objetivo
+                    FROM puestos p
+                    JOIN objetivos o ON p.objetivo_id = o.idObjetivo
+                    WHERE p.activo = 0
+                    ORDER BY p.objetivo_id";
+            $objetivos = $db->consultas($sql);
+        }
         include __DIR__ . '/../vistas/paginas/puestos/listado_puestos_desactivados.php';
         return;
     }
@@ -219,12 +273,21 @@ class ControladorPuestos
     {
         Auth::check('puestos', 'vistaRotaciones');
 
-        $objetivo_id = (int)($_GET['objetivo_id'] ?? 0);
+        $esRestringido = self::esUsuarioRestringido();
+        $objetivo_id = $esRestringido ? self::objetivoAsignadoSesion() : (int)($_GET['objetivo_id'] ?? 0);
         $mes = $_GET['mes'] ?? date('Y-m');
 
         // Para el selector de objetivo
         $db = new Conexion;
-        $objetivos  = $db->consultas("SELECT * FROM objetivos WHERE activo = 1 ORDER BY nombre");
+        if ($esRestringido) {
+            if ($objetivo_id > 0) {
+                $objetivos = $db->consultas("SELECT * FROM objetivos WHERE activo = 1 AND idObjetivo = ? ORDER BY nombre", [$objetivo_id]);
+            } else {
+                $objetivos = [];
+            }
+        } else {
+            $objetivos  = $db->consultas("SELECT * FROM objetivos WHERE activo = 1 ORDER BY nombre");
+        }
 
         // Datos que la vista necesita (si hay objetivo elegido)
         $puestos = [];

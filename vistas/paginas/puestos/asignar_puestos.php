@@ -12,6 +12,8 @@ $puestos = $puestos ?? [];
 $vigiladores = $vigiladores ?? [];
 $turnos = $turnos ?? [];
 $rotaciones = $rotaciones ?? [];
+$esRestringido = in_array(($_SESSION['rol'] ?? ''), ['Vigilador', 'Referente'], true)
+    || in_array(($_SESSION['categoria'] ?? ''), ['operativo', 'referente'], true);
 ?>
 <style>
     /* Mantener encabezado visible al hacer scroll vertical */
@@ -95,6 +97,12 @@ $rotaciones = $rotaciones ?? [];
                 <input type="hidden" name="r" value="rotaciones_puestos">
 
                 <label class="form-label mr-2">Objetivo:</label>
+                <?php if ($esRestringido): ?>
+                    <input type="hidden" name="objetivo_id" value="<?= (int)$objetivo_id ?>">
+                    <span class="form-control form-control-sm mr-3 bg-light">
+                        <?= htmlspecialchars($objetivos[0]['nombre'] ?? 'Objetivo asignado') ?>
+                    </span>
+                <?php else: ?>
                 <select name="objetivo_id" class="form-control form-control-sm mr-3" onchange="this.form.submit()">
                     <option value="0" <?= $objetivo_id === 0 ? 'selected' : '' ?>>Seleccione…</option>
                     <?php foreach ($objetivos as $o): ?>
@@ -103,6 +111,7 @@ $rotaciones = $rotaciones ?? [];
                         </option>
                     <?php endforeach; ?>
                 </select>
+                <?php endif; ?>
 
                 <label class="form-label mr-2">Mes:</label>
                 <input type="month" name="mes" class="form-control form-control-sm mr-2"

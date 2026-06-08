@@ -36,7 +36,7 @@ $tipoFiltro = $_GET['tipo'] ?? '';
                                     <th style="text-align: center;" width="100px">Tipo</th>
                                     <th style="text-align: center;">Detalle</th>
                                     <th style="text-align: center;" width="80px">Adjunto</th>
-                                    <?php if ($_SESSION['nivel'] > 2): ?>
+                                    <?php if ($_SESSION['nivel'] > 2 && !in_array($_SESSION['categoria'] ?? '', ['operativo', 'referente'], true)): ?>
                                         <th style="text-align: center;" width="120px">Acciones</th>
                                     <?php endif; ?>
                                 </tr>
@@ -86,7 +86,7 @@ $tipoFiltro = $_GET['tipo'] ?? '';
                                         </td>
 
                                         <!-- Acciones -->
-                                        <?php if ($_SESSION['nivel'] > 2): ?>
+                                        <?php if ($_SESSION['nivel'] > 2 && !in_array($_SESSION['categoria'] ?? '', ['operativo', 'referente'], true)): ?>
                                             <td style="vertical-align: middle; text-align: center;">
                                                 <div class="d-flex justify-content-center">
                                                     <!-- Editar -->
@@ -120,7 +120,7 @@ $tipoFiltro = $_GET['tipo'] ?? '';
                                     <th style="text-align: center;">Tipo</th>
                                     <th style="text-align: center;">Detalle</th>
                                     <th style="text-align: center;">Adjunto</th>
-                                    <?php if ($_SESSION['nivel'] > 2): ?>
+                                    <?php if ($_SESSION['nivel'] > 2 && !in_array($_SESSION['categoria'] ?? '', ['operativo', 'referente'], true)): ?>
                                         <th style="text-align: center;">Acciones</th>
                                     <?php endif; ?>
                                 </tr>

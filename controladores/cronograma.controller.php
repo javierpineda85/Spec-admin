@@ -1074,7 +1074,19 @@ class ControladorCronogramas
     static public function vistaListadoCronogramaPorVigilador()
     {
         Auth::check('cronogramas', 'vistaListadoCronogramaPorVigilador');
-        //include __DIR__ . '/../vistas/paginas/cronogramas/listado_cronogramas.php';
+        $rol = $_SESSION['rol'] ?? '';
+        $categoria = $_SESSION['categoria'] ?? '';
+        $esRestringido = in_array($rol, ['Vigilador', 'Referente'], true)
+            || in_array($categoria, ['operativo', 'referente'], true);
+
+        if ($esRestringido) {
+            $filtros = $_SESSION['filtros_vigilador'] ?? [];
+            $miId = (int)($_SESSION['idUsuario'] ?? 0);
+            if (($filtros['vigilador'] ?? 0) !== $miId) {
+                unset($_SESSION['filtros_vigilador'], $_SESSION['turnos_porVigilador'], $_SESSION['dias_rango'], $_SESSION['feriados_rango']);
+            }
+        }
+
         include __DIR__ . '/../vistas/paginas/cronogramas/listado_porVigilador.php';
         return;
     }

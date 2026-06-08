@@ -29,13 +29,16 @@ $objetivos = $db->consultas($sql);
                     <?php endif; ?>
                     <!-- /.card-header -->
                     <div class="card-body">
+                        <?php $esRestringido = in_array(($_SESSION['categoria'] ?? ''), ['operativo', 'referente'], true); ?>
                         <table id="example1" class="table table-bordered table-striped table-sm">
                             <thead>
                                 <tr>
                                     <th style="text-align: center;">Puesto</th>
                                     <th style="text-align: center;">Objetivo</th>
                                     <th style="text-align: center;">tipo</th>
-                                    <th style="text-align: center;">Acciones</th>
+                                    <?php if (! $esRestringido): ?>
+                                        <th style="text-align: center;">Acciones</th>
+                                    <?php endif; ?>
                                 </tr>
                             </thead>
                             <tbody>
@@ -44,14 +47,16 @@ $objetivos = $db->consultas($sql);
                                         <td> <?= $valor['puesto'] ?></td>
                                         <td> <?= $valor['objetivo'] ?></td>
                                         <td> <?= $valor['tipo'] ?></td>
-                                        <td style="vertical-align: middle; text-align: center;">
-                                            <div class="d-flex justify-content-center">
-                                                <form method="post">
-                                                    <input type="hidden" name="idReactivar" value="<?= $valor['idPuesto'] ?>" title="Reactivar">
-                                                    <button class="btn btn-success btn-sm"><i class="fas fa-check-circle"></i></button>
-                                                </form>
-                                            </div>
-                                        </td>
+                                        <?php if (! $esRestringido): ?>
+                                            <td style="vertical-align: middle; text-align: center;">
+                                                <div class="d-flex justify-content-center">
+                                                    <form method="post">
+                                                        <input type="hidden" name="idReactivar" value="<?= $valor['idPuesto'] ?>" title="Reactivar">
+                                                        <button class="btn btn-success btn-sm"><i class="fas fa-check-circle"></i></button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        <?php endif; ?>
                                     </tr>
                                 <?php endforeach ?>
                             </tbody>

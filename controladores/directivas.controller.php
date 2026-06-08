@@ -5,12 +5,30 @@ require_once __DIR__ . '/../modelos/push.modelo.php';
 
 class ControladorDirectivas
 {
+    private static function esUsuarioRestringido(): bool
+    {
+        $rol = $_SESSION['rol'] ?? '';
+        $categoria = $_SESSION['categoria'] ?? '';
+
+        return in_array($rol, ['Vigilador', 'Referente'], true)
+            || in_array($categoria, ['operativo', 'referente'], true);
+    }
+
+    private static function denegarGestionDirectivas(): void
+    {
+        http_response_code(403);
+        include __DIR__ . '/../vistas/paginas/403.php';
+        exit;
+    }
 
     /* GUARDAR DIRECTIVAS */
     static public function crtGuardarDirectiva()
     {
         //Auth::check('directivas', 'crtGuardarDirectiva');
         Auth::check('directivas', 'vistaCrearDirectiva');
+        if (self::esUsuarioRestringido()) {
+            self::denegarGestionDirectivas();
+        }
         if (isset($_POST["id_objetivo"])) {
             if (session_status() !== PHP_SESSION_ACTIVE) {
                 session_start();
@@ -98,6 +116,9 @@ class ControladorDirectivas
     static public function crtModificarDirectiva()
     {
         Auth::check('directivas', 'vistaEditarDirectiva');
+        if (self::esUsuarioRestringido()) {
+            self::denegarGestionDirectivas();
+        }
         if (isset($_POST["idDirectiva"])) {
             try {
                 $conexion = Conexion::conectar();
@@ -168,6 +189,9 @@ class ControladorDirectivas
     static public function crtEliminarDirectiva()
     {
         Auth::check('directivas', 'crtEliminarDirectiva');
+        if (self::esUsuarioRestringido()) {
+            self::denegarGestionDirectivas();
+        }
         if (isset($_POST['idEliminar'])) {
             // Convertimos a entero para sanear
             $idDirectiva = intval($_POST['idEliminar']);
@@ -208,8 +232,11 @@ class ControladorDirectivas
 
         // Recupero rol y, en caso de Vigilador, su objetivo
         $rol = $_SESSION['rol'] ?? '';
+        $categoria = $_SESSION['categoria'] ?? '';
+        $esRestringido = in_array($rol, ['Vigilador', 'Referente'], true)
+            || in_array($categoria, ['operativo', 'referente'], true);
 
-        if ($rol === 'Vigilador') {
+        if ($esRestringido) {
             // Opción A: lo sacas directo de sesión
             $objetivoId = $_SESSION['objetivo_id'] ?? null;
 
@@ -239,11 +266,17 @@ class ControladorDirectivas
     static public function vistaCrearDirectiva()
     {
         Auth::check('directivas', 'vistaCrearDirectiva');
+        if (self::esUsuarioRestringido()) {
+            self::denegarGestionDirectivas();
+        }
         include __DIR__ . '/../vistas/paginas/directivas/crear_directivas.php';
     }
     static public function vistaEditarDirectiva()
     {
         Auth::check('directivas', 'vistaEditarDirectiva');
+        if (self::esUsuarioRestringido()) {
+            self::denegarGestionDirectivas();
+        }
         include __DIR__ . '/../vistas/paginas/directivas/modificar_directivas.php';
     }
 }

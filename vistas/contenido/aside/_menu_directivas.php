@@ -1,3 +1,4 @@
+<?php $esRestringido = in_array(($_SESSION['categoria'] ?? ''), ['operativo', 'referente'], true); ?>
 <?php if (
     Auth::hasPermission('directivas', 'crtGuardarDirectiva') || 
     Auth::hasPermission('directivas', 'vistaListadoDirectivas') || 
@@ -9,7 +10,7 @@
             <p>Directivas <i class="fas fa-angle-left right"></i></p>
         </a>
         <ul class="nav nav-treeview">
-            <?php if (Auth::hasPermission('directivas', 'crtGuardarDirectiva') || Auth::hasPermission('directivas', 'vistaCrearDirectiva')): ?>
+            <?php if (!$esRestringido && (Auth::hasPermission('directivas', 'crtGuardarDirectiva') || Auth::hasPermission('directivas', 'vistaCrearDirectiva'))): ?>
                 <li class="nav-item">
                     <a href="?r=vistaCrearDirectiva" class="nav-link">
                         <i class="far fa-circle nav-icon"></i>

@@ -2,6 +2,8 @@
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idEliminar'])) {
   RondasController::crtDesactivarRonda(intval($_POST['idEliminar']));
 }
+$esRestringido = in_array(($_SESSION['rol'] ?? ''), ['Vigilador', 'Referente'], true)
+  || in_array(($_SESSION['categoria'] ?? ''), ['operativo', 'referente'], true);
 /*
 $db = new Conexion;
 $sql = " SELECT r.idRonda, r.puesto, r.objetivo_id, r.tipo, o.nombre AS objetivo
@@ -26,7 +28,9 @@ $rondas = $db->consultas($sql);
           <th>Puesto</th>
           <th>Objetivo</th>
           <th>Tipo</th>
-          <th>Acciones</th>
+          <?php if (!$esRestringido): ?>
+            <th>Acciones</th>
+          <?php endif; ?>
         </tr>
       </thead>
       <tbody>
@@ -35,15 +39,17 @@ $rondas = $db->consultas($sql);
             <td><?= htmlspecialchars($r['puesto']) ?></td>
             <td><?= htmlspecialchars($r['objetivo']) ?></td>
             <td><?= htmlspecialchars($r['tipo']) ?></td>
-            <td class="text-center">
-              <a href="?r=editar_ronda&id=<?= $r['idRonda'] ?>" class="btn btn-success btn-sm" title="Editar ronda"> <i class="fas fa-edit"></i> </a>
-              <form method="post" style="display:inline-block;">
-                <input type="hidden" name="idEliminar" value="<?= $r['idRonda'] ?>">
-                <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('¿Desactivar esta ronda?')" title="Desactivar ronda">
-                  <i class="fas fa-ban"></i>
-                </button>
-              </form>
-            </td>
+            <?php if (!$esRestringido): ?>
+              <td class="text-center">
+                <a href="?r=editar_ronda&id=<?= $r['idRonda'] ?>" class="btn btn-success btn-sm" title="Editar ronda"> <i class="fas fa-edit"></i> </a>
+                <form method="post" style="display:inline-block;">
+                  <input type="hidden" name="idEliminar" value="<?= $r['idRonda'] ?>">
+                  <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('Â¿Desactivar esta ronda?')" title="Desactivar ronda">
+                    <i class="fas fa-ban"></i>
+                  </button>
+                </form>
+              </td>
+            <?php endif; ?>
           </tr>
         <?php endforeach; ?>
       </tbody>

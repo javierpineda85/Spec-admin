@@ -11,6 +11,22 @@ if (session_status() === PHP_SESSION_NONE) {
 
 class RondasController
 {
+    private static function esUsuarioRestringido(): bool
+    {
+        $rol = $_SESSION['rol'] ?? '';
+        $categoria = $_SESSION['categoria'] ?? '';
+
+        return in_array($rol, ['Vigilador', 'Referente'], true)
+            || in_array($categoria, ['operativo', 'referente'], true);
+    }
+
+    private static function denegarGestionRondas(): void
+    {
+        http_response_code(403);
+        include __DIR__ . '/../vistas/paginas/403.php';
+        exit;
+    }
+
     // Guardar rondas
     static public function crtGuardarRondas($rondas)
     {
@@ -83,6 +99,9 @@ class RondasController
     static public function crtDesactivarRonda($idRonda)
     {
         Auth::check('rondas', 'crtDesactivarRonda');
+        if (self::esUsuarioRestringido()) {
+            self::denegarGestionRondas();
+        }
         $res = ModeloRondas::mdlDesactivarRonda('rondas', $idRonda);
         if ($res === 'ok') {
             ToastifyController::success('Ronda desactivada correctamente');
@@ -96,6 +115,9 @@ class RondasController
     {
         //Auth::check('rondas', 'crtActualizarRonda');
         Auth::check('rondas', 'vistaEditarRondas');
+        if (self::esUsuarioRestringido()) {
+            self::denegarGestionRondas();
+        }
         // 1️⃣ Recoger y validar datos
         $idRonda    = intval($_POST['idRonda']     ?? 0);
         $puesto     = trim($_POST['puesto']        ?? '');
@@ -168,12 +190,29 @@ class RondasController
     {
         Auth::check('rondas', 'vistaListadoRondas');
         $db = new Conexion;
-        $sql = " SELECT r.idRonda, r.puesto, r.objetivo_id, r.tipo, o.nombre AS objetivo
-                  FROM rondas r
-                  JOIN objetivos o ON r.objetivo_id = o.idObjetivo
-                  WHERE r.status = 'active'
-                  ORDER BY r.objetivo_id, r.orden_escaneo";
-        $rondas = $db->consultas($sql);
+        $esRestringido = self::esUsuarioRestringido();
+        $objetivoId = (int)($_SESSION['objetivo_id'] ?? 0);
+
+        if ($esRestringido) {
+            if ($objetivoId > 0) {
+                $sql = "SELECT r.idRonda, r.puesto, r.objetivo_id, r.tipo, o.nombre AS objetivo
+                          FROM rondas r
+                          JOIN objetivos o ON r.objetivo_id = o.idObjetivo
+                         WHERE r.status = 'active'
+                           AND r.objetivo_id = ?
+                      ORDER BY r.objetivo_id, r.orden_escaneo";
+                $rondas = $db->consultas($sql, [$objetivoId]);
+            } else {
+                $rondas = [];
+            }
+        } else {
+            $sql = " SELECT r.idRonda, r.puesto, r.objetivo_id, r.tipo, o.nombre AS objetivo
+                      FROM rondas r
+                      JOIN objetivos o ON r.objetivo_id = o.idObjetivo
+                      WHERE r.status = 'active'
+                      ORDER BY r.objetivo_id, r.orden_escaneo";
+            $rondas = $db->consultas($sql);
+        }
         include __DIR__ . '/../vistas/paginas/rondas/listado_rondas.php';
         return;
     }
@@ -187,6 +226,9 @@ class RondasController
     static public function vistaEditarRondas()
     {
         Auth::check('rondas', 'vistaEditarRondas');
+        if (self::esUsuarioRestringido()) {
+            self::denegarGestionRondas();
+        }
         include __DIR__ . '/../vistas/paginas/rondas/editar_ronda.php';
         return;
     }

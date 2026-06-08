@@ -3,7 +3,7 @@
 $db = new Conexion();
 
 // Vigiladores disponibles (autolimitado si es vigilador)
-if (($_SESSION['rol'] ?? '') === 'Vigilador') {
+if (in_array(($_SESSION['rol'] ?? ''), ['Vigilador', 'Referente'], true) || in_array(($_SESSION['categoria'] ?? ''), ['operativo', 'referente'], true)) {
     $sql = "SELECT idUsuario, apellido, nombre FROM usuarios WHERE idUsuario = ?";
     $vigiladores = $db->consultas($sql, [$_SESSION['idUsuario']]);
 } else {
@@ -16,6 +16,8 @@ $filtros    = $_SESSION['filtros_vigilador'] ?? [];
 $turnos     = $_SESSION['turnos_porVigilador'] ?? [];
 $diasRango  = $_SESSION['dias_rango'] ?? [];
 $feriados   = $_SESSION['feriados_rango'] ?? [];
+$esRestringido = in_array(($_SESSION['rol'] ?? ''), ['Vigilador', 'Referente'], true)
+    || in_array(($_SESSION['categoria'] ?? ''), ['operativo', 'referente'], true);
 
 ?>
 
@@ -32,15 +34,22 @@ $feriados   = $_SESSION['feriados_rango'] ?? [];
         <!-- Filtros -->
         <form action="index.php?r=buscar_porVigilador" method="POST" class="form-inline mb-3">
           <label class="mr-2">Vigilador</label>
-          <select name="vigilador" class="form-control mr-3" required>
-            <option value="" disabled selected>Selecciona un vigilador</option>
-            <?php foreach ($vigiladores as $v): ?>
-              <?php $sel = ($filtros['vigilador'] ?? '') == $v['idUsuario']; ?>
-              <option value="<?= $v['idUsuario'] ?>" <?= $sel ? 'selected' : '' ?>>
-                <?= htmlspecialchars("{$v['apellido']} {$v['nombre']}") ?>
-              </option>
-            <?php endforeach; ?>
-          </select>
+          <?php if ($esRestringido): ?>
+            <input type="hidden" name="vigilador" value="<?= (int)($_SESSION['idUsuario'] ?? 0) ?>">
+            <span class="form-control mr-3 bg-light">
+              <?= htmlspecialchars(($_SESSION['apellido'] ?? '') . ' ' . ($_SESSION['nombre'] ?? '')) ?>
+            </span>
+          <?php else: ?>
+            <select name="vigilador" class="form-control mr-3" required>
+              <option value="" disabled selected>Selecciona un vigilador</option>
+              <?php foreach ($vigiladores as $v): ?>
+                <?php $sel = ($filtros['vigilador'] ?? '') == $v['idUsuario']; ?>
+                <option value="<?= $v['idUsuario'] ?>" <?= $sel ? 'selected' : '' ?>>
+                  <?= htmlspecialchars("{$v['apellido']} {$v['nombre']}") ?>
+                </option>
+              <?php endforeach; ?>
+            </select>
+          <?php endif; ?>
 
           <label class="mr-2">Desde</label>
           <input type="date" name="desde" class="form-control mr-3"
