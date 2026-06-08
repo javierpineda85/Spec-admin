@@ -71,7 +71,7 @@ require_once 'modelos/conexion.php';
             minute: '2-digit'
           });
           
-          const tipoClase = a.tipo === 'hombre_vivo' ? 'danger' : 'warning';
+          const tipoClase = String(a.tipo || '').startsWith('hombre_vivo') ? 'danger' : 'warning';
           const card = document.createElement('div');
           card.className = 'col-md-3';
 

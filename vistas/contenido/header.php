@@ -126,11 +126,13 @@ $cantidadNoLeidos = count($mensajesNoLeidos);
 
           contenedor.innerHTML = '';
           alertas.slice(0, 3).forEach(a => {
-            const icono = {
-              'hombre_vivo': 'fas fa-user-clock',
-              'mensaje': 'fas fa-envelope',
-              'directiva': 'fas fa-bullhorn'
-            } [a.tipo] || 'fas fa-bell';
+            const tipoAlerta = String(a.tipo || '');
+            const icono = tipoAlerta.startsWith('hombre_vivo')
+              ? 'fas fa-user-clock'
+              : ({
+                  'mensaje': 'fas fa-envelope',
+                  'directiva': 'fas fa-bullhorn'
+                }[tipoAlerta] || 'fas fa-bell');
 
             const item = document.createElement('a');
             item.href = (a.tipo === 'directiva') ?

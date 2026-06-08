@@ -28,3 +28,24 @@ $config = [];
 foreach ($configModel->obtenerTodo() as $row) {
     $config[$row['clave']] = $row['valor'];
 }
+
+// Claves VAPID para Web Push.
+// En produccion conviene mover esto a variables de entorno o a un archivo
+// de configuracion fuera del repositorio.
+if (!defined('PUSH_VAPID_PUBLIC_KEY')) {
+    define('PUSH_VAPID_PUBLIC_KEY', 'BC0BXuMrwfUNdXmUCHMumHPWJU9oG0WVm-5cHyag-WtCkK-OG8CrDXj0baMPDOAD_oXwa_odle87wWSLAdE6fzQ');
+}
+
+if (!defined('PUSH_VAPID_PRIVATE_KEY_PEM')) {
+    define('PUSH_VAPID_PRIVATE_KEY_PEM', <<<'PEM'
+-----BEGIN PRIVATE KEY-----
+MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQg0JMeC/L40Hmr7njN
+wPsDyzFrjtF89xgGd3NugeZi0/qhRANCAAQtAV7jK8H1DXV5lAhzLphz1iVPaBtF
+lZvuXB8moPlrQpCvjhvAqw149G2jDwzgA/6F8Gv6HZXvO8FkiwHROn80
+-----END PRIVATE KEY-----
+PEM);
+}
+
+if (!defined('PUSH_VAPID_SUBJECT')) {
+    define('PUSH_VAPID_SUBJECT', 'mailto:soporte@spec-admin.local');
+}

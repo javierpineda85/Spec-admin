@@ -1,6 +1,7 @@
 <?php
 ob_start(); // permite enviar headers sin interferencias
 require_once('modelos/directivas.modelo.php');
+require_once __DIR__ . '/../modelos/push.modelo.php';
 
 class ControladorDirectivas
 {
@@ -70,6 +71,9 @@ class ControladorDirectivas
 
                     // Confirmar todo
                     $conexion->commit();
+
+                    $destinatariosPush = array_map(static fn($u) => (int)($u['idUsuario'] ?? 0), $usuarios);
+                    ModeloPush::enviarPushAUsuarios($destinatariosPush);
 
                     ToastifyController::success("Directiva creada exitosamente.");
                 } else {

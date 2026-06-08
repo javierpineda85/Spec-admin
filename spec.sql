@@ -42,6 +42,29 @@ CREATE TABLE IF NOT EXISTS `alertas` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `push_subscriptions`
+--
+
+DROP TABLE IF EXISTS `push_subscriptions`;
+CREATE TABLE IF NOT EXISTS `push_subscriptions` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `usuario_id` int NOT NULL,
+  `endpoint` varchar(191) NOT NULL,
+  `p256dh` varchar(255) NOT NULL,
+  `auth` varchar(255) NOT NULL,
+  `content_encoding` varchar(20) DEFAULT 'aes128gcm',
+  `user_agent` varchar(255) DEFAULT NULL,
+  `subscription_json` longtext,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_endpoint` (`endpoint`),
+  KEY `idx_usuario_id` (`usuario_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `art`
 --
 

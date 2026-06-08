@@ -1,50 +1,167 @@
 <?php
+require_once __DIR__ . '/../modelos/conexion.php';
+require_once __DIR__ . '/../modelos/push.modelo.php';
 
 class AlertasController
 {
+    private static function usuariosPorCategorias(array $categorias): array
+    {
+        $categorias = array_values(array_filter(array_map('strval', $categorias)));
+        if (!$categorias) {
+            return [];
+        }
+
+        $placeholders = implode(',', array_fill(0, count($categorias), '?'));
+        $sql = "SELECT u.idUsuario
+                FROM usuarios u
+                INNER JOIN roles r ON u.rol_id = r.id
+                WHERE u.activo = 1
+                  AND r.activo = 1
+                  AND r.categoria IN ($placeholders)
+                ORDER BY u.apellido, u.nombre";
+
+        $db = new Conexion();
+        $rows = $db->consultas($sql, $categorias);
+
+        return array_map(static fn($r) => (int)($r['idUsuario'] ?? 0), $rows ?: []);
+    }
+
+    private static function destinatariosHombreVivo(): array
+    {
+        // El vigilador recibe su propia notificación, y además los supervisores activos.
+        // Si no hay supervisores activos, caemos a direccion como respaldo operativo.
+        $vigilador = intval($_SESSION['idUsuario'] ?? 0);
+        $supervisores = self::usuariosPorCategorias(['supervisor']);
+        if (!$supervisores) {
+            $supervisores = self::usuariosPorCategorias(['supervisor', 'direccion']);
+        }
+
+        return array_values(array_unique(array_merge([$vigilador], $supervisores)));
+    }
+
+    private static function registrarAlertasParaUsuarios(array $usuariosIds, string $tipo, string $mensaje, ?int $objetivoId = null): array
+    {
+        $usuariosIds = array_values(array_unique(array_filter(array_map('intval', $usuariosIds))));
+        if (!$usuariosIds) {
+            return [];
+        }
+
+        $db = new Conexion();
+        $insertados = [];
+
+        foreach ($usuariosIds as $usuarioId) {
+            $sqlCheck = "SELECT 1 FROM alertas
+                         WHERE tipo = ?
+                           AND usuario_id = ?
+                           AND leida = 0";
+            $paramsCheck = [$tipo, $usuarioId];
+
+            if ($objetivoId !== null) {
+                $sqlCheck .= " AND objetivo_id = ?";
+                $paramsCheck[] = $objetivoId;
+            }
+
+            $sqlCheck .= " LIMIT 1";
+            $existe = $db->consultas($sqlCheck, $paramsCheck);
+            if ($existe) {
+                continue;
+            }
+
+            $sql = "INSERT INTO alertas (tipo, mensaje, usuario_id, objetivo_id, leida, creada_en)
+                    VALUES (?, ?, ?, ?, 0, NOW())";
+            $ok = $db->ejecutar($sql, [$tipo, $mensaje, $usuarioId, $objetivoId]);
+            if ($ok) {
+                $insertados[] = $usuarioId;
+            }
+        }
+
+        if ($insertados) {
+            ModeloPush::enviarPushAUsuarios($insertados);
+        }
+
+        return $insertados;
+    }
+
     public static function registrarDemoraHombreVivo()
     {
-        $data = json_decode(file_get_contents('php://input'), true);
-        $usuarioId = intval($data['usuario_id'] ?? 0);
+        header('Content-Type: application/json; charset=utf-8');
+
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+
+        $data = json_decode(file_get_contents('php://input'), true) ?: [];
+        $usuarioId = intval($_SESSION['idUsuario'] ?? ($data['usuario_id'] ?? 0));
+        $objetivoId = intval($data['objetivo_id'] ?? ($_SESSION['ultimo_objetivo'] ?? 0));
         $rondaId   = intval($data['ronda_id'] ?? 0);
         $tiempo    = intval($data['tiempo'] ?? 0);
+        $fase      = strtolower(trim((string)($data['fase'] ?? 'vencido')));
 
-        if (!$usuarioId || !$rondaId || $tiempo < 300) return;
+        if (!$usuarioId) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'Sesion no iniciada']);
+            return;
+        }
 
-        $db = new Conexion;
+        if ($tiempo < 0) {
+            echo json_encode(['success' => false, 'error' => 'Datos incompletos o tiempo insuficiente']);
+            return;
+        }
 
-        $sql = "SELECT o.idObjetivo, o.nombre AS objetivo, CONCAT(u.apellido, ' ', u.nombre) AS usuario
-                FROM rondas r
-                JOIN objetivos o ON r.objetivo_id = o.idObjetivo
-                JOIN usuarios u ON u.idUsuario = :uid
-                WHERE r.idRonda = :rid
-                LIMIT 1";
+        $db = new Conexion();
 
-        $stmt = $db->conectar()->prepare($sql);
-        $stmt->bindParam(':uid', $usuarioId, PDO::PARAM_INT);
-        $stmt->bindParam(':rid', $rondaId, PDO::PARAM_INT);
-        $stmt->execute();
-        $info = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$objetivoId && $rondaId) {
+            $sql = "SELECT r.objetivo_id, o.nombre AS objetivo, CONCAT(u.apellido, ' ', u.nombre) AS usuario
+                    FROM rondas r
+                    JOIN objetivos o ON r.objetivo_id = o.idObjetivo
+                    JOIN usuarios u ON u.idUsuario = :uid
+                    WHERE r.idRonda = :rid
+                    LIMIT 1";
 
-        if (!$info) return;
+            $stmt = $db->conectar()->prepare($sql);
+            $stmt->bindParam(':uid', $usuarioId, PDO::PARAM_INT);
+            $stmt->bindParam(':rid', $rondaId, PDO::PARAM_INT);
+            $stmt->execute();
+            $info = $stmt->fetch(PDO::FETCH_ASSOC);
+        } else {
+            $sql = "SELECT o.idObjetivo AS objetivo_id,
+                           o.nombre AS objetivo,
+                           CONCAT(u.apellido, ' ', u.nombre) AS usuario
+                    FROM objetivos o
+                    JOIN usuarios u ON u.idUsuario = :uid
+                    WHERE o.idObjetivo = :oid
+                    LIMIT 1";
 
-        $mensaje = "El usuario {$info['usuario']} no registró el reporte en el objetivo {$info['objetivo']} desde hace {$tiempo} segundos.";
+            $stmt = $db->conectar()->prepare($sql);
+            $stmt->bindParam(':uid', $usuarioId, PDO::PARAM_INT);
+            $stmt->bindParam(':oid', $objetivoId, PDO::PARAM_INT);
+            $stmt->execute();
+            $info = $stmt->fetch(PDO::FETCH_ASSOC);
+        }
 
-        self::registrarAlertaGeneral('hombre_vivo', $mensaje, $usuarioId, $info['idObjetivo']);
+        if (!$info) {
+            echo json_encode(['success' => false, 'error' => 'No se pudo obtener el contexto de la alerta']);
+            return;
+        }
+
+        $objetivoId = intval($info['objetivo_id'] ?? $objetivoId);
+        if ($fase === 'excedido') {
+            $tipo = 'hombre_vivo_excedido';
+            $mensaje = "Demora en reporte de hombre vivo: {$info['usuario']} supero la tolerancia de 3 minutos en el objetivo {$info['objetivo']} ({$tiempo} segundos de retraso).";
+        } else {
+            $tipo = 'hombre_vivo_vencido';
+            $mensaje = "Reporte de hombre vivo vencido: {$info['usuario']} debe registrar el reporte en el objetivo {$info['objetivo']}.";
+        }
+
+        $destinatarios = self::destinatariosHombreVivo();
+        self::registrarAlertasParaUsuarios($destinatarios, $tipo, $mensaje, $objetivoId);
+
+        echo json_encode(['success' => true]);
     }
 
     public static function registrarAlertaGeneral(string $tipo, string $mensaje, int $usuarioId, int $objetivoId = null)
     {
-        $db = new Conexion;
-
-        // Evitar duplicados abiertos del mismo tipo y usuario
-        $sqlCheck = "SELECT 1 FROM alertas WHERE tipo = ? AND usuario_id = ? AND leida = 0 LIMIT 1";
-        $existe = $db->consultas($sqlCheck, [$tipo, $usuarioId]);
-        if ($existe) return;
-
-        $sql = "INSERT INTO alertas (tipo, mensaje, usuario_id, objetivo_id)
-                VALUES (?, ?, ?, ?)";
-        $db->consultas($sql, [$tipo, $mensaje, $usuarioId, $objetivoId]);
+        self::registrarAlertasParaUsuarios([$usuarioId], $tipo, $mensaje, $objetivoId);
     }
 
     public static function contarNoLeidas($usuarioId)
@@ -70,9 +187,9 @@ class AlertasController
 
         try {
             $db = new Conexion();
-            $sql = "SELECT * FROM alertas 
-                    WHERE usuario_id = ? AND leida = 0 
-                    ORDER BY creada_en DESC 
+            $sql = "SELECT * FROM alertas
+                    WHERE usuario_id = ? AND leida = 0
+                    ORDER BY creada_en DESC
                     LIMIT 10";
 
             $alertas = $db->consultas($sql, [$usuarioId]);
@@ -108,7 +225,7 @@ class AlertasController
 
             echo json_encode(['status' => 'ok']);
         } catch (Exception $e) {
-            error_log("❌ Error al marcar alerta como leída: " . $e->getMessage());
+            error_log("Error al marcar alerta como leida: " . $e->getMessage());
             echo json_encode(['status' => 'error']);
         }
 
@@ -143,7 +260,7 @@ class AlertasController
 
         $where = implode(" AND ", $condiciones);
 
-        $sql = "SELECT a.*, 
+        $sql = "SELECT a.*,
                        CONCAT(u.apellido, ' ', u.nombre) AS usuario,
                        o.nombre AS objetivo
                 FROM alertas a
@@ -162,6 +279,7 @@ class AlertasController
         $alertas = $stmt->fetchAll(PDO::FETCH_ASSOC);
         echo json_encode($alertas);
     }
+
     public static function obtenerNoLeidas($usuarioId, $limite = 10)
     {
         $db = new Conexion();

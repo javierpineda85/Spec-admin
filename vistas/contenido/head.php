@@ -22,6 +22,15 @@
 <link rel="manifest" href="<?= BASE_URL ?>/manifest.json">
 <meta name="theme-color" content="#007bff">
 
+<script>
+  window.SPEC_PUSH = {
+    enabled: true,
+    publicKey: <?= json_encode(PUSH_VAPID_PUBLIC_KEY, JSON_UNESCAPED_SLASHES) ?>,
+    subscribeUrl: <?= json_encode(BASE_URL . '/ajax/guardar_push_subscription.php', JSON_UNESCAPED_SLASHES) ?>,
+    alertsUrl: <?= json_encode(BASE_URL . '/index.php?r=alertas_supervisor', JSON_UNESCAPED_SLASHES) ?>
+  };
+</script>
+
 <!-- Registro del Service Worker -->
 <script src="<?= BASE_URL ?>/sw-register.js"></script>
 

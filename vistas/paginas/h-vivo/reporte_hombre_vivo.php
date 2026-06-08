@@ -2,11 +2,10 @@
 
 $baseScript = basename($_SERVER['SCRIPT_NAME']);
 
-// asume ronda e id_usuario en sesión o GET.
 $tieneEntrada = !empty($_SESSION['hVivo_tiene_entrada']);
-$yaSalida     = !empty($_SESSION['hVivo_ya_salida']);
+$yaSalida = !empty($_SESSION['hVivo_ya_salida']);
 
-$objetivoId  = intval($_GET['objetivo_id'] ?? ($_SESSION['ultimo_objetivo'] ?? 0));
+$objetivoId = intval($_GET['objetivo_id'] ?? ($_SESSION['ultimo_objetivo'] ?? 0));
 $usuarioId = intval($_SESSION['idUsuario'] ?? 0);
 $configHV = $_SESSION['hVivo_config'] ?? ModeloReporteHombreVivo::mdlObtenerConfiguracion();
 $turnoHV = $_SESSION['hVivo_turno'] ?? 'diurno';
@@ -16,17 +15,16 @@ $turnoHV = $_SESSION['hVivo_turno'] ?? 'diurno';
     <h3 class="card-title">Reporte Hombre Vivo</h3>
   </div>
   <div class="card-body text-center">
-    <?php if (! $tieneEntrada): ?>
+    <?php if (!$tieneEntrada): ?>
       <p class="text-warning">
         Debes <strong>registrar tu entrada</strong> primero para activar el reporte.
       </p>
       <button class="btn btn-primary" disabled>Esperando Entrada</button>
 
     <?php elseif ($yaSalida): ?>
-      <p class="text-success">Has marcado la salida. El reporte finalizó.</p>
+      <p class="text-success">Has marcado la salida. El reporte finalizo.</p>
 
     <?php else: ?>
-      <!-- Aquí tu contador y botón reales -->
       <p>
         <span id="status-text">Próximo reporte en</span>:
         <span id="timer">30:00</span>
@@ -35,8 +33,8 @@ $turnoHV = $_SESSION['hVivo_turno'] ?? 'diurno';
     <?php endif; ?>
   </div>
 </div>
-<?php if ($tieneEntrada && ! $yaSalida): ?>
 
+<?php if ($tieneEntrada && !$yaSalida): ?>
   <script>
     (function() {
       const objetivoId = <?= json_encode($_SESSION['ultimo_objetivo'] ?? 0) ?>;
@@ -53,19 +51,16 @@ $turnoHV = $_SESSION['hVivo_turno'] ?? 'diurno';
       const timer = document.getElementById('timer');
       const status = document.getElementById('status-text');
 
-      // Si no hay deadline guardado, lo inicializamos
       let next = parseInt(localStorage.getItem(key), 10);
       if (!next || isNaN(next)) {
         next = Date.now() + intervaloMinutos * 60 * 1000;
         localStorage.setItem(key, next);
       }
 
-      // Flags y control de intervalos
-      let alertaVigiladorMostrada = false;
-      let alertaSupervisorEnviada = false;
+      let alertaVencimientoEnviada = false;
+      let alertaExcesoEnviada = false;
       let alertaIntervalo = null;
 
-      // Función híbrida: 3 pitidos rápidos + recordatorio persistente
       function dispararAlertaSonoraHibrida() {
         let repeticiones = 0;
         const audio = new Audio('public/sonidos/spec_notificacion.mp3');
@@ -77,7 +72,6 @@ $turnoHV = $_SESSION['hVivo_turno'] ?? 'diurno';
           if (repeticiones >= 3) {
             clearInterval(pitidosRapidos);
 
-            // Aviso persistente cada 10 segundos
             if (!alertaIntervalo) {
               alertaIntervalo = setInterval(() => {
                 const audioPersistente = new Audio('public/sonidos/spec_notificacion.mp3');
@@ -95,7 +89,21 @@ $turnoHV = $_SESSION['hVivo_turno'] ?? 'diurno';
         }
       }
 
-      // Formatea mm:ss
+      function registrarAlertaHV(fase, tiempoSegundos) {
+        return fetch('ajax/registrar_alerta_hombrevivo.php', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            usuario_id: usuarioId,
+            objetivo_id: objetivoId,
+            fase,
+            tiempo: tiempoSegundos
+          })
+        });
+      }
+
       function fmt(ms) {
         const s = Math.floor(ms / 1000);
         return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0');
@@ -109,54 +117,43 @@ $turnoHV = $_SESSION['hVivo_turno'] ?? 'diurno';
           status.textContent = 'Próximo reporte en';
           status.style.color = '';
           detenerAlertaSonora();
-          alertaVigiladorMostrada = false;
-
+          alertaVencimientoEnviada = false;
+          alertaExcesoEnviada = false;
         } else if (diff >= -toleranciaMs) {
-          status.textContent = 'Dentro de tolerancia';
+          status.textContent = 'Tiempo vencido, dentro de tolerancia';
           status.style.color = 'orange';
           detenerAlertaSonora();
-          alertaVigiladorMostrada = false;
+          alertaExcesoEnviada = false;
 
-          // Alerta sonora al vigilador (una sola vez)
-          if (!alertaVigiladorMostrada) {
-            alertaVigiladorMostrada = true;
+          if (!alertaVencimientoEnviada) {
+            alertaVencimientoEnviada = true;
             const audio = new Audio('public/sonidos/spec_notificacion.mp3');
             audio.play();
+            registrarAlertaHV('vencido', Math.max(0, Math.floor(Math.abs(diff) / 1000)));
           }
-
         } else {
           status.textContent = '¡ALERTA! Tiempo excedido superior a 3 minutos';
           status.style.color = 'red';
 
-          // Alerta sonora híbrida
-          if (!alertaVigiladorMostrada) {
-            alertaVigiladorMostrada = true;
-            dispararAlertaSonoraHibrida();
+          if (!alertaVencimientoEnviada) {
+            alertaVencimientoEnviada = true;
+            const audio = new Audio('public/sonidos/spec_notificacion.mp3');
+            audio.play();
+            registrarAlertaHV('vencido', Math.max(0, Math.floor(Math.abs(diff) / 1000)));
           }
 
-          // Aviso al supervisor
-          if (!alertaSupervisorEnviada) {
-            alertaSupervisorEnviada = true;
-            fetch('ajax/registrar_alerta_hombrevivo.php', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                usuario_id: usuarioId,
-                objetivo_id: objetivoId,
-                tiempo: Math.floor(Math.abs(diff) / 1000)
-              })
-            });
+          if (!alertaExcesoEnviada) {
+            alertaExcesoEnviada = true;
+            dispararAlertaSonoraHibrida();
+            registrarAlertaHV('excedido', Math.max(0, Math.floor(Math.abs(diff) / 1000)));
           }
         }
 
-        // Habilita solo en últimos 3 minutos antes o después
         btn.disabled = !(diff <= toleranciaMs);
         if (diff > toleranciaMs) {
           btn.innerText = `Disponible en ${Math.ceil(diff / 60000)} min`;
         } else {
-          btn.innerText = "Reportar Ahora";
+          btn.innerText = 'Reportar Ahora';
         }
       }
 
@@ -180,11 +177,10 @@ $turnoHV = $_SESSION['hVivo_turno'] ?? 'diurno';
             if (json.success) {
               status.textContent = 'Reporte registrado correctamente.';
               status.style.color = '';
-              // Nuevo ciclo
               next = Date.now() + intervaloMinutos * 60 * 1000;
               localStorage.setItem(key, next);
-              alertaVigiladorMostrada = false;
-              alertaSupervisorEnviada = false;
+              alertaVencimientoEnviada = false;
+              alertaExcesoEnviada = false;
               detenerAlertaSonora();
               tick();
               iv = setInterval(tick, 1000);
@@ -200,6 +196,4 @@ $turnoHV = $_SESSION['hVivo_turno'] ?? 'diurno';
       });
     })();
   </script>
-
-
 <?php endif; ?>
