@@ -34,11 +34,12 @@ if (isset($_GET['r']) && $_GET['r'] === 'guardar_mensaje') {
     if ($resultado === 'ok') {
         ToastifyController::success('Mensaje enviado con éxito');
         header("Location: ?r=bandeja-entrada");
+        exit;
     } else {
         ToastifyController::error('No se pudo enviar el mensaje');
         header("Location: ?r=nuevo-mensaje");
+        exit;
     }
-    return;
 }
 
 // Ver mensaje
