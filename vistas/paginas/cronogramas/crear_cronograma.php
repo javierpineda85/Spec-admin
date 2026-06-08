@@ -1,5 +1,5 @@
 <?php
-$_SESSION['cronograma_post'] = [];  
+$_SESSION['cronograma_post'] = [];
 //Guardar datos en la BD
 if (isset($_POST['guardar_cronograma']) && empty($_SESSION['cronograma_post'])) {
   ControladorCronogramas::ctrGuardarCronograma();
@@ -82,9 +82,17 @@ $feriadosDelMes = array_filter($feriados, function ($f) use ($mesSeleccionado) {
 
   /* === Sticky SOLO para Rol y Usuario === */
   #tablaCronogramaContainer .table-responsive {
-    max-width: 100%;
+    /*max-width: 100%;
     max-height: 380px;
-    overflow: auto;
+    overflow: auto;*/
+    /* max-height: none;
+    overflow: visible;*/
+    max-width: 100%;
+    max-height: none;
+    overflow-x: auto;
+    overflow-y: visible;
+
+
   }
 
   #tablaCronogramaContainer table {
@@ -126,6 +134,31 @@ $feriadosDelMes = array_filter($feriados, function ($f) use ($mesSeleccionado) {
     width: var(--w-usuario);
   }
 
+  /* Días */
+  .resumen-dias {
+    background-color: #d9edf7 !important;
+    /* celeste */
+  }
+
+  /* Noches */
+  .resumen-noches {
+    background-color: #e6d9f7 !important;
+    /* violeta suave */
+  }
+
+  /* Total horas por día */
+  .resumen-total-dia {
+    background-color: #f2f2f2 !important;
+    /* gris claro */
+  }
+
+  /* Total general (ya existe pero reforzamos contraste) */
+  #total-general {
+    font-weight: bold;
+    background-color: #1e88e5 !important;
+    color: white !important;
+  }
+
   /* Para dispositivos móviles, achicamos las columnas fijas */
   @media (max-width: 767px) {
     :root {
@@ -153,9 +186,11 @@ $feriadosDelMes = array_filter($feriados, function ($f) use ($mesSeleccionado) {
     text-align: center;
     /*margin-top: -10px;*/
   }
+
   .celda-turno:focus {
-    border:1px solid red !important;
+    border: 1px solid red !important;
   }
+
   .celda-select {
     border: none;
     background: none;
@@ -251,6 +286,9 @@ $feriadosDelMes = array_filter($feriados, function ($f) use ($mesSeleccionado) {
     </form>
   </div>
 </div>
+<script>
+    const API_SIGLAS_URL = new URL(<?= json_encode(BASE_URL . '/index.php?r=api_siglas', JSON_UNESCAPED_SLASHES) ?>, window.location.origin).toString();
+</script>
 
 <script>
   window.CRONOGRAMA_BOOT = {
@@ -262,7 +300,11 @@ $feriadosDelMes = array_filter($feriados, function ($f) use ($mesSeleccionado) {
     horasPorUsuario: <?= json_encode($_SESSION['horas_usuario'] ?? new stdClass(), JSON_UNESCAPED_UNICODE) ?>
   };
 </script>
-<script src="js/cronograma.js"></script>
+<?php
+$cronogramaJsPath = dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . 'js' . DIRECTORY_SEPARATOR . 'cronograma.js';
+$cronogramaJsVersion = file_exists($cronogramaJsPath) ? filemtime($cronogramaJsPath) : time();
+?>
+<script src="js/cronograma.js?v=<?= $cronogramaJsVersion ?>"></script>
 <script>
   // inicializa pasando IDs de elementos vivos en la vista
   Cronograma.init({

@@ -37,6 +37,7 @@ class ControladorCronogramas
             $horasPorUsuario = [];  // Para alertar por exceso o defecto
 
             $turnosProcesados = [];
+            $horasSiglasObjetivo = self::obtenerHorasSiglasObjetivo($objetivoId);
 
             foreach (['vigilador', 'referente'] as $rol) {
                 if (!isset($_POST[$rol])) continue;
@@ -53,11 +54,16 @@ class ControladorCronogramas
                             if ($codigo === '') continue;
 
                             $fecha = $mes . '-' . str_pad($dia, 2, '0', STR_PAD_LEFT);
+                            $codigo = strtoupper($codigo);
+                            $hsCodigo = self::horasCodigoCronograma($codigo, $horasSiglasObjetivo);
 
                             // Para validaciones
-                            if (in_array($codigo, ['D', 'N'])) {
+                            if (in_array($codigo, ['D', 'N', 'GP/D', 'GP/N'], true)) {
                                 $guardiasPorDia[$fecha][] = $codigo;
-                                $horasPorUsuario[$usuarioId] = ($horasPorUsuario[$usuarioId] ?? 0) + 12;
+                            }
+
+                            if ($hsCodigo > 0) {
+                                $horasPorUsuario[$usuarioId] = ($horasPorUsuario[$usuarioId] ?? 0) + $hsCodigo;
                             }
 
                             $tipo = self::esLicencia($codigo) ? 'Licencia' : 'Normal';
@@ -86,6 +92,17 @@ class ControladorCronogramas
                             if ($codigo === '') continue;
 
                             $fecha = $mes . '-' . str_pad($dia, 2, '0', STR_PAD_LEFT);
+                            $codigo = strtoupper($codigo);
+                            $hsCodigo = self::horasCodigoCronograma($codigo, $horasSiglasObjetivo);
+
+                            if (in_array($codigo, ['D', 'N', 'GP/D', 'GP/N'], true)) {
+                                $guardiasPorDia[$fecha][] = $codigo;
+                            }
+
+                            if ($hsCodigo > 0) {
+                                $horasPorUsuario[$usuarioId] = ($horasPorUsuario[$usuarioId] ?? 0) + $hsCodigo;
+                            }
+
                             $tipo = self::esLicencia($codigo) ? 'Licencia' : 'Normal';
 
                             $turnosProcesados[] = [
@@ -99,6 +116,8 @@ class ControladorCronogramas
                         }
                     }
                 }
+
+                break;
             }
 
             // Validación 1: mínimo 3 tipos de guardia por día (D, N, Licencias)
@@ -177,6 +196,46 @@ class ControladorCronogramas
             exit;*/
         }
     }
+    private static function obtenerHorasSiglasObjetivo(int $objetivoId): array
+    {
+        try {
+            $stmt = Conexion::conectar()->prepare("SELECT sigla, horas FROM objetivo_siglas WHERE objetivo_id = ? AND activo = 1");
+            $stmt->execute([$objetivoId]);
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Throwable $e) {
+            return [];
+        }
+
+        $horas = [];
+        foreach ($rows as $row) {
+            $sigla = strtoupper(trim((string)$row['sigla']));
+            if ($sigla !== '') {
+                $horas[$sigla] = (float)$row['horas'];
+            }
+        }
+
+        return $horas;
+    }
+
+    private static function horasCodigoCronograma(string $codigo, array $horasSiglasObjetivo): float
+    {
+        $codigo = strtoupper(trim($codigo));
+
+        if ($codigo === '' || in_array($codigo, ['F', 'E', 'P', 'L', 'S'], true)) {
+            return 0.0;
+        }
+
+        if (in_array($codigo, ['D', 'N', 'GP/D', 'GP/N'], true)) {
+            return 12.0;
+        }
+
+        if (preg_match('/^(\d+(?:[.,]\d+)?)H$/', $codigo, $match)) {
+            return (float)str_replace(',', '.', $match[1]);
+        }
+
+        return $horasSiglasObjetivo[$codigo] ?? 0.0;
+    }
+
     private static function esLicencia(string $codigo): bool
     {
         // Tratamos GP/D y GP/N como licencias “laborables” para KPI,

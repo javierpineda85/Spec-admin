@@ -188,6 +188,21 @@ $rotaciones = $rotaciones ?? [];
     const ROTACIONES = <?= json_encode($rotaciones, JSON_UNESCAPED_UNICODE) ?>;
     const TURNOS_POR_PUESTO = <?= json_encode($turnosPorPuesto, JSON_UNESCAPED_UNICODE) ?>;
 
+    function mostrarAvisoRotacion(texto, tipo = 'info') {
+        if (window.Toastify) {
+            const bg = tipo === 'success' ? '#28a745' : (tipo === 'warning' ? '#f59e0b' : '#dc3545');
+            Toastify({
+                text: texto,
+                backgroundColor: bg,
+                duration: 7000,
+                close: true
+            }).showToast();
+            return;
+        }
+
+        alert(texto);
+    }
+
     // ===== Indexaciones =====
     // a) Código real por fecha y usuario (D/N/F/…)
     //    Si tu BD marca Franco con tipo_turno='Licencia', lo tratamos como 'F'
@@ -445,18 +460,27 @@ $rotaciones = $rotaciones ?? [];
             const json = JSON.parse(txt);
 
             if (!json.ok) {
-                mostrarToast(json.msg || "No se pudo completar.", "danger");
+                mostrarAvisoRotacion(json.msg || "No se pudo completar.", "danger");
                 return;
             }
 
-            mostrarToast(`Auto-rotación OK. Asignaciones: ${json.count ?? "—"}`, "success");
+            const avisos = Array.isArray(json.warnings) ? json.warnings : [];
+            if (avisos.length) {
+                mostrarAvisoRotacion(
+                    `Auto-rotación OK. Asignaciones: ${json.count ?? "—"}. Avisos: ${avisos[0]}`,
+                    "warning"
+                );
+                console.warn("Avisos de auto-rotación:", avisos);
+            } else {
+                mostrarAvisoRotacion(`Auto-rotación OK. Asignaciones: ${json.count ?? "—"}`, "success");
+            }
 
-            // Recargar la vista después de mostrar el toast
-            location.reload();
+            // Recargar la vista después de mostrar el aviso
+            setTimeout(() => location.reload(), avisos.length ? 1800 : 900);
 
         } catch (e) {
             console.error("Auto-rotar devolvió HTML/invalid JSON:", txt);
-            mostrarToast("Error: la API devolvió HTML en vez de JSON. Revisar rutas/Auth.", "warning");
+            mostrarAvisoRotacion("Error: la API devolvió HTML en vez de JSON. Revisar rutas/Auth.", "warning");
         }
 
 

@@ -6,9 +6,11 @@ class ModeloObjetivos
     static public function mdlGuardarObjetivo($tabla, $d)
     {
         $conexion = Conexion::conectar(); // cambia la forma para poder obtener el ultimo id
-        $sql = "INSERT INTO $tabla (nombre,latitud,longitud,radio_m,localidad,tipo, activo) VALUES (:nombre, :latitud, :longitud, :radio_m, :localidad, :tipo, :activo)";
+        $sql = "INSERT INTO $tabla (nombre,latitud,longitud,radio_m,localidad,tipo, domicilio, activo) 
+                VALUES (:nombre, :latitud, :longitud, :radio_m, :localidad, :tipo, :domicilio, :activo)";
         $stmt = $conexion->prepare($sql);
         $stmt->bindParam(':nombre', $d['nombre'], PDO::PARAM_STR);
+        $stmt->bindParam(':domicilio', $d['domicilio'], PDO::PARAM_STR);
         $stmt->bindParam(':latitud', $d['latitud']);
         $stmt->bindParam(':longitud', $d['longitud']);
         $stmt->bindParam(':radio_m', $d['radio_m'], PDO::PARAM_INT);
@@ -54,10 +56,13 @@ class ModeloObjetivos
     /*MODIFICAR OBJETIVO */
     static public function mdlModificarObjetivo($tabla, $d)
     {
-        $sql = "UPDATE $tabla SET nombre=:nombre,localidad=:localidad,tipo=:tipo, latitud=:latitud,longitud=:longitud,radio_m=:radio_m WHERE idObjetivo=:idObjetivo";
+        $sql = "UPDATE $tabla 
+                    SET nombre=:nombre,localidad=:localidad,tipo=:tipo, latitud=:latitud,longitud=:longitud, radio_m=:radio_m, domicilio=:domicilio
+                    WHERE idObjetivo=:idObjetivo";
         $stmt = Conexion::conectar()->prepare($sql);
         $stmt->bindParam(':idObjetivo', $d['idObjetivo'], PDO::PARAM_INT);
         $stmt->bindParam(':nombre', $d['nombre'], PDO::PARAM_STR);
+        $stmt->bindParam(':domicilio', $d['domicilio'], PDO::PARAM_STR);
         $stmt->bindParam(':localidad', $d['localidad'], PDO::PARAM_STR);
         $stmt->bindParam(':tipo', $d['tipo'], PDO::PARAM_STR);
         $stmt->bindParam(':latitud', $d['latitud']);
@@ -99,7 +104,12 @@ class ModeloObjetivos
         $stmt->execute([$idObjetivo]);
     }
 
-    
+    public static function mdlObtenerSiglas()
+    {
+        $stmt = Conexion::conectar()->prepare("SELECT objetivo_id, sigla, descripcion, horas FROM objetivo_siglas");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
     static public function mdlObtenerBaseOperativaPorObjetivo($idObjetivo)
     {
         $db = Conexion::conectar();
@@ -157,5 +167,51 @@ class ModeloObjetivos
         $stmt = Conexion::conectar()->prepare("UPDATE $tabla SET activo = 1 WHERE idObjetivo = :id");
         $stmt->bindParam(':id', $idObjetivo, PDO::PARAM_INT);
         return $stmt->execute() ? 'ok' : 'error';
+    }
+    /* ============================
+   SIGLAS DINÁMICAS POR OBJETIVO
+   ============================ */
+
+    /* Obtener siglas de un objetivo */
+    static public function mdlObtenerSiglasPorObjetivo($idObjetivo)
+    {
+        $db = Conexion::conectar();
+        $sql = "SELECT id, sigla, descripcion, horas, activo 
+            FROM objetivo_siglas 
+            WHERE objetivo_id = ? 
+            ORDER BY sigla";
+        $stmt = $db->prepare($sql);
+        $stmt->execute([$idObjetivo]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /* Insertar sigla */
+    static public function mdlInsertarSigla($idObjetivo, $sigla, $descripcion, $horas)
+    {
+        $db = Conexion::conectar();
+        $sql = "INSERT INTO objetivo_siglas (objetivo_id, sigla, descripcion, horas, activo)
+            VALUES (?, ?, ?, ?, 1)";
+        $stmt = $db->prepare($sql);
+        return $stmt->execute([$idObjetivo, $sigla, $descripcion, $horas]);
+    }
+
+    /* Actualizar sigla */
+    static public function mdlActualizarSigla($id, $sigla, $descripcion, $horas, $activo)
+    {
+        $db = Conexion::conectar();
+        $sql = "UPDATE objetivo_siglas 
+            SET sigla = ?, descripcion = ?, horas = ?, activo = ?
+            WHERE id = ?";
+        $stmt = $db->prepare($sql);
+        return $stmt->execute([$sigla, $descripcion, $horas, $activo, $id]);
+    }
+
+    /* Eliminar sigla */
+    static public function mdlEliminarSigla($id)
+    {
+        $db = Conexion::conectar();
+        $sql = "DELETE FROM objetivo_siglas WHERE id = ?";
+        $stmt = $db->prepare($sql);
+        return $stmt->execute([$id]);
     }
 }

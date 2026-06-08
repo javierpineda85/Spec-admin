@@ -7,9 +7,33 @@ class RutasController
         ini_set('display_errors', 1);
         error_reporting(E_ALL);
 
-        // ============================
-        // 1) Cargar rutas por módulos
-        // ============================
+        // ============================================
+        // 1. LOGIN (GET/POST)
+        // ============================================
+        if (isset($_GET['r']) && $_GET['r'] === 'login') {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                LoginController::procesarLogin();
+            } else {
+                LoginController::mostrarLogin();
+            }
+            return;
+        }
+
+        // ============================================
+        // 2. RESET PASSWORD (GET/POST)
+        // ============================================
+        if (isset($_GET['r']) && $_GET['r'] === 'reset-password') {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                ResetPasswordController::crtResetPassword();
+            } else {
+                ResetPasswordController::vistaResetPassword();
+            }
+            return;
+        }
+
+        // ============================================
+        // 3. CARGAR RUTAS MODULARES
+        // ============================================
         require_once __DIR__ . '/../rutas/rutas_alertas.php';
         require_once __DIR__ . '/../rutas/rutas_art.php';
         require_once __DIR__ . '/../rutas/rutas_configuracion.php';
@@ -31,10 +55,9 @@ class RutasController
         require_once __DIR__ . '/../rutas/rutas_uniformes.php';
         require_once __DIR__ . '/../rutas/rutas_usuarios.php';
 
-        // ============================
-        // 2) Mapeo simple a vistas
-        // ============================
-
+        // ============================================
+        // 4. MAPEO DIRECTO A VISTAS
+        // ============================================
         $mapeo = [
             "cerrar_sesion" => "usuario/salir.php",
             "imprimir_qr"   => "rondas/imprimir_qr.php",
@@ -46,10 +69,16 @@ class RutasController
             return;
         }
 
-        // ============================
-        // 3) Vista por defecto
-        // ============================
+        // ============================================
+        // 5. SI ALGUNA RUTA MODULAR YA SE EJECUTÓ → NO HACER NADA
+        // ============================================
+        if (defined('RUTA_EJECUTADA') && RUTA_EJECUTADA === true) {
+            return;
+        }
 
+        // ============================================
+        // 6. SI NO SE EJECUTÓ NADA → MOSTRAR INICIO
+        // ============================================
         include("vistas/paginas/inicio.php");
     }
 }

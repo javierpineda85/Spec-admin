@@ -150,6 +150,20 @@ class ModeloPuestos
         }
 
         // ============================
+        // 1.b) Validación global: si ya está ocupado en otro objetivo o puesto en ese mismo día/turno
+        // ============================
+        $conflictoGlobal = self::mdlBuscarConflictoRotacion($obj, $f, $ct, $u, $puesto_id);
+        if (!empty($conflictoGlobal)) {
+            $c = $conflictoGlobal[0];
+            $objetivoConf = $c['objetivo'] ?? ('objetivo #' . $c['objetivo_id']);
+            $puestoConf   = $c['puesto'] ?? ('puesto #' . $c['puesto_id']);
+            return [
+                'ok'  => false,
+                'msg' => "El vigilador ya está asignado en {$objetivoConf} / {$puestoConf} para ese día y turno."
+            ];
+        }
+
+        // ============================
         // 2) Validación: ¿ya existe una rotación para ese puesto en esa fecha/turno?
         // ============================
         $existePuesto = $db->consultas("SELECT idRotacion, usuario_id 
@@ -357,6 +371,7 @@ class ModeloPuestos
         $cursor = 0;
         $n = count($vigs);
         $asignados = 0; // contador de inserts
+        $warnings = [];
         foreach ($period as $d) {
             $f = $d->format('Y-m-d');
             $habilitados = $porFecha[$f] ?? []; // los que tienen turno ese día/turno
@@ -378,33 +393,38 @@ class ModeloPuestos
                     $k2 = $f . '|' . $cand;
                     if (isset($ocupado[$k2])) continue;
 
-                    // inserto
-                    $ok = $db->ejecutar("INSERT IGNORE INTO rotaciones_puestos (objetivo_id, fecha, puesto_id, usuario_id, codigo_turno)
-                                         VALUES ($objetivo_id, '$f', {$p['idPuesto']}, $cand, '$codigo_turno')");
-                    if ($ok) {
-                        $idRot = $db->lastInsertId();
-                        self::mdlLogRotacion([
-                            'rotacion_id' => (int)$idRot,
-                            'objetivo_id' => $objetivo_id,
-                            'fecha' => $f,
-                            'puesto_id' => (int)$p['idPuesto'],
-                            'usuario_anterior' => null,
-                            'usuario_nuevo' => $cand,
-                            'codigo_turno' => $codigo_turno,
-                            'usuario_editor' => $editor_id,
-                            'accion' => 'autofill',
-                            'motivo' => 'auto-rr'
-                        ]);
+                    $resultado = self::mdlGuardarRotacion([
+                        'objetivo_id' => $objetivo_id,
+                        'fecha' => $f,
+                        'puesto_id' => (int)$p['idPuesto'],
+                        'usuario_id' => $cand,
+                        'codigo_turno' => $codigo_turno,
+                        'editor_id' => $editor_id,
+                        'motivo' => 'auto-rr'
+                    ]);
+
+                    if (!empty($resultado['ok'])) {
                         $ocupado[$k1] = true;
                         $ocupado[$k2] = true;
                         $asignados++;
                         break;
                     }
+
+                    $msg = $resultado['msg'] ?? 'No se pudo asignar.';
+                    $warningKey = $f . '|' . $p['idPuesto'] . '|' . $cand . '|' . $msg;
+                    if (!isset($warnings[$warningKey])) {
+                        $warnings[$warningKey] = $msg;
+                    }
                 }
             }
         }
         error_log("auto_rotar asignados=" . $asignados);
-        return ['ok' => true, 'msg' => 'Auto-rotación completada', 'count' => $asignados];
+        return [
+            'ok' => true,
+            'msg' => 'Auto-rotación completada',
+            'count' => $asignados,
+            'warnings' => array_values($warnings)
+        ];
     }
 
     /** Log */
@@ -418,5 +438,32 @@ class ModeloPuestos
             VALUES ($rot, {$l['objetivo_id']}, '{$l['fecha']}', {$l['puesto_id']},
                     " . ($l['usuario_anterior'] ?? 'NULL') . ", " . ($l['usuario_nuevo'] ?? 'NULL') . ",
                     '{$l['codigo_turno']}', {$l['usuario_editor']}, '{$l['accion']}', $motivo)");
+    }
+
+    /**
+     * Devuelve la primera rotación conflictiva para un vigilador en un día/turno.
+     * Se usa para advertir cuando el vigilador ya está activo en otro puesto u objetivo.
+     */
+    private static function mdlBuscarConflictoRotacion(int $objetivo_id, string $fecha, string $codigo_turno, int $usuario_id, int $puesto_id): array
+    {
+        $db = new Conexion;
+        return $db->consultas(
+            "SELECT rp.idRotacion,
+                    rp.objetivo_id,
+                    rp.puesto_id,
+                    rp.codigo_turno,
+                    COALESCE(o.nombre, CONCAT('objetivo #', rp.objetivo_id)) AS objetivo,
+                    COALESCE(p.puesto, CONCAT('puesto #', rp.puesto_id)) AS puesto
+               FROM rotaciones_puestos rp
+               LEFT JOIN objetivos o ON o.idObjetivo = rp.objetivo_id
+               LEFT JOIN puestos p ON p.idPuesto = rp.puesto_id
+              WHERE rp.fecha = ?
+                AND rp.usuario_id = ?
+                AND rp.codigo_turno = ?
+                AND NOT (rp.objetivo_id = ? AND rp.puesto_id = ?)
+              ORDER BY rp.idRotacion ASC
+              LIMIT 1",
+            [$fecha, $usuario_id, $codigo_turno, $objetivo_id, $puesto_id]
+        );
     }
 }

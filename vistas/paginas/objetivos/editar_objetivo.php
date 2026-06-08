@@ -31,7 +31,31 @@ $vigiladoresSeleccionados = array_column($asignadosVigiladores, 'vigilador_id');
 $referentesSeleccionados = array_column($asignadosReferentes, 'referente_id');
 $asignadosBase = $db->consultas("SELECT base_id FROM objetivo_base_operativa WHERE objetivo_id = ?", [$objetivo['idObjetivo']]);
 $baseSeleccionados = array_column($asignadosBase, 'base_id');
+$siglas = ModeloObjetivos::mdlObtenerSiglasPorObjetivo($objetivo['idObjetivo']);
 ?>
+<style>
+    #formObjetivo .select2-container--default .select2-selection--multiple {
+        min-height: 38px;
+        border-color: #6c757d;
+    }
+
+    #formObjetivo .select2-container--default .select2-selection--multiple .select2-selection__choice {
+        background-color: #1f2937;
+        border: 1px solid #111827;
+        color: #fff;
+        padding: 2px 8px;
+    }
+
+    #formObjetivo .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+        color: #fff;
+        margin-right: 6px;
+    }
+
+    #formObjetivo .select2-container--default .select2-results__option--selected {
+        background-color: #e2e8f0;
+        color: #111827;
+    }
+</style>
 
 <div class="card">
     <div class="card-header bg-info text-white">
@@ -50,12 +74,12 @@ $baseSeleccionados = array_column($asignadosBase, 'base_id');
                     <input type="hidden" name="idObjetivo" value="<?= $objetivo['idObjetivo'] ?>">
 
                     <div class="row">
-                        <div class="form-group col-sm-12 col-md-4">
+                        <div class="form-group col-sm-12 col-md-6">
                             <label class="form-label">Nombre</label>
                             <input type="text" class="form-control" name="nombreObjetivo" required value="<?= htmlspecialchars($objetivo['nombre']) ?>">
                         </div>
 
-                        <div class="form-group col-sm-12 col-md-3">
+                        <div class="form-group col-sm-12 col-md-2">
                             <label class="form-label">Tipo</label>
                             <select id="tipo" name="tipo" class="form-control" required>
                                 <option value="" disabled>Selecciona un tipo</option>
@@ -70,7 +94,7 @@ $baseSeleccionados = array_column($asignadosBase, 'base_id');
                             <input type="number" name="cantidad_vigiladores" id="cantidad_vigiladores" class="form-control" min="1" data-optional="true">
                         </div>
 
-                        <div class="form-group col-sm-12 col-md-3">
+                        <div class="form-group col-sm-12 col-md-4">
                             <label class="form-label">Localidad</label>
                             <select id="localidad" name="localidad" class="form-control" required>
                                 <option value="<?= htmlspecialchars($objetivo['localidad']) ?>" selected><?= htmlspecialchars($objetivo['localidad']) ?></option>
@@ -89,17 +113,53 @@ $baseSeleccionados = array_column($asignadosBase, 'base_id');
                         <div class="form-group col-sm-12 col-md-5">
                             <label class="form-label">Buscar dirección</label>
                             <div class="input-group">
-                                <input type="text" id="address" class="form-control" data-optional="true" placeholder="Ingresa una dirección">
+                                <input type="text" id="address" class="form-control" name="domicilio" placeholder="Ingresa una dirección" value="<?= htmlspecialchars($objetivo['domicilio'] ?? '') ?>">
                                 <div class="input-group-append">
                                     <button type="button" id="btnSearch" class="btn btn-primary">Buscar</button>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="form-group col-sm-12 col-md-2">
+                        <div class="form-group col-sm-12 col-md-1">
                             <label class="form-label">Radio (m)</label>
                             <input type="number" id="radio_m" name="radio_m" class="form-control" placeholder="200" required value="<?= htmlspecialchars($objetivo['radio_m']) ?>">
                         </div>
+                        <div class="col-sm-12 col-md-1">
+                            <div class="form-group">
+                                <label>Sigla</label>
+                                <input type="hidden" name="siglas[0][id]" value="<?= $siglas[0]['id'] ?? '' ?>">
+                                <input type="text"
+                                    name="siglas[0][sigla]"
+                                    class="form-control"
+                                    value="<?= htmlspecialchars($siglas[0]['sigla'] ?? '') ?>"
+                                    placeholder="6H, MIC"
+                                    required>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12 col-md-1">
+                            <div class="form-group">
+                                <label>Horas</label>
+                                <input type="number"
+                                    name="siglas[0][horas]"
+                                    class="form-control"
+                                    value="<?= htmlspecialchars($siglas[0]['horas'] ?? '') ?>"
+                                    placeholder="Horas"
+                                    required>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12 col-md-4">
+                            <div class="form-group">
+                                <label>Descripción</label>
+                                <input type="text"
+                                    name="siglas[0][descripcion]"
+                                    class="form-control"
+                                    value="<?= htmlspecialchars($siglas[0]['descripcion'] ?? '') ?>"
+                                    placeholder="Descripción (opcional)">
+                            </div>
+                        </div>
+
                     </div>
 
                     <div class="row">
@@ -144,6 +204,7 @@ $baseSeleccionados = array_column($asignadosBase, 'base_id');
                             <small class="form-text text-muted">Podés asignar responsables de base operativa para este objetivo.</small>
                         </div>
                     </div>
+
                 </div>
 
                 <div class="card-footer col-sm-12 col-md-12 d-flex justify-content-between">
@@ -159,11 +220,11 @@ $baseSeleccionados = array_column($asignadosBase, 'base_id');
 
 <script>
     // Carga los departamentos en el select
-  const deps = [
-    "Capital", "Godoy Cruz", "Guaymallén", "Las Heras", "Luján de Cuyo","Lavalle", "Maipú",
-    "San Martín", "Rivadavia", "Junín", "Santa Rosa", "La Paz", "Tunuyán",
-    "Tupungato", "San Carlos","San Rafael", "General Alvear", "Malargüe"
-  ];
+    const deps = [
+        "Capital", "Godoy Cruz", "Guaymallén", "Las Heras", "Luján de Cuyo", "Lavalle", "Maipú",
+        "San Martín", "Rivadavia", "Junín", "Santa Rosa", "La Paz", "Tunuyán",
+        "Tupungato", "San Carlos", "San Rafael", "General Alvear", "Malargüe"
+    ];
 
 
     const sel = document.getElementById("localidad");
