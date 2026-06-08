@@ -45,12 +45,20 @@ function obtenerCoordenadasDesdeMapData(string $mapData)
                                 <th style="text-align:center;">Evento</th>
                                 <th style="text-align:center;">Fecha</th>
                                 <th style="text-align:center;">Hora</th>
+                                <th style="text-align:center;">Hora esperada</th>
+                                <th style="text-align:center;">Diff (min)</th>
                                 <th style="text-align:center;">Estado</th>
                                 <th style="text-align:center;">Acciones</th>
                             </tr>
                         </thead>
+
                         <tbody>
                             <?php foreach ($marcaciones as $m): ?>
+                                <?php
+                                // Formateo visual del diff con signo
+                                $diffFmt = isset($m['diff_min']) ? (($m['diff_min'] > 0 ? '+' : '') . $m['diff_min']) : '';
+                                ?>
+
                                 <tr>
                                     <td style="vertical-align:middle; text-align:center;">
                                         <?= htmlspecialchars($m['vigilador']) ?>
@@ -66,6 +74,12 @@ function obtenerCoordenadasDesdeMapData(string $mapData)
                                     </td>
                                     <td style="vertical-align:middle; text-align:center;">
                                         <?= date('H:i', strtotime($m['fecha_hora'])) ?>
+                                    </td>
+                                    <td style="vertical-align:middle; text-align:center;">
+                                        <?= htmlspecialchars($m['hora_esperada_ts'] ?? '-') ?>
+                                    </td>
+                                    <td style="vertical-align:middle; text-align:center;">
+                                        <?= $diffFmt ?>
                                     </td>
                                     <td style="vertical-align:middle; text-align:center;">
                                         <?php if (!empty($m['badge'])): ?>
@@ -98,6 +112,7 @@ function obtenerCoordenadasDesdeMapData(string $mapData)
 
                                 </tr>
                             <?php endforeach; ?>
+
                         </tbody>
                     </table>
 
@@ -183,7 +198,7 @@ function obtenerCoordenadasDesdeMapData(string $mapData)
                 const desde = document.getElementById('filtroDesde')?.value || '';
                 const hasta = document.getElementById('filtroHasta')?.value || '';
                 const fechaTexto = data[3]; // Columna Fecha (dd-mm-yyyy)
-                let estadoTexto = data[5] || ''; // Columna Estado (badge)
+                let estadoTexto = data[7] || ''; // Columna Estado (badge)
 
                 if (!fechaTexto) return false;
 

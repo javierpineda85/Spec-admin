@@ -18,12 +18,6 @@ $rondas = $db->consultas($sql);
   <div class="card-header bg-info text-white">
     <h3 class="card-title">Listado de Rondas</h3>
   </div>
-  <?php if (!empty($_SESSION['success_message'])): ?>
-    <div class="alert alert-success mt-3">
-      <?= $_SESSION['success_message'];
-      unset($_SESSION['success_message']); ?>
-    </div>
-  <?php endif; ?>
 
   <div class="card-body">
     <table id="example1" class="table table-bordered table-striped table-sm">

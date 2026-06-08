@@ -15,6 +15,9 @@
                 <div id="collapseMensajeria" class="collapse">
                     <div class="mt-2">
                         <?php if (Auth::hasPermission('mensajes', 'crtMostrarMensajesEnviados')): ?>
+                            <a href="?r=bandeja-entrada" class="btn btn-block btn-info btn-sm text-white">Bandeja de entrada</a>
+                        <?php endif; ?>
+                        <?php if (Auth::hasPermission('mensajes', 'crtMostrarMensajesEnviados')): ?>
                             <a href="?r=mensajes-enviados" class="btn btn-block btn-info btn-sm text-white">Mensajes enviados</a>
                         <?php endif; ?>
                         <?php if (Auth::hasPermission('mensajes', 'crtGuardarMensaje')): ?>

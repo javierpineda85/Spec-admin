@@ -17,10 +17,18 @@ class Conexion
         if (self::$link) return self::$link;
 
         try {
-            $link = new PDO("mysql:host=localhost;port=3306;dbname=spec", "root", "");
+            $link = new PDO("mysql:host=localhost;port=3306;dbname=argus", "root", "");
+            //$link = new PDO("mysql:host=localhost;port=3306;dbname=u515462975_spec", "u515462975_root", "Q*/CyO48j");
+            //$link = new PDO("mysql:host=localhost;port=3306;dbname=spec_db;charset=utf8mb4","spec_user",pLMK!6vCX%ug.Qtk78%_"); /* SERVIDOR EN PRODUCCION */
+
             $link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $link->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
             $link->exec("SET NAMES utf8");
+
+            // 🔑 Ajustamos la zona horaria de MySQL al offset actual de PHP
+            // Esto asegura que CURRENT_TIMESTAMP y NOW() usen la misma hora que PHP
+            $link->exec("SET time_zone = '" . date('P') . "'");
+
             self::$link = $link; // clave para evitar recursividad
             return self::$link;
         } catch (PDOException $e) {
@@ -109,10 +117,6 @@ class Conexion
         // Removemos las comillas externas para que puedas usar "'".$db->limpiar($x)."'" si querés
         return substr($quoted, 1, -1);
     }
-
-    /* --- (Opcional) Atajos para transacciones si alguna vez los querés usar ---
-    public function begin(): bool { return $this->conexion->beginTransaction(); }
-    public function commit(): bool { return $this->conexion->commit(); }
-    public function rollback(): bool { return $this->conexion->rollBack(); }
-    -----------------------------------------------------------------------------*/
 }
+
+

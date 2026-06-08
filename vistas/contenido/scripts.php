@@ -76,7 +76,8 @@
 
 <!-- JS personalizado -->
 <script src="<?= BASE_URL ?>/js/main.js"></script>
-<script src="<?= BASE_URL ?>/js/custom.js" defer></script>
+<script src="<?= BASE_URL ?>/js/custom.js?v=<?= time(); ?>"></script>
+
 
 <!-- Modal para imagen ampliada -->
 <div class="modal fade" id="imagenModal" tabindex="-1" role="dialog" aria-hidden="true">

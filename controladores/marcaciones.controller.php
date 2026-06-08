@@ -25,6 +25,8 @@ class MarcacionesController
         $objetivo_id  = $_POST['objetivo_id']  ?? null;
         $objetivo_id  = !empty($objetivo_id)   ? $objetivo_id : null;
 
+        $puesto_id    = $_POST['puesto_id'] ?? null;
+
         $tipo_evento  = $_POST['tipo_evento']  ?? null;
         $lat          = $_POST['latitud']      ?? null;
         $lng          = $_POST['longitud']     ?? null;
@@ -83,12 +85,13 @@ class MarcacionesController
             }
 
             // Insert marcación
-            $sqlIns = "INSERT INTO marcaciones_servicio (vigilador_id, objetivo_id, tipo_evento, fecha_hora, latitud, longitud) VALUES (:v, :o, :t, NOW(), :lat, :lng)
+            $sqlIns = "INSERT INTO marcaciones_servicio (vigilador_id, objetivo_id,puesto_id, tipo_evento, fecha_hora, latitud, longitud) VALUES (:v, :o,:p, :t, NOW(), :lat, :lng)
             ";
             $stmtIns = $pdo->prepare($sqlIns);
             $stmtIns->execute([
                 ':v'   => $vigilador_id,
                 ':o'   => $objetivo_id,
+                ':p'   => $puesto_id,
                 ':t'   => $tipo_evento,
                 ':lat' => $lat,
                 ':lng' => $lng

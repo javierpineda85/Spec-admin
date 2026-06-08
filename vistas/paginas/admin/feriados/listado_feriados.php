@@ -86,7 +86,9 @@ $meses = [
               <th>Fecha</th>
               <th>Motivo</th>
               <th>Tipo</th>
-              <th>Acciones</th>
+              <?php if ($_SESSION['nivel'] > 2): ?>
+                <th>Acciones</th>
+              <?php endif; ?>
             </tr>
           </thead>
           <tbody>
@@ -95,16 +97,19 @@ $meses = [
                 <td><?= date('d/m/Y', strtotime($f['fecha'])) ?></td>
                 <td><?= htmlspecialchars($f['motivo']) ?></td>
                 <td><?= ucfirst($f['tipo_feriado']) ?></td>
-                <td>
-                  <a href="?r=editar_feriado&id=<?= $f['idFeriado'] ?>" class="btn btn-sm btn-info">Editar</a>
-                  <a href="?r=eliminar_feriado&id=<?= $f['idFeriado'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar feriado?')">Eliminar</a>
-                </td>
+                <?php if ($_SESSION['nivel'] > 2): ?>
+                  <td>
+                    <a href="?r=editar_feriado&id=<?= $f['idFeriado'] ?>" class="btn btn-sm btn-info">Editar</a>
+                    <a href="?r=eliminar_feriado&id=<?= $f['idFeriado'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar feriado?')">Eliminar</a>
+                  </td>
+                <?php endif; ?>
               </tr>
             <?php endforeach; ?>
           </tbody>
         </table>
       </div>
     <?php else: ?>
+
       <div class="alert alert-info">No se encontraron feriados con los filtros aplicados.</div>
     <?php endif; ?>
   </div>

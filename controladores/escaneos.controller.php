@@ -27,19 +27,28 @@ class EscaneosController
         $data = [
             'ronda_id'     => $rondaId,
             'sector_id'    => $sectorId,
-            'vigilador_id' => $vigiladorId
+            'vigilador_id' => $vigiladorId,
+            'fecha_hora'   => date('Y-m-d H:i:s')
         ];
 
         $res = ModeloEscaneos::mdlGuardarEscaneo('escaneos', $data);
 
         if ($res === 'ok') {
             ToastifyController::success('Escaneo registrado correctamente');
+            // Guardamos IDs en sesión para el feedback
+            if (session_status() !== PHP_SESSION_ACTIVE) {
+                session_start();
+            }
+            $_SESSION['ultima_ronda_id']  = $rondaId;
+            $_SESSION['ultimo_sector_id'] = $sectorId;
         } else {
             ToastifyController::error("<h3>Error al registrar:</h3><pre>" . htmlspecialchars($res) . "</pre>");
         }
+
         header('Location: ?r=escaneo_feedback');
         exit;
     }
+
     public static function feedback()
     {
         // Asegúrate de que session esté iniciado

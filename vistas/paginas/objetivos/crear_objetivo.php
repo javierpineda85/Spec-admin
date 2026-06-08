@@ -1,13 +1,51 @@
 <?php
 
 $db = new Conexion;
-$usuarios = $db->consultas("SELECT idUsuario, nombre, apellido FROM usuarios WHERE rol = 'Vigilador' AND activo = 1 ORDER BY apellido");
-$db = new Conexion;
-$referentes = $db->consultas("SELECT idUsuario, nombre, apellido FROM usuarios WHERE rol = 'Referente' AND activo = 1 ORDER BY apellido");
+$vigiladores = $db->consultas("SELECT u.idUsuario, u.nombre, u.apellido
+                                    FROM usuarios u
+                                    INNER JOIN roles r ON u.rol_id = r.id
+                                    WHERE r.categoria = 'operativo' AND u.activo = 1
+                                    ORDER BY u.apellido ");
+
+$referentes = $db->consultas("SELECT u.idUsuario, u.nombre, u.apellido
+                                      FROM usuarios u
+                                      INNER JOIN roles r ON u.rol_id = r.id
+                                      WHERE r.categoria = 'referente' AND u.activo = 1
+                                      ORDER BY u.apellido");
+$baseOperativa = $db->consultas("SELECT u.idUsuario, u.nombre, u.apellido
+                                FROM usuarios u
+                                INNER JOIN roles r ON u.rol_id = r.id
+                                WHERE r.categoria = 'baseOperativa' AND u.activo = 1
+                                ORDER BY u.apellido");
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   ControladorObjetivos::crtGuardarObjetivo();
 }
+
 ?>
+<style>
+  #formObjetivo .select2-container--default .select2-selection--multiple {
+    min-height: 38px;
+    border-color: #6c757d;
+  }
+
+  #formObjetivo .select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: #1f2937;
+    border: 1px solid #111827;
+    color: #fff;
+    padding: 2px 8px;
+  }
+
+  #formObjetivo .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+    color: #fff;
+    margin-right: 6px;
+  }
+
+  #formObjetivo .select2-container--default .select2-results__option--selected {
+    background-color: #e2e8f0;
+    color: #111827;
+  }
+</style>
 
 <div class="card">
   <div class="card-header bg-info text-white">
@@ -25,12 +63,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <form class="form-horizontal" id="formObjetivo" action="?r=crear_objetivo" method="POST">
         <div class="card-body">
           <div class="row">
-            <div class="form-group col-sm-12 col-md-4">
+            <div class="form-group col-sm-12 col-md-6">
               <label class="form-label">Nombre</label>
               <input type="text" class="form-control" placeholder="Servicio 1" name="nombreObjetivo" required>
             </div>
 
-            <div class="form-group col-sm-12 col-md-3">
+            <div class="form-group col-sm-12 col-md-2">
               <label class="form-label">Tipo</label>
               <select id="tipo" name="tipo" class="form-control" required>
                 <option value="" disabled selected>Selecciona un tipo</option>
@@ -39,11 +77,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <option value="movil">Móvil</option>
               </select>
             </div>
-            <div class="form-group col-sm-12 col-md-3">
+            <div class="form-group col-sm-12 col-md-3" style="display: none;">
               <label for="cantidad_vigiladores">Cantidad de Vigiladores</label>
-              <input type="number" name="cantidad_vigiladores" id="cantidad_vigiladores" class="form-control" min="1" value="1" required>
+              <input type="number" name="cantidad_vigiladores" id="cantidad_vigiladores" class="form-control" min="1" value="1" data-optional="true">
             </div>
-            <div class="form-group col-sm-12 col-md-3">
+            <div class="form-group col-sm-12 col-md-4">
               <label class="form-label">Localidad</label>
               <select id="localidad" name="localidad" class="form-control" required>
                 <option value="" disabled selected>Selecciona una localidad</option>
@@ -62,16 +100,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="form-group col-sm-12 col-md-5">
               <label class="form-label">Buscar dirección</label>
               <div class="input-group">
-                <input type="text" id="address" class="form-control" data-optional="true" placeholder="Ingresa una dirección">
+                <input type="text" id="address" class="form-control" name="domicilio" placeholder="Ingresa una dirección">
                 <div class="input-group-append">
                   <button type="button" id="btnSearch" class="btn btn-primary">Buscar</button>
                 </div>
               </div>
             </div>
-            <div class="form-group col-sm-12 col-md-2">
+            <div class="form-group col-sm-12 col-md-1">
               <label class="form-label">Radio (m)</label>
               <input type="number" id="radio_m" name="radio_m" class="form-control" placeholder="200" required>
             </div>
+
+            <div class="col-sm-12 col-md-1">
+              <div class="form-group">
+                <label>Sigla</label>
+                <input type="text" name="siglas[0][sigla]" class="form-control" placeholder="6H, MIC" required>
+              </div>
+            </div>
+            <div class="col-sm-12 col-md-1">
+              <div class="form-group">
+                <label>Horas</label>
+                <input type="number" name="siglas[0][horas]" class="form-control" placeholder="Horas" required>
+              </div>
+            </div>
+            <div class="col-sm-12 col-md-4">
+              <div class="form-group">
+                <label>Descripción</label>
+                <input type="text" name="siglas[0][descripcion]" class="form-control" placeholder="Descripción (opcional)" data-optional="true">
+              </div>
+            </div>
+
           </div>
           <!-- Contenedor del mapa -->
           <div class="row">
@@ -80,12 +138,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
           </div>
 
-
           <div class="row">
             <div class="form-group col-sm-12 col-md-5">
               <label for="vigiladores">Seleccionar Vigiladores</label>
-              <select name="vigiladores[]" id="vigiladores" class="form-control select2" data-optional="true" multiple >
-                <?php foreach ($usuarios as $u): ?>
+              <select name="vigiladores[]" id="vigiladores" class="form-control select2"  multiple>
+                <?php foreach ($vigiladores as $u): ?>
                   <option value="<?= $u['idUsuario'] ?>"><?= $u['apellido'] ?> <?= $u['nombre'] ?></option>
                 <?php endforeach; ?>
               </select>
@@ -94,14 +151,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="form-group col-sm-12 col-md-5">
               <label for="referentes">Seleccionar Referentes</label>
-              <select name="referentes[]" id="referentes" class="form-control select2" data-optional="true" multiple >
+              <select name="referentes[]" id="referentes" class="form-control select2"  multiple>
                 <?php foreach ($referentes as $r): ?>
                   <option value="<?= $r['idUsuario'] ?>"><?= $r['apellido'] . ' ' . $r['nombre'] ?></option>
                 <?php endforeach; ?>
               </select>
               <small class="form-text text-muted">Podés seleccionar uno o varios referentes para este objetivo.</small>
             </div>
-
+            <div class="form-group col-sm-12 col-md-5">
+              <label for="base_operativa">Seleccionar Base Operativa</label>
+              <select name="base_operativa[]" id="base_operativa" class="form-control select2" data-optional="true" multiple>
+                <?php foreach ($baseOperativa as $b): ?>
+                  <option value="<?= $b['idUsuario'] ?>" <?= in_array($b['idUsuario'], $baseSeleccionados ?? []) ? 'selected' : '' ?>>
+                    <?= $b['apellido'] ?> <?= $b['nombre'] ?>
+                  </option>
+                <?php endforeach; ?>
+              </select>
+              <small class="form-text text-muted">Podés asignar responsables de base operativa para este objetivo.</small>
+            </div>
           </div>
 
 
@@ -124,54 +191,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 <script>
+
   // Carga los departamentos en el select
-  var selectProvincia = document.getElementById("localidad");
-  var localidadJSON = {
-    "departamentos": [{
-        "nombre": "Capital"
-      }, {
-        "nombre": "Godoy Cruz"
-      }, {
-        "nombre": "Guaymallén"
-      },
-      {
-        "nombre": "Las Heras"
-      }, {
-        "nombre": "Luján de Cuyo"
-      }, {
-        "nombre": "Maipú"
-      },
-      {
-        "nombre": "San Martín"
-      }, {
-        "nombre": "Rivadavia"
-      }, {
-        "nombre": "Junín"
-      },
-      {
-        "nombre": "Santa Rosa"
-      }, {
-        "nombre": "La Paz"
-      }, {
-        "nombre": "Tunuyán"
-      },
-      {
-        "nombre": "Tupungato"
-      }, {
-        "nombre": "San Carlos"
-      }, {
-        "nombre": "General Alvear"
-      },
-      {
-        "nombre": "Malargüe"
-      }
-    ]
-  };
-  localidadJSON.departamentos.forEach(function(localidad) {
-    var option = document.createElement("option");
-    option.value = localidad.nombre;
-    option.text = localidad.nombre;
-    selectProvincia.appendChild(option);
+  const deps = [
+    "Capital", "Godoy Cruz", "Guaymallén", "Las Heras", "Luján de Cuyo", "Lavalle", "Maipú",
+    "San Martín", "Rivadavia", "Junín", "Santa Rosa", "La Paz", "Tunuyán",
+    "Tupungato", "San Carlos", "San Rafael", "General Alvear", "Malargüe"
+  ];
+
+  const sel = document.getElementById("localidad");
+  deps.forEach(d => {
+    let o = document.createElement("option");
+    o.value = d;
+    o.text = d;
+    sel.append(o);
   });
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -230,61 +263,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .catch(() => alert('Error al buscar la dirección.'));
     });
   });
-  //Validacion de cantidad de vigiladores
+
+  // Validación de cantidad de vigiladores
+  /*
   $(document).ready(function() {
     $('#vigiladores').select2({
       placeholder: "Selecciona los vigiladores asignados"
     });
+    $('#referentes').select2({
+      placeholder: "Selecciona los referentes asignados"
+    });
+    // ✅ Nuevo campo Base Operativa
+    $('#base_operativa').select2({
+      placeholder: "Selecciona los responsables de base operativa"
+    });
   });
+*/
   document.addEventListener("DOMContentLoaded", function() {
     const form = document.getElementById("formObjetivo");
-    const inputCantidad = document.getElementById("cantidad_vigiladores");
+    //const inputCantidad = document.getElementById("cantidad_vigiladores");
     const $selectVigiladores = $('#vigiladores');
+    const $selectReferentes = $('#referentes');
+    const $selectBase = $('#base_operativa'); // ✅ Nuevo campo
 
     // Inicializar Select2
     $selectVigiladores.select2({
       placeholder: "Selecciona los vigiladores asignados"
     });
+    $selectReferentes.select2({
+      placeholder: "Selecciona los referentes asignados"
+    });
+    $selectBase.select2({
+      placeholder: "Selecciona los responsables de base operativa"
+    });
+
     // Mostrar toast
     function mostrarToast(mensaje) {
       $('#toast-msg').text(mensaje);
       $('#toast-alerta').toast('show');
     }
-    // Validación dinámica al seleccionar
-    $selectVigiladores.on('select2:select', function(e) {
-      const max = parseInt(inputCantidad.value) || 0;
-      const seleccionados = $selectVigiladores.select2('data');
 
-      if (seleccionados.length > max) {
-        // Elimina el último seleccionado
-        const idEliminar = e.params.data.id;
-        const opciones = $selectVigiladores.val().filter(val => val !== idEliminar);
-        $selectVigiladores.val(opciones).trigger('change');
-
-        mostrarToast('Solo puedes seleccionar hasta ' + max + ' vigilador(es).');
-      }
-    });
 
     // Validación de respaldo al enviar
     form.addEventListener("submit", function(e) {
-      const cantidadRequerida = parseInt(inputCantidad.value);
-      const seleccionados = $selectVigiladores.select2('data').length;
+      const seleccionadosVigiladores = $selectVigiladores.select2('data').length;
+      const seleccionadosBase = $selectBase.select2('data').length;
 
-      if (seleccionados !== cantidadRequerida) {
+      // Si no hay vigiladores O no hay base operativa → bloquear envío
+      if (seleccionadosVigiladores === 0 && seleccionadosBase === 0) {
         e.preventDefault();
-        mostrarToast("Debes seleccionar exactamente " + cantidadRequerida + " vigilador(es). Actualmente seleccionaste " + seleccionados + ".");
+        mostrarToast("Debes seleccionar al menos un vigilador y un responsable de base operativa.");
       }
-    });
-  });
-
-  //Carga de referentes
-  document.addEventListener("DOMContentLoaded", function() {
-    const form = document.getElementById("formObjetivo");
-    const $selectReferentes = $('#referentes');
-
-    // Inicializar Select2
-    $selectReferentes.select2({
-      placeholder: "Selecciona los referentes asignados"
     });
 
 

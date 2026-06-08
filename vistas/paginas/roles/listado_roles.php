@@ -88,8 +88,3 @@
         </small>
     </div>
 </div>
-
-<script>
-    // Si usás DataTables en el proyecto, podés inicializarlo así:
-    // $(function(){ $("#tablaRoles").DataTable({ responsive:true, autoWidth:false }); });
-</script>

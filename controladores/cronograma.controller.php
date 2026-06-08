@@ -2,12 +2,13 @@
 
 require_once('modelos/cronograma.modelo.php');
 require_once 'modelos/turnos.modelo.php';
-class ControladorCronograma
+class ControladorCronogramas
 {
     public static function ctrGuardarCronograma()
     {
 
-        Auth::check('cronogramas', 'ctrGuardarCronograma');
+        //Auth::check('cronogramas', 'ctrGuardarCronograma');
+        Auth::check('cronogramas', 'vistaCrearCronograma');
 
         if (!isset($_POST['guardar_cronograma'])) return;
 
@@ -36,6 +37,7 @@ class ControladorCronograma
             $horasPorUsuario = [];  // Para alertar por exceso o defecto
 
             $turnosProcesados = [];
+            $horasSiglasObjetivo = self::obtenerHorasSiglasObjetivo($objetivoId);
 
             foreach (['vigilador', 'referente'] as $rol) {
                 if (!isset($_POST[$rol])) continue;
@@ -52,11 +54,16 @@ class ControladorCronograma
                             if ($codigo === '') continue;
 
                             $fecha = $mes . '-' . str_pad($dia, 2, '0', STR_PAD_LEFT);
+                            $codigo = strtoupper($codigo);
+                            $hsCodigo = self::horasCodigoCronograma($codigo, $horasSiglasObjetivo);
 
                             // Para validaciones
-                            if (in_array($codigo, ['D', 'N'])) {
+                            if (in_array($codigo, ['D', 'N', 'GP/D', 'GP/N'], true)) {
                                 $guardiasPorDia[$fecha][] = $codigo;
-                                $horasPorUsuario[$usuarioId] = ($horasPorUsuario[$usuarioId] ?? 0) + 12;
+                            }
+
+                            if ($hsCodigo > 0) {
+                                $horasPorUsuario[$usuarioId] = ($horasPorUsuario[$usuarioId] ?? 0) + $hsCodigo;
                             }
 
                             $tipo = self::esLicencia($codigo) ? 'Licencia' : 'Normal';
@@ -85,6 +92,17 @@ class ControladorCronograma
                             if ($codigo === '') continue;
 
                             $fecha = $mes . '-' . str_pad($dia, 2, '0', STR_PAD_LEFT);
+                            $codigo = strtoupper($codigo);
+                            $hsCodigo = self::horasCodigoCronograma($codigo, $horasSiglasObjetivo);
+
+                            if (in_array($codigo, ['D', 'N', 'GP/D', 'GP/N'], true)) {
+                                $guardiasPorDia[$fecha][] = $codigo;
+                            }
+
+                            if ($hsCodigo > 0) {
+                                $horasPorUsuario[$usuarioId] = ($horasPorUsuario[$usuarioId] ?? 0) + $hsCodigo;
+                            }
+
                             $tipo = self::esLicencia($codigo) ? 'Licencia' : 'Normal';
 
                             $turnosProcesados[] = [
@@ -98,6 +116,8 @@ class ControladorCronograma
                         }
                     }
                 }
+
+                break;
             }
 
             // Validación 1: mínimo 3 tipos de guardia por día (D, N, Licencias)
@@ -127,12 +147,19 @@ class ControladorCronograma
 
             // Guardar turnos
             foreach ($turnosProcesados as $t) {
-
                 $respuesta = ModeloTurnos::mdlGuardarTurno('turnos', $t);
                 if ($respuesta !== 'ok') {
-                    throw new Exception("Error al guardar turno del usuario " . $t['usuario_id'] . " " . $respuesta);
+                    /* Buscar nombre del usuario
+                    $stmt = $db->prepare("SELECT apellido, nombre FROM usuarios WHERE idUsuario = ?");
+                    $stmt->execute([$t['usuario_id']]);
+                    $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                    $nombreCompleto = $usuario ? "{$usuario['apellido']}, {$usuario['nombre']}" : "ID {$t['usuario_id']}";
+                   throw new Exception("Turno duplicado para {$nombreCompleto}. Por favor verifica el cronograma");*/
+                    throw new Exception($respuesta);
                 }
             }
+
             // Guardamos las horas en sesión para mostrarlas visualmente en la vista
             $_SESSION['horas_usuario'] = $horasPorUsuario;
             $db->commit();
@@ -148,13 +175,67 @@ class ControladorCronograma
             if ($db && $db->inTransaction()) {
                 $db->rollBack();
             }
-            ToastifyController::error("Error al guardar: " . $e->getMessage());
+            if ($e->getMessage() !== 'duplicado') {
+                ToastifyController::error("Error al guardar turno del usuario " . $t['usuario_id'] . $e->getMessage());
+                $_SESSION['cronograma_error'] = $_POST; // guardar datos para repoblar
+                header('Location: ?r=crear_cronograma');
+                exit;
+            } else {
+                ToastifyController::success("Cronograma cargado exitosamente");
+                $_SESSION['cronograma_error'] = $_POST; // guardar datos para repoblar
+                header('Location: ?r=crear_cronograma');
+                exit;
+            }
 
-            // Reintentamos mostrando la vista ya poblada
+
+            /* Reintentamos mostrando la vista ya poblada
             self::vistaCrearCronograma();
-            return;
+            return;*/
+            /*$_SESSION['cronograma_error'] = $_POST; // guardar datos para repoblar
+            header('Location: ?r=crear_cronograma');
+            exit;*/
         }
     }
+    private static function obtenerHorasSiglasObjetivo(int $objetivoId): array
+    {
+        try {
+            $stmt = Conexion::conectar()->prepare("SELECT sigla, horas FROM objetivo_siglas WHERE objetivo_id = ? AND activo = 1");
+            $stmt->execute([$objetivoId]);
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Throwable $e) {
+            return [];
+        }
+
+        $horas = [];
+        foreach ($rows as $row) {
+            $sigla = strtoupper(trim((string)$row['sigla']));
+            if ($sigla !== '') {
+                $horas[$sigla] = (float)$row['horas'];
+            }
+        }
+
+        return $horas;
+    }
+
+    private static function horasCodigoCronograma(string $codigo, array $horasSiglasObjetivo): float
+    {
+        $codigo = strtoupper(trim($codigo));
+
+        if ($codigo === '' || in_array($codigo, ['F', 'E', 'P', 'L', 'S'], true)) {
+            return 0.0;
+        }
+
+        if (in_array($codigo, ['D', 'N', 'GP/D', 'GP/N'], true)) {
+            return 12.0;
+        }
+
+        if (preg_match('/^(\d+(?:[.,]\d+)?)H$/', $codigo, $match)) {
+            return (float)str_replace(',', '.', $match[1]);
+        }
+
+        return $horasSiglasObjetivo[$codigo] ?? 0.0;
+    }
+
     private static function esLicencia(string $codigo): bool
     {
         // Tratamos GP/D y GP/N como licencias “laborables” para KPI,
@@ -169,13 +250,24 @@ class ControladorCronograma
         $db = new Conexion;
 
         // Vigiladores y referentes vinculados al objetivo
-        $vigiladores = $db->consultas("SELECT u.idUsuario FROM usuarios u
-        INNER JOIN objetivo_vigiladores ov ON ov.vigilador_id = u.idUsuario
-        WHERE ov.objetivo_id = $objetivoId AND u.activo = 1 AND u.rol='Vigilador'");
+        $vigiladores = $db->consultas(" SELECT u.idUsuario
+                                    FROM usuarios u
+                                    INNER JOIN roles r ON u.rol_id = r.id
+                                    INNER JOIN objetivo_vigiladores ov ON ov.vigilador_id = u.idUsuario
+                                    WHERE ov.objetivo_id = $objetivoId
+                                    AND u.activo = 1
+                                    AND r.categoria = 'operativo'
+                                ");
 
-        $referentes = $db->consultas("SELECT u.idUsuario FROM usuarios u
-        INNER JOIN objetivo_referentes orf ON orf.referente_id = u.idUsuario
-        WHERE orf.objetivo_id = $objetivoId AND u.activo = 1 AND u.rol='Referente'");
+        $referentes = $db->consultas(" SELECT u.idUsuario
+                                    FROM usuarios u
+                                    INNER JOIN roles r ON u.rol_id = r.id
+                                    INNER JOIN objetivo_referentes orf ON orf.referente_id = u.idUsuario
+                                    WHERE orf.objetivo_id = $objetivoId
+                                    AND u.activo = 1
+                                    AND r.categoria = 'referente'
+                                ");
+
 
         $post = [
             'objetivo'  => $objetivoId,
@@ -349,9 +441,15 @@ class ControladorCronograma
 
         // Vigiladores vinculados al objetivo
         $db = new Conexion;
-        $vigiladores = $db->consultas("SELECT u.idUsuario FROM usuarios u
-        INNER JOIN objetivo_vigiladores ov ON ov.vigilador_id = u.idUsuario
-        WHERE ov.objetivo_id = $objetivoId AND u.activo = 1 AND u.rol='Vigilador'");
+        $vigiladores = $db->consultas("SELECT u.idUsuario
+                                        FROM usuarios u
+                                        INNER JOIN roles r ON u.rol_id = r.id
+                                        INNER JOIN objetivo_vigiladores ov ON ov.vigilador_id = u.idUsuario
+                                        WHERE ov.objetivo_id = $objetivoId
+                                        AND u.activo = 1
+                                        AND r.categoria = 'operativo'
+                                    ");
+
         $uidsV = array_map(fn($r) => (int)$r['idUsuario'], $vigiladores);
 
         foreach ($uidsV as $uid) {
@@ -399,9 +497,15 @@ class ControladorCronograma
         }
 
         // Referentes: copiar tal cual el mismo día si existía en el mes anterior
-        $referentes = $db->consultas("SELECT u.idUsuario FROM usuarios u
-        INNER JOIN objetivo_referentes orf ON orf.referente_id = u.idUsuario
-        WHERE orf.objetivo_id = $objetivoId AND u.activo = 1 AND u.rol='Referente'");
+        $referentes = $db->consultas("SELECT u.idUsuario
+                                    FROM usuarios u
+                                    INNER JOIN roles r ON u.rol_id = r.id
+                                    INNER JOIN objetivo_referentes orf ON orf.referente_id = u.idUsuario
+                                    WHERE orf.objetivo_id = $objetivoId
+                                    AND u.activo = 1
+                                    AND r.categoria = 'referente'
+                                ");
+
         $uidsR = array_map(fn($r) => (int)$r['idUsuario'], $referentes);
 
         // map día => código del mes anterior
@@ -429,9 +533,15 @@ class ControladorCronograma
         }
 
         // 2) Traer referentes vinculados al objetivo
-        $referentes = $db->consultas("SELECT u.idUsuario FROM usuarios u
-        INNER JOIN objetivo_referentes orf ON orf.referente_id = u.idUsuario
-        WHERE orf.objetivo_id = $objetivoId AND u.activo = 1 AND u.rol='Referente'");
+        $referentes = $db->consultas("SELECT u.idUsuario
+                                    FROM usuarios u
+                                    INNER JOIN roles r ON u.rol_id = r.id
+                                    INNER JOIN objetivo_referentes orf ON orf.referente_id = u.idUsuario
+                                    WHERE orf.objetivo_id = $objetivoId
+                                    AND u.activo = 1
+                                    AND r.categoria = 'referente'
+                                ");
+
         $uidsR = array_map(fn($r) => (int)$r['idUsuario'], $referentes);
 
         // 3) Generar mes con la continuidad 4×2 (D,D → N,N → F,F → ...)
@@ -509,7 +619,8 @@ class ControladorCronograma
     /*Funcion para buscar por resumen diario de jornadas trabajadas*/
     static public function crtBuscarResumenDiario()
     {
-        Auth::check('cronogramas', 'crtBuscarResumenDiario');
+        //Auth::check('cronogramas', 'crtBuscarResumenDiario');
+        Auth::check('cronogramas', 'vistaJornadasPorObjetivo');
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
@@ -543,7 +654,8 @@ class ControladorCronograma
     /* Se emparejan entradas y salidas por vigilador y objetivo (el GROUP BY m1.idMarcacion previene múltiples pareos). */
     static public function crtBuscarResumenHoras()
     {
-        Auth::check('cronogramas', 'crtBuscarResumenHoras');
+        //Auth::check('cronogramas', 'crtBuscarResumenHoras');
+        Auth::check('cronogramas', 'vistaReporteHorasPorObjetivo');
 
         $desde = $_POST['desde'] ?? null;
         $hasta = $_POST['hasta'] ?? null;
@@ -705,7 +817,8 @@ class ControladorCronograma
 
     public static function crtBuscarResumenHorasPorVigilador()
     {
-        Auth::check('cronograma', 'crtBuscarResumenHorasPorVigilador');
+        //Auth::check('cronograma', 'crtBuscarResumenHorasPorVigilador');
+        Auth::check('cronogramas', 'vistaHorasPorVigilador');
 
         $desde = $_POST['desde'] ?? '';
         $hasta = $_POST['hasta'] ?? '';
@@ -717,7 +830,10 @@ class ControladorCronograma
         }
 
         $db = new Conexion;
-        $usuarios = $db->consultas("SELECT idUsuario, CONCAT(apellido, ', ', nombre) AS vigilador FROM usuarios WHERE rol = 'Vigilador'");
+        $usuarios = $db->consultas("SELECT u.idUsuario, CONCAT(u.apellido, ', ', u.nombre) AS vigilador
+                                            FROM usuarios u
+                                            JOIN roles r ON u.rol_id = r.id
+                                            WHERE r.nombre = 'Vigilador';");
         $horariosTurnos = $db->consultas("SELECT  numero_turno, hora_entrada, hora_salida FROM puestos_turnos");
 
         $mapeoTurnos = [
@@ -976,10 +1092,10 @@ class ControladorCronograma
     }
     public static function vistaReporteHorasPorObjetivo()
     {
-        Auth::check('cronogramas', 'crtBuscarResumenHoras');
+        Auth::check('cronogramas', 'vistaReporteHorasPorObjetivo');
         // Carga lista de objetivos
         $db = new Conexion();
-        $objetivos = $db->consultas("SELECT idObjetivo, nombre FROM objetivos ORDER BY nombre");
+        $objetivos = $db->consultas("SELECT idObjetivo, nombre FROM objetivos WHERE activo=1 ORDER BY nombre");
         // Recupera el reporte generado por POST (si existe)
         $reporte = $_SESSION['resumen_periodo'] ?? null;
         include __DIR__ . '/../vistas/paginas/cronogramas/reporte_horas_por_objetivo.php';

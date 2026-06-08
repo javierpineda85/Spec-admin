@@ -28,14 +28,6 @@ $tipoFiltro = $_GET['tipo'] ?? '';
                     </div>
 
                     <div class="card-body">
-                        <?php if (!empty($_SESSION['success_message'])): ?>
-                            <div class="alert alert-success alert-dismissible mt-3">
-                                <button type="button" class="close" data-dismiss="alert">&times;</button>
-                                <i class="icon fas fa-check"></i>
-                                <?= $_SESSION['success_message'];
-                                unset($_SESSION['success_message']); ?>
-                            </div>
-                        <?php endif; ?>
 
                         <table id="example1" class="table table-bordered table-striped table-sm">
                             <thead>
@@ -44,7 +36,9 @@ $tipoFiltro = $_GET['tipo'] ?? '';
                                     <th style="text-align: center;" width="100px">Tipo</th>
                                     <th style="text-align: center;">Detalle</th>
                                     <th style="text-align: center;" width="80px">Adjunto</th>
-                                    <th style="text-align: center;" width="120px">Acciones</th>
+                                    <?php if ($_SESSION['nivel'] > 2): ?>
+                                        <th style="text-align: center;" width="120px">Acciones</th>
+                                    <?php endif; ?>
                                 </tr>
                             </thead>
                             <tbody>
@@ -92,29 +86,31 @@ $tipoFiltro = $_GET['tipo'] ?? '';
                                         </td>
 
                                         <!-- Acciones -->
-                                        <td style="vertical-align: middle; text-align: center;">
-                                            <div class="d-flex justify-content-center">
-                                                <!-- Editar -->
-                                                <a href="?r=vistaEditarDirectiva&id=<?= $valor["idDirectiva"]; ?>"
-                                                    class="btn btn-success btn-sm mr-1"
-                                                    title="Editar directiva">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
+                                        <?php if ($_SESSION['nivel'] > 2): ?>
+                                            <td style="vertical-align: middle; text-align: center;">
+                                                <div class="d-flex justify-content-center">
+                                                    <!-- Editar -->
+                                                    <a href="?r=vistaEditarDirectiva&id=<?= $valor["idDirectiva"]; ?>"
+                                                        class="btn btn-success btn-sm mr-1"
+                                                        title="Editar directiva">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
 
-                                                <!-- Eliminar (solo si no es general) -->
-                                                <?php if ($valor['tipo'] !== 'general'): ?>
-                                                    <form method="post" style="display:inline-block;">
-                                                        <input type="hidden" name="idEliminar" value="<?= $valor["idDirectiva"]; ?>">
-                                                        <button type="submit"
-                                                            class="btn btn-danger btn-sm"
-                                                            title="Eliminar directiva"
-                                                            onclick="return confirm('¿Seguro que deseas eliminar PERMANENTEMENTE esta directiva?');">
-                                                            <i class="fas fa-trash-alt"></i>
-                                                        </button>
-                                                    </form>
-                                                <?php endif; ?>
-                                            </div>
-                                        </td>
+                                                    <!-- Eliminar (solo si no es general) -->
+                                                    <?php if ($valor['tipo'] !== 'general'): ?>
+                                                        <form method="post" style="display:inline-block;">
+                                                            <input type="hidden" name="idEliminar" value="<?= $valor["idDirectiva"]; ?>">
+                                                            <button type="submit"
+                                                                class="btn btn-danger btn-sm"
+                                                                title="Eliminar directiva"
+                                                                onclick="return confirm('¿Seguro que deseas eliminar PERMANENTEMENTE esta directiva?');">
+                                                                <i class="fas fa-trash-alt"></i>
+                                                            </button>
+                                                        </form>
+                                                    <?php endif; ?>
+                                                </div>
+                                            </td>
+                                        <?php endif; ?>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
@@ -124,7 +120,9 @@ $tipoFiltro = $_GET['tipo'] ?? '';
                                     <th style="text-align: center;">Tipo</th>
                                     <th style="text-align: center;">Detalle</th>
                                     <th style="text-align: center;">Adjunto</th>
-                                    <th style="text-align: center;">Acciones</th>
+                                    <?php if ($_SESSION['nivel'] > 2): ?>
+                                        <th style="text-align: center;">Acciones</th>
+                                    <?php endif; ?>
                                 </tr>
                             </tfoot>
                         </table>

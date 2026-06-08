@@ -1,5 +1,6 @@
 <?php
-require_once('modelos/mensajes.modelo.php');
+//require_once('modelos/mensajes.modelo.php');
+require_once __DIR__ . "/../modelos/mensajes.modelo.php";
 
 class ControladorMensajes
 {
@@ -53,6 +54,14 @@ class ControladorMensajes
         return null;
     }
 
+    //bandeja de entrada
+    static public function crtMostrarMensajesRecibidos($item, $valor)
+    {
+        Auth::check('mensajes', 'crtMostrarMensajesEnviados'); //para no afectar lo ya creado pero deberia tener su propio permiso
+        $respuesta = ModeloMensajes::mdlMostrarMensajes($item, $valor);
+        return $respuesta;
+    }
+
     static public function crtMostrarMensajesEnviados($item, $valor)
     {
         Auth::check('mensajes', 'crtMostrarMensajesEnviados');
@@ -68,6 +77,16 @@ class ControladorMensajes
         return $respuesta;
 
         exit;
+    }
+    static public function crtMarcarLeido($id)
+    {
+        //Auth::check('mensajes', 'crtMarcarLeido'); 
+        return ModeloMensajes::mdlMarcarLeido($id);
+    }
+    static public function crtMarcarNoLeido($id)
+    {
+        //Auth::check('mensajes', 'crtMarcarNoLeido'); 
+        return ModeloMensajes::mdlMarcarNoLeido($id);
     }
 
     static public function puedeEnviar($id_remitente, $id_destinatario, $idMensajeOriginal = null)

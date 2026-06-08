@@ -8,7 +8,8 @@ class ControladorDirectivas
     /* GUARDAR DIRECTIVAS */
     static public function crtGuardarDirectiva()
     {
-        Auth::check('directivas', 'crtGuardarDirectiva');
+        //Auth::check('directivas', 'crtGuardarDirectiva');
+        Auth::check('directivas', 'vistaCrearDirectiva');
         if (isset($_POST["id_objetivo"])) {
             if (session_status() !== PHP_SESSION_ACTIVE) {
                 session_start();
@@ -38,17 +39,22 @@ class ControladorDirectivas
                 $datos = array(
                     "id_objetivo" => $_POST["id_objetivo"],
                     "detalle"     => $_POST["detalle"],
-                    "adjunto"     => $rutaAdjunto
+                    "adjunto"     => $rutaAdjunto,
+                    "tipo"        => $_POST["tipo"] ?? 'general' // valor por defecto
                 );
+
 
                 // 3. Guardar directiva
                 $respuesta = ModeloDirectivas::mdlGuardarDirectiva($tabla, $datos);
 
                 if ($respuesta === "ok") {
                     // ✅ Insertar alertas para supervisores y vigiladores activos
-                    $sqlUsuarios = "SELECT idUsuario FROM usuarios 
-                                WHERE rol IN ('Vigilador', 'Supervisor I', 'Supervisor II') 
-                                  AND activo = 1";
+                    $sqlUsuarios = "SELECT u.idUsuario
+                                            FROM usuarios u
+                                            JOIN roles r ON u.rol_id = r.id
+                                            WHERE r.categoria IN ('operativo','referente','supervisor')
+                                            AND u.activo = 1
+                                            AND r.activo = 1;";
                     $usuarios = $conexion->query($sqlUsuarios)->fetchAll(PDO::FETCH_ASSOC);
 
                     $sqlAlerta = "INSERT INTO alertas (tipo, mensaje, usuario_id, objetivo_id, leida, creada_en)
@@ -87,7 +93,7 @@ class ControladorDirectivas
     /* MODIFICAR DIRECTIVAS */
     static public function crtModificarDirectiva()
     {
-        Auth::check('directivas', 'crtModificarDirectiva');
+        Auth::check('directivas', 'vistaEditarDirectiva');
         if (isset($_POST["idDirectiva"])) {
             try {
                 $conexion = Conexion::conectar();
@@ -98,7 +104,7 @@ class ControladorDirectivas
                 $idDirectiva  = intval($_POST["idDirectiva"]);
                 $id_objetivo  = intval($_POST["id_objetivo"]);
                 $detalle      = $_POST["detalle"];
-                $tipo         = $_POST["tipo"]; // nuevo campo
+                $tipo         = $_POST["tipo"]; // ahora obligatorio
                 $rutaAdjuntoViejo = $_POST["adjuntoActual"];
 
                 // Procesar nuevo archivo si existe
@@ -120,6 +126,7 @@ class ControladorDirectivas
                     $rutaAdjuntoFinal = $rutaAdjuntoViejo;
                 }
 
+                // Armamos datos completos
                 $datos = [
                     "idDirectiva" => $idDirectiva,
                     "id_objetivo" => $id_objetivo,
@@ -151,6 +158,7 @@ class ControladorDirectivas
             }
         }
     }
+
 
 
     static public function crtEliminarDirectiva()

@@ -27,7 +27,8 @@ $roles = ModeloRoles::mdlObtenerRolesActivos();
 $nivelLogueado = isset($_SESSION['nivel']) ? floatval($_SESSION['nivel']) : 1.0;
 
 // Helpers de bloqueo: niveles 1 y 2 solo pueden editar campos vacíos
-function lockIfFilled(bool $isBlocked, $value): bool {
+function lockIfFilled(bool $isBlocked, $value): bool
+{
     return $isBlocked && strlen(trim((string)$value)) > 0;
 }
 $isBlockedLevel = in_array($nivelLogueado, [1.0, 2.0], true);
@@ -37,8 +38,9 @@ $u = $usuario ?: [];
 ?>
 
 <?php if (!$usuario): ?>
-<div class="alert alert-danger">No se encontró el usuario solicitado.</div>
-<?php return; endif; ?>
+    <div class="alert alert-danger">No se encontró el usuario solicitado.</div>
+<?php return;
+endif; ?>
 
 <div class="card">
     <div class="card card-info">
@@ -60,17 +62,21 @@ $u = $usuario ?: [];
                     <h5>Foto de Perfil</h5>
                     <div class="text-center">
                         <img class="profile-user-img img-fluid w-50"
-                             src="<?= htmlspecialchars($u['imgPerfil'] ?? '') ?>"
-                             alt="Foto de perfil"
-                             style="cursor: default;">
+                            src="<?= htmlspecialchars($u['imgPerfil'] ?? '') ?>"
+                            alt="Foto de perfil"
+                            data-toggle="modal"
+                            data-target="#modalImagen"
+                            style="cursor: default;">
                     </div>
 
                     <h5 class="mt-5">Foto Carnet Repriv</h5>
                     <div class="text-center">
                         <img src="<?= htmlspecialchars($u['imgRepriv'] ?? '') ?>"
-                             alt="Carnet de REPRIV"
-                             width="400"
-                             style="cursor: default;">
+                            alt="Carnet de REPRIV"
+                            data-toggle="modal"
+                            data-target="#modalImagen"
+                            width="400"
+                            style="cursor: default;">
                     </div>
                 </div>
 
@@ -86,8 +92,7 @@ $u = $usuario ?: [];
                                 name="nombre"
                                 value="<?= htmlspecialchars($u['nombre'] ?? '') ?>"
                                 <?= lockIfFilled($isBlockedLevel, $u['nombre'] ?? '') ? 'readonly' : '' ?>
-                                required
-                            >
+                                required>
                         </div>
 
                         <div class="form-group col-sm-12 col-md-4">
@@ -99,8 +104,7 @@ $u = $usuario ?: [];
                                 name="apellido"
                                 value="<?= htmlspecialchars($u['apellido'] ?? '') ?>"
                                 <?= lockIfFilled($isBlockedLevel, $u['apellido'] ?? '') ? 'readonly' : '' ?>
-                                required
-                            >
+                                required>
                         </div>
 
                         <div class="form-group col-sm-12 col-md-4">
@@ -114,8 +118,7 @@ $u = $usuario ?: [];
                                 maxlength="8"
                                 value="<?= htmlspecialchars($u['dni'] ?? '') ?>"
                                 readonly
-                                required
-                            >
+                                required>
                             <small id="caracteresRestantes" class="form-text text-muted">Caracteres restantes: 8</small>
                         </div>
 
@@ -127,24 +130,23 @@ $u = $usuario ?: [];
                                 name="f_nac"
                                 value="<?= htmlspecialchars($u['f_nac'] ?? '') ?>"
                                 <?= lockIfFilled($isBlockedLevel, $u['f_nac'] ?? '') ? 'readonly' : '' ?>
-                                required
-                            >
+                                required>
                         </div>
 
                         <div class="form-group col-sm-12 col-md-4">
                             <label class="form-label">Rol de Usuario</label>
                             <?php
-                                $lockRol = lockIfFilled($isBlockedLevel, $u['rol_id'] ?? '');
+                            $lockRol = lockIfFilled($isBlockedLevel, $u['rol_id'] ?? '');
                             ?>
                             <select
                                 class="custom-select"
                                 name="rol"
                                 <?= $lockRol ? 'disabled' : '' ?>
-                                required >
+                                required>
                                 <?php foreach ($roles as $rol): ?>
                                     <option
                                         value="<?= (int)$rol['id'] ?>"
-                                        <?= ((string)($u['rol_id'] ?? '') === (string)$rol['id']) ? 'selected' : '' ?> >
+                                        <?= ((string)($u['rol_id'] ?? '') === (string)$rol['id']) ? 'selected' : '' ?>>
                                         <?= htmlspecialchars($rol['nombre']) ?>
                                     </option>
                                 <?php endforeach; ?>
@@ -164,8 +166,7 @@ $u = $usuario ?: [];
                                 name="telefono"
                                 value="<?= htmlspecialchars($u['telefono'] ?? '') ?>"
                                 <?= lockIfFilled($isBlockedLevel, $u['telefono'] ?? '') ? 'readonly' : '' ?>
-                                required
-                            >
+                                required>
                         </div>
 
                         <div class="form-group col-sm-12 col-md-4">
@@ -176,8 +177,7 @@ $u = $usuario ?: [];
                                 placeholder="2612223333"
                                 name="tel_emergencia"
                                 value="<?= htmlspecialchars($u['tel_emergencia'] ?? '') ?>"
-                                <?= lockIfFilled($isBlockedLevel, $u['tel_emergencia'] ?? '') ? 'readonly' : '' ?>
-                            >
+                                <?= lockIfFilled($isBlockedLevel, $u['tel_emergencia'] ?? '') ? 'readonly' : '' ?>>
                         </div>
 
                         <div class="form-group col-sm-12 col-md-4">
@@ -188,8 +188,7 @@ $u = $usuario ?: [];
                                 placeholder="Juan Perez"
                                 name="nombre_contacto"
                                 value="<?= htmlspecialchars($u['nombre_contacto'] ?? '') ?>"
-                                <?= lockIfFilled($isBlockedLevel, $u['nombre_contacto'] ?? '') ? 'readonly' : '' ?>
-                            >
+                                <?= lockIfFilled($isBlockedLevel, $u['nombre_contacto'] ?? '') ? 'readonly' : '' ?>>
                         </div>
 
                         <div class="form-group col-sm-12 col-md-4">
@@ -200,8 +199,7 @@ $u = $usuario ?: [];
                                 placeholder="Parentesco"
                                 name="parentesco"
                                 value="<?= htmlspecialchars($u['parentesco'] ?? '') ?>"
-                                <?= lockIfFilled($isBlockedLevel, $u['parentesco'] ?? '') ? 'readonly' : '' ?>
-                            >
+                                <?= lockIfFilled($isBlockedLevel, $u['parentesco'] ?? '') ? 'readonly' : '' ?>>
                         </div>
 
                         <div class="form-group col-sm-12 col-md-5">
@@ -213,23 +211,21 @@ $u = $usuario ?: [];
                                 name="domicilio"
                                 value="<?= htmlspecialchars($u['domicilio'] ?? '') ?>"
                                 <?= lockIfFilled($isBlockedLevel, $u['domicilio'] ?? '') ? 'readonly' : '' ?>
-                                required
-                            >
+                                required>
                         </div>
 
                         <div class="form-group col-sm-12 col-md-5">
                             <label class="form-label">Provincia</label>
                             <?php
-                                $lockProv = lockIfFilled($isBlockedLevel, $u['provincia'] ?? '');
-                                $provValue = htmlspecialchars($u['provincia'] ?? '');
+                            $lockProv = lockIfFilled($isBlockedLevel, $u['provincia'] ?? '');
+                            $provValue = htmlspecialchars($u['provincia'] ?? '');
                             ?>
                             <select
                                 id="provincia"
                                 name="provincia"
                                 class="form-control"
                                 <?= $lockProv ? 'disabled' : '' ?>
-                                required
-                            >
+                                required>
                                 <?php if ($provValue !== ''): ?>
                                     <option value="<?= $provValue ?>" selected><?= $provValue ?></option>
                                 <?php else: ?>
@@ -253,16 +249,14 @@ $u = $usuario ?: [];
                                     <input
                                         type="hidden"
                                         name="imgPerfilActual"
-                                        value="<?= htmlspecialchars($u['imgPerfil'] ?? '') ?>"
-                                    >
+                                        value="<?= htmlspecialchars($u['imgPerfil'] ?? '') ?>">
                                     <input
                                         type="file"
                                         class="custom-file-input"
                                         id="inputGroupFile01"
                                         name="imgPerfil"
                                         accept=".png,.jpg,.jpeg"
-                                        <?= lockIfFilled($isBlockedLevel, $u['imgPerfil'] ?? '') ? 'disabled' : '' ?>
-                                    >
+                                        <?= lockIfFilled($isBlockedLevel, $u['imgPerfil'] ?? '') ? 'disabled' : '' ?>>
                                     <label class="custom-file-label" for="inputGroupFile01">Selecciona un archivo</label>
                                 </div>
                             </div>
@@ -276,16 +270,14 @@ $u = $usuario ?: [];
                                     <input
                                         type="hidden"
                                         name="imgReprivActual"
-                                        value="<?= htmlspecialchars($u['imgRepriv'] ?? '') ?>"
-                                    >
+                                        value="<?= htmlspecialchars($u['imgRepriv'] ?? '') ?>">
                                     <input
                                         type="file"
                                         class="custom-file-input"
                                         id="inputGroupFile02"
                                         name="imgRepriv"
                                         accept=".png,.jpg,.jpeg"
-                                        <?= lockIfFilled($isBlockedLevel, $u['imgRepriv'] ?? '') ? 'disabled' : '' ?>
-                                    >
+                                        <?= lockIfFilled($isBlockedLevel, $u['imgRepriv'] ?? '') ? 'disabled' : '' ?>>
                                     <label class="custom-file-label" for="inputGroupFile02">Selecciona un archivo</label>
                                 </div>
                             </div>
@@ -293,7 +285,7 @@ $u = $usuario ?: [];
                         </div>
                     </div>
 
-                    <?php if (isset($_SESSION['nivel']) && in_array((int)$_SESSION['nivel'], [5, 99], true)):?>
+                    <?php if (isset($_SESSION['nivel']) && in_array((int)$_SESSION['nivel'], [5, 99], true)): ?>
                         <div class="form-group col-sm-12 col-md-12 p-3 border border-secondary">
                             <label class="form-label">Estado y seguridad</label>
 
@@ -324,15 +316,27 @@ $u = $usuario ?: [];
         </form>
     </div>
 </div>
+<div class="modal fade" id="modalImagen" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0">
+            <button type="button" class="close position-absolute"
+                style="right: 10px; top: 10px; z-index: 10;"
+                data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <img src="" class="img-fluid rounded" style="max-height: 90vh; object-fit: contain;">
+        </div>
+    </div>
+</div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    const checkbox = document.getElementById("customSwitch2");
-    const motivoContainer = document.getElementById("motivoContainer");
-    if (checkbox && motivoContainer) {
-        checkbox.addEventListener("change", function() {
-            motivoContainer.style.display = this.checked ? "block" : "none";
-        });
-    }
-});
+    document.addEventListener("DOMContentLoaded", function() {
+        const checkbox = document.getElementById("customSwitch2");
+        const motivoContainer = document.getElementById("motivoContainer");
+        if (checkbox && motivoContainer) {
+            checkbox.addEventListener("change", function() {
+                motivoContainer.style.display = this.checked ? "block" : "none";
+            });
+        }
+    });
 </script>

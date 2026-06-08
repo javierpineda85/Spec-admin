@@ -19,32 +19,50 @@ $baseObjetivo = $resBase[0] ?? ['idObjetivo' => null, 'nombre' => 'Sin objetivo 
 // Solo para Vigilador/Referente cargamos su turno
 $turnoHoy     = null;
 $turnoAyer    = null;
-if (in_array($rol_usuario, ['Vigilador', 'Referente'])) {
+if (in_array($rol_usuario, ['VIGILADOR', 'REFERENTE'])) {
     $hoy        = $fecha;
     $ayer       = date('Y-m-d', strtotime('-1 day'));
     // Turno hoy
-    $sqlHoy     = "SELECT o.idObjetivo, o.nombre
-                     FROM turnos t
-                     JOIN objetivos o ON t.objetivo_id = o.idObjetivo
-                    WHERE t.usuario_id = ? AND t.fecha = ?
-                    LIMIT 1";
-    $tmpHoy     = $db->consultas($sqlHoy, [$vigilador_id, $hoy]);
-    $turnoHoy   = $tmpHoy[0] ?? null;
+    $sqlHoy = "SELECT 
+              o.idObjetivo, 
+              o.nombre AS nombre_objetivo, 
+              p.puesto AS nombre_puesto,
+              p.idPuesto AS puesto_id
+           FROM turnos t
+           JOIN objetivos o ON t.objetivo_id = o.idObjetivo
+           LEFT JOIN rotaciones_puestos rp 
+              ON rp.objetivo_id = t.objetivo_id 
+             AND rp.fecha = t.fecha 
+             AND rp.codigo_turno = t.codigo_turno 
+             AND rp.usuario_id = t.usuario_id
+           LEFT JOIN puestos p ON rp.puesto_id = p.idPuesto
+           WHERE t.usuario_id = ? 
+             AND t.fecha = ? 
+             AND t.rol = ? 
+             AND t.tipo_turno = 'Normal'
+           LIMIT 1";
+
+    $tmpHoy = $db->consultas($sqlHoy, [$vigilador_id, $hoy, $rol_usuario]);
+    $turnoHoy = $tmpHoy[0] ?? null;
+
     // Turno nocturno ayer
-    $sqlAyer    = "SELECT o.idObjetivo, o.nombre
-                     FROM turnos t
-                     JOIN objetivos o ON t.objetivo_id = o.idObjetivo
-                    WHERE t.usuario_id = ? AND t.fecha = ? AND t.codigo_turno='N'
-                    LIMIT 1";
-    $tmpAyer    = $db->consultas($sqlAyer, [$vigilador_id, $ayer]);
+    $sqlAyer = "SELECT o.idObjetivo, o.nombre AS nombre_objetivo
+              FROM turnos t
+              JOIN objetivos o ON t.objetivo_id = o.idObjetivo
+             WHERE t.usuario_id = ? 
+               AND t.fecha = ? 
+               AND t.codigo_turno = 'N' 
+               AND t.rol = ? 
+               AND t.tipo_turno = 'Normal'
+             LIMIT 1";
+    $tmpAyer = $db->consultas($sqlAyer, [$vigilador_id, $ayer, $rol_usuario]);
     $turnoAyer  = $tmpAyer[0] ?? null;
 }
 
 // Decidimos objetivo inicial
-$objetivoAsignado = in_array($rol_usuario, ['Vigilador', 'Referente'])
+$objetivoAsignado = in_array($rol_usuario, ['VIGILADOR', 'REFERENTE'])
     ? ($turnoHoy ?? $baseObjetivo)
     : $baseObjetivo;
-
 ?>
 <!-- Default box -->
 <div class="card">
@@ -55,34 +73,15 @@ $objetivoAsignado = in_array($rol_usuario, ['Vigilador', 'Referente'])
             <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
                 <i class="fas fa-minus"></i>
             </button>
-
         </div>
     </div>
     <div class="card-body">
 
         <form class="form-horizontal" id="entradaSalidaForm" method="POST">
-            <?php if (!empty($_SESSION['success_message'])): ?>
-                <div class="alert alert-success alert-dismissible mt-3">
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    <i class="icon fas fa-check"></i>
-                    <?= $_SESSION['success_message'];
-                    unset($_SESSION['success_message']); ?>
-                </div>
-            <?php endif; ?>
-            <?php if (!empty($_SESSION['error_message'])): ?>
-                <div class="alert alert-danger alert-dismissible mt-3">
-                    <button type="button" class="close" data-dismiss="alert">&times;</button>
-                    <i class="icon fas fa-exclamation-circle"></i>
-                    <?= $_SESSION['error_message'];
-                    unset($_SESSION['error_message']); ?>
-                </div>
-
-            <?php endif; ?>
             <div class="card-body">
                 <h6>Para registrar la entrada al servicio, solo presiona "Registrar"</h6>
                 <div class="row mt-3">
-
-                    <div class="form-group col-sm-12 col-md-3">
+                    <div class="form-group col-sm-12 col-md-5">
                         <label class="form-label fw-bold">Usuario</label>
                         <input type="text" class="form-control" name="idUsuario" value="<?php echo $_SESSION['idUsuario']; ?>" hidden>
                         <input type="text" class="form-control" name="usuario" value="<?php echo $_SESSION['apellido'] . " " . $_SESSION['nombre']; ?>" readonly>
@@ -97,13 +96,22 @@ $objetivoAsignado = in_array($rol_usuario, ['Vigilador', 'Referente'])
                     </div>
                 </div>
                 <div class="row">
-                    <div class="form-group col-sm-12 col-md-4">
+                    <div class="form-group col-sm-12 col-md-3">
                         <label class="form-label fw-bold">Objetivo:</label>
                         <!-- En todos los casos envío hidden + muestro readonly -->
                         <input type="hidden" name="objetivo_id" value="<?= $objetivoAsignado['idObjetivo'] ?>">
-                        <input type="text" class="form-control"
-                            value="<?= htmlspecialchars($objetivoAsignado['nombre']) ?>" readonly>
+                        <input type="text" class="form-control" name="objetivo_nombre"
+                            value="<?= htmlspecialchars($objetivoAsignado['nombre_objetivo'] ?? $objetivoAsignado['nombre'] ?? 'Sin objetivo definido') ?>" readonly>
                     </div>
+                    <?php if (!empty($turnoHoy['nombre_puesto'])): ?>
+                        <div class="form-group col-sm-12 col-md-3">
+                            <?php if (!empty($turnoHoy['nombre_puesto'])): ?>
+                                <input type="hidden" name="puesto_id" value="<?= htmlspecialchars($turnoHoy['puesto_id'] ?? 0) ?>">
+                            <?php endif; ?>
+                            <label class="form-label fw-bold">Puesto asignado:</label>
+                            <input type="text" class="form-control" value="<?= htmlspecialchars($turnoHoy['nombre_puesto']) ?>" readonly>
+                        </div>
+                    <?php endif; ?>
                     <div class="form-group col-sm-12 col-md-3">
                         <label class="form-label fw-bold">Presiona para cambiar</label>
                         <div class="custom-control custom-switch ms-2">
@@ -112,7 +120,6 @@ $objetivoAsignado = in_array($rol_usuario, ['Vigilador', 'Referente'])
                         </div>
                         <small class="form-text text-muted" id="switchText">Se registrará la entrada</small>
                     </div>
-
                 </div>
                 <div class="row">
                     <div class="form-group col-sm-12 col-md-6">
@@ -125,13 +132,10 @@ $objetivoAsignado = in_array($rol_usuario, ['Vigilador', 'Referente'])
             <!-- /.card-body -->
             <div class="card-footer col-sm-12 col-md-6">
                 <input type="submit" class="btn btn-success" value="Registrar" name="Registrar">
-
             </div>
             <!-- /.card-footer -->
         </form>
     </div>
-
-
 </div>
 
 <script>

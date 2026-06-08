@@ -26,12 +26,22 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('fetch', event => {
+  const url = new URL(event.request.url);
+
+  // Si la URL tiene parámetro "r", es una ruta dinámica → no cachear
+  if (url.searchParams.has('r')) {
+    return; // dejar que el navegador haga la request normal
+  }
+
+  // Para todo lo demás (assets estáticos)
   event.respondWith(
     caches.match(event.request).then(response => {
       return response || fetch(event.request);
     })
   );
 });
+
+
 
 // ===========================================
 // 🔔 Notificaciones Push
@@ -64,12 +74,12 @@ self.addEventListener('push', event => {
 });
 
 // 🔁 Al hacer clic en la notificación
-self.addEventListener('notificationclick', function(event) {
+self.addEventListener('notificationclick', function (event) {
   event.notification.close();
 
   // Redirigir al sistema
   event.waitUntil(
-    clients.matchAll({ type: "window", includeUncontrolled: true }).then(function(clientList) {
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then(function (clientList) {
       for (const client of clientList) {
         if ('focus' in client) {
           if (event.notification.data && event.notification.data.url) {

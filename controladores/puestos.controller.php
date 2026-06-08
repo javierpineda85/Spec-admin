@@ -5,7 +5,8 @@ class ControladorPuestos
 {
     public static function ctrGuardarPuesto()
     {
-        Auth::check('puestos', 'ctrGuardarPuesto');
+        //Auth::check('puestos', 'ctrGuardarPuesto');
+        Auth::check('puestos', 'vistaCrearPuestos');
 
         if (empty($_POST['puesto']) || empty($_POST['objetivo_id']) || empty($_POST['tipo'])) {
             ToastifyController::error('Faltan campos obligatorios.');
@@ -51,12 +52,15 @@ class ControladorPuestos
         }
 
         ToastifyController::success('Puesto y turnos registrados correctamente.');
+        header('Location:?r=crear_puesto');
+        exit;
     }
 
 
     static public function crtModificarPuesto()
     {
-        Auth::check('puestos', 'crtModificarPuesto');
+        //Auth::check('puestos', 'crtModificarPuesto');
+        Auth::check('puestos', 'vistaEditarPuesto');
         if (isset($_POST["puesto"])) {
 
             try {
@@ -213,7 +217,7 @@ class ControladorPuestos
     /** Vista principal (micro-sección) */
     public static function vistaRotaciones()
     {
-        Auth::check('puestos', 'gestionarRotaciones');
+        Auth::check('puestos', 'vistaRotaciones');
 
         $objetivo_id = (int)($_GET['objetivo_id'] ?? 0);
         $mes = $_GET['mes'] ?? date('Y-m');
@@ -234,7 +238,10 @@ class ControladorPuestos
             $turnos      = ModeloPuestos::mdlObtenerTurnosMesObjetivo($objetivo_id, $mes);
             $rotaciones  = ModeloPuestos::mdlObtenerRotacionesMes($objetivo_id, $mes);
         }
-
+        $turnosPorPuesto = [];
+        foreach ($puestos as $p) {
+            $turnosPorPuesto[$p['idPuesto']] = ModeloPuestos::mdlObtenerTurnosPorPuesto($objetivo_id, $p['idPuesto'], $mes);
+        }
         include 'vistas/paginas/puestos/asignar_puestos.php';
     }
 
@@ -242,8 +249,8 @@ class ControladorPuestos
     /** API: guardar o actualizar una rotación (AJAX) */
     public static function crtGuardarRotacion()
     {
-        Auth::check('puestos', 'gestionarRotaciones');
-
+        //Auth::check('puestos', 'gestionarRotaciones');
+        Auth::check('puestos', 'vistaRotaciones');
         $data = [
             'objetivo_id' => (int)($_POST['objetivo_id'] ?? 0),
             'fecha' => $_POST['fecha'] ?? '',
@@ -263,7 +270,7 @@ class ControladorPuestos
     /** API: eliminar rotación (AJAX) */
     public static function crtEliminarRotacion()
     {
-        Auth::check('puestos', 'gestionarRotaciones');
+        Auth::check('puestos', 'crtEliminarRotacion');
 
         $idRot = (int)($_POST['idRotacion'] ?? 0);
         $ok = ModeloPuestos::mdlEliminarRotacion($idRot, (int)($_SESSION['idUsuario'] ?? 0));
@@ -276,7 +283,7 @@ class ControladorPuestos
     /** API: swap entre dos vigiladores en rango (AJAX) */
     public static function crtSwapRotacion()
     {
-        Auth::check('puestos', 'gestionarRotaciones');
+        Auth::check('puestos', 'crtSwapRotacion');
 
         $res = ModeloPuestos::mdlSwapRotaciones([
             'objetivo_id' => (int)($_POST['objetivo_id'] ?? 0),
@@ -297,17 +304,39 @@ class ControladorPuestos
     /** API: autollenado equitativo (round-robin) */
     public static function crtAutoRotarEquitativo()
     {
-        Auth::check('puestos', 'gestionarRotaciones');
 
-        $res = ModeloPuestos::mdlAutoRotarEquitativo(
-            (int)($_POST['objetivo_id'] ?? 0),
-            $_POST['mes'] ?? date('Y-m'),
-            $_POST['codigo_turno'] ?? 'D',
-            (int)($_SESSION['idUsuario'] ?? 0)
-        );
+        // 🔒 Verificación de permisos:
+        // Asegura que el usuario tenga permiso para gestionar rotaciones.
+        Auth::check('puestos', 'crtAutoRotarEquitativo');
 
-        header('Content-Type: application/json');
-        echo json_encode($res);
+        try {
+            // 📥 Llamada al modelo con parámetros saneados:
+            $res = ModeloPuestos::mdlAutoRotarEquitativo(
+                (int)($_POST['objetivo_id'] ?? 0),
+                $_POST['mes'] ?? date('Y-m'),
+                $_POST['codigo_turno'] ?? 'D',
+                (int)($_SESSION['idUsuario'] ?? 0)
+            );
+
+            // ✅ El modelo debería devolver un array con al menos:
+            // ['ok' => true/false, 'msg' => 'texto', 'count' => número]
+        } catch (Throwable $e) {
+            // ⚠️ Captura cualquier excepción y devuelve JSON de error
+            $res = [
+                'ok'   => false,
+                'msg'  => 'Error interno: ' . $e->getMessage(),
+                'count' => 0
+            ];
+        }
+
+        // 📤 Respuesta JSON:
+        // Cabecera explícita para que el cliente sepa que es JSON
+        header('Content-Type: application/json; charset=UTF-8');
+
+        // Codificamos el array como JSON. JSON_UNESCAPED_UNICODE evita problemas con acentos.
+        echo json_encode($res, JSON_UNESCAPED_UNICODE);
+
+        // 🚪 Exit para cortar el flujo y evitar que se renderice la plantilla HTML
         exit;
     }
 }

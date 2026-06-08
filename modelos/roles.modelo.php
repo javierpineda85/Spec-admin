@@ -4,8 +4,8 @@ class ModeloRoles
     public static function listar(bool $soloActivos = true)
     {
         $db = new Conexion;
-        $sql = "SELECT id, nombre, alias, tipo, reservado, activo FROM roles";
-        if ($soloActivos) $sql .= " WHERE activo = 1";
+        $sql = "SELECT id, nombre, alias, tipo, reservado, activo FROM roles WHERE nivel <> 99";
+        if ($soloActivos) $sql .= " AND activo = 1 ";
         $sql .= " ORDER BY nombre";
         return $db->consultas($sql);
     }

@@ -17,7 +17,8 @@ class RolesController
 
     public static function ctrGuardarRol()
     {
-        Auth::check('roles', 'ctrGuardarRol');
+        //Auth::check('roles', 'ctrGuardarRol');
+        Auth::check('roles', 'vistaCrearRol');
         try {
             $nombre    = trim($_POST['nombre'] ?? '');
             $alias     = trim($_POST['alias'] ?? '') ?: null;
@@ -32,6 +33,7 @@ class RolesController
             $nivelesPorCategoria = [
                 'operativo'      => 1,
                 'referente'      => 2,
+                'baseOperativa'  => 2,
                 'supervisor'     => 3,
                 'administrativo' => 4,
                 'direccion'      => 5,
@@ -71,8 +73,8 @@ class RolesController
 
     public static function ctrActualizarRol()
     {
-        Auth::check('roles', 'ctrActualizarRol');
-
+        //Auth::check('roles', 'ctrActualizarRol');
+        Auth::check('roles', 'vistaEditarRol');
         try {
             $id        = (int)($_POST['id'] ?? 0);
             $nombre    = trim($_POST['nombre'] ?? '');
@@ -89,6 +91,7 @@ class RolesController
             $nivelesPorCategoria = [
                 'operativo'      => 1,
                 'referente'      => 2,
+                'baseOperativa'  => 2,
                 'supervisor'     => 3,
                 'administrativo' => 4,
                 'direccion'      => 5,
@@ -173,6 +176,7 @@ class RolesController
                     COALESCE(alias, descripcion) AS alias, 
                     descripcion
                     FROM permissions
+                    WHERE visible = 1
                     ORDER BY controlador, accion"
         );
 

@@ -1,13 +1,6 @@
 <?php
-$mesActual = date('m');
-
-$db = new Conexion;
-$cumples = $db->consultas("
-    SELECT nombre, apellido, rol, f_nac 
-    FROM usuarios 
-    WHERE MONTH(f_nac) = $mesActual
-    ORDER BY DAY(f_nac)
-");
+/*
+$cumples  ya viene del controlador que carga la vista */
 ?>
 <div class="card">
     <div class="card-header bg-primary text-white">

@@ -1,16 +1,25 @@
 // /js/cronograma.js
+
 const Cronograma = (() => {
     // ---------- Config y estado ----------
-    const HOURS_BY_CODE = {
-        D: 12, N: 12, N15: 15, '6H': 6, '7H': 7, '8H': 8, '9H': 9, '9RF': 9, '9HEX': 9, '13H': 13, '14H': 14,
-        'D/LEM': 12, 'D/GU': 12, 'D/AR': 12, 'D/LUJ': 12, 'D/LH': 12, 'D/GC': 12, 'D/MA': 12, BE: 12,
-        'GP/D': 0, 'GP/N': 0
-    };
+    // Estas constantes siguen siendo válidas
     const OFF_CODES = new Set(['F', 'E', 'P', 'L', 'S']);
-    const JORNADA_NORMAL = new Set(['D', 'N', '6H', '7H', '8H', '9H', '9RF', '9HEX', '13H', '14H', 'N15', 'D/LEM', 'D/GU', 'D/AR', 'D/LUJ', 'D/LH', 'D/GC', 'D/MA', 'BE']);
-    const REFERENCIAS = new Set(['SALA', 'MIC', 'F/JUS', 'NOTT', 'GUE', 'PER', 'PAL', 'BOS', 'OFI']);
-    const LICENCIAS = new Set(['F', 'GP/D', 'GP/N', 'E', 'P', 'L', 'S']); // ojo: GP/D, GP/N se tratan como licencia para coexistencia
+    const LICENCIAS = new Set(['F', 'GP/D', 'GP/N', 'E', 'P', 'L', 'S']);
+    //const JORNADA_NORMAL = new Set(['D', 'N', '6H', '7H', '8H', '9H', '9RF', '9HEX', '13H', '14H', 'N15', 'D/LEM', 'D/GU', 'D/AR', 'D/LUJ', 'D/LH', 'D/GC', 'D/MA', 'BE']);
+    const TURNOS_JORNADA = ['D', 'N', ...Array.from({ length: 24 }, (_, i) => `${i + 1}H`)];
+    const JORNADA_NORMAL = new Set(TURNOS_JORNADA);
+    const TURNOS_12_HORAS = new Set(['D', 'N', 'GP/D', 'GP/N']);
+    const HOUR_CODE_RE = /^(\d+(?:[.,]\d+)?)H$/;
+    const RESUMEN_BASE_CODES = [
+        'D', 'N', 'GP/D', 'GP/N',
+        ...Array.from({ length: 24 }, (_, i) => `${i + 1}H`)
+    ];
 
+    // Estas dos se reemplazan por datos dinámicos
+    let SIGLAS = {};       // { 'MIC': 'Microhospital', ... }
+    let HORAS_SIGLA = {};  // { 'MIC': 12, 'PAL': 8, ... }
+    let OBJETIVO_SIGLA = {};
+    let objetivoActual = null;
     let cfg = {};
     let boot = {};
     let estado = {
@@ -21,6 +30,77 @@ const Cronograma = (() => {
         datosPrevios: {},
         horasPorUsuario: {}
     };
+    const normalizarCodigo = code => (code || '').toString().toUpperCase().trim();
+
+    function procesarSiglas(data, objetivoVal) {
+        objetivoActual = String(objetivoVal || '');
+        SIGLAS = {};
+        HORAS_SIGLA = {};
+        OBJETIVO_SIGLA = {};
+
+        const ordenadas = [...(data || [])].sort((a, b) => {
+            const aActual = String(a.objetivo_id ?? '') === objetivoActual ? 0 : 1;
+            const bActual = String(b.objetivo_id ?? '') === objetivoActual ? 0 : 1;
+            return aActual - bActual;
+        });
+
+        ordenadas.forEach(s => {
+            const sigla = normalizarCodigo(s.sigla);
+            if (!sigla || SIGLAS[sigla] !== undefined) return;
+            SIGLAS[sigla] = s.descripcion || sigla;
+            HORAS_SIGLA[sigla] = parseFloat(s.horas);
+            OBJETIVO_SIGLA[sigla] = s.objetivo_id ?? null;
+        });
+    }
+
+    function horasCodigo(code) {
+        const c = normalizarCodigo(code);
+        if (!c || OFF_CODES.has(c)) return 0;
+        if (TURNOS_12_HORAS.has(c)) return 12;
+
+        const hMatch = c.match(HOUR_CODE_RE);
+        if (hMatch) {
+            const hs = parseFloat(hMatch[1].replace(',', '.'));
+            return Number.isFinite(hs) ? hs : 0;
+        }
+
+        if (
+            OBJETIVO_SIGLA[c] !== undefined &&
+            OBJETIVO_SIGLA[c] !== null &&
+            objetivoActual &&
+            String(OBJETIVO_SIGLA[c]) !== objetivoActual
+        ) {
+            return 0;
+        }
+
+        const hs = parseFloat(HORAS_SIGLA[c]);
+        return Number.isFinite(hs) ? hs : 0;
+    }
+
+    function esCodigoValido(code) {
+        const c = normalizarCodigo(code);
+        return !c || JORNADA_NORMAL.has(c) || LICENCIAS.has(c) || HOUR_CODE_RE.test(c) || SIGLAS[c] !== undefined;
+    }
+
+    async function cargarSiglas(objetivoVal) {
+        const url = API_SIGLAS_URL;
+        const res = await fetch(url, {
+            credentials: 'include'
+        });
+
+        const text = await res.text();
+
+        let data = [];
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            console.error("No se pudo parsear JSON en cargarSiglas:", e);
+            data = [];
+        }
+
+        procesarSiglas(data, objetivoVal);
+    }
+
 
     // --- Función utilitaria ---
     function uniqueById(arr) {
@@ -115,28 +195,42 @@ const Cronograma = (() => {
             const clase = (dia === 0 || dia === 6 || esFeriado) ? 'bg-olive color-palette text-white' : '';
             th.push(`<th class="day-col ${clase}">${d}</th>`);
         }
+        // columnas de resumen por empleado
+        th.push('<th class="day-col">F</th>');
+        th.push('<th class="day-col">GP</th>');
         th.push('</tr></thead>');
         return th.join('');
     };
-
     const opcionesTurnoHTML = (seleccion) => {
-        const jornada = Array.from(JORNADA_NORMAL);
-        const referencias = Array.from(REFERENCIAS);
-        const licencias = Array.from(LICENCIAS);
+        const jornada = TURNOS_JORNADA;
+        const licencias = Array.from(LICENCIAS);      // F, E, P, L, S, GP/D, GP/N
 
         let html = `<option value=""></option>`;
+
+        // --- Jornada normal ---
         html += `<optgroup label="Jornada normal">`;
-        jornada.forEach(c => html += `<option value="${c}" ${seleccion === c ? 'selected' : ''}>${c}</option>`);
+        jornada.forEach(c => {
+            html += `<option value="${c}" ${seleccion === c ? 'selected' : ''}>${c}</option>`;
+        });
         html += `</optgroup>`;
-        html += `<optgroup label="Referencias">`;
-        referencias.forEach(c => html += `<option value="${c}" ${seleccion === c ? 'selected' : ''}>${c}</option>`);
+
+        // --- Siglas dinámicas ---
+        html += `<optgroup label="Servicios">`;
+        for (const sigla in SIGLAS) {
+            if (JORNADA_NORMAL.has(sigla) || LICENCIAS.has(sigla) || HOUR_CODE_RE.test(sigla)) continue;
+            html += `<option value="${sigla}" ${seleccion === sigla ? 'selected' : ''}>${sigla}</option>`;
+        }
         html += `</optgroup>`;
+
+        // --- Licencias ---
         html += `<optgroup label="Licencias">`;
-        licencias.forEach(c => html += `<option value="${c}" ${seleccion === c ? 'selected' : ''}>${c}</option>`);
+        licencias.forEach(c => {
+            html += `<option value="${c}" ${seleccion === c ? 'selected' : ''}>${c}</option>`;
+        });
         html += `</optgroup>`;
+
         return html;
     };
-
     const renderFila = (rol, u, dim, y, m, objetivoVal) => {
         const usuarioId = parseInt(u.idUsuario);
         const horasIni = (estado.horasPorUsuario && estado.horasPorUsuario[usuarioId]) ? estado.horasPorUsuario[usuarioId] : 0;
@@ -156,12 +250,12 @@ const Cronograma = (() => {
         html += `<tr data-rol="${rol}" data-usuario="${usuarioId}" data-objetivo="${objetivoVal}">`;
         html += `<td class="sticky-col rol-sticky">${rol}</td>`;
         html += `<td class="sticky-col usuario-sticky">
-      <div class="d-flex align-items-center">
-        ${selectUsr}
-        <span class="badge badge-horas ${claseHoras} ml-2" title="${horasIni} hs">${horasIni} hs</span>
-      </div>
-      <input type="hidden" name="${rol.toLowerCase()}[${usuarioId}][usuario]" value="${usuarioId}">
-    </td>`;
+            <div class="d-flex align-items-center">
+                ${selectUsr}
+                <span class="badge badge-horas ${claseHoras} ml-2" title="${horasIni} hs">${horasIni} hs</span>
+            </div>
+            <input type="hidden" name="${rol.toLowerCase()}[${usuarioId}][usuario]" value="${usuarioId}">
+            </td>`;
 
         for (let d = 1; d <= dim; d++) {
             const fecha = new Date(`${toYmd(y, m, d)}T00:00:00`).toISOString().slice(0, 10);
@@ -171,20 +265,106 @@ const Cronograma = (() => {
 
             const dp = estado.datosPrevios?.[rol.toLowerCase()]?.[usuarioId]?.[d] || '';
             html += `<td class="day-col ${clase}">
-        <select name="${rol.toLowerCase()}[${usuarioId}][${d}]" class="form-control no-arrow celda-turno" data-optional="true" data-rol="${rol.toLowerCase()}">
-          ${opcionesTurnoHTML(dp)}
-        </select>
-      </td>`;
+                <select name="${rol.toLowerCase()}[${usuarioId}][${d}]" class="form-control no-arrow celda-turno" data-optional="true" data-rol="${rol.toLowerCase()}">
+                    ${opcionesTurnoHTML(dp)}
+                </select>
+            </td>`;
         }
-        html += `</tr>`;
+        // columnas resumen por empleado
+        html += `
+            <td class="day-col resumen-usuario franco-count" data-usuario="${usuarioId}">0</td>
+            <td class="day-col resumen-usuario guardia-count" data-usuario="${usuarioId}">0</td>
+        </tr>`;
         return html;
     };
+    // ===============================
+    // FILAS DE TOTALES
+    // ===============================
+    function renderFilaResumen(label, tipo, dim, extraClass = '') {
+        let html = `<tr class="fila-resumen ${extraClass}" data-tipo-resumen="${tipo}" style="display:none">`;
+        html += `<td class="sticky-col rol-sticky">${label}</td>`;
+        html += `<td class="sticky-col usuario-sticky"></td>`;
+        for (let d = 1; d <= dim; d++) {
+            html += `<td class="day-col" data-dia="${d}" data-resumen="${tipo}">0</td>`;
+        }
+        html += `<td class="day-col"></td><td class="day-col"></td>`;
+        html += `</tr>`;
+        return html;
+    }
 
-    const renderTabla = (objetivoVal, mesVal) => {
+    function renderFilaTotalHorasDia(dim, extraClass = '') {
+        let html = `<tr class="fila-resumen bg-light font-weight-bold ${extraClass}" data-tipo-resumen="total_horas">`;
+        html += `<td class="sticky-col rol-sticky">Total horas</td>`;
+        html += `<td class="sticky-col usuario-sticky"></td>`;
+        for (let d = 1; d <= dim; d++) {
+            html += `<td class="day-col" data-dia="${d}" data-resumen="total_horas">0</td>`;
+        }
+        html += `<td class="day-col"></td><td class="day-col"></td>`;
+        html += `</tr>`;
+        return html;
+    }
+
+    function renderFilaTotalGeneral(dim) {
+        let html = '<tr class="bg-info text-white font-weight-bold">';
+        html += '<td class="sticky-col rol-sticky">Total</td>';
+        html += '<td class="sticky-col usuario-sticky">Horas totales</td>';
+        html += `<td colspan="${dim}" class="text-center" id="total-general">0 hs</td>`;
+        html += `<td class="day-col"></td><td class="day-col"></td>`;
+        html += '</tr>';
+        return html;
+    }
+
+
+    const renderTablaOld = async (objetivoVal, mesVal) => {
         const ym = getYearMonth(mesVal);
         if (!ym) return;
 
-        // feriados UI
+        // 1) Cargar siglas dinámicas del objetivo
+        const url = API_SIGLAS_URL;
+
+        let siglas = [];
+        try {
+            const res = await fetch(url, {
+                credentials: 'include'
+            });
+
+            const text = await res.text();
+            siglas = JSON.parse(text);
+        } catch (e) {
+            console.error('No se pudo parsear JSON en renderTabla:', e);
+            siglas = [];
+        }
+
+
+        // Copiar siglas dinámicas al sistema global
+        SIGLAS = {};
+        HORAS_SIGLA = {};
+        siglas.forEach(s => {
+            SIGLAS[s.sigla] = s.descripcion;
+            HORAS_SIGLA[s.sigla] = parseFloat(s.horas);
+        });
+
+        // LIMPIAR códigos viejos de datosPrevios
+        if (estado.datosPrevios) {
+            for (const rol in estado.datosPrevios) {
+                for (const uid in estado.datosPrevios[rol]) {
+                    for (const d in estado.datosPrevios[rol][uid]) {
+                        const code = estado.datosPrevios[rol][uid][d];
+                        // Si NO es jornada normal, NO es licencia y NO está en SIGLAS → borrar
+                        if (code && !JORNADA_NORMAL.has(code) && !LICENCIAS.has(code) && !SIGLAS[code]) {
+                            estado.datosPrevios[rol][uid][d] = '';
+                        }
+                    }
+                }
+            }
+        }
+
+
+        // 2) Si no hay siglas, no rompemos nada
+        const siglasMap = {};
+        siglas.forEach(s => siglasMap[s.sigla] = s.horas);
+
+        // 3) El resto de tu renderTabla queda igual
         const listaF = cargarFeriadosDeMes(mesVal);
         pintarFeriadosUI(listaF);
 
@@ -195,25 +375,88 @@ const Cronograma = (() => {
         const partes = [];
         partes.push('<div class="table-responsive"><table class="table table-sm table-bordered">');
         partes.push(renderCabecera(ym.y, ym.m));
+
         partes.push('<tbody>');
-        vigObj.forEach(u => partes.push(renderFila('Vigilador', u, dim, ym.y, ym.m, objetivoVal)));
-        refObj.forEach(u => partes.push(renderFila('Referente', u, dim, ym.y, ym.m, objetivoVal)));
-        partes.push('</tbody></table></div>');
+        vigObj.forEach(u => partes.push(renderFila('Vigilador', u, dim, ym.y, ym.m, objetivoVal, siglas)));
+        refObj.forEach(u => partes.push(renderFila('Referente', u, dim, ym.y, ym.m, objetivoVal, siglas)));
+        partes.push('</tbody>');
+
+        // PIE dinámico basado en siglas
+        partes.push('<tfoot>');
+        RESUMEN_BASE_CODES.forEach(code => partes.push(renderFilaResumen(code, code, dim)));
+        siglas.forEach(s => partes.push(renderFilaResumen(s.sigla, s.sigla, dim)));
+        partes.push(renderFilaTotalHorasDia(dim));
+        partes.push(renderFilaTotalGeneral(dim));
+        partes.push('</tfoot>');
 
         const cont = document.getElementById(cfg.contenedorTablaId);
         cont.innerHTML = partes.join('');
 
-        // select2 opcional
         if (window.jQuery && jQuery().select2) {
             jQuery('.select2').select2({ width: 'resolve' });
         }
 
+        calcularHoras(siglasMap);
+        rendered = true;
+    };
 
-        // cálculo inicial
+
+    // --- Clasificación de códigos según constantes existentes ---
+    const renderTabla = async (objetivoVal, mesVal) => {
+        const ym = getYearMonth(mesVal);
+        if (!ym) return;
+
+        await cargarSiglas(objetivoVal);
+
+        if (estado.datosPrevios) {
+            for (const rol in estado.datosPrevios) {
+                if (!['vigilador', 'referente'].includes(rol)) continue;
+                for (const uid in estado.datosPrevios[rol]) {
+                    for (const d in estado.datosPrevios[rol][uid]) {
+                        const code = normalizarCodigo(estado.datosPrevios[rol][uid][d]);
+                        if (!esCodigoValido(code)) {
+                            estado.datosPrevios[rol][uid][d] = '';
+                        }
+                    }
+                }
+            }
+        }
+
+        const listaF = cargarFeriadosDeMes(mesVal);
+        pintarFeriadosUI(listaF);
+
+        const dim = daysInMonth(ym.y, ym.m);
+        const vigObj = estado.vigiladores.filter(u => u.objetivo_id == objetivoVal);
+        const refObj = estado.referentes.filter(u => u.objetivo_id == objetivoVal);
+        const resumenCodes = [
+            ...RESUMEN_BASE_CODES,
+            ...Object.keys(SIGLAS).filter(code => !RESUMEN_BASE_CODES.includes(code))
+        ];
+
+        const partes = [];
+        partes.push('<div class="table-responsive"><table class="table table-sm table-bordered">');
+        partes.push(renderCabecera(ym.y, ym.m));
+        partes.push('<tbody>');
+        vigObj.forEach(u => partes.push(renderFila('Vigilador', u, dim, ym.y, ym.m, objetivoVal)));
+        refObj.forEach(u => partes.push(renderFila('Referente', u, dim, ym.y, ym.m, objetivoVal)));
+        partes.push('</tbody>');
+        partes.push('<tfoot>');
+        resumenCodes.forEach(code => partes.push(renderFilaResumen(code, code, dim)));
+        partes.push(renderFilaTotalHorasDia(dim));
+        partes.push(renderFilaTotalGeneral(dim));
+        partes.push('</tfoot>');
+
+        const cont = document.getElementById(cfg.contenedorTablaId);
+        cont.innerHTML = partes.join('');
+
+        if (window.jQuery && jQuery().select2) {
+            jQuery('.select2').select2({ width: 'resolve' });
+        }
+
         calcularHoras();
         rendered = true;
     };
-    // --- Clasificación de códigos según constantes existentes ---
+
     function tipoDeCodigo(code) {
         code = (code || '').toUpperCase().trim();
         if (jornadaNormalHoras.hasOwnProperty(code)) return 'jornada';
@@ -266,32 +509,128 @@ const Cronograma = (() => {
 
     // ---------- Cálculo de horas ----------
     const calcularHoras = () => {
-        const totals = {}; // uid => horas
+        const totalsUsuario = {};          // uid => horas totales
+        const francosUsuario = {};         // uid => cantidad de F
+        const guardiasUsuario = {};        // uid => cantidad de GP/D + GP/N
+
+        const contadoresPorDiaPorCodigo = {}; // dia => { code => count }
+        const totalsDiaHoras = {};             // dia => horas totales
+        let totalGeneral = 0;
+
+        // inicializar estructuras por día
+        const dim = $all(`#${cfg.contenedorTablaId} thead th.day-col`).length - 2; // restamos F/GP
+        for (let d = 1; d <= dim; d++) {
+            contadoresPorDiaPorCodigo[d] = {};
+            totalsDiaHoras[d] = 0;
+        }
+
+        // recorrer filas de usuarios
         $all(`#${cfg.contenedorTablaId} tbody tr[data-usuario]`).forEach(fila => {
             const uid = parseInt(fila.getAttribute('data-usuario'));
             if (!uid) return;
+
             let horasFila = 0;
+            let francos = 0;
+            let guardias = 0;
+
             $all('select.celda-turno', fila).forEach(sel => {
-                const code = (sel.value || '').toUpperCase().trim();
-                if (OFF_CODES.has(code)) return;
-                horasFila += (HOURS_BY_CODE[code] || 0);
+                const code = normalizarCodigo(sel.value);
+                const name = sel.getAttribute('name') || '';
+                const diaMatch = name.match(/\[(\d+)\]$/);
+                if (!diaMatch) return;
+                const dia = parseInt(diaMatch[1]);
+
+                if (!contadoresPorDiaPorCodigo[dia]) {
+                    contadoresPorDiaPorCodigo[dia] = {};
+                }
+
+                // francos
+                if (code === 'F') {
+                    francos++;
+                    return;
+                }
+
+                // guardias
+                if (code === 'GP/D' || code === 'GP/N') {
+                    guardias++;
+                }
+
+                // unidades por tipo (D, N, XH)
+                if (code) {
+                    if (!contadoresPorDiaPorCodigo[dia][code]) {
+                        contadoresPorDiaPorCodigo[dia][code] = 0;
+                    }
+                    contadoresPorDiaPorCodigo[dia][code]++;
+                }
+
+                // horas
+                const hs = horasCodigo(code);
+                horasFila += hs;
+                totalsDiaHoras[dia] += hs;
+                totalGeneral += hs;
             });
-            totals[uid] = (totals[uid] || 0) + horasFila;
+
+            totalsUsuario[uid] = horasFila;
+            francosUsuario[uid] = francos;
+            guardiasUsuario[uid] = guardias;
+            estado.horasPorUsuario[uid] = horasFila;
         });
 
-        // actualizar badges y estado
+        // actualizar resumen por empleado (F / GP)
         $all(`#${cfg.contenedorTablaId} tbody tr[data-usuario]`).forEach(fila => {
             const uid = parseInt(fila.getAttribute('data-usuario'));
-            const horas = totals[uid] || 0;
+            const horas = totalsUsuario[uid] || 0;
+            const francos = francosUsuario[uid] || 0;
+            const guardias = guardiasUsuario[uid] || 0;
+
+            const tdF = fila.querySelector('.franco-count');
+            const tdGP = fila.querySelector('.guardia-count');
             const badge = fila.querySelector('.badge-horas');
-            badge.classList.remove('horas-bajo', 'horas-ok', 'horas-alto');
-            badge.textContent = `${horas} hs`;
-            if (horas < 200) badge.classList.add('horas-bajo');
-            else if (horas > 240) badge.classList.add('horas-alto');
-            else badge.classList.add('horas-ok');
-            badge.title = `${horas} hs`;
-            estado.horasPorUsuario[uid] = horas;
+
+            if (tdF) tdF.textContent = francos;
+            if (tdGP) tdGP.textContent = guardias;
+
+            if (badge) {
+                badge.classList.remove('horas-bajo', 'horas-ok', 'horas-alto');
+                badge.textContent = `${horas} hs`;
+                if (horas < 200) badge.classList.add('horas-bajo');
+                else if (horas > 240) badge.classList.add('horas-alto');
+                else badge.classList.add('horas-ok');
+                badge.title = `${horas} hs`;
+            }
         });
+
+        // actualizar pie
+        const tfoot = document.querySelector(`#${cfg.contenedorTablaId} tfoot`);
+        if (!tfoot) return;
+
+        $all('tr[data-tipo-resumen]', tfoot).forEach(fila => {
+            const tipo = fila.getAttribute('data-tipo-resumen');
+            if (!tipo || tipo === 'total_horas') return;
+            let total = 0;
+
+            for (let d = 1; d <= dim; d++) {
+                const count = contadoresPorDiaPorCodigo[d][tipo] || 0;
+                total += count;
+
+                const celda = fila.querySelector(`td[data-dia="${d}"][data-resumen="${tipo}"]`);
+                if (celda) celda.textContent = count;
+            }
+
+            fila.style.display = total > 0 ? '' : 'none';
+        });
+
+        // total horas por día
+        for (let d = 1; d <= dim; d++) {
+            const celda = tfoot.querySelector(`td[data-dia="${d}"][data-resumen="total_horas"]`);
+            if (celda) celda.textContent = totalsDiaHoras[d] || 0;
+        }
+
+        // total general
+        const totalGeneralCell = tfoot.querySelector('#total-general');
+        if (totalGeneralCell) {
+            totalGeneralCell.textContent = `${totalGeneral} hs`;
+        }
     };
 
     // ---------- Validaciones ----------
@@ -299,7 +638,7 @@ const Cronograma = (() => {
     // Sí puede coexistir cualquier cantidad de códigos de Referencias.
     const validarAsignacion = (uid, diaIndex, nuevoCodigo, filaActual) => {
         const code = (nuevoCodigo || '').toUpperCase().trim();
-        const esRefer = REFERENCIAS.has(code) || code === '';
+        const esRefer = (code === '') || (SIGLAS[code] !== undefined);
         if (esRefer) return { ok: true };
 
         // buscar otros selects del mismo usuario/día
@@ -446,7 +785,7 @@ const Cronograma = (() => {
     };
 
     // ---------- Carga inicial ----------
-    const init = (config, bootData) => {
+    const init = async (config, bootData) => {
         cfg = config || {};
         boot = bootData || {};
         estado = {
@@ -463,12 +802,11 @@ const Cronograma = (() => {
         const mesVal = estado.datosPrevios?.mes || document.getElementById(cfg.mesId)?.value || '';
 
         if (objetivo && mesVal) {
-            renderTabla(objetivo, mesVal);
+            await renderTabla(objetivo, mesVal);
         }
 
         bindEventos();
     };
-
     // API pública
     return { init, renderTabla };
 })();

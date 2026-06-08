@@ -1,9 +1,11 @@
 <?php
+$_SESSION['cronograma_post'] = [];
 //Guardar datos en la BD
 if (isset($_POST['guardar_cronograma']) && empty($_SESSION['cronograma_post'])) {
-  ControladorCronograma::ctrGuardarCronograma();
+  ControladorCronogramas::ctrGuardarCronograma();
 }
 
+//Vaciar el cronograma
 // Primero verificamos si hay datos previos (guardados por el controlador al fallar o precargar)
 $datosPrevios = $_SESSION['cronograma_post'] ?? [];
 // Siempre limpiamos los datos previos si se está intentando cargar un cronograma nuevo
@@ -17,7 +19,7 @@ if (isset($_POST['cargar']) && empty($datosPrevios)) {
   $objetivoReq = (int)($_POST['objetivo'] ?? 0);
   $mesReq      = $_POST['mes'] ?? date('Y-m');
 
-  $info = ControladorCronograma::precargarCronogramaSiExiste($objetivoReq, $mesReq);
+  $info = ControladorCronogramas::precargarCronogramaSiExiste($objetivoReq, $mesReq);
 
   if (($info['origen'] ?? null) === 'anterior' && !empty($info['mesAnterior'])) {
     ToastifyController::info("Precargando datos del mes anterior ({$info['mesAnterior']}) con continuidad 4×2");
@@ -28,7 +30,7 @@ if (isset($_POST['cargar']) && empty($datosPrevios)) {
 
   // fallback extremo (no debería ocurrir, pero por las dudas)
   if (empty($datosPrevios)) {
-    $datosPrevios = ControladorCronograma::generarSimulacionVacia($objetivoReq, $mesReq);
+    $datosPrevios = ControladorCronogramas::generarSimulacionVacia($objetivoReq, $mesReq);
   }
 
   $_SESSION['cronograma_post']       = $datosPrevios;
@@ -45,21 +47,23 @@ if (empty($datosPrevios)) {
 
 // ===================== CARGAS INICIALES =====================
 $db = new Conexion;
-$objetivos  = $db->consultas("SELECT * FROM objetivos ORDER BY nombre");
-$puestos    = $db->consultas("SELECT idPuesto, puesto, objetivo_id FROM puestos");
+$objetivos  = $db->consultas("SELECT * FROM objetivos WHERE activo = 1 ORDER BY nombre ");
+$puestos    = $db->consultas("SELECT idPuesto, puesto, objetivo_id FROM puestos WHERE activo = 1");
 $vigiladores = $db->consultas("SELECT DISTINCT u.idUsuario, u.nombre, u.apellido, ov.objetivo_id
-                                  FROM usuarios u
-                                  JOIN objetivo_vigiladores ov ON u.idUsuario = ov.vigilador_id
-                                  WHERE u.rol = 'Vigilador' AND u.activo = 1
-                                  ORDER BY u.apellido, u.nombre
-                              ");
+                                    FROM usuarios u
+                                    JOIN roles r ON u.rol_id = r.id
+                                    JOIN objetivo_vigiladores ov ON u.idUsuario = ov.vigilador_id
+                                    WHERE r.categoria = 'operativo' AND u.activo = 1
+                                    ORDER BY u.apellido, u.nombre
+  ");
 
 $referentes = $db->consultas("SELECT DISTINCT u.idUsuario, u.nombre, u.apellido, orf.objetivo_id
-                                  FROM usuarios u
-                                  JOIN objetivo_referentes orf ON u.idUsuario = orf.referente_id
-                                  WHERE u.rol = 'Referente' AND u.activo = 1
-                                  ORDER BY u.apellido, u.nombre
-                              ");
+                                        FROM usuarios u
+                                        JOIN roles r ON u.rol_id = r.id
+                                        JOIN objetivo_referentes orf ON u.idUsuario = orf.referente_id
+                                        WHERE r.categoria = 'referente' AND u.activo = 1
+                                        ORDER BY u.apellido, u.nombre
+                                    ");
 
 // ===================== FERIADOS DEL MES =====================
 //Para la tabla
@@ -78,9 +82,17 @@ $feriadosDelMes = array_filter($feriados, function ($f) use ($mesSeleccionado) {
 
   /* === Sticky SOLO para Rol y Usuario === */
   #tablaCronogramaContainer .table-responsive {
-    max-width: 100%;
+    /*max-width: 100%;
     max-height: 380px;
-    overflow: auto;
+    overflow: auto;*/
+    /* max-height: none;
+    overflow: visible;*/
+    max-width: 100%;
+    max-height: none;
+    overflow-x: auto;
+    overflow-y: visible;
+
+
   }
 
   #tablaCronogramaContainer table {
@@ -122,6 +134,31 @@ $feriadosDelMes = array_filter($feriados, function ($f) use ($mesSeleccionado) {
     width: var(--w-usuario);
   }
 
+  /* Días */
+  .resumen-dias {
+    background-color: #d9edf7 !important;
+    /* celeste */
+  }
+
+  /* Noches */
+  .resumen-noches {
+    background-color: #e6d9f7 !important;
+    /* violeta suave */
+  }
+
+  /* Total horas por día */
+  .resumen-total-dia {
+    background-color: #f2f2f2 !important;
+    /* gris claro */
+  }
+
+  /* Total general (ya existe pero reforzamos contraste) */
+  #total-general {
+    font-weight: bold;
+    background-color: #1e88e5 !important;
+    color: white !important;
+  }
+
   /* Para dispositivos móviles, achicamos las columnas fijas */
   @media (max-width: 767px) {
     :root {
@@ -148,6 +185,10 @@ $feriadosDelMes = array_filter($feriados, function ($f) use ($mesSeleccionado) {
     padding: 0;
     text-align: center;
     /*margin-top: -10px;*/
+  }
+
+  .celda-turno:focus {
+    border: 1px solid red !important;
   }
 
   .celda-select {
@@ -245,6 +286,9 @@ $feriadosDelMes = array_filter($feriados, function ($f) use ($mesSeleccionado) {
     </form>
   </div>
 </div>
+<script>
+    const API_SIGLAS_URL = new URL(<?= json_encode(BASE_URL . '/index.php?r=api_siglas', JSON_UNESCAPED_SLASHES) ?>, window.location.origin).toString();
+</script>
 
 <script>
   window.CRONOGRAMA_BOOT = {
@@ -256,7 +300,11 @@ $feriadosDelMes = array_filter($feriados, function ($f) use ($mesSeleccionado) {
     horasPorUsuario: <?= json_encode($_SESSION['horas_usuario'] ?? new stdClass(), JSON_UNESCAPED_UNICODE) ?>
   };
 </script>
-<script src="js/cronograma.js"></script>
+<?php
+$cronogramaJsPath = dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . 'js' . DIRECTORY_SEPARATOR . 'cronograma.js';
+$cronogramaJsVersion = file_exists($cronogramaJsPath) ? filemtime($cronogramaJsPath) : time();
+?>
+<script src="js/cronograma.js?v=<?= $cronogramaJsVersion ?>"></script>
 <script>
   // inicializa pasando IDs de elementos vivos en la vista
   Cronograma.init({

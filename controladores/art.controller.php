@@ -4,7 +4,8 @@ class ArtController
 {
     public static function ctrGuardarArt()
     {
-        Auth::check('art', 'ctrGuardarArt');
+        //Auth::check('art', 'ctrGuardarArt');
+        Auth::check('art', 'vistaCrearArt');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $datos = [
@@ -30,7 +31,8 @@ class ArtController
     }
     public static function ctrEditarArt()
     {
-        Auth::check('art', 'ctrEditarArt');
+        //Auth::check('art', 'ctrEditarArt');
+        Auth::check('art', 'vistaEditarArt');
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['idArt'])) {
             $idArt = intval($_POST['idArt']);
@@ -62,7 +64,7 @@ class ArtController
     // Vista: credencial (usuario)
     public static function vistaCredencialArt()
     {
-        Auth::check('art', 'verCredencialArt');
+        Auth::check('art', 'vistaCredencialArt');
         require 'vistas/paginas/admin/art/credencial_art.php';
     }
 
@@ -76,14 +78,14 @@ class ArtController
     // Vista: crear (admin)
     public static function vistaCrearArt()
     {
-        Auth::check('art', 'crtGuardarArt');
+        Auth::check('art', 'vistaCrearArt');
         require 'vistas/paginas/admin/art/crear_art.php';
     }
 
     // Vista: editar (admin)
     public static function vistaEditarArt()
     {
-        Auth::check('art', 'crtEditarArt');
+        Auth::check('art', 'vistaEditarArt');
         require 'vistas/paginas/admin/art/editar_art.php';
     }
 }

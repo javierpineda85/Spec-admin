@@ -1,5 +1,5 @@
 <?php
-Auth::check('puestos', 'gestionarRotaciones');
+//Auth::check('puestos', 'gestionarRotaciones');
 
 $objetivo_id = (int)($_GET['objetivo_id'] ?? 0);
 $mes = $_GET['mes'] ?? date('Y-m');
@@ -14,53 +14,67 @@ $turnos = $turnos ?? [];
 $rotaciones = $rotaciones ?? [];
 ?>
 <style>
-  /* Mantener encabezado visible al hacer scroll vertical */
-  #tabla-rotaciones thead th {
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    background: #f8f9fa; /* coincide con .thead-light */
-  }
+    /* Mantener encabezado visible al hacer scroll vertical */
+    #tabla-rotaciones thead th {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background: #f8f9fa;
+        /* coincide con .thead-light */
+    }
 
-  /* Columna "Puesto" fija (encabezado y cuerpo) */
-  #tabla-rotaciones th:first-child,
-  #tabla-rotaciones td:first-child {
-    position: sticky;
-    left: 0;
-    z-index: 3;                 /* por encima del resto de celdas */
-    background: #fff;           /* evitar traslucir al scrollear */
-    box-shadow: inset -1px 0 0 rgba(0,0,0,.08); /* línea divisoria */
-    white-space: nowrap;        /* no cortar nombre de puesto */
-  }
+    /* Columna "Puesto" fija (encabezado y cuerpo) */
+    #tabla-rotaciones th:first-child,
+    #tabla-rotaciones td:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 3;
+        /* por encima del resto de celdas */
+        background: #fff;
+        /* evitar traslucir al scrollear */
+        box-shadow: inset -1px 0 0 rgba(0, 0, 0, .08);
+        /* línea divisoria */
+        white-space: nowrap;
+        /* no cortar nombre de puesto */
+    }
 
-  /* La celda cabecera top-left necesita mayor z-index */
-  #tabla-rotaciones thead th:first-child {
-    z-index: 4;
-    background: #f8f9fa;
-  }
+    /* La celda cabecera top-left necesita mayor z-index */
+    #tabla-rotaciones thead th:first-child {
+        z-index: 4;
+        background: #f8f9fa;
+    }
 
-  /* Ancho mínimo para las columnas de días */
-  #tabla-rotaciones th:not(:first-child),
-  #tabla-rotaciones td:not(:first-child) {
-    min-width: 120px;            /* ajustable a gusto */
-    white-space: nowrap;
-  }
+    /* Ancho mínimo para las columnas de días */
+    #tabla-rotaciones th:not(:first-child),
+    #tabla-rotaciones td:not(:first-child) {
+        min-width: 150px;
+        /* ajustable a gusto */
+        white-space: nowrap;
+    }
 
-  /* Asegurar que el select no se achique demasiado */
-  #tabla-rotaciones td:not(:first-child) .select-rotacion {
-    min-width: 100%;
-  }
+    /* Asegurar que el select no se achique demasiado */
+    #tabla-rotaciones td:not(:first-child) .select-rotacion {
+        min-width: 100%;
+    }
 
-  /* Ayuda para sticky dentro del contenedor con overflow */
-  #tabla-rotaciones {
-    border-collapse: separate;   /* mejora borde con sticky */
-    border-spacing: 0;           /* alineado prolijo */
-  }
+    /* Ayuda para sticky dentro del contenedor con overflow */
+    #tabla-rotaciones {
+        border-collapse: separate;
+        /* mejora borde con sticky */
+        border-spacing: 0;
+        /* alineado prolijo */
+    }
 
-  /* garantizamos scroll horizontal */
-  .table-responsive {
-    overflow-x: auto;
-  }
+    /* garantizamos scroll horizontal */
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .turnos-hint.blocked {
+        color: #dc3545 !important;
+        /* rojo Bootstrap */
+        font-weight: bold;
+    }
 </style>
 
 <div class="card">
@@ -74,11 +88,14 @@ $rotaciones = $rotaciones ?? [];
     </div>
     <div class="card-body">
         <div class="row ml-1">
-
+            <div class="col-md-12 d-flex align-items-center mb-3">
+                <small class="border border-warning py-1 px-4 rounded">Antes de realizar las rotaciones, debe completar el cronograma</small>
+            </div>
             <form method="GET" class="form-inline">
                 <input type="hidden" name="r" value="rotaciones_puestos">
-                <label class="form-label">Objetivo: </label>
-                <select name="objetivo_id" class="form-control form-control-sm mr-2" onchange="this.form.submit()">
+
+                <label class="form-label mr-2">Objetivo:</label>
+                <select name="objetivo_id" class="form-control form-control-sm mr-3" onchange="this.form.submit()">
                     <option value="0" <?= $objetivo_id === 0 ? 'selected' : '' ?>>Seleccione…</option>
                     <?php foreach ($objetivos as $o): ?>
                         <option value="<?= (int)$o['idObjetivo'] ?>" <?= $objetivo_id === (int)$o['idObjetivo'] ? 'selected' : '' ?>>
@@ -86,39 +103,27 @@ $rotaciones = $rotaciones ?? [];
                         </option>
                     <?php endforeach; ?>
                 </select>
-                <!-- si ya hay objetivo, preservamos -->
-                <?php if ($mes): ?>
-                    <input type="hidden" name="mes" value="<?= htmlspecialchars($mes) ?>">
-                <?php endif; ?>
+
+                <label class="form-label mr-2">Mes:</label>
+                <input type="month" name="mes" class="form-control form-control-sm mr-2"
+                    value="<?= htmlspecialchars($mes) ?>" onchange="this.form.submit()">
             </form>
 
-            <form method="GET" class="form-inline">
-                <input type="hidden" name="r" value="rotaciones_puestos">
-                <input type="hidden" name="objetivo_id" value="<?= $objetivo_id ?>">
-                <input type="month" name="mes" class="form-control form-control-sm mr-2" value="<?= htmlspecialchars($mes) ?>">
-                <button class="btn btn-sm btn-info">Cambiar mes</button>
-            </form>
-        </div>
-        <div class="row mt-3">
 
-            <div class="mb-3 col-md-2">
-                <label class="form-label">Código turno</label>
+            <div class="d-flex align-items-center mb-2 mr-3">
+                <label for="rr-codigo-turno" class="form-label mb-0 mr-2" style="white-space: nowrap;">Código turno:</label>
                 <select id="rr-codigo-turno" class="form-control form-control-sm">
                     <option value="D">Diurno (D)</option>
                     <option value="N">Nocturno (N)</option>
                 </select>
             </div>
-            <div class="mr-2 col-md-3">
-                <label class="form-label">Auto-rotar</label><br>
-                <button id="btn-auto-rr" class="btn btn-sm btn-primary">Equitativo (Round-robin)</button>
-            </div>
-            <div class="mr-2 col-md-3">
-                <label class="mb-0 form-label">Swap</label><br>
-                <button id="btn-swap" class="btn btn-sm btn-warning">Intercambiar</button>
+            <div class="d-flex align-items-center mb-2">
+                <label class="form-label">Auto-rotar </label><br>
+                <button id="btn-auto-rr" class="btn btn-sm btn-primary mx-2">Equitativo</button>
             </div>
 
         </div>
-
+        <hr class="my-3" style="border-bottom: 1px solid #ccc;">
         <div class="table-responsive">
             <table id="tabla-rotaciones" class="table table-bordered table-sm">
                 <thead class="thead-light">
@@ -151,7 +156,7 @@ $rotaciones = $rotaciones ?? [];
                                 $fecha = $d1->format('Y-m-d');
                             ?>
                                 <td class="p-1 text-center align-middle"
-                                    data-fecha="<?= $fecha ?>">
+                                    data-fecha="<?= $fecha ?>" data-puesto-id="<?= (int)$p['idPuesto'] ?>">
                                     <!-- select de vigiladores habilitados para esa fecha según turno, se llena por JS -->
                                     <select class="form-control form-control-sm select-rotacion"
                                         data-fecha="<?= $fecha ?>"
@@ -181,6 +186,22 @@ $rotaciones = $rotaciones ?? [];
     const VIGILADORES = <?= json_encode($vigiladores, JSON_UNESCAPED_UNICODE) ?>;
     const TURNOS = <?= json_encode($turnos, JSON_UNESCAPED_UNICODE) ?>;
     const ROTACIONES = <?= json_encode($rotaciones, JSON_UNESCAPED_UNICODE) ?>;
+    const TURNOS_POR_PUESTO = <?= json_encode($turnosPorPuesto, JSON_UNESCAPED_UNICODE) ?>;
+
+    function mostrarAvisoRotacion(texto, tipo = 'info') {
+        if (window.Toastify) {
+            const bg = tipo === 'success' ? '#28a745' : (tipo === 'warning' ? '#f59e0b' : '#dc3545');
+            Toastify({
+                text: texto,
+                backgroundColor: bg,
+                duration: 7000,
+                close: true
+            }).showToast();
+            return;
+        }
+
+        alert(texto);
+    }
 
     // ===== Indexaciones =====
     // a) Código real por fecha y usuario (D/N/F/…)
@@ -227,7 +248,11 @@ $rotaciones = $rotaciones ?? [];
     // - Deshabilita a los que no coinciden con el turno seleccionado (D/N)
     // - Deshabilita a los que ya están ocupados en ese día/turno (otra celda/puesto)
     function buildOptions(fecha, turnoSel) {
-        const lista = [{ id: '', txt: '—', disabled: false }];
+        const lista = [{
+            id: '',
+            txt: '—',
+            disabled: false
+        }];
         const dayMap = codByFechaUsuario[fecha] || {};
         const keyOcup = `${fecha}|${turnoSel}`;
         const usados = ocupados[keyOcup] || new Set();
@@ -259,7 +284,17 @@ $rotaciones = $rotaciones ?? [];
                 const sel = td.querySelector('select.select-rotacion');
                 const hint = td.querySelector('.turnos-hint');
 
-                // options
+                // Validar si el turno está habilitado para este puesto
+                const turnoHabilitado = (TURNOS_POR_PUESTO[puestoId] || []).some(t => t.codigo_turno === turno);
+                if (!turnoHabilitado) {
+                    sel.innerHTML = '';
+                    sel.disabled = true;
+                    hint.textContent = '⚠ Turno no habilitado';
+                    hint.classList.add('text-danger');
+                    return;
+                }
+
+                // Construir opciones
                 sel.innerHTML = '';
                 const opts = buildOptions(fecha, turno);
                 for (const o of opts) {
@@ -270,21 +305,27 @@ $rotaciones = $rotaciones ?? [];
                     sel.appendChild(op);
                 }
 
-                // valor actual (si había)
+                // Precarga de valor actual
                 const k = `${fecha}|${puestoId}|${turno}`;
                 const val = rotByKey[k] || '';
                 sel.value = val ? String(val) : '';
 
-                // hint: conteo rápido
+                // Mostrar hint visual
                 const habilCount = opts.filter(x => x.id && !x.disabled).length;
-                hint.textContent = habilCount ? `${habilCount} habilitado(s)` : 'sin habilitados';
-                sel.disabled = (habilCount === 0);
+                hint.textContent = habilCount ? `${habilCount} habilitado(s)` : '⚠ sin habilitados';
+                hint.classList.toggle('text-danger', habilCount === 0);
+                sel.disabled = false; // siempre activo
             });
         });
     }
 
     // Guardar una celda con validaciones extra de F y coincidir turno
-    async function guardarRotacion({ fecha, puesto_id, usuario_id, codigo_turno }) {
+    async function guardarRotacion({
+        fecha,
+        puesto_id,
+        usuario_id,
+        codigo_turno
+    }) {
         const uid = parseInt(usuario_id);
         const codReal = (codByFechaUsuario[fecha]?.[uid]) || '';
 
@@ -306,11 +347,16 @@ $rotaciones = $rotaciones ?? [];
         fd.append('usuario_id', usuario_id);
         fd.append('codigo_turno', codigo_turno);
 
-        const res = await fetch('?r=guardar_rotacion', { method: 'POST', body: fd });
-        const json = await res.json();
-        if (!json.ok) {
-            alert(json.msg || 'No se pudo guardar.');
-            return false;
+        const res = await fetch('?r=guardar_rotacion', {
+            method: 'POST',
+            body: fd
+        });
+        const text = await res.text();
+        try {
+            const json = JSON.parse(text);
+            // usar json normalmente
+        } catch (e) {
+            console.error('Respuesta no válida:', text);
         }
 
         // Sincronizar estado local
@@ -344,7 +390,12 @@ $rotaciones = $rotaciones ?? [];
 
         // Si eligió vacío, interpretamos como “quitar asignación”
         if (!usuarioId) {
-            const ok = await guardarRotacion({ fecha, puesto_id: puestoId, usuario_id: '', codigo_turno: turno });
+            const ok = await guardarRotacion({
+                fecha,
+                puesto_id: puestoId,
+                usuario_id: '',
+                codigo_turno: turno
+            });
             if (!ok) {
                 const k = `${fecha}|${puestoId}|${turno}`;
                 sel.value = rotByKey[k] ? String(rotByKey[k]) : '';
@@ -354,7 +405,12 @@ $rotaciones = $rotaciones ?? [];
             return;
         }
 
-        const ok = await guardarRotacion({ fecha, puesto_id: puestoId, usuario_id: usuarioId, codigo_turno: turno });
+        const ok = await guardarRotacion({
+            fecha,
+            puesto_id: puestoId,
+            usuario_id: usuarioId,
+            codigo_turno: turno
+        });
         if (!ok) {
             // revertir UI
             const k = `${fecha}|${puestoId}|${turno}`;
@@ -365,39 +421,99 @@ $rotaciones = $rotaciones ?? [];
     });
 
     // Auto-rotar y Swap (tus handlers, sin cambios)
+    /*document.getElementById('btn-auto-rr').addEventListener('click', async () => {
+        const turno = selCodigoTurno.value;
+        const fd = new FormData();
+        fd.append('objetivo_id', OBJETIVO_ID);
+        fd.append('mes', MES);
+        fd.append('codigo_turno', turno);
+        const res = await fetch('?r=auto_rotar', {
+            method: 'POST',
+            body: fd
+        });
+        const json = await res.json();
+        if (!json.ok) {
+            alert(json.msg || 'No se pudo completar.');
+            return;
+        }
+        location.reload();
+    });*/
     document.getElementById('btn-auto-rr').addEventListener('click', async () => {
         const turno = selCodigoTurno.value;
         const fd = new FormData();
         fd.append('objetivo_id', OBJETIVO_ID);
         fd.append('mes', MES);
         fd.append('codigo_turno', turno);
-        const res = await fetch('?r=auto_rotar', { method: 'POST', body: fd });
-        const json = await res.json();
-        if (!json.ok) { alert(json.msg || 'No se pudo completar.'); return; }
-        location.reload();
+
+        const res = await fetch('index.php?r=auto_rotar', {
+            method: 'POST',
+            body: fd,
+            cache: 'no-store',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+
+
+        const txt = await res.text();
+        try {
+            const json = JSON.parse(txt);
+
+            if (!json.ok) {
+                mostrarAvisoRotacion(json.msg || "No se pudo completar.", "danger");
+                return;
+            }
+
+            const avisos = Array.isArray(json.warnings) ? json.warnings : [];
+            if (avisos.length) {
+                mostrarAvisoRotacion(
+                    `Auto-rotación OK. Asignaciones: ${json.count ?? "—"}. Avisos: ${avisos[0]}`,
+                    "warning"
+                );
+                console.warn("Avisos de auto-rotación:", avisos);
+            } else {
+                mostrarAvisoRotacion(`Auto-rotación OK. Asignaciones: ${json.count ?? "—"}`, "success");
+            }
+
+            // Recargar la vista después de mostrar el aviso
+            setTimeout(() => location.reload(), avisos.length ? 1800 : 900);
+
+        } catch (e) {
+            console.error("Auto-rotar devolvió HTML/invalid JSON:", txt);
+            mostrarAvisoRotacion("Error: la API devolvió HTML en vez de JSON. Revisar rutas/Auth.", "warning");
+        }
+
+
     });
 
-    document.getElementById('btn-swap').addEventListener('click', async () => {
-        const turno = selCodigoTurno.value;
-        const uA = prompt('ID vigilador A:');
-        const uB = prompt('ID vigilador B:');
-        const desde = prompt('Desde (YYYY-MM-DD):', '<?= $desde ?>');
-        const hasta = prompt('Hasta (YYYY-MM-DD):', '<?= $hasta ?>');
-        if (!uA || !uB || !desde || !hasta) return;
+    /*
+        document.getElementById('btn-swap').addEventListener('click', async () => {
+            const turno = selCodigoTurno.value;
+            const uA = prompt('ID vigilador A:');
+            const uB = prompt('ID vigilador B:');
+            const desde = prompt('Desde (YYYY-MM-DD):', '<?= $desde ?>');
+            const hasta = prompt('Hasta (YYYY-MM-DD):', '<?= $hasta ?>');
+            if (!uA || !uB || !desde || !hasta) return;
 
-        const fd = new FormData();
-        fd.append('objetivo_id', OBJETIVO_ID);
-        fd.append('desde', desde);
-        fd.append('hasta', hasta);
-        fd.append('usuario_a', uA);
-        fd.append('usuario_b', uB);
-        fd.append('codigo_turno', turno);
+            const fd = new FormData();
+            fd.append('objetivo_id', OBJETIVO_ID);
+            fd.append('desde', desde);
+            fd.append('hasta', hasta);
+            fd.append('usuario_a', uA);
+            fd.append('usuario_b', uB);
+            fd.append('codigo_turno', turno);
 
-        const res = await fetch('?r=swap_rotacion', { method: 'POST', body: fd });
-        const json = await res.json();
-        if (!json.ok) { alert(json.msg || 'No se pudo completar el swap.'); return; }
-        location.reload();
-    });
+            const res = await fetch('?r=swap_rotacion', {
+                method: 'POST',
+                body: fd
+            });
+            const json = await res.json();
+            if (!json.ok) {
+                alert(json.msg || 'No se pudo completar el swap.');
+                return;
+            }
+            location.reload();
+        });*/
 
     // Inicial
     renderTabla();

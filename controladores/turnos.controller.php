@@ -72,7 +72,8 @@ class ControladorTurnos
             ];
 
             // Traemos los datos del modelo
-           $_SESSION['turnos'] = ModeloTurnos::mdlObtenerTurnos('turnos', $_SESSION['filtros']);
+            //$_SESSION['turnos'] = ModeloTurnos::mdlObtenerTurnos('turnos', $_SESSION['filtros']);
+            $_SESSION['turnos'] = ModeloTurnos::mdlObtenerTurnosConPuestos('turnos', $_SESSION['filtros']);
 
             // Mensaje opcional
             $_SESSION['success_message'] =
@@ -113,7 +114,7 @@ class ControladorTurnos
         // Obtenemos los turnos
         $turnos = ModeloTurnos::mdlObtenerTurnos('turnos', $_SESSION['filtros_vigilador']);
 
-    
+
         foreach ($turnos as &$t) {
 
             // También renombramos campos para compatibilidad con la vista
@@ -140,7 +141,8 @@ class ControladorTurnos
             $fecha = $t['fecha'];
             $turnosPorFecha[$fecha] = [
                 'turno'  => $t['codigo_turno'],
-                'puesto' => $t['puesto']
+                'puesto' => $t['puesto'],
+                'objetivo' => $t['objetivo']
             ];
         }
         $_SESSION['turnos_porVigilador'] = $turnosPorFecha;

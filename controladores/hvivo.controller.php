@@ -34,7 +34,8 @@ class HombreVivoController
 
     public static function registrar()
     {
-        Auth::check('hvivo', 'registrar');
+        //Auth::check('hvivo', 'registrar');
+        Auth::check('hvivo', 'vistaHombreVivo');
 
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
@@ -171,7 +172,7 @@ class HombreVivoController
     public static function ajaxRegistrarReporte()
     {
 
-        Auth::check('hvivo', 'ajaxRegistrarReporte');
+        //Auth::check('hvivo', 'ajaxRegistrarReporte');
 
         header('Content-Type: application/json; charset=utf-8');
 

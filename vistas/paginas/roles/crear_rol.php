@@ -30,7 +30,7 @@
             <div class="form-group row">
                 <label for="alias" class="col-sm-2 col-form-label">Alias</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="alias" id="alias" placeholder="Nombre legible (opcional)">
+                    <input type="text" class="form-control" name="alias" id="alias" placeholder="Nombre legible (opcional)" data-optional = "true">
                 </div>
             </div>
 
@@ -52,6 +52,7 @@
                     <select class="form-control" name="categoria" id="categoria" required>
                         <option value="operativo">Operativo</option>
                         <option value="referente">Referente</option>
+                        <option value="baseOperativa">Base Operativa</option>
                         <option value="supervisor">Supervisor</option>
                         <option value="administrativo">Administrativo</option>
                         <option value="direccion">Dirección/Gerencia</option>

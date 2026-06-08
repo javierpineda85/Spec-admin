@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <input type="date" name="fecha" class="form-control" value="<?= $feriado['fecha'] ?>" required>
         </div>
         <div class="col-md-5">
-          <input type="text" name="motivo" class="form-control" value="<?= htmlspecialchars($feriado['motivo']) ?>" required>
+          <input type="text" name="motivo" class="form-control" value="<?= htmlspecialchars($feriado['motivo'])?? '' ?>" required>
         </div>
         <div class="col-md-3">
           <select name="tipo_feriado" class="form-control" required>

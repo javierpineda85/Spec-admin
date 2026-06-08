@@ -35,7 +35,9 @@ $objetivos = $db->consultas($sql);
                                     <th style="text-align: center;">Puesto</th>
                                     <th style="text-align: center;">Objetivo</th>
                                     <th style="text-align: center;">tipo</th>
-                                    <th style="text-align: center;">Acciones</th>
+                                    <?php if ($_SESSION['nivel'] > 2): ?>
+                                        <th style="text-align: center;">Acciones</th>
+                                    <?php endif; ?>
                                 </tr>
                             </thead>
                             <tbody>
@@ -44,18 +46,28 @@ $objetivos = $db->consultas($sql);
                                         <td> <?= $valor['puesto'] ?></td>
                                         <td> <?= $valor['objetivo'] ?></td>
                                         <td> <?= $valor['tipo'] ?></td>
-                                        <td style="vertical-align: middle; text-align: center;">
-                                            <div class="d-flex justify-content-center">
-                                                <!-- Editar -->
-                                                <a href="?r=editar_puesto&id=<?php echo $valor['idPuesto']; ?>" class="btn btn-success btn-sm mr-1" title="Editar puesto"> <i class="fas fa-edit"></i> </a>
+                                        <?php if ($_SESSION['nivel'] > 2): ?>
+                                            <td style="vertical-align: middle; text-align: center;">
+                                                <div class="d-flex justify-content-center">
+                                                    <!-- Editar -->
+                                                    <a href="?r=editar_puesto&id=<?= $valor['idPuesto']; ?>"
+                                                        class="btn btn-success btn-sm mr-1"
+                                                        title="Editar puesto">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
 
-                                                <!-- Desactivar (soft-delete) -->
-                                                <form method="post" style="display:inline-block;">
-                                                    <input type="hidden" name="idEliminar" value="<?php echo $valor['idPuesto']; ?>">
-                                                    <button type="submit" class="btn btn-warning btn-sm" title="Desactivar puesto" onclick="return confirm('¿Desea desactivar este puesto?');"> <i class="fas fa-ban"></i> </button>
-                                                </form>
-                                            </div>
-                                        </td>
+                                                    <!-- Desactivar -->
+                                                    <form method="post" style="display:inline-block;">
+                                                        <input type="hidden" name="idEliminar" value="<?= $valor['idPuesto']; ?>">
+                                                        <button type="submit" class="btn btn-warning btn-sm"
+                                                            title="Desactivar puesto"
+                                                            onclick="return confirm('¿Desea desactivar este puesto?');">
+                                                            <i class="fas fa-ban"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        <?php endif; ?>
                                     </tr>
                                 <?php endforeach ?>
                             </tbody>
