@@ -19,11 +19,12 @@ try {
     $db = new Conexion();
 
     // Obtener datos del vigilador, objetivo y puesto
-    $sql = "SELECT 
-                u.nombre, u.apellido, u.telefono, u.rol,
+    $sql = "SELECT u.nombre, u.apellido, u.telefono,
+                r.nombre AS rol,
                 o.nombre AS objetivo,
                 p.nombre AS puesto
             FROM usuarios u
+            JOIN roles r ON u.rol_id = r.id
             JOIN turnos t ON t.vigilador_id = u.idUsuario
             JOIN objetivos o ON t.objetivo_id = o.idObjetivo
             JOIN puestos p ON t.puesto_id = p.idPuesto

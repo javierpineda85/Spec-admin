@@ -16,7 +16,7 @@ include_once 'contenido/head.php';
             <section class="content mt-2 mx-auto d-flex justify-content-center shadow p-3 mb-5 bg-white rounded">
                 <div class="login-box">
                     <div class="login-logo">
-                        <h2><b>S.P.E.C.</b> <br>Grupo Marsan S.A.</h2>
+                        <h2><b>SPEC</b> <br>Grupo Marsan S.A.</h2>
                         <img src="img/logo2024.png" width="100px">
                     </div>
                     <div class="card">

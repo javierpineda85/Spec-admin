@@ -73,6 +73,7 @@ class Auth
             exit;
         }
     }
+
     /**
      * Lanza acceso denegado si el usuario no tiene permiso.
      * @param string $controller  nombre en minúsculas (p.ej. 'novedades')
@@ -89,53 +90,67 @@ class Auth
             return;
         }
 
-        // Rutas que ignoramos siempre
         $rutaActual = "{$controller}/{$action}";
-        $ignorar    = [
+
+        // Rutas que ignoramos siempre
+        $ignorar = [
             'login/crtMostrarLogin',
             'login/crtProcesarLogin',
             'login/crtLogout',
+            'acceso_denegado/index',
             'acceso_denegado/crtAccesoDenegado'
         ];
         if (in_array($rutaActual, $ignorar, true)) {
             return;
         }
 
-        // Aquí reemplazamos el middleware por hasPermission directo
+        // Si ya validamos permisos en este flujo, no repetir
+        if (!empty($_SESSION['permiso_validado'])) {
+            return;
+        }
+
+        // Validación normal
         if (!self::hasPermission($controller, $action)) {
-            header('Location: ?r=acceso_denegado/crtAccesoDenegado');
+            header('Location: ?r=acceso_denegado/index');
             exit;
         }
+
+        // Si pasó la validación, marcamos flag
+        $_SESSION['permiso_validado'] = true;
     }
 
     public static function hasPermission(string $controller, string $action): bool
     {
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start();
-        }
-
-        // 1) Programador siempre pasa
+        // Programador siempre pasa
         if (self::isSuperRole($_SESSION['rol'] ?? null)) {
             return true;
         }
 
-        // 2) Si no hay permisos en sesión, recárgalos
-        if (!isset($_SESSION['permisos_usuario'])) {
-            self::reloadPermisosUsuario();
+        // Si no hay permisos en sesión, negar
+        if (empty($_SESSION['permisos_usuario'])) {
+            return false;
         }
 
-        // 3) Verifica existencia exacta de “controlador/accion”
+        // comodín
+        if (in_array('*', $_SESSION['permisos_usuario'], true)) {
+            return true;
+        }
+
         $ruta = "{$controller}/{$action}";
         return in_array($ruta, $_SESSION['permisos_usuario'], true);
     }
 
     // Logica para saltear el rol programador
-
     public static function isSuperRole(?string $rol)
     {
         return in_array($rol, ['Programador'], true);
     }
 
+    /**
+     * Método legacy: ya no se usa en el flujo normal.
+     * Los permisos se cargan una sola vez en el login.
+     * Se mantiene por compatibilidad, pero no se invoca desde hasPermission().
+     */
     public static function reloadPermisosUsuario(): void
     {
         if (session_status() !== PHP_SESSION_ACTIVE) {

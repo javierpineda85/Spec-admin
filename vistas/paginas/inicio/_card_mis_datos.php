@@ -2,8 +2,8 @@
     Auth::hasPermission('usuarios', 'vistaPerfilUsuario') ||
     Auth::hasPermission('art', 'vistaCredencialArt') ||
     Auth::hasPermission('salud', 'vistaMiSalud') ||
-    Auth::hasPermission('uniformes', 'vistaMiUniforme')
-    // Nota: 'datos_personales' aún no existe en permisos. Agregar cuando lo definas.
+    Auth::hasPermission('uniformes', 'vistaMiUniforme') ||
+    Auth::hasPermission('datos_personales', 'vistaMisDatosPersonales')
 ): ?>
     <div class="col-lg-3 col-md-6 col-sm-12">
         <div class="info-box shadow">
@@ -15,6 +15,7 @@
                         <i class="fas fa-plus"></i>
                     </button>
                 </div>
+
                 <div id="collapseMisDatos" class="collapse">
                     <div class="mt-2">
                         <?php $id = $_SESSION['idUsuario']; ?>
@@ -23,11 +24,9 @@
                             <a href="?r=perfil-usuario&id=<?= $id ?>" class="btn btn-block btn-info btn-sm text-white">Mi Perfil</a>
                         <?php endif; ?>
 
-                        <?php /* Espera a crear permisos 'datos_personales' en la BD
-                      <?php if (Auth::hasPermission('datos_personales', 'vistaMisDatosPersonales')): ?>
-                          <a href="?r=mis_datos_personales&id=<?= $id ?>" class="btn btn-block btn-info btn-sm text-white">Mis Datos Personales</a>
-                      <?php endif; ?>
-                      */ ?>
+                        <?php if (Auth::hasPermission('datos_personales', 'vistaMisDatosPersonales')): ?>
+                            <a href="?r=mis_datos_personales&id=<?= $id ?>" class="btn btn-block btn-info btn-sm text-white">Mis Datos Personales</a>
+                        <?php endif; ?>
 
                         <?php if (Auth::hasPermission('salud', 'vistaMiSalud')): ?>
                             <a href="?r=mi_salud&id=<?= $id ?>" class="btn btn-block btn-info btn-sm text-white">Mi Salud</a>

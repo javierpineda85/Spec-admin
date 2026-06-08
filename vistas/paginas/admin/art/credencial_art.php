@@ -33,7 +33,7 @@ if (!$art || !$empleado):
       <div class="col-12 col-md-8">
         <h5 class="text-info"><?= $empleado['apellido'] . ', ' . $empleado['nombre'] ?></h5>
 
-        <p class="mb-1"><strong>Razón Social:</strong> <?= htmlspecialchars($art['razon_social']) ?></p>
+        <p class="mb-1"><strong>Razón Social:</strong> <?= htmlspecialchars($art['razon_social'])?? '' ?></p>
         <p class="mb-1"><strong>CUIT:</strong> <?= $art['cuit_empresa'] ?></p>
         <p class="mb-1"><strong>Tel. Empresa:</strong> 
           <a href="tel:<?= preg_replace('/\D+/', '', $art['telefono_empresa']) ?>" class="text-secondary">
@@ -41,7 +41,7 @@ if (!$art || !$empleado):
           </a>
         </p>
 
-        <p class="mb-1"><strong>Aseguradora:</strong> <?= htmlspecialchars($art['empresa_aseguradora']) ?></p>
+        <p class="mb-1"><strong>Aseguradora:</strong> <?= htmlspecialchars($art['empresa_aseguradora']) ?? ''?></p>
         <p class="mb-1"><strong>CUIT Aseguradora:</strong> <?= $art['cuit_aseguradora'] ?></p>
         <p class="mb-1"><strong>Póliza:</strong> <?= $art['nro_poliza'] ?></p>
         <p class="mb-1"><strong>Tel. Aseguradora:</strong> 

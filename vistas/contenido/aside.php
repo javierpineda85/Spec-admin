@@ -37,6 +37,7 @@ $id = $_SESSION['idUsuario'] ?? 0; // disponible para partials si lo necesitan
         <?php include __DIR__ . '/aside/_menu_noticias.php'; ?>
         <?php include __DIR__ . '/aside/_menu_mis_datos.php'; ?>
         <?php include __DIR__ . '/aside/_menu_permisos.php'; ?>
+        <?php include __DIR__ . '/aside/_menu_config.php'; ?>
         <?php include __DIR__ . '/aside/_menu_logout.php'; ?>
 
       </ul>

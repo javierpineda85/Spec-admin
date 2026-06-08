@@ -1,4 +1,7 @@
-<?php include __DIR__ . '/contenido/head.php'; 
+<?php 
+global $config;
+include __DIR__ . '/contenido/head.php';
+
 
 if (!isset($_SESSION)) {
   session_start();
@@ -67,16 +70,35 @@ if (!isset($_SESSION)) {
 
 
     <!-- Toast reutilizable -->
-    <div aria-live="polite" aria-atomic="true" style="position: fixed; top: 1rem; right: 1rem; z-index: 1050;">
-      <div id="toast-alerta" class="toast" role="alert" data-delay="7000" style="min-width: 300px;">
+    <div id="toast-alerta" aria-live="polite" aria-atomic="true" style="position: fixed; top: 1rem; right: 1rem; z-index: 1000;">
+      <div class="toast" role="alert" data-delay="7000" style="min-width: 300px;">
         <div class="toast-header bg-info text-white">
-          <strong class="mr-auto"><i class="fas fa-info-circle"></i> Notificación</strong>
+          <strong class="mr-auto"><i class="fas fa-info-circle text-dark"></i> Notificación</strong>
           <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Cerrar">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="toast-body" id="toast-msg">
           <!-- mensaje dinámico -->
+        </div>
+      </div>
+    </div>
+
+
+
+    <!-- Modal Mensajes -->
+    <div class="modal fade" id="modalVerMensaje" tabindex="-1" role="dialog" aria-labelledby="modalVerMensajeLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content border-info">
+          <div class="modal-header bg-info text-white">
+            <h5 class="modal-title" id="modalVerMensajeLabel">Mensaje recibido</h5>
+            <button type="button" class="close text-white" data-dismiss="modal" aria-label="Cerrar">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body" id="contenido-mensaje">
+            <p class="text-muted">Cargando mensaje...</p>
+          </div>
         </div>
       </div>
     </div>
@@ -91,9 +113,13 @@ if (!isset($_SESSION)) {
     <!-- scripts -->
     <script>
       function mostrarToast(mensaje, tipo = 'info') {
-        const $toast = $('#toast-alerta');
+        const $contenedor = $('#toast-alerta'); // ahora es el contenedor externo
+        const $toast = $contenedor.find('.toast');
         const $header = $toast.find('.toast-header');
         const $icon = $header.find('i');
+
+        // Elevar z-index mientras está visible
+        $contenedor.css('z-index', 3000);
 
         // Limpiar clases anteriores
         $toast.removeClass('bg-success bg-warning bg-danger bg-info');
@@ -123,7 +149,14 @@ if (!isset($_SESSION)) {
         }
 
         $('#toast-msg').text(mensaje);
-        $toast.toast('show');
+        $toast.toast({
+          delay: 7000
+        }).toast('show');
+
+        // Restaurar z-index después del delay
+        setTimeout(() => {
+          $contenedor.css('z-index', 1000);
+        }, 7000);
       }
     </script>
     <?php include __DIR__ . '/contenido/scripts.php'; ?>

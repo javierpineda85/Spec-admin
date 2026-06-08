@@ -53,8 +53,6 @@ class LoginController
                 $_SESSION['categoria']  = $user['categoria'];
                 $_SESSION['reservado']  = $user['reservado'];
 
-                unset($_SESSION['permisos_usuario']);
-                Auth::reloadPermisosUsuario();
                 // Si es vigilador o referente, cargar asignación del día
                 if (in_array($_SESSION['categoria'], ['operativo', 'referente'])) {
                     $asig = $modeloUsuarios->getAsignacionHoy($_SESSION['idUsuario']);
@@ -71,20 +69,29 @@ class LoginController
                     }
                 }
 
-                // Cargar permisos del rol
-                $db = new Conexion();
-                $resultados = $db->consultas(
-                    "SELECT p.controlador, p.accion
-                 FROM role_permissions rp
-                 JOIN permissions p ON rp.permission_id = p.id
-                 WHERE rp.role_id = ?",
-                    [$_SESSION['rol_id']]
-                );
+                // Cargar permisos del rol (una sola vez en login)
+                unset($_SESSION['permisos_usuario']);
 
-                $_SESSION['permisos_usuario'] = array_map(
-                    fn($r) => "{$r['controlador']}/{$r['accion']}",
-                    $resultados
-                );
+                if ($_SESSION['rol'] === 'Programador') {
+                    // BYPASS total para Programador
+                    $_SESSION['permisos_usuario'] = ['*'];
+                } else {
+                    $db = new Conexion();
+                    $resultados = $db->consultas(
+                        "SELECT p.controlador, p.accion
+                     FROM role_permissions rp
+                     JOIN permissions p ON rp.permission_id = p.id
+                     WHERE rp.role_id = ?",
+                        [$_SESSION['rol_id']]
+                    );
+
+                    $_SESSION['permisos_usuario'] = array_map(
+                        fn($r) => "{$r['controlador']}/{$r['accion']}",
+                        $resultados
+                    );
+                }
+
+                // Alias si lo usás en otros lugares
                 $_SESSION['permisos'] = $_SESSION['permisos_usuario'];
 
                 // Redirigir al inicio

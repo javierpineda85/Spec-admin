@@ -8,12 +8,14 @@ class ControladorObjetivos
     /*GUARDAR OBJETIVOS */
     static public function crtGuardarObjetivo()
     {
-        Auth::check('objetivos', 'crtGuardarObjetivo');
+        //Auth::check('objetivos', 'crtGuardarObjetivo');
+        Auth::check('objetivos', 'vistaCrearObjetivo');
         if (isset($_POST['nombreObjetivo'])) {
             $conexion = Conexion::conectar();
             $conexion->beginTransaction();
             $datos = [
                 'nombre'    => $_POST['nombreObjetivo'],
+                'domicilio' => $_POST['domicilio'],
                 'latitud'   => $_POST['latitud'],
                 'longitud'  => $_POST['longitud'],
                 'radio_m'   => $_POST['radio_m'],
@@ -36,6 +38,23 @@ class ControladorObjetivos
             if (!empty($_POST['referentes']) && is_array($_POST['referentes'])) {
                 ModeloObjetivos::mdlGuardarReferentesObjetivo($idObjetivo, $_POST['referentes']);
             }
+
+            // Guardar Base Operativa
+            if (!empty($_POST['base_operativa']) && is_array($_POST['base_operativa'])) {
+                ModeloObjetivos::mdlGuardarBaseOperativaObjetivo($idObjetivo, $_POST['base_operativa']);
+            }
+
+            // Guardar siglas dinámicas
+            if (!empty($_POST['siglas']) && is_array($_POST['siglas'])) {
+                foreach ($_POST['siglas'] as $s) {
+                    ModeloObjetivos::mdlInsertarSigla(
+                        $idObjetivo,
+                        $s['sigla'],
+                        $s['descripcion'],
+                        $s['horas']
+                    );
+                }
+            }
             $conexion->commit();
             ToastifyController::success('Objetivo creado exitosamente');
         }
@@ -44,7 +63,8 @@ class ControladorObjetivos
     /*MODIFICAR OBJETIVOS */
     static public function crtModificarObjetivo()
     {
-        Auth::check('objetivos', 'crtModificarObjetivo');
+        //Auth::check('objetivos', 'crtModificarObjetivo');
+        Auth::check('objetivos', 'vistaEditarObjetivo');
 
         if (isset($_POST['idObjetivo'], $_POST['nombreObjetivo'])) {
             $conexion = Conexion::conectar();
@@ -53,6 +73,7 @@ class ControladorObjetivos
             $datos = [
                 'idObjetivo' => $_POST['idObjetivo'],
                 'nombre'     => $_POST['nombreObjetivo'],
+                'domicilio'  => $_POST['domicilio'],
                 'latitud'    => $_POST['latitud'],
                 'longitud'   => $_POST['longitud'],
                 'radio_m'    => $_POST['radio_m'],
@@ -90,14 +111,50 @@ class ControladorObjetivos
                     ModeloObjetivos::mdlGuardarReferentesObjetivo($datos['idObjetivo'], $nuevosReferentes);
                 }
             }
+            /*
             if (!empty($_POST['vigiladores']) && is_array($_POST['vigiladores'])) {
                 ModeloObjetivos::mdlGuardarVigiladoresObjetivo($datos['idObjetivo'], $_POST['vigiladores']);
             }
 
             if (!empty($_POST['referentes']) && is_array($_POST['referentes'])) {
                 ModeloObjetivos::mdlGuardarReferentesObjetivo($datos['idObjetivo'], $_POST['referentes']);
+            }*/
+            // === BASE OPERATIVA ===
+            $actualesBase = ModeloObjetivos::mdlObtenerBaseOperativaPorObjetivo($datos['idObjetivo']);
+            $nuevaBase = $_POST['base_operativa'] ?? [];
+
+            sort($actualesBase);
+            sort($nuevaBase);
+
+            if ($actualesBase !== $nuevaBase) {
+                ModeloObjetivos::mdlEliminarBaseOperativaObjetivo($datos['idObjetivo']);
+                if (!empty($nuevaBase)) {
+                    ModeloObjetivos::mdlGuardarBaseOperativaObjetivo($datos['idObjetivo'], $nuevaBase);
+                }
             }
 
+            // SIGLAS DINÁMICAS
+            $actuales = ModeloObjetivos::mdlObtenerSiglasPorObjetivo($datos['idObjetivo']);
+            $nuevas = $_POST['siglas'] ?? [];
+
+            $idsActuales = array_column($actuales, 'id');
+            $idsNuevas = array_column($nuevas, 'id');
+
+            // Eliminar siglas quitadas
+            foreach ($idsActuales as $id) {
+                if (!in_array($id, $idsNuevas)) {
+                    ModeloObjetivos::mdlEliminarSigla($id);
+                }
+            }
+
+            // Insertar o actualizar siglas
+            foreach ($nuevas as $s) {
+                if (empty($s['id'])) {
+                    ModeloObjetivos::mdlInsertarSigla($datos['idObjetivo'], $s['sigla'], $s['descripcion'], $s['horas']);
+                } else {
+                    ModeloObjetivos::mdlActualizarSigla($s['id'], $s['sigla'], $s['descripcion'], $s['horas'], 1);
+                }
+            }
             $conexion->commit();
             ToastifyController::success('Objetivo actualizado correctamente');
         }
@@ -155,7 +212,12 @@ class ControladorObjetivos
             }
         }
     }
-
+    public static function apiSiglas()
+    {
+        $siglas = ModeloObjetivos::mdlObtenerSiglas();
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode($siglas, JSON_UNESCAPED_UNICODE);
+    }
     static public function vistaListadoObjetivos()
     {
         Auth::check('objetivos', 'vistaListadoObjetivos');

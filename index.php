@@ -14,6 +14,7 @@ require_once __DIR__ . '/config.php';
 require_once('controladores/alertas.controller.php');
 require_once('controladores/archivos.controller.php');
 require_once('controladores/art.controller.php');
+require_once('controladores/config.controller.php');
 require_once('controladores/cronograma.controller.php');
 require_once('controladores/datospersonales.controller.php');
 require_once("controladores/directivas.controller.php");
@@ -74,11 +75,23 @@ if ($r === 'registrar_reporte') {
     HombreVivoController::ajaxRegistrarReporte();
     exit;
 }
+// ===== 3b) AJAX – auto rotar equitativo =====
+if ($r === 'auto_rotar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    header('Content-Type: application/json; charset=utf-8');
+    ControladorPuestos::crtAutoRotarEquitativo();
+    exit;
+}
 
 // ===== 4) PROTECCIÓN GENERAL =====
 // A partir de aquí, cualquier otra ruta exige usuario autenticado
 Auth::requireLogin();
 
+// ===== 5) APIs JSON protegidas =====
+// Deben responder antes de cargar la plantilla, porque la plantilla imprime HTML.
+if ($r === 'api_siglas') {
+    ControladorObjetivos::apiSiglas();
+    exit;
+}
 
 if (!isset($_SESSION['idUsuario']) || empty($_SESSION['idUsuario'])) {
     // Si no está autenticado, redirigimos al login

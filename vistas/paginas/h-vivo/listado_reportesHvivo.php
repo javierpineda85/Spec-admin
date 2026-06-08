@@ -43,19 +43,33 @@ $conteo = ['azul' => 0, 'verde' => 0, 'rojo' => 0];
 foreach ($reportes as $row) {
     $demoraStr = trim($row['demora']);
     $signo = '';
-    if (strpos($demoraStr, '-') === 0) {
+
+    if ($demoraStr[0] === '-') {
         $signo = '-';
         $demoraStr = substr($demoraStr, 1);
+    } elseif ($demoraStr[0] === '+') {
+        $signo = '+';
+        $demoraStr = substr($demoraStr, 1);
     }
-    list($min, $sec) = array_map('intval', explode(':', $demoraStr));
-    $totalSeg = ($min * 60) + $sec;
 
-    if ($signo === '-' || $totalSeg === 0) {
-        $conteo['azul']++;
+    // Normalizar a H:M:S
+    $partes = explode(':', $demoraStr);
+    while (count($partes) < 3) {
+        array_unshift($partes, '00'); // agrega horas si faltan
+    }
+
+    list($h, $m, $s) = array_map('intval', $partes);
+    $totalSeg = ($h * 3600) + ($m * 60) + $s;
+
+    if ($signo === '-') {
+        $totalSeg *= -1;
+    }
+    if ($totalSeg <= 0) {
+        $conteo['azul']++;   // En tiempo o adelantado
     } elseif ($totalSeg <= 180) {
-        $conteo['verde']++;
+        $conteo['verde']++;  // ≤ 3 min tarde
     } else {
-        $conteo['rojo']++;
+        $conteo['rojo']++;   // > 3 min tarde
     }
 }
 ?>
@@ -73,7 +87,8 @@ foreach ($reportes as $row) {
                             <div class="alert alert-success alert-dismissible">
                                 <button type="button" class="close" data-dismiss="alert">&times;</button>
                                 <i class="icon fas fa-check"></i>
-                                <?= $_SESSION['success_message']; unset($_SESSION['success_message']); ?>
+                                <?= $_SESSION['success_message'];
+                                unset($_SESSION['success_message']); ?>
                             </div>
                         <?php endif; ?>
 
@@ -127,26 +142,45 @@ foreach ($reportes as $row) {
                                 <?php if (!empty($reportes)): ?>
                                     <?php foreach ($reportes as $row): ?>
                                         <?php
-                                            $demoraStr = trim($row['demora']);
-                                            $signo = '';
-                                            if (strpos($demoraStr, '-') === 0) {
-                                                $signo = '-';
-                                                $demoraStr = substr($demoraStr, 1);
-                                            }
-                                            list($min, $sec) = array_map('intval', explode(':', $demoraStr));
-                                            $totalSeg = ($min * 60) + $sec;
-                                            $demoraFmt = sprintf('%02d:%02d', $min, $sec);
+                                        $demoraStr = trim($row['demora']);
+                                        $signo = '';
 
-                                            if ($signo === '-' || $totalSeg === 0) {
-                                                $badgeClass = 'badge-primary';
-                                                $label = 'En tiempo';
-                                            } elseif ($totalSeg <= 180) {
-                                                $badgeClass = 'badge-success';
-                                                $label = '≤ 3 min';
-                                            } else {
-                                                $badgeClass = 'badge-danger';
-                                                $label = '> 3 min';
-                                            }
+                                        // Detectar signo
+                                        if ($demoraStr[0] === '-') {
+                                            $signo = '-';
+                                            $demoraStr = substr($demoraStr, 1);
+                                        } elseif ($demoraStr[0] === '+') {
+                                            $signo = '+';
+                                            $demoraStr = substr($demoraStr, 1);
+                                        }
+
+                                        // Normalizar a H:M:S (si faltan partes, se completan con ceros)
+                                        $partes = explode(':', $demoraStr);
+                                        while (count($partes) < 3) {
+                                            array_unshift($partes, '00');
+                                        }
+                                        list($h, $m, $s) = array_map('intval', $partes);
+
+                                        // Calcular segundos totales
+                                        $totalSeg = ($h * 3600) + ($m * 60) + $s;
+                                        if ($signo === '-') {
+                                            $totalSeg *= -1;
+                                        }
+
+                                        // Formato para mostrar (mm:ss)
+                                        $demoraFmt = sprintf('%02d:%02d', $m, $s);
+
+                                        // Clasificación
+                                        if ($totalSeg <= 0) {
+                                            $badgeClass = 'badge-primary';
+                                            $label = 'En tiempo';
+                                        } elseif ($totalSeg <= 180) {
+                                            $badgeClass = 'badge-success';
+                                            $label = '≤ 3 min';
+                                        } else {
+                                            $badgeClass = 'badge-danger';
+                                            $label = '> 3 min';
+                                        }
                                         ?>
                                         <tr>
                                             <td><?= htmlspecialchars($row['vigilador']) ?></td>
@@ -163,18 +197,7 @@ foreach ($reportes as $row) {
                             </tbody>
                         </table>
 
-                        <script>
-                        function filtrarColor(clase) {
-                            document.querySelectorAll('#example1 tbody tr').forEach(tr => {
-                                if (!clase) {
-                                    tr.style.display = '';
-                                } else {
-                                    const badge = tr.querySelector('.badge');
-                                    tr.style.display = badge && badge.classList.contains(clase) ? '' : 'none';
-                                }
-                            });
-                        }
-                        </script>
+
 
                     </div>
                 </div>
@@ -182,3 +205,15 @@ foreach ($reportes as $row) {
         </div>
     </div>
 </section>
+<script>
+    function filtrarColor(clase) {
+        document.querySelectorAll('#example1 tbody tr').forEach(tr => {
+            if (!clase) {
+                tr.style.display = '';
+            } else {
+                const badge = tr.querySelector('.badge');
+                tr.style.display = badge && badge.className.includes(clase) ? '' : 'none';
+            }
+        });
+    }
+</script>

@@ -1,6 +1,7 @@
 <?php
 // Auth::check('salud', 'verMiSalud');
-$idUsuario = $_SESSION['idUsuario'] ?? 0;
+//$idUsuario = $_SESSION['idUsuario'] ?? 0;
+$idUsuario = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $db = new Conexion;
 
 // Datos existentes

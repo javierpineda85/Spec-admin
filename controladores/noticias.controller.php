@@ -3,17 +3,17 @@ class NoticiasController
 {
     public static function vistaCumple()
     {
-        Auth::check('noticias', 'verCumples');
+        Auth::check('noticias', 'vistaCumple');
 
         $mesActual = date('m');
         $db = new Conexion;
+        $cumples = $db->consultas("SELECT u.nombre, u.apellido, r.nombre AS rol, u.f_nac
+                                    FROM usuarios u
+                                    JOIN roles r ON u.rol_id = r.id
+                                    WHERE MONTH(u.f_nac) = ?
+                                    ORDER BY DAY(u.f_nac)
+                                ", [$mesActual]);
 
-        $cumples = $db->consultas("
-            SELECT nombre, apellido, rol, f_nac 
-            FROM usuarios 
-            WHERE MONTH(f_nac) = ?
-            ORDER BY DAY(f_nac)
-        ", [$mesActual]);
 
         include 'vistas/paginas/admin/noticias/cumpleanos.php';
     }

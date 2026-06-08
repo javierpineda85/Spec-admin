@@ -7,6 +7,15 @@
         <ul class="nav nav-treeview">
             <?php if (Auth::hasPermission('mensajes', 'crtMostrarMensajesEnviados')): ?>
                 <li class="nav-item">
+                    <a href="?r=bandeja-entrada" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Bandeja de entrada</p>
+                    </a>
+                </li>
+            <?php endif; ?>
+
+            <?php if (Auth::hasPermission('mensajes', 'crtMostrarMensajesEnviados')): ?>
+                <li class="nav-item">
                     <a href="?r=mensajes-enviados" class="nav-link">
                         <i class="far fa-circle nav-icon"></i>
                         <p>Mensajes enviados</p>

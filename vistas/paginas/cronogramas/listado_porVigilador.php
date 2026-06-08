@@ -65,6 +65,7 @@ $feriados   = $_SESSION['feriados_rango'] ?? [];
               <tr>
                 <th>Fecha</th>
                 <th>Turno</th>
+                <th>Objetivo</th>
                 <th>Puesto</th>
               </tr>
             </thead>
@@ -79,6 +80,7 @@ $feriados   = $_SESSION['feriados_rango'] ?? [];
                 <tr class="<?= $verde ?>">
                   <td><?= date('d/m/Y', strtotime($fecha)) ?></td>
                   <td><?= htmlspecialchars($info['turno'] ?? '-') ?></td>
+                  <td><?= htmlspecialchars($info['objetivo'] ?? '-') ?></td>
                   <td><?= htmlspecialchars($info['puesto'] ?? '-') ?></td>
                 </tr>
               <?php endforeach; ?>

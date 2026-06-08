@@ -1,15 +1,16 @@
 <?php
-// Obtener destinatarios válidos según reglas y contexto
-$idMensajeOriginal = (isset($_GET['t']) && $_GET['t'] === 'reply') ? ($_GET['idMsj'] ?? null) : null;
+$modo = $_GET['t'] ?? 'nuevo';
+$idMensajeOriginal = ($modo === 'reply' || $modo === 'share') ? ($_GET['idMsj'] ?? null) : null;
+
 $usuarios = ControladorMensajes::obtenerDestinatariosDisponibles($_SESSION['idUsuario'], $idMensajeOriginal);
 
 $mensaje = [];
-if (isset($_GET['t']) && in_array($_GET['t'], ['reply', 'share'])) {
-    $mensaje = ControladorMensajes::crtMostrarUnMensaje($_GET['idMsj']);
+if ($idMensajeOriginal) {
+    $mensaje = ControladorMensajes::crtMostrarUnMensaje($idMensajeOriginal) ?? [];
 }
 
-$recibidos = ControladorMensajes::crtMostrarMensajes('destinatario_id', $_SESSION['idUsuario']);
-$mensajesNoLeidos = array_filter($recibidos, fn($m) => $m['leido'] == 0);
+$recibidos = ControladorMensajes::crtMostrarMensajesEnviados('destinatario_id', $_SESSION['idUsuario']);
+$mensajesNoLeidos = array_filter($recibidos, fn($m) => isset($m['leido']) && $m['leido'] == 0);
 $cantidadNoLeidos = count($mensajesNoLeidos);
 ?>
 
@@ -71,9 +72,11 @@ $cantidadNoLeidos = count($mensajesNoLeidos);
                             <div class="card-header">
                                 <h3 class="card-title">
                                     <?php
-                                    if ($_GET['t'] == 'reply') echo "Responder mensaje";
-                                    elseif ($_GET['t'] == 'share') echo "Compartir mensaje";
-                                    else echo "Redactar nuevo mensaje";
+                                    switch ($modo) {
+                                        case 'reply': echo "Responder mensaje"; break;
+                                        case 'share': echo "Compartir mensaje"; break;
+                                        default: echo "Redactar nuevo mensaje";
+                                    }
                                     ?>
                                 </h3>
                             </div>
@@ -87,16 +90,14 @@ $cantidadNoLeidos = count($mensajesNoLeidos);
                                     <form action="" method="post">
                                         <input type="hidden" name="id_remitente" value="<?= $_SESSION['idUsuario']; ?>">
 
-                                        <?php if ($_GET['t'] == 'reply'): ?>
-                                            <input type="hidden" name="id_destinatario" value="<?= $mensaje[0]["remitente_id"]; ?>">
-                                            <input type="hidden" name="idMensajeOriginal" value="<?= $_GET['idMsj']; ?>">
+                                        <?php if ($modo === 'reply' && !empty($mensaje[0]['remitente_id'])): ?>
+                                            <input type="hidden" name="id_destinatario" value="<?= $mensaje[0]['remitente_id']; ?>">
                                         <?php endif; ?>
 
-
                                         <div class="form-group">
-                                            <select class="form-control select2" name="id_destinatario" <?= ($_GET['t'] == 'reply') ? 'disabled' : ''; ?> required>
+                                            <select class="form-control select2" name="id_destinatario" <?= ($modo === 'reply') ? 'disabled' : ''; ?> required>
                                                 <option value="" disabled selected>Para:</option>
-                                                <?php if ($_GET['t'] == 'reply'): ?>
+                                                <?php if ($modo === 'reply' && !empty($mensaje[0]['remitente_id'])): ?>
                                                     <option value="<?= $mensaje[0]["remitente_id"]; ?>" selected>
                                                         <?= $mensaje[0]['apellido'] . " " . $mensaje[0]['nombre']; ?>
                                                     </option>
@@ -110,9 +111,9 @@ $cantidadNoLeidos = count($mensajesNoLeidos);
                                             </select>
                                         </div>
 
-                                        <?php if ($_GET['t'] == 'reply' || $_GET['t'] == 'share'): ?>
+                                        <?php if (in_array($modo, ['reply', 'share']) && !empty($mensaje[0]['contenido'])): ?>
                                             <div class="alert alert-light small">
-                                                <strong><?= $_GET['t'] == 'reply' ? 'Mensaje anterior:' : 'Mensaje compartido:' ?></strong><br>
+                                                <strong><?= $modo === 'reply' ? 'Mensaje anterior:' : 'Mensaje compartido:' ?></strong><br>
                                                 <?= nl2br(htmlspecialchars($mensaje[0]['contenido'])); ?><br>
                                                 <em class="text-muted">Enviado el <?= $mensaje[0]['fMensaje']; ?> a las <?= $mensaje[0]['horaMensaje']; ?></em>
                                             </div>

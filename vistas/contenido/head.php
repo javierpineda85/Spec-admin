@@ -2,29 +2,37 @@
 <html lang="es">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="author" content="Javier Pineda">
-  <meta name="description" content="Sistema de gestión de trabajo de la empresa de seguridad S.P.E.C. perteneciente al grupo MARSAN S.A.">
-  <link rel="shortcut icon" href="img/spec-favicon.ico" type="image/x-icon">
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>S.P.E.C. </title>
+<!-- Metadatos dinámicos -->
+<meta name="author" content="<?= htmlspecialchars($config['system_author'] ?? '') ?>">
+<meta name="description" content="<?= htmlspecialchars($config['system_description'] ?? '') ?>">
+<link rel="shortcut icon" href="<?= htmlspecialchars($config['system_favicon'] ?? (BASE_URL.'/img/spec-favicon.ico')) ?>" type="image/x-icon">
 
-  <link rel="manifest" href="<?= BASE_URL ?>/manifest.json">
-  <meta name="theme-color" content="#007bff">
-  <!-- Registro del Service Worker -->
-  <script src="<?= BASE_URL ?>/sw-register.js"></script>
+<!-- Control de caché -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+
+<!-- Título dinámico -->
+<title><?= htmlspecialchars($config['system_name'] ?? 'SPEC - Grupo Marzan SA') ?></title>
+
+<!-- PWA -->
+<link rel="manifest" href="<?= BASE_URL ?>/manifest.json">
+<meta name="theme-color" content="#007bff">
+
+<!-- Registro del Service Worker -->
+<script src="<?= BASE_URL ?>/sw-register.js"></script>
 
   <!-- Audio para alertas -->
   <audio id="sonido-alerta-global" src="<?= BASE_URL ?>/public/sonidos/spec_notificacion.mp3" preload="auto"></audio>
   <!-- Google Font: Source Sans Pro -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="./css/all.min.css">
-  <script src="https://kit.fontawesome.com/7907a05fb3.js"></script>
+  <link rel="stylesheet" href="./plugins/fontawesome-free/css/all.min.css">
+
+
   <!-- Theme style -->
   <link rel="stylesheet" href="./css/adminlte.min.css">
 

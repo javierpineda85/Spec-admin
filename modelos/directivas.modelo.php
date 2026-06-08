@@ -5,38 +5,24 @@ class ModeloDirectivas
     /* INSERTAR DIRECTIVA */
     static public function mdlGuardarDirectiva($tabla, $datos)
     {
-        // Asegúrate que la tabla tiene columna 'adjunto'
-        $registro = Conexion::conectar()->prepare("
-                INSERT INTO $tabla (detalle, id_objetivo, adjunto, tipo) 
-                VALUES (:detalle, :id_objetivo, :adjunto, :tipo)
+        $registro = Conexion::conectar()->prepare(" INSERT INTO $tabla (detalle, id_objetivo, adjunto, tipo) 
+        VALUES (:detalle, :id_objetivo, :adjunto, :tipo)
             ");
 
-        // Limpiar saltos de línea
         $detalleLimpio = str_replace("\r\n", "\n", $datos["detalle"]);
         $registro->bindParam(":detalle", $detalleLimpio, PDO::PARAM_STR);
         $registro->bindParam(":id_objetivo", $datos["id_objetivo"], PDO::PARAM_INT);
         $registro->bindParam(":tipo", $datos["tipo"], PDO::PARAM_STR);
 
-        $registro->bindParam(":detalle", $detalleLimpio, PDO::PARAM_STR);
-        $registro->bindParam(":id_objetivo", $datos["id_objetivo"], PDO::PARAM_INT);
-        // Si no hubo adjunto, se envía NULL
         if (empty($datos["adjunto"])) {
             $registro->bindValue(":adjunto", null, PDO::PARAM_NULL);
         } else {
             $registro->bindParam(":adjunto", $datos["adjunto"], PDO::PARAM_STR);
         }
 
-        if ($registro->execute()) {
-            return "ok";
-        } else {
-            // Imprime info de error para debugging
-            // print_r(Conexion::conectar()->errorInfo());
-            return "error";
-        }
-
-        $registro->closeCursor();
-        $registro = null;
+        return $registro->execute() ? "ok" : "error";
     }
+
 
     /* MODIFICAR DIRECTIVA */
     static public function mdlModificarDirectiva($tabla, $datos)
@@ -44,7 +30,6 @@ class ModeloDirectivas
         try {
             $conexion = Conexion::conectar();
 
-            // Si llega adjunto nuevo, lo actualizamos; si no, dejamos el antiguo
             if (!empty($datos["adjunto"])) {
                 $sql = "UPDATE $tabla 
                     SET detalle = :detalle, 
@@ -76,6 +61,7 @@ class ModeloDirectivas
             return $e->getMessage();
         }
     }
+
 
 
     static public function mdlEliminarDirectiva($tabla, $idDirectiva)

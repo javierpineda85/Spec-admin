@@ -7,15 +7,55 @@ $db = new Conexion();
 $sql = "SELECT * FROM objetivos WHERE idObjetivo = ?";
 $objetivo = $db->consultas($sql, [$_GET['id']])[0];
 
-$usuarios = $db->consultas("SELECT idUsuario, nombre, apellido FROM usuarios WHERE rol = 'Vigilador' AND activo = 1 ORDER BY apellido");
-$referentes = $db->consultas("SELECT idUsuario, nombre, apellido FROM usuarios WHERE rol = 'Referente' AND activo = 1 ORDER BY apellido");
+$usuarios = $db->consultas("SELECT u.idUsuario, u.nombre, u.apellido
+                            FROM usuarios u
+                            INNER JOIN roles r ON u.rol_id = r.id
+                            WHERE r.categoria = 'operativo' AND u.activo = 1
+                            ORDER BY u.apellido");
+
+$referentes = $db->consultas("SELECT u.idUsuario, u.nombre, u.apellido
+                              FROM usuarios u
+                              INNER JOIN roles r ON u.rol_id = r.id
+                              WHERE r.categoria = 'referente' AND u.activo = 1
+                              ORDER BY u.apellido");
+$baseOperativa = $db->consultas("SELECT u.idUsuario, u.nombre, u.apellido
+                                FROM usuarios u
+                                INNER JOIN roles r ON u.rol_id = r.id
+                                WHERE r.categoria = 'baseOperativa' AND u.activo = 1
+                                ORDER BY u.apellido");
 
 $asignadosVigiladores = $db->consultas("SELECT vigilador_id FROM objetivo_vigiladores WHERE objetivo_id = ?", [$objetivo['idObjetivo']]);
 $asignadosReferentes = $db->consultas("SELECT referente_id FROM objetivo_referentes WHERE objetivo_id = ?", [$objetivo['idObjetivo']]);
 
 $vigiladoresSeleccionados = array_column($asignadosVigiladores, 'vigilador_id');
 $referentesSeleccionados = array_column($asignadosReferentes, 'referente_id');
+$asignadosBase = $db->consultas("SELECT base_id FROM objetivo_base_operativa WHERE objetivo_id = ?", [$objetivo['idObjetivo']]);
+$baseSeleccionados = array_column($asignadosBase, 'base_id');
+$siglas = ModeloObjetivos::mdlObtenerSiglasPorObjetivo($objetivo['idObjetivo']);
 ?>
+<style>
+    #formObjetivo .select2-container--default .select2-selection--multiple {
+        min-height: 38px;
+        border-color: #6c757d;
+    }
+
+    #formObjetivo .select2-container--default .select2-selection--multiple .select2-selection__choice {
+        background-color: #1f2937;
+        border: 1px solid #111827;
+        color: #fff;
+        padding: 2px 8px;
+    }
+
+    #formObjetivo .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+        color: #fff;
+        margin-right: 6px;
+    }
+
+    #formObjetivo .select2-container--default .select2-results__option--selected {
+        background-color: #e2e8f0;
+        color: #111827;
+    }
+</style>
 
 <div class="card">
     <div class="card-header bg-info text-white">
@@ -34,12 +74,12 @@ $referentesSeleccionados = array_column($asignadosReferentes, 'referente_id');
                     <input type="hidden" name="idObjetivo" value="<?= $objetivo['idObjetivo'] ?>">
 
                     <div class="row">
-                        <div class="form-group col-sm-12 col-md-4">
+                        <div class="form-group col-sm-12 col-md-6">
                             <label class="form-label">Nombre</label>
                             <input type="text" class="form-control" name="nombreObjetivo" required value="<?= htmlspecialchars($objetivo['nombre']) ?>">
                         </div>
 
-                        <div class="form-group col-sm-12 col-md-3">
+                        <div class="form-group col-sm-12 col-md-2">
                             <label class="form-label">Tipo</label>
                             <select id="tipo" name="tipo" class="form-control" required>
                                 <option value="" disabled>Selecciona un tipo</option>
@@ -49,12 +89,12 @@ $referentesSeleccionados = array_column($asignadosReferentes, 'referente_id');
                             </select>
                         </div>
 
-                        <div class="form-group col-sm-12 col-md-3">
+                        <div class="form-group col-sm-12 col-md-3" style="display: none;">
                             <label for="cantidad_vigiladores">Cantidad de Vigiladores</label>
-                            <input type="number" name="cantidad_vigiladores" id="cantidad_vigiladores" class="form-control" min="1" required>
+                            <input type="number" name="cantidad_vigiladores" id="cantidad_vigiladores" class="form-control" min="1" data-optional="true">
                         </div>
 
-                        <div class="form-group col-sm-12 col-md-3">
+                        <div class="form-group col-sm-12 col-md-4">
                             <label class="form-label">Localidad</label>
                             <select id="localidad" name="localidad" class="form-control" required>
                                 <option value="<?= htmlspecialchars($objetivo['localidad']) ?>" selected><?= htmlspecialchars($objetivo['localidad']) ?></option>
@@ -73,17 +113,53 @@ $referentesSeleccionados = array_column($asignadosReferentes, 'referente_id');
                         <div class="form-group col-sm-12 col-md-5">
                             <label class="form-label">Buscar dirección</label>
                             <div class="input-group">
-                                <input type="text" id="address" class="form-control" data-optional="true" placeholder="Ingresa una dirección">
+                                <input type="text" id="address" class="form-control" name="domicilio" placeholder="Ingresa una dirección" value="<?= htmlspecialchars($objetivo['domicilio'] ?? '') ?>">
                                 <div class="input-group-append">
                                     <button type="button" id="btnSearch" class="btn btn-primary">Buscar</button>
                                 </div>
                             </div>
                         </div>
 
-                        <div class="form-group col-sm-12 col-md-2">
+                        <div class="form-group col-sm-12 col-md-1">
                             <label class="form-label">Radio (m)</label>
                             <input type="number" id="radio_m" name="radio_m" class="form-control" placeholder="200" required value="<?= htmlspecialchars($objetivo['radio_m']) ?>">
                         </div>
+                        <div class="col-sm-12 col-md-1">
+                            <div class="form-group">
+                                <label>Sigla</label>
+                                <input type="hidden" name="siglas[0][id]" value="<?= $siglas[0]['id'] ?? '' ?>">
+                                <input type="text"
+                                    name="siglas[0][sigla]"
+                                    class="form-control"
+                                    value="<?= htmlspecialchars($siglas[0]['sigla'] ?? '') ?>"
+                                    placeholder="6H, MIC"
+                                    required>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12 col-md-1">
+                            <div class="form-group">
+                                <label>Horas</label>
+                                <input type="number"
+                                    name="siglas[0][horas]"
+                                    class="form-control"
+                                    value="<?= htmlspecialchars($siglas[0]['horas'] ?? '') ?>"
+                                    placeholder="Horas"
+                                    required>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12 col-md-4">
+                            <div class="form-group">
+                                <label>Descripción</label>
+                                <input type="text"
+                                    name="siglas[0][descripcion]"
+                                    class="form-control"
+                                    value="<?= htmlspecialchars($siglas[0]['descripcion'] ?? '') ?>"
+                                    placeholder="Descripción (opcional)">
+                            </div>
+                        </div>
+
                     </div>
 
                     <div class="row">
@@ -116,7 +192,19 @@ $referentesSeleccionados = array_column($asignadosReferentes, 'referente_id');
                             </select>
                             <small class="form-text text-muted">Podés seleccionar uno o varios referentes para este objetivo.</small>
                         </div>
+                        <div class="form-group col-sm-12 col-md-5">
+                            <label for="base_operativa">Seleccionar Base Operativa</label>
+                            <select name="base_operativa[]" id="base_operativa" class="form-control select2" data-optional="true" multiple>
+                                <?php foreach ($baseOperativa as $b): ?>
+                                    <option value="<?= $b['idUsuario'] ?>" <?= in_array($b['idUsuario'], $baseSeleccionados ?? []) ? 'selected' : '' ?>>
+                                        <?= $b['apellido'] ?> <?= $b['nombre'] ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <small class="form-text text-muted">Podés asignar responsables de base operativa para este objetivo.</small>
+                        </div>
                     </div>
+
                 </div>
 
                 <div class="card-footer col-sm-12 col-md-12 d-flex justify-content-between">
@@ -131,17 +219,80 @@ $referentesSeleccionados = array_column($asignadosReferentes, 'referente_id');
 
 
 <script>
-    const deps = ["Capital", "Godoy Cruz", "Guaymallén", "Las Heras", "Luján de Cuyo", "Maipú", "San Martín", "Rivadavia", "Junín", "Santa Rosa", "La Paz", "Tunuyán", "Tupungato", "San Carlos", "General Alvear", "Malargüe"];
-    const sel = document.getElementById('localidad');
+    // Carga los departamentos en el select
+    const deps = [
+        "Capital", "Godoy Cruz", "Guaymallén", "Las Heras", "Luján de Cuyo", "Lavalle", "Maipú",
+        "San Martín", "Rivadavia", "Junín", "Santa Rosa", "La Paz", "Tunuyán",
+        "Tupungato", "San Carlos", "San Rafael", "General Alvear", "Malargüe"
+    ];
+
+
+    const sel = document.getElementById("localidad");
     deps.forEach(d => {
-        if (d !== '<?= $objetivo['localidad'] ?>') {
-            let o = document.createElement('option');
-            o.value = d;
-            o.text = d;
-            sel.append(o);
-        }
+        let o = document.createElement("option");
+        o.value = d;
+        o.text = d;
+        sel.append(o);
     });
 
+    document.addEventListener('DOMContentLoaded', () => {
+        const latInput = document.getElementById('latitud');
+        const lngInput = document.getElementById('longitud');
+        const radioInput = document.getElementById('radio_m');
+        const addressInput = document.getElementById('address');
+        const btnSearch = document.getElementById('btnSearch');
+
+        // Valores iniciales
+        const initialLat = parseFloat(latInput.value) || -32.889458;
+        const initialLng = parseFloat(lngInput.value) || -68.845839;
+        const map = L.map('map').setView([initialLat, initialLng], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        const marker = L.marker([initialLat, initialLng], {
+            draggable: true
+        }).addTo(map);
+
+        // Actualiza inputs al mover marcador
+        marker.on('dragend', () => {
+            const pos = marker.getLatLng();
+            latInput.value = pos.lat.toFixed(6);
+            lngInput.value = pos.lng.toFixed(6);
+        });
+
+        // Al hacer clic en el mapa reposiciona
+        map.on('click', (e) => {
+            marker.setLatLng(e.latlng);
+            latInput.value = e.latlng.lat.toFixed(6);
+            lngInput.value = e.latlng.lng.toFixed(6);
+        });
+
+        // Búsqueda de dirección con Nominatim
+        btnSearch.addEventListener('click', () => {
+            const query = addressInput.value.trim();
+            if (!query) return;
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
+                .then(res => res.json())
+                .then(results => {
+                    if (results && results.length) {
+                        const place = results[0];
+                        const lat = parseFloat(place.lat);
+                        const lon = parseFloat(place.lon);
+                        map.setView([lat, lon], 15);
+                        marker.setLatLng([lat, lon]);
+                        latInput.value = lat.toFixed(6);
+                        lngInput.value = lon.toFixed(6);
+                    } else {
+                        alert('Dirección no encontrada.');
+                    }
+                })
+                .catch(() => alert('Error al buscar la dirección.'));
+        });
+    });
+
+    // Validación de cantidad de vigiladores
     $(document).ready(function() {
         $('#vigiladores').select2({
             placeholder: "Selecciona los vigiladores asignados"
@@ -149,105 +300,47 @@ $referentesSeleccionados = array_column($asignadosReferentes, 'referente_id');
         $('#referentes').select2({
             placeholder: "Selecciona los referentes asignados"
         });
-    });
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const latInput = document.getElementById('latitud');
-        const lngInput = document.getElementById('longitud');
-        const addressInput = document.getElementById('address');
-        const btnSearch = document.getElementById('btnSearch');
-        const initLat = parseFloat(latInput.value) || -32.889458;
-        const initLng = parseFloat(lngInput.value) || -68.845839;
-        const map = L.map('map').setView([initLat, initLng], 13);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OSM'
-        }).addTo(map);
-        const marker = L.marker([initLat, initLng], {
-            draggable: true
-        }).addTo(map);
-        marker.on('dragend', () => {
-            const p = marker.getLatLng();
-            latInput.value = p.lat.toFixed(6);
-            lngInput.value = p.lng.toFixed(6);
-        });
-        map.on('click', e => {
-            marker.setLatLng(e.latlng);
-            latInput.value = e.latlng.lat.toFixed(6);
-            lngInput.value = e.latlng.lng.toFixed(6);
-        });
-        btnSearch.addEventListener('click', () => {
-            const q = addressInput.value.trim();
-            if (!q) return;
-            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}`)
-                .then(r => r.json()).then(rs => {
-                    if (rs.length) {
-                        let p = rs[0];
-                        let la = parseFloat(p.lat),
-                            ln = parseFloat(p.lon);
-                        map.setView([la, ln], 15);
-                        marker.setLatLng([la, ln]);
-                        latInput.value = la.toFixed(6);
-                        lngInput.value = ln.toFixed(6);
-                    } else alert('No encontrado');
-                });
+        // ✅ Nuevo campo Base Operativa
+        $('#base_operativa').select2({
+            placeholder: "Selecciona los responsables de base operativa"
         });
     });
 
-    //Validacion de cantidad de vigiladores
-    $(document).ready(function() {
-        $('#vigiladores').select2({
-            placeholder: "Selecciona los vigiladores asignados"
-        });
-    });
     document.addEventListener("DOMContentLoaded", function() {
         const form = document.getElementById("formObjetivo");
-        const inputCantidad = document.getElementById("cantidad_vigiladores");
+        //const inputCantidad = document.getElementById("cantidad_vigiladores");
         const $selectVigiladores = $('#vigiladores');
+        const $selectReferentes = $('#referentes');
+        const $selectBase = $('#base_operativa'); // ✅ Nuevo campo
 
         // Inicializar Select2
         $selectVigiladores.select2({
             placeholder: "Selecciona los vigiladores asignados"
         });
+        $selectReferentes.select2({
+            placeholder: "Selecciona los referentes asignados"
+        });
+        $selectBase.select2({
+            placeholder: "Selecciona los responsables de base operativa"
+        });
+
         // Mostrar toast
         function mostrarToast(mensaje) {
             $('#toast-msg').text(mensaje);
             $('#toast-alerta').toast('show');
         }
-        // Validación dinámica al seleccionar
-        $selectVigiladores.on('select2:select', function(e) {
-            const max = parseInt(inputCantidad.value) || 0;
-            const seleccionados = $selectVigiladores.select2('data');
 
-            if (seleccionados.length > max) {
-                // Elimina el último seleccionado
-                const idEliminar = e.params.data.id;
-                const opciones = $selectVigiladores.val().filter(val => val !== idEliminar);
-                $selectVigiladores.val(opciones).trigger('change');
-
-                mostrarToast('Solo puedes seleccionar hasta ' + max + ' vigilador(es).');
-            }
-        });
 
         // Validación de respaldo al enviar
         form.addEventListener("submit", function(e) {
-            const cantidadRequerida = parseInt(inputCantidad.value);
-            const seleccionados = $selectVigiladores.select2('data').length;
+            const seleccionadosVigiladores = $selectVigiladores.select2('data').length;
+            const seleccionadosBase = $selectBase.select2('data').length;
 
-            if (seleccionados !== cantidadRequerida) {
+            // Si no hay vigiladores O no hay base operativa → bloquear envío
+            if (seleccionadosVigiladores === 0 && seleccionadosBase === 0) {
                 e.preventDefault();
-                mostrarToast("Debes seleccionar exactamente " + cantidadRequerida + " vigilador(es). Actualmente seleccionaste " + seleccionados + ".");
+                mostrarToast("Debes seleccionar al menos un vigilador y un responsable de base operativa.");
             }
-        });
-    });
-
-    //Carga de referentes
-    document.addEventListener("DOMContentLoaded", function() {
-        const form = document.getElementById("formObjetivo");
-        const $selectReferentes = $('#referentes');
-
-        // Inicializar Select2
-        $selectReferentes.select2({
-            placeholder: "Selecciona los referentes asignados"
         });
 
 

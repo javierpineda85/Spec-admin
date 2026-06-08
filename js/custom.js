@@ -94,8 +94,6 @@ function ocultar() {
   $e.classList.toggle('d-none');
 }
 
-
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 //funcion para completar el DNI y contraseña al mismo tiempo en  paginas/usuarios/crear-usuario.php
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -240,7 +238,7 @@ document.addEventListener("DOMContentLoaded", function () {
   document.querySelectorAll("form").forEach(function (form) {
     form.addEventListener("submit", function (event) {
 
-      if (form.id === "perfilForm" || form.id === "entradaSalidaForm" ) {
+      if (form.id === "perfilForm" || form.id === "entradaSalidaForm") {
         console.log("↪ Saltando validación genérica para este form:", form.id);
         return;
       }
@@ -270,7 +268,7 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
           vacio = campo.value.trim() === "";
         }
-console.log("Campo:", campo.name || campo.id, "| Optional:", campo.dataset.optional);
+        console.log("Campo:", campo.name || campo.id, "| Optional:", campo.dataset.optional);
 
         if (vacio) {
           isValid = false;
@@ -367,3 +365,172 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+//                  funcion para ver las notificaciones de los mensajes
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+document.addEventListener('DOMContentLoaded', function () {
+  function actualizarContadorMensajes() {
+    fetch('ajax/ver_mensajes.php')
+      .then(res => res.json())
+      .then(mensajes => {
+        //console.log('📬 Mensajes recibidos:', mensajes);
+        const badge = document.getElementById('badge-mensajes');
+        const contenedor = document.getElementById('dropdown-mensajes-preview');
+        if (!badge || !contenedor) {
+          console.warn('⚠️ No se encontró el badge o el contenedor de mensajes');
+          return;
+        }
+
+        if (mensajes.length > 0) {
+          badge.innerText = mensajes.length;
+          badge.style.display = 'inline-block';
+
+          const prev = parseInt(localStorage.getItem('mensajes_previos'), 10) || 0;
+          if (
+            mensajes.length > prev &&
+            !window.location.search.includes('r=bandeja-entrada')
+          ) {
+            document
+              .getElementById('sonido-alerta-global')
+              .play()
+              .catch(() => { });
+          }
+          localStorage.setItem('mensajes_previos', mensajes.length);
+
+          contenedor.innerHTML = '';
+          mensajes.slice(0, 3).forEach(m => {
+            const nombre = m.nombre ?? 'Sin nombre';
+            const apellido = m.apellido ?? '';
+            const fecha = m.fMensaje ?? '';
+            const hora = fecha.slice(11, 16);
+            const dia = fecha.slice(0, 10);
+
+            contenedor.insertAdjacentHTML(
+              'beforeend',`
+            <a href="index.php?r=bandeja-entrada" class="dropdown-item">
+              <i class="fas fa-envelope mr-2"></i>
+              ${nombre} ${apellido}
+              <span class="float-right text-muted text-sm">${hora}</span>
+              <div class="text-sm">Recibido el ${dia}</div>
+            </a>
+            <div class="dropdown-divider"></div>
+          `
+            );
+          });
+        } else {
+          badge.style.display = 'none';
+          contenedor.innerHTML =
+            '<span class="dropdown-item text-muted">Sin mensajes nuevos</span>';
+          localStorage.setItem('mensajes_previos', 0);
+        }
+      })
+      .catch(e => console.error('❌ Error al obtener mensajes:', e));
+  }
+
+
+  $(document).on('click', '.ver-mensaje', function () {
+    const idMensaje = $(this).data('id');
+    $('#contenido-mensaje').html('<p class="text-muted">Cargando mensaje...</p>');
+
+    $.ajax({
+      url: 'ajax/ver_mensaje.php',
+      type: 'POST',
+      data: {
+        idMensaje
+      },
+      dataType: 'json',
+      success: function (respuesta) {
+        if (respuesta && respuesta.exito) {
+          const html = `
+            <p><strong>De:</strong> ${respuesta.nombre} ${respuesta.apellido}</p>
+            <p><strong>Fecha:</strong> ${respuesta.fecha} ${respuesta.hora}</p>
+            <hr>
+            <p>${respuesta.contenido}</p>
+          `;
+          $('#contenido-mensaje').html(html);
+          $('#modalVerMensaje').modal('show');
+        } else {
+          $('#contenido-mensaje').html(`<p class="text-danger">${respuesta.error ?? 'Error al cargar el mensaje.'}</p>`);
+        }
+      },
+      error: function (xhr, status, error) {
+        console.error("❌ Error en AJAX:", status, error);
+        $('#contenido-mensaje').html('<p class="text-danger">Error de conexión con el servidor.</p>');
+      }
+
+    });
+
+    $.ajax({
+      url: 'ajax/marcar_leido.php',
+      type: 'POST',
+      data: {
+        idMensaje
+      },
+      success: function (respuesta) {
+        //console.log('📬 Mensaje marcado como leído');
+        $(`#mensaje-${idMensaje}`).removeClass('no-leido font-weight-bold bg-light').addClass('leido');
+        $(`#icono-${idMensaje}`).removeClass('fa-envelope').addClass('fa-envelope-open');
+
+        //Para simular que actualizó la cantidad desde la BD
+        const badgePrincipal = $('#badge-mensajes');
+        const badgeEntrada = $('#badge-mensajes-entrada');
+
+        const cantidadPrincipal = parseInt(badgePrincipal.text(), 10);
+        const cantidadEntrada = parseInt(badgeEntrada.text(), 10);
+
+        if (cantidadPrincipal > 0) {
+          badgePrincipal.text(cantidadPrincipal - 1);
+          if (cantidadPrincipal - 1 === 0) {
+            badgePrincipal.hide();
+          }
+        }
+
+        if (cantidadEntrada > 0) {
+          badgeEntrada.text(cantidadEntrada - 1);
+          if (cantidadEntrada - 1 === 0) {
+            badgeEntrada.hide();
+          }
+        }
+        //location.reload();
+      },
+      error: function (xhr, status, error) {
+        //console.error("❌ Error al marcar como leído:", status, error);
+      }
+    });
+
+  });
+  //Marcar como NO LEIDO
+  $(document).on('click', '.marcar-no-leido', function () {
+    const idMensaje = $(this).data('id');
+
+    $.ajax({
+      url: 'ajax/marcar_no_leido.php',
+      type: 'POST',
+      data: {
+        'idMensaje': idMensaje
+      },
+      dataType: 'json',
+      success: function (respuesta) {
+        if (respuesta.exito) {
+          //alert('📭 Mensaje marcado como no leído');
+          $(`#mensaje-${idMensaje}`).removeClass('leido').addClass('no-leido font-weight-bold bg-light');
+          $(`#icono-${idMensaje}`).removeClass('fa-envelope-open').addClass('fa-envelope');
+
+          location.reload(); // o actualizar solo el ícono si querés evitar reload
+        } else {
+          alert('Error: ' + (respuesta.error ?? 'No se pudo marcar como no leído'));
+        }
+      },
+      error: function (xhr, status, error) {
+        console.error("❌ Error AJAX:", status, error);
+        alert('Error de conexión');
+      }
+    });
+  });
+
+  actualizarContadorMensajes();
+  setInterval(actualizarContadorMensajes, 30000);
+
+});
+

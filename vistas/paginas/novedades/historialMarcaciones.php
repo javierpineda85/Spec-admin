@@ -16,10 +16,11 @@ function obtenerCoordenadasDesdeMarcacion(array $row)
 
 
 $db = new Conexion();
-$sql = "SELECT idUsuario, apellido, nombre 
-        FROM usuarios 
-        WHERE rol = 'Vigilador'
-        ORDER BY apellido, nombre";
+$sql = "SELECT u.idUsuario, u.apellido, u.nombre
+                FROM usuarios u
+                INNER JOIN roles r ON u.rol_id = r.id
+                WHERE r.categoria = 'operativo' AND u.activo = 1
+                ORDER BY u.apellido, u.nombre";
 $vigiladores = $db->consultas($sql);
 
 $filtros = [
@@ -27,21 +28,7 @@ $filtros = [
     'desde'     => $_POST['desde'] ?? '',
     'hasta'     => $_POST['hasta'] ?? ''
 ];
-/*
-$marcaciones = [];
-if ($filtros['vigilador'] && $filtros['desde'] && $filtros['hasta']) {
-    $sql = "SELECT m.*, o.nombre AS objetivo
-            FROM marcaciones_servicio m
-            JOIN objetivos o ON m.objetivo_id = o.idObjetivo
-            WHERE m.vigilador_id = ?
-            AND DATE(m.fecha_hora) BETWEEN ? AND ?
-            ORDER BY m.fecha_hora ASC";
-    $marcaciones = $db->consultas($sql, [
-        $filtros['vigilador'],
-        $filtros['desde'],
-        $filtros['hasta']
-    ]);
-}*/
+
 
 ?>
 
