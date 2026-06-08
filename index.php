@@ -86,6 +86,12 @@ if ($r === 'auto_rotar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
 // A partir de aquí, cualquier otra ruta exige usuario autenticado
 Auth::requireLogin();
 
+// ===== 5) APIs JSON protegidas =====
+// Deben responder antes de cargar la plantilla, porque la plantilla imprime HTML.
+if ($r === 'api_siglas') {
+    ControladorObjetivos::apiSiglas();
+    exit;
+}
 
 if (!isset($_SESSION['idUsuario']) || empty($_SESSION['idUsuario'])) {
     // Si no está autenticado, redirigimos al login
