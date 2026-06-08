@@ -7,6 +7,7 @@ $hora = date('H:i');
 $db           = new Conexion();
 $vigilador_id = $_SESSION['idUsuario'];
 $rol_usuario  = $_SESSION['rol'] ?? null;
+$rol_normalizado = strtolower((string)$rol_usuario);
 
 // Cargamos “Base” para roles genéricos
 $sqlBase      = "SELECT idObjetivo, nombre
@@ -19,7 +20,7 @@ $baseObjetivo = $resBase[0] ?? ['idObjetivo' => null, 'nombre' => 'Sin objetivo 
 // Solo para Vigilador/Referente cargamos su turno
 $turnoHoy     = null;
 $turnoAyer    = null;
-if (in_array($rol_usuario, ['VIGILADOR', 'REFERENTE'])) {
+if (in_array($rol_normalizado, ['vigilador', 'referente'], true)) {
     $hoy        = $fecha;
     $ayer       = date('Y-m-d', strtotime('-1 day'));
     // Turno hoy
@@ -60,7 +61,7 @@ if (in_array($rol_usuario, ['VIGILADOR', 'REFERENTE'])) {
 }
 
 // Decidimos objetivo inicial
-$objetivoAsignado = in_array($rol_usuario, ['VIGILADOR', 'REFERENTE'])
+$objetivoAsignado = in_array($rol_normalizado, ['vigilador', 'referente'], true)
     ? ($turnoHoy ?? $baseObjetivo)
     : $baseObjetivo;
 ?>
