@@ -159,6 +159,33 @@ class AlertasController
         echo json_encode(['success' => true]);
     }
 
+    public static function obtenerAlertasHombreVivoInicio(int $usuarioId, int $limite = 5): array
+    {
+        $usuarioId = (int) $usuarioId;
+        $limite = max(1, (int) $limite);
+
+        if ($usuarioId <= 0) {
+            return [];
+        }
+
+        $db = new Conexion();
+        $sql = "SELECT a.idAlerta,
+                       a.tipo,
+                       a.mensaje,
+                       a.creada_en,
+                       a.objetivo_id,
+                       o.nombre AS objetivo
+                FROM alertas a
+                LEFT JOIN objetivos o ON a.objetivo_id = o.idObjetivo
+                WHERE a.usuario_id = ?
+                  AND a.leida = 0
+                  AND a.tipo LIKE 'hombre_vivo%'
+                ORDER BY a.creada_en DESC
+                LIMIT {$limite}";
+
+        return $db->consultas($sql, [$usuarioId]) ?: [];
+    }
+
     public static function registrarAlertaGeneral(string $tipo, string $mensaje, int $usuarioId, int $objetivoId = null)
     {
         self::registrarAlertasParaUsuarios([$usuarioId], $tipo, $mensaje, $objetivoId);

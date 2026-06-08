@@ -6,7 +6,7 @@
     Auth::hasPermission('cronogramas', 'vistaReporteHorasPorObjetivo') ||
     Auth::hasPermission('cronogramas', 'vistaHorasPorVigilador')
 ): ?>
-  <div class="col-lg-3 col-md-6 col-sm-12">
+  <div class="col-6 col-md-6 col-lg-3">
       <div class="info-box shadow">
           <span class="info-box-icon bg-primary"><i class="fas fa-calendar-alt"></i></span>
           <div class="info-box-content">

@@ -18,6 +18,12 @@ Este módulo es crítico para:
 
 El módulo funciona tanto por **formulario web** como por **AJAX**, permitiendo integración con apps móviles o dispositivos externos.
 
+Actualización reciente:
+
+- El tiempo entre reportes quedó configurable por turno **diurno** y **nocturno**.
+- La tolerancia de alerta se mantiene fija en **3 minutos**.
+- La portada muestra un bloque con los reportes recientes y enlaza al listado completo.
+
 ---
 
 ## 2. Rutas del módulo
@@ -33,6 +39,10 @@ Estas rutas deben estar en:
 | `hombre_vivo` | GET | Muestra la vista principal del módulo. |
 | `registrar_hvivo` | GET/POST | Registra un reporte Hombre Vivo. |
 | `listado_hvivo` | GET | Lista todos los reportes. |
+| `reporte_hombre_vivo` | GET | Vista operativa del reporte con temporizador. |
+| `listado_reportes` | GET | Listado general de reportes Hombre Vivo. |
+| `configuracion_hvivo` | GET | Pantalla de configuración por turno. |
+| `guardar_configuracion_hvivo` | POST | Guarda la configuración diurna/nocturna. |
 | `ajax_registrar_hvivo` | GET | Registra reporte vía AJAX. |
 
 ---
@@ -46,6 +56,7 @@ Estas rutas deben estar en:
 | `registrar()` | Registra un reporte Hombre Vivo (GET/POST). |
 | `vistaHombreVivo()` | Muestra la vista principal del módulo. |
 | `vistaListadoReportesHombreVivo()` | Muestra listado de reportes. |
+| `obtenerReportesRecientesInicio()` | Devuelve los últimos reportes para el panel de inicio. |
 | `ajaxRegistrarReporte()` | Registra reporte vía AJAX. |
 
 ---
@@ -75,6 +86,7 @@ Validaciones:
 - Valida permisos  
 - Verifica si el usuario ya marcó **entrada** y **salida** hoy  
 - Guarda estado en sesión  
+- Carga la configuración de minutos por turno desde `hvivo_config`
 - Renderiza:
 
 ```
@@ -99,6 +111,16 @@ vistas/paginas/h-vivo/listado_reportesHvivo.php
 - Inserta directamente en BD  
 - Devuelve JSON  
 - No usa el modelo (inserta con SQL directo)  
+
+---
+
+## 11. Inicio y paneles relacionados
+
+La portada del sistema reutiliza parte de este módulo para mostrar:
+
+- Resumen de reportes recientes de Hombre Vivo
+- Enlace directo a `index.php?r=listado_reportes`
+- Acceso a configuración para roles habilitados
 
 ---
 

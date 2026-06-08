@@ -21,6 +21,12 @@ Este módulo es utilizado por:
 
 ---
 
+## 14. ActualizaciÃ³n reciente
+
+- El listado general de uniformes sigue disponible en `?r=listado_uniformes`.
+- El acceso se expone desde el panel de AdministraciÃ³n y desde accesos rÃ¡pidos del sistema.
+- La vista conserva el detalle por talle y el resumen por prenda/talle.
+
 # 2. Rutas del módulo
 
 Estas rutas deben estar en:

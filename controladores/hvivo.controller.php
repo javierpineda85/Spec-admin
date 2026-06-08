@@ -127,6 +127,26 @@ class HombreVivoController
         Auth::check('hvivo', 'vistaListadoReportesHombreVivo');
         include __DIR__ . '/../vistas/paginas/h-vivo/listado_reportesHvivo.php';
     }
+
+    public static function obtenerReportesRecientesInicio(int $limite = 5): array
+    {
+        $limite = max(1, (int) $limite);
+
+        $sql = "SELECT r.idReporte,
+                       r.demora,
+                       DATE(r.fecha_hora) AS fecha,
+                       TIME(r.fecha_hora) AS hora,
+                       CONCAT(u.nombre, ' ', u.apellido) AS vigilador,
+                       o.nombre AS objetivo
+                FROM reporte_hombre_vivo AS r
+                JOIN usuarios AS u ON r.id_usuario = u.idUsuario
+                LEFT JOIN objetivos o ON r.objetivo_id = o.idObjetivo
+                ORDER BY r.fecha_hora DESC
+                LIMIT {$limite}";
+
+        $db = new Conexion();
+        return $db->consultas($sql) ?: [];
+    }
     public static function vistaConfiguracionHombreVivo()
     {
         if (!self::puedeConfigurarHombreVivo()) {

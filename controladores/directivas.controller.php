@@ -262,6 +262,32 @@ class ControladorDirectivas
         include __DIR__ . '/../vistas/paginas/directivas/listado_directivas.php';
     }
 
+    public static function obtenerDirectivasInicio(?int $objetivoId = null, int $limite = 5): array
+    {
+        $db = new Conexion();
+        $limite = max(1, (int) $limite);
+
+        $sql = "SELECT d.idDirectiva,
+                       d.detalle,
+                       d.tipo,
+                       d.adjunto,
+                       d.id_objetivo,
+                       o.nombre AS objetivo
+                FROM directivas d
+                INNER JOIN objetivos o ON d.id_objetivo = o.idObjetivo";
+
+        $params = [];
+        if (!empty($objetivoId)) {
+            $sql .= " WHERE d.id_objetivo = ?";
+            $params[] = (int) $objetivoId;
+        }
+
+        $sql .= " ORDER BY d.idDirectiva DESC
+                  LIMIT {$limite}";
+
+        return $db->consultas($sql, $params) ?: [];
+    }
+
 
     static public function vistaCrearDirectiva()
     {

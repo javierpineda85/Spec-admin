@@ -3,8 +3,8 @@
             || Auth::hasPermission('usuarios', 'vistaListadoUsuarios')
             || Auth::hasPermission('usuarios', 'vistaListadoUsuariosInactivos')
         ): ?>
-          <div class="col-lg-3 col-md-6 col-sm-12">
-              <div class="info-box shadow">
+  <div class="col-6 col-md-6 col-lg-3">
+      <div class="info-box shadow">
                   <span class="info-box-icon bg-info"><i class="fas fa-users"></i></span>
                   <div class="info-box-content">
                       <!-- Fila para el título y botón de colapsar -->

@@ -1,10 +1,13 @@
-<?php $esRestringido = in_array(($_SESSION['categoria'] ?? ''), ['operativo', 'referente'], true); ?>
+<?php $esRestringido = in_array(strtolower((string)($_SESSION['categoria'] ?? '')), ['operativo', 'referente'], true); ?>
 <?php if (
-    Auth::hasPermission('directivas', 'crtGuardarDirectiva') ||
-    Auth::hasPermission('directivas', 'vistaListadoDirectivas') ||
-    Auth::hasPermission('directivas', 'vistaCrearDirectiva')
+    !$esRestringido &&
+    (
+        Auth::hasPermission('directivas', 'crtGuardarDirectiva') ||
+        Auth::hasPermission('directivas', 'vistaListadoDirectivas') ||
+        Auth::hasPermission('directivas', 'vistaCrearDirectiva')
+    )
 ): ?>
-  <div class="col-lg-3 col-md-6 col-sm-12">
+  <div class="col-6 col-md-6 col-lg-3">
       <div class="info-box shadow">
           <span class="info-box-icon bg-warning"><i class="fas fa-list-ul"></i></span>
           <div class="info-box-content">

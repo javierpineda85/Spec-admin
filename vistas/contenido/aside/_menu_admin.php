@@ -2,7 +2,8 @@
     Auth::hasPermission('feriados', 'vistaCrearFeriados') ||
     Auth::hasPermission('feriados', 'vistaListadoFeriados') ||
     Auth::hasPermission('art', 'vistaCrearArt') ||
-    Auth::hasPermission('art', 'vistaListadoArt')
+    Auth::hasPermission('art', 'vistaListadoArt') ||
+    Auth::hasPermission('uniformes', 'vistaListadoUniformes')
 ): ?>
     <li class="nav-item has-treeview">
         <a href="#" class="nav-link">
@@ -43,6 +44,15 @@
                     <a href="?r=listado_art" class="nav-link">
                         <i class="far fa-circle nav-icon"></i>
                         <p>Listado A.R.T.</p>
+                    </a>
+                </li>
+            <?php endif; ?>
+
+            <?php if (Auth::hasPermission('uniformes', 'vistaListadoUniformes')): ?>
+                <li class="nav-item">
+                    <a href="?r=listado_uniformes" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Listado Uniformes</p>
                     </a>
                 </li>
             <?php endif; ?>

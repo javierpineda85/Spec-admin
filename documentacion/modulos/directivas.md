@@ -24,6 +24,12 @@ Este módulo es utilizado por:
 
 ---
 
+## 11. ActualizaciÃ³n reciente
+
+- La portada del sistema muestra directivas en modo solo lectura para vigiladores y referentes.
+- Las acciones de crear, editar y eliminar quedan restringidas para roles operativos.
+- La vista de inicio reutiliza una versiÃ³n resumida del listado.
+
 ## 2. Rutas del módulo
 
 | Ruta | Método | Descripción |

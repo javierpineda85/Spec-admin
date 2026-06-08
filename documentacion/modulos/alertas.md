@@ -12,6 +12,12 @@ Su función principal es advertir sobre eventos importantes, especialmente:
 - Marcado de alertas como leídas
 - Historial filtrado de alertas
 
+Actualización reciente:
+
+- Las alertas de Hombre Vivo se separan en vencidas y excedidas.
+- Cuando se dispara una alerta de Hombre Vivo, el sistema notifica al vigilador y a los supervisores activos, y además intenta enviar push web a las suscripciones activas.
+- La portada reutiliza reportes recientes para mostrar un resumen operativo sin entrar al listado completo.
+
 Este módulo es utilizado por:
 
 - Supervisores  
@@ -40,6 +46,7 @@ Este módulo es utilizado por:
 |--------|-------------|
 | `registrarDemoraHombreVivo()` | Genera alerta automática por demora en reporte. |
 | `registrarAlertaGeneral()` | Inserta alerta evitando duplicados. |
+| `obtenerAlertasHombreVivoInicio()` | Devuelve alertas recientes de Hombre Vivo para la portada. |
 | `contarNoLeidas()` | Devuelve cantidad de alertas no leídas. |
 | `verAlertasNoLeidas()` | Devuelve JSON con alertas no leídas. |
 | `marcarLeida()` | Marca una alerta como leída. |
@@ -107,7 +114,7 @@ CREATE TABLE `alertas` (
 
 ### 1. Generación automática de alerta
 - Un vigilador no reporta “Hombre Vivo”
-- El sistema detecta demora > 300 segundos
+- El sistema detecta demora > 180 segundos para la tolerancia operativa
 - Se llama a `registrarDemoraHombreVivo()`
 - Se genera alerta si no existe una abierta
 

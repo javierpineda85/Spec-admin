@@ -7,14 +7,14 @@ El módulo **Plantillas** es responsable de cargar:
 - La **plantilla principal** del sistema (layout general)
 - La **vista de login** cuando el usuario no está autenticado
 
-Este módulo no maneja datos, no interactúa con la base de datos y no tiene lógica de negocio.  
+Este módulo no maneja datos, no interactúa con la base de datos y no tiene lógica de negocio.
 Su única función es **incluir la vista correcta** según el contexto.
 
 Es uno de los módulos más simples, pero es esencial porque:
 
-- Define la estructura HTML base  
-- Carga el menú, header, footer y contenedor de contenido  
-- Es el punto de entrada del sistema después del login  
+- Define la estructura HTML base
+- Carga el menú, header, footer y contenedor de contenido
+- Es el punto de entrada del sistema después del login
 
 ---
 
@@ -78,12 +78,19 @@ vistas/plantilla.php
 
 Esta vista contiene:
 
-- Header  
-- Sidebar  
-- Navbar  
-- Contenedor principal  
-- Footer  
-- Inclusión dinámica de módulos según `$_GET['r']`  
+- Header
+- Sidebar
+- Navbar
+- Contenedor principal
+- Footer
+- Inclusión dinámica de módulos según `$_GET['r']`
+- Portada con tarjetas y paneles según rol y permisos
+
+En la portada actual se muestran accesos rápidos y paneles específicos:
+
+- Vigiladores y referentes: directivas en modo solo lectura
+- Supervisores, administrativos y gerencia: alertas de Hombre Vivo y guardias en servicio con filtro por objetivo
+- Vista móvil: tarjetas del panel de control acomodadas en dos columnas
 
 ---
 
@@ -104,15 +111,15 @@ vistas/login.php
 
 Esta vista contiene:
 
-- Formulario de login  
-- Estilos propios  
-- No incluye menú ni estructura general  
+- Formulario de login
+- Estilos propios
+- No incluye menú ni estructura general
 
 ---
 
 # 4. Modelos involucrados
 
-Este módulo **no utiliza modelos**.  
+Este módulo **no utiliza modelos**.
 No accede a la base de datos.
 
 ---
@@ -170,11 +177,11 @@ Este módulo **no utiliza tablas**.
 
 # 10. Mejoras futuras sugeridas
 
-- Sistema de plantillas múltiples (tema claro/oscuro)  
-- Plantillas por rol (operativo vs administrativo)  
-- Layout responsive avanzado  
-- Carga dinámica de módulos vía AJAX  
-- Integración con componentes reutilizables (cards, widgets, dashboards)  
+- Sistema de plantillas múltiples (tema claro/oscuro)
+- Plantillas por rol (operativo vs administrativo)
+- Layout responsive avanzado
+- Carga dinámica de módulos vía AJAX
+- Integración con componentes reutilizables (cards, widgets, dashboards)
 
 ---
 

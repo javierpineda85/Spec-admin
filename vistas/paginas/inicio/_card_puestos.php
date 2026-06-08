@@ -4,7 +4,7 @@
     Auth::hasPermission('puestos', 'vistaListadoPuestosDesactivados') ||
     Auth::hasPermission('puestos', 'vistaRotaciones')
 ): ?>
-    <div class="col-lg-3 col-md-6 col-sm-12">
+    <div class="col-6 col-md-6 col-lg-3">
         <div class="info-box shadow">
             <span class="info-box-icon bg-success"><i class="fas fa-eye"></i></span>
             <div class="info-box-content">

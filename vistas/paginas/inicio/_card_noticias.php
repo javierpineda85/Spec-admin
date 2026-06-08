@@ -1,6 +1,6 @@
 <?php if (Auth::hasPermission('noticias', 'vistaCumple')): ?>
-    <div class="col-lg-3 col-md-6 col-sm-12">
-        <div class="info-box shadow">
+  <div class="col-6 col-md-6 col-lg-3">
+      <div class="info-box shadow">
             <span class="info-box-icon bg-info"><i class="fas fa-bullhorn"></i></span>
             <div class="info-box-content">
                 <div class="d-flex justify-content-between align-items-center">

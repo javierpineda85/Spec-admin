@@ -230,6 +230,47 @@ class NovedadesController
 
         include __DIR__ . '/../vistas/paginas/novedades/listado_entradaSalidas.php';
     }
+
+    public static function obtenerGuardiasEnServicioInicio(?int $objetivoId = null, int $limite = 5): array
+    {
+        $db = new Conexion();
+        $limite = max(1, (int) $limite);
+
+        $sql = "SELECT m.idMarcacion,
+                       m.vigilador_id,
+                       m.objetivo_id,
+                       m.puesto_id,
+                       CONCAT(u.apellido, ', ', u.nombre) AS vigilador,
+                       o.nombre AS objetivo,
+                       COALESCE(p.puesto, '-') AS puesto,
+                       DATE_FORMAT(m.fecha_hora, '%H:%i') AS hora_entrada,
+                       m.fecha_hora
+                FROM marcaciones_servicio m
+                INNER JOIN usuarios u ON u.idUsuario = m.vigilador_id
+                LEFT JOIN objetivos o ON o.idObjetivo = m.objetivo_id
+                LEFT JOIN puestos p ON p.idPuesto = m.puesto_id
+                WHERE m.idMarcacion = (
+                    SELECT m2.idMarcacion
+                    FROM marcaciones_servicio m2
+                    WHERE m2.vigilador_id = m.vigilador_id
+                      AND m2.objetivo_id = m.objetivo_id
+                      AND COALESCE(m2.puesto_id, 0) = COALESCE(m.puesto_id, 0)
+                    ORDER BY m2.fecha_hora DESC, m2.idMarcacion DESC
+                    LIMIT 1
+                )
+                  AND LOWER(TRIM(m.tipo_evento)) LIKE 'entrada%'";
+
+        $params = [];
+        if (!empty($objetivoId)) {
+            $sql .= " AND m.objetivo_id = ?";
+            $params[] = (int) $objetivoId;
+        }
+
+        $sql .= " ORDER BY m.fecha_hora DESC
+                  LIMIT {$limite}";
+
+        return $db->consultas($sql, $params) ?: [];
+    }
     static public function calcularHoraEsperadaConBase($evento, $fechaTurnoBase, $horaEntrada, $horaSalida)
     {
         $evento = strtolower(trim($evento));
