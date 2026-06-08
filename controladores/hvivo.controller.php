@@ -4,6 +4,34 @@ require_once('modelos/hvivo.modelo.php');
 
 class HombreVivoController
 {
+    private static function puedeConfigurarHombreVivo(): bool
+    {
+        $categoria = $_SESSION['categoria'] ?? '';
+        return !in_array($categoria, ['operativo', 'referente'], true);
+    }
+
+    private static function denegarConfiguracion(): void
+    {
+        header('Location: ?r=acceso_denegado/index');
+        exit;
+    }
+
+    private static function determinarTurnoHombreVivo(?string $codigoTurno): string
+    {
+        $codigoTurno = strtoupper(trim((string)$codigoTurno));
+
+        if (in_array($codigoTurno, ['N', 'GP/N'], true)) {
+            return 'nocturno';
+        }
+
+        if (in_array($codigoTurno, ['D', 'GP/D'], true)) {
+            return 'diurno';
+        }
+
+        $horaActual = (int)date('H');
+        return ($horaActual >= 20 || $horaActual < 6) ? 'nocturno' : 'diurno';
+    }
+
     public static function registrar()
     {
         Auth::check('hvivo', 'registrar');
@@ -58,6 +86,7 @@ class HombreVivoController
 
         $objetivoId = intval($_SESSION['objetivo_id'] ?? 0);
         $userId = $_SESSION['idUsuario'];
+        $modeloUsuarios = new ModeloUsuarios();
         $db     = Conexion::conectar();
         // 1) ¿Ya marcó la entrada hoy?
         $sqlEntry = " SELECT COUNT(*) AS cnt
@@ -81,12 +110,63 @@ class HombreVivoController
         $_SESSION['hVivo_ya_salida'] = $salidasHoy > 0;
         $_SESSION['ultimo_objetivo'] = $objetivoId;
 
+        $_SESSION['turno_codigo'] = null;
+        $asignacionHoy = $modeloUsuarios->getAsignacionHoy($userId);
+        if ($asignacionHoy && !empty($asignacionHoy['codigo_turno'])) {
+            $_SESSION['turno_codigo'] = $asignacionHoy['codigo_turno'];
+        }
+
+        $_SESSION['hVivo_config'] = ModeloReporteHombreVivo::mdlObtenerConfiguracion();
+        $_SESSION['hVivo_turno'] = self::determinarTurnoHombreVivo($_SESSION['turno_codigo'] ?? null);
+
         include __DIR__ . '/../vistas/paginas/h-vivo/reporte_hombre_vivo.php';
     }
     public static function vistaListadoReportesHombreVivo()
     {
         Auth::check('hvivo', 'vistaListadoReportesHombreVivo');
         include __DIR__ . '/../vistas/paginas/h-vivo/listado_reportesHvivo.php';
+    }
+    public static function vistaConfiguracionHombreVivo()
+    {
+        if (!self::puedeConfigurarHombreVivo()) {
+            self::denegarConfiguracion();
+        }
+
+        $config = ModeloReporteHombreVivo::mdlObtenerConfiguracion();
+        include __DIR__ . '/../vistas/paginas/h-vivo/configuracion_hombre_vivo.php';
+    }
+    public static function guardarConfiguracionHombreVivo()
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ?r=configuracion_hvivo');
+            exit;
+        }
+
+        if (!self::puedeConfigurarHombreVivo()) {
+            self::denegarConfiguracion();
+        }
+
+        $diurno = intval($_POST['minutos_diurno'] ?? 0);
+        $nocturno = intval($_POST['minutos_nocturno'] ?? 0);
+
+        if ($diurno <= 0 || $nocturno <= 0) {
+            ToastifyController::error("Debes indicar minutos válidos para ambos turnos.");
+            header('Location: ?r=configuracion_hvivo');
+            exit;
+        }
+
+        $resDiurno = ModeloReporteHombreVivo::mdlGuardarConfiguracion('diurno', $diurno);
+        $resNocturno = ModeloReporteHombreVivo::mdlGuardarConfiguracion('nocturno', $nocturno);
+
+        if ($resDiurno === 'ok' && $resNocturno === 'ok') {
+            ToastifyController::success("Configuración de Hombre Vivo guardada correctamente.");
+        } else {
+            $error = $resDiurno !== 'ok' ? $resDiurno : $resNocturno;
+            ToastifyController::error("No se pudo guardar la configuración: " . $error);
+        }
+
+        header('Location: ?r=configuracion_hvivo');
+        exit;
     }
     public static function ajaxRegistrarReporte()
     {

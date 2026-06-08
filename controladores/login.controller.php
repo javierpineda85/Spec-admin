@@ -61,11 +61,13 @@ class LoginController
                     if ($asig) {
                         $_SESSION['puesto_id']    = $asig['puesto_id'];
                         $_SESSION['objetivo_id']  = $asig['objetivo_id'];
+                        $_SESSION['turno_codigo'] = $asig['codigo_turno'] ?? null;
                         $_SESSION['isReferente']  = !empty($asig['is_referente']);
                         unset($_SESSION['sinAsignaciones']);
                     } else {
                         $_SESSION['puesto_id']    = 0;
                         $_SESSION['objetivo_id']  = 0;
+                        $_SESSION['turno_codigo'] = null;
                         $_SESSION['isReferente']  = false;
                         $_SESSION['sinAsignaciones'] = true;
                     }

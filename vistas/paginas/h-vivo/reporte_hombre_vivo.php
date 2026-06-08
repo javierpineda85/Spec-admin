@@ -8,6 +8,8 @@ $yaSalida     = !empty($_SESSION['hVivo_ya_salida']);
 
 $objetivoId  = intval($_GET['objetivo_id'] ?? ($_SESSION['ultimo_objetivo'] ?? 0));
 $usuarioId = intval($_SESSION['idUsuario'] ?? 0);
+$configHV = $_SESSION['hVivo_config'] ?? ModeloReporteHombreVivo::mdlObtenerConfiguracion();
+$turnoHV = $_SESSION['hVivo_turno'] ?? 'diurno';
 ?>
 <div class="card">
   <div class="card-header bg-info text-white">
@@ -39,8 +41,14 @@ $usuarioId = intval($_SESSION['idUsuario'] ?? 0);
     (function() {
       const objetivoId = <?= json_encode($_SESSION['ultimo_objetivo'] ?? 0) ?>;
       const usuarioId = <?= json_encode($_SESSION['idUsuario']) ?>;
+      const turno = <?= json_encode($turnoHV) ?>;
+      const config = <?= json_encode($configHV, JSON_UNESCAPED_UNICODE) ?>;
+      const intervaloMinutos = turno === 'nocturno'
+        ? Number(config.nocturno || 30)
+        : Number(config.diurno || 30);
+      const toleranciaMs = 3 * 60 * 1000;
 
-      const key = `hVivo_nextDeadline_${usuarioId}_${objetivoId}`;
+      const key = `hVivo_nextDeadline_${usuarioId}_${objetivoId}_${turno}_${intervaloMinutos}`;
       const btn = document.getElementById('btnReportar');
       const timer = document.getElementById('timer');
       const status = document.getElementById('status-text');
@@ -48,7 +56,7 @@ $usuarioId = intval($_SESSION['idUsuario'] ?? 0);
       // Si no hay deadline guardado, lo inicializamos
       let next = parseInt(localStorage.getItem(key), 10);
       if (!next || isNaN(next)) {
-        next = Date.now() + 30 * 60 * 1000;
+        next = Date.now() + intervaloMinutos * 60 * 1000;
         localStorage.setItem(key, next);
       }
 
@@ -103,7 +111,7 @@ $usuarioId = intval($_SESSION['idUsuario'] ?? 0);
           detenerAlertaSonora();
           alertaVigiladorMostrada = false;
 
-        } else if (diff >= -3 * 60 * 1000) {
+        } else if (diff >= -toleranciaMs) {
           status.textContent = 'Dentro de tolerancia';
           status.style.color = 'orange';
           detenerAlertaSonora();
@@ -144,8 +152,8 @@ $usuarioId = intval($_SESSION['idUsuario'] ?? 0);
         }
 
         // Habilita solo en últimos 3 minutos antes o después
-        btn.disabled = !(diff <= 3 * 60 * 1000);
-        if (diff > 3 * 60 * 1000) {
+        btn.disabled = !(diff <= toleranciaMs);
+        if (diff > toleranciaMs) {
           btn.innerText = `Disponible en ${Math.ceil(diff / 60000)} min`;
         } else {
           btn.innerText = "Reportar Ahora";
@@ -173,7 +181,7 @@ $usuarioId = intval($_SESSION['idUsuario'] ?? 0);
               status.textContent = 'Reporte registrado correctamente.';
               status.style.color = '';
               // Nuevo ciclo
-              next = Date.now() + 30 * 60 * 1000;
+              next = Date.now() + intervaloMinutos * 60 * 1000;
               localStorage.setItem(key, next);
               alertaVigiladorMostrada = false;
               alertaSupervisorEnviada = false;

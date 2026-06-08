@@ -1,6 +1,7 @@
 <?php if (
   Auth::hasPermission('hvivo', 'vistaHombreVivo') ||
-  Auth::hasPermission('hvivo', 'vistaListadoReportesHombreVivo')
+  Auth::hasPermission('hvivo', 'vistaListadoReportesHombreVivo') ||
+  !in_array($_SESSION['categoria'] ?? '', ['operativo', 'referente'], true)
 ): ?>
   <li class="nav-item has-treeview">
     <a href="#" class="nav-link">
@@ -21,6 +22,14 @@
           <a href="?r=listado_reportes" class="nav-link">
             <i class="far fa-circle nav-icon"></i>
             <p>Ver reportes</p>
+          </a>
+        </li>
+      <?php endif; ?>
+      <?php if (!in_array($_SESSION['categoria'] ?? '', ['operativo', 'referente'], true)): ?>
+        <li class="nav-item">
+          <a href="?r=configuracion_hvivo" class="nav-link">
+            <i class="far fa-circle nav-icon"></i>
+            <p>Configuración</p>
           </a>
         </li>
       <?php endif; ?>

@@ -192,6 +192,16 @@ class RutasController
             return;
         }
 
+        // Configuración de reportes Hombre Vivo
+        if (isset($_GET['r']) && $_GET['r'] === 'configuracion_hvivo') {
+            HombreVivoController::vistaConfiguracionHombreVivo();
+            return;
+        }
+        if (isset($_GET['r']) && $_GET['r'] === 'guardar_configuracion_hvivo' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+            HombreVivoController::guardarConfiguracionHombreVivo();
+            return;
+        }
+
         // Vista de Listado Reportes H VIVO
         if (isset($_GET['r']) && $_GET['r'] === 'listado_reportes') {
             HombreVivoController::vistaListadoReportesHombreVivo();

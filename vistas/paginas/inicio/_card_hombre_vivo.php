@@ -1,6 +1,7 @@
 <?php if (
     Auth::hasPermission('hvivo', 'vistaHombreVivo') ||
-    Auth::hasPermission('hvivo', 'vistaListadoReportesHombreVivo')
+    Auth::hasPermission('hvivo', 'vistaListadoReportesHombreVivo') ||
+    !in_array($_SESSION['categoria'] ?? '', ['operativo', 'referente'], true)
 ): ?>
     <div class="col-lg-3 col-md-6 col-sm-12">
         <div class="info-box shadow">
@@ -20,6 +21,9 @@
                         <?php endif; ?>
                         <?php if (Auth::hasPermission('hvivo', 'vistaListadoReportesHombreVivo')): ?>
                             <a href="?r=listado_reportes" class="btn btn-block btn-info btn-sm text-white">Ver reportes</a>
+                        <?php endif; ?>
+                        <?php if (!in_array($_SESSION['categoria'] ?? '', ['operativo', 'referente'], true)): ?>
+                            <a href="?r=configuracion_hvivo" class="btn btn-block btn-secondary btn-sm text-white">Configuración</a>
                         <?php endif; ?>
                     </div>
                 </div>

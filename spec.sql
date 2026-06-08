@@ -445,6 +445,27 @@ INSERT INTO `puestos` (`idPuesto`, `puesto`, `objetivo_id`, `tipo`, `activo`) VA
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `hvivo_config`
+--
+
+DROP TABLE IF EXISTS `hvivo_config`;
+CREATE TABLE IF NOT EXISTS `hvivo_config` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `turno` enum('diurno','nocturno') NOT NULL,
+  `minutos` int NOT NULL DEFAULT '30',
+  `tolerancia_minutos` int NOT NULL DEFAULT '3',
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_hvivo_turno` (`turno`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+INSERT INTO `hvivo_config` (`turno`, `minutos`, `tolerancia_minutos`) VALUES
+('diurno', 30, 3),
+('nocturno', 30, 3);
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `reporte_hombre_vivo`
 --
 
