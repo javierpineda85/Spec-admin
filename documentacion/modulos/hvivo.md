@@ -145,7 +145,9 @@ CREATE TABLE `reporte_hombre_vivo` (
   `objetivo_id` int NOT NULL,
   `fecha_hora` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `demora` varchar(9) DEFAULT NULL,
+  `operacion_id` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`idReporte`),
+  UNIQUE KEY `uq_hvivo_operacion` (`operacion_id`),
   KEY `idx_usuario` (`id_usuario`),
   KEY `idx_objetivo` (`objetivo_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;

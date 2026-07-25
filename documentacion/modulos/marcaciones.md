@@ -94,7 +94,9 @@ CREATE TABLE `marcaciones_servicio` (
   `latitud` decimal(10,8) NOT NULL,
   `longitud` decimal(11,8) NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`idMarcacion`)
+  `operacion_id` varchar(64) DEFAULT NULL,
+  PRIMARY KEY (`idMarcacion`),
+  UNIQUE KEY `uq_marcaciones_operacion` (`operacion_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
 ```
 

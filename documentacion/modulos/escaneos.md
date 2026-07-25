@@ -108,7 +108,9 @@ CREATE TABLE `escaneos` (
   `sector_id` int DEFAULT NULL,
   `vigilador_id` int DEFAULT NULL,
   `fecha_hora` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `operacion_id` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`idEscaneo`),
+  UNIQUE KEY `uq_escaneos_operacion` (`operacion_id`),
   KEY `ronda_id` (`ronda_id`),
   KEY `sector_id` (`sector_id`),
   KEY `vigilador_id` (`vigilador_id`)

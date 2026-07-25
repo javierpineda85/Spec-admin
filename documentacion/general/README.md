@@ -23,6 +23,7 @@
 - La portada ahora es sensible al rol: supervisores/admin/gerencia ven alertas de Hombre Vivo y guardias en servicio, mientras que vigiladores/referentes ven directivas en modo lectura.
 - Hombre Vivo quedó configurado por turno diurno y nocturno, manteniendo la tolerancia fija de 3 minutos.
 - Las alertas del sistema quedaron integradas con notificaciones push web para los usuarios activos.
+- Marcaciones, Hombre Vivo y escaneos de rondas admiten guardado offline y sincronizacion automatica sin duplicados. Ver `modo_offline.md`.
 - El listado general de uniformes quedó expuesto desde Administración y conserva el detalle por talle y su resumen.
 
 ### **3. Módulos transversales**
