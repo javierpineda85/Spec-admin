@@ -75,6 +75,8 @@
 <script src="https://unpkg.com/@zxing/library@latest"></script>
 
 <!-- JS personalizado -->
+<script src="<?= BASE_URL ?>/js/offline-store.js"></script>
+<script src="<?= BASE_URL ?>/js/offline-sync.js"></script>
 <script src="<?= BASE_URL ?>/js/main.js"></script>
 <script src="<?= BASE_URL ?>/js/custom.js?v=<?= time(); ?>"></script>
 
