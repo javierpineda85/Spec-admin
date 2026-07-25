@@ -152,7 +152,9 @@ CREATE TABLE IF NOT EXISTS `escaneos` (
   `sector_id` int DEFAULT NULL,
   `vigilador_id` int DEFAULT NULL,
   `fecha_hora` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `operacion_id` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`idEscaneo`),
+  UNIQUE KEY `uq_escaneos_operacion` (`operacion_id`),
   KEY `ronda_id` (`ronda_id`),
   KEY `sector_id` (`sector_id`),
   KEY `vigilador_id` (`vigilador_id`)
@@ -198,7 +200,9 @@ CREATE TABLE IF NOT EXISTS `marcaciones_servicio` (
   `latitud` decimal(10,8) NOT NULL,
   `longitud` decimal(11,8) NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`idMarcacion`)
+  `operacion_id` varchar(64) DEFAULT NULL,
+  PRIMARY KEY (`idMarcacion`),
+  UNIQUE KEY `uq_marcaciones_operacion` (`operacion_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -497,7 +501,9 @@ CREATE TABLE IF NOT EXISTS `reporte_hombre_vivo` (
   `objetivo_id` int NOT NULL,
   `fecha_hora` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `demora` time DEFAULT NULL,
+  `operacion_id` varchar(64) DEFAULT NULL,
   PRIMARY KEY (`idReporte`),
+  UNIQUE KEY `uq_hvivo_operacion` (`operacion_id`),
   KEY `idx_usuario` (`id_usuario`),
   KEY `idx_objetivo` (`objetivo_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

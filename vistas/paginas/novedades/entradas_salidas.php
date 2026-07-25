@@ -150,6 +150,47 @@ $objetivoAsignado = in_array($rol_normalizado, ['vigilador', 'referente'], true)
         const latInput = document.getElementById('latitud');
         const lngInput = document.getElementById('longitud');
 
+        async function enviarMarcacion() {
+            const submit = form.querySelector('[type="submit"]');
+            const originalValue = submit.value;
+            submit.disabled = true;
+            submit.value = 'Guardando...';
+
+            try {
+                const data = new URLSearchParams(new FormData(form));
+                data.set('fecha_evento', new Date().toISOString());
+                data.set('format', 'json');
+
+                const result = await SpecOffline.send({
+                    url: 'index.php?r=registrar_marcacion&format=json',
+                    method: 'POST',
+                    type: 'marcacion_servicio',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                        'Accept': 'application/json'
+                    },
+                    body: data.toString()
+                });
+
+                if (result.queued) {
+                    submit.value = 'Guardado en el teléfono';
+                    return;
+                }
+
+                const json = await result.response.json();
+                if (!json.success) {
+                    throw new Error(json.error || 'No se pudo registrar la marcación');
+                }
+
+                mostrarToast(json.message || 'Marcación registrada correctamente.', 'success');
+                setTimeout(() => window.location.reload(), 800);
+            } catch (error) {
+                mostrarToast(error.message || 'No se pudo guardar la marcación.', 'danger');
+                submit.disabled = false;
+                submit.value = originalValue;
+            }
+        }
+
         // Lógica de switch solo para vigilador/referente
         if (switchInput) {
             switchInput.addEventListener('change', () => {
@@ -174,17 +215,17 @@ $objetivoAsignado = in_array($rol_normalizado, ['vigilador', 'referente'], true)
             evt.preventDefault();
             if (!navigator.geolocation) {
                 alert('Tu navegador no soporta geolocalización');
-                return form.submit();
+                return;
             }
             navigator.geolocation.getCurrentPosition(
                 pos => {
                     latInput.value = pos.coords.latitude;
                     lngInput.value = pos.coords.longitude;
-                    form.submit();
+                    enviarMarcacion();
                 },
                 err => {
                     alert('Error obteniendo ubicación: ' + err.message);
-                    form.submit();
+                    return;
                 }, {
                     enableHighAccuracy: true,
                     timeout: 10000

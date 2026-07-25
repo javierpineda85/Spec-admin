@@ -30,10 +30,30 @@ class MarcacionesController
         $tipo_evento  = $_POST['tipo_evento']  ?? null;
         $lat          = $_POST['latitud']      ?? null;
         $lng          = $_POST['longitud']     ?? null;
+        $operacion_id = trim((string)($_SERVER['HTTP_X_SPEC_OPERATION_ID'] ?? ($_POST['operacion_id'] ?? '')));
+        if ($operacion_id === '') {
+            $operacion_id = bin2hex(random_bytes(16));
+        }
+        $fecha_evento = self::normalizarFechaEvento($_POST['fecha_evento'] ?? null);
+        $jsonResponse = ($_GET['format'] ?? $_POST['format'] ?? '') === 'json'
+            || strpos($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json') !== false;
 
         // Validación mínima
         if (!$vigilador_id || !$tipo_evento || !$lat || !$lng) {
+            if ($jsonResponse) {
+                self::responderJson(false, 'Faltan datos para registrar la marcación', 400);
+            }
             ToastifyController::error('Faltan datos para registrar la marcación');
+            header('Location: ?r=entradas_salidas');
+            exit;
+        }
+
+        if (!in_array($tipo_evento, ['entrada', 'salida'], true)
+            || !preg_match('/^[a-zA-Z0-9-]{16,64}$/', $operacion_id)) {
+            if ($jsonResponse) {
+                self::responderJson(false, 'Datos de marcación inválidos', 400);
+            }
+            ToastifyController::error('Datos de marcación inválidos');
             header('Location: ?r=entradas_salidas');
             exit;
         }
@@ -85,7 +105,10 @@ class MarcacionesController
             }
 
             // Insert marcación
-            $sqlIns = "INSERT INTO marcaciones_servicio (vigilador_id, objetivo_id,puesto_id, tipo_evento, fecha_hora, latitud, longitud) VALUES (:v, :o,:p, :t, NOW(), :lat, :lng)
+            $sqlIns = "INSERT INTO marcaciones_servicio
+                (vigilador_id, objetivo_id, puesto_id, tipo_evento, fecha_hora, latitud, longitud, operacion_id)
+                VALUES (:v, :o, :p, :t, :fecha, :lat, :lng, :operacion)
+                ON DUPLICATE KEY UPDATE operacion_id = VALUES(operacion_id)
             ";
             $stmtIns = $pdo->prepare($sqlIns);
             $stmtIns->execute([
@@ -93,12 +116,27 @@ class MarcacionesController
                 ':o'   => $objetivo_id,
                 ':p'   => $puesto_id,
                 ':t'   => $tipo_evento,
+                ':fecha' => $fecha_evento,
                 ':lat' => $lat,
-                ':lng' => $lng
+                ':lng' => $lng,
+                ':operacion' => $operacion_id
             ]);
+            $duplicada = $stmtIns->rowCount() === 0;
 
             // Commit
             $pdo->commit();
+
+            if ($jsonResponse) {
+                header('Content-Type: application/json; charset=utf-8');
+                echo json_encode([
+                    'success' => true,
+                    'duplicate' => $duplicada,
+                    'message' => $duplicada
+                        ? 'La marcación ya estaba registrada.'
+                        : ucfirst($tipo_evento) . ' registrada correctamente.'
+                ], JSON_UNESCAPED_UNICODE);
+                exit;
+            }
 
             ToastifyController::success(ucfirst($tipo_evento) . ' registrada correctamente.');
             header('Location: ?r=entradas_salidas');
@@ -107,9 +145,31 @@ class MarcacionesController
             if (isset($pdo) && $pdo->inTransaction()) {
                 $pdo->rollBack();
             }
+            if ($jsonResponse) {
+                self::responderJson(false, $e->getMessage(), 422);
+            }
             ToastifyController::error('Error: ' . $e->getMessage());
             header('Location: ?r=entradas_salidas');
             exit;
+        }
+    }
+
+    private static function responderJson(bool $success, string $message, int $status): void
+    {
+        http_response_code($status);
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode(['success' => $success, 'error' => $message], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    private static function normalizarFechaEvento($fecha): string
+    {
+        try {
+            $date = $fecha ? new DateTime((string)$fecha) : new DateTime();
+            $date->setTimezone(new DateTimeZone(date_default_timezone_get()));
+            return $date->format('Y-m-d H:i:s');
+        } catch (Throwable $e) {
+            return date('Y-m-d H:i:s');
         }
     }
 }

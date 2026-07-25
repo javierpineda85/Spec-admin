@@ -198,9 +198,32 @@ class HombreVivoController
 
         // Lee y valida parámetros…
 
-        $userId  = intval($_GET['id_usuario'] ?? 0);
+        $userId = intval($_SESSION['idUsuario'] ?? 0);
+        if ($userId <= 0) {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'error' => 'La sesión venció. Inicia sesión para sincronizar.']);
+            exit;
+        }
+
         $objetivoId = intval($_GET['objetivo_id'] ?? ($_SESSION['ultimo_objetivo'] ?? 0));
-        $demora  = $_GET['demora'] ?? '';
+        $demora = trim((string)($_GET['demora'] ?? ''));
+        $operacionId = trim((string)($_SERVER['HTTP_X_SPEC_OPERATION_ID'] ?? ($_GET['operacion_id'] ?? '')));
+        if ($operacionId === '') {
+            $operacionId = bin2hex(random_bytes(16));
+        }
+        $fechaEvento = self::normalizarFechaEvento($_GET['fecha_evento'] ?? null);
+
+        if (!preg_match('/^-?\d{1,3}:\d{2}:\d{2}$/', $demora)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'Formato de demora inválido']);
+            exit;
+        }
+
+        if (!preg_match('/^[a-zA-Z0-9-]{16,64}$/', $operacionId)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'error' => 'Identificador de operación inválido']);
+            exit;
+        }
         if (!$objetivoId || !$userId) {
             http_response_code(400);
             echo json_encode(['success' => false, 'error' => 'Parámetros incompletos']);
@@ -210,12 +233,15 @@ class HombreVivoController
         // Inserta en BD…
         try {
             $db = Conexion::conectar();
-            $sql = "INSERT INTO reporte_hombre_vivo (id_usuario, objetivo_id, demora, fecha_hora)
-                VALUES (?, ?, ?, NOW())";
-            $ok  = $db->prepare($sql)->execute([$userId, $objetivoId, $demora]);
+            $sql = "INSERT INTO reporte_hombre_vivo
+                        (id_usuario, objetivo_id, demora, fecha_hora, operacion_id)
+                    VALUES (?, ?, ?, ?, ?)
+                    ON DUPLICATE KEY UPDATE operacion_id = VALUES(operacion_id)";
+            $stmt = $db->prepare($sql);
+            $ok = $stmt->execute([$userId, $objetivoId, $demora, $fechaEvento, $operacionId]);
 
             if ($ok) {
-                echo json_encode(['success' => true]);
+                echo json_encode(['success' => true, 'duplicate' => $stmt->rowCount() === 0]);
             } else {
                 echo json_encode(['success' => false, 'error' => 'No se pudo guardar']);
             }
@@ -224,5 +250,16 @@ class HombreVivoController
             echo json_encode(['success' => false, 'error' => $e->getMessage()]);
         }
         exit;
+    }
+
+    private static function normalizarFechaEvento($fecha): string
+    {
+        try {
+            $date = $fecha ? new DateTime((string)$fecha) : new DateTime();
+            $date->setTimezone(new DateTimeZone(date_default_timezone_get()));
+            return $date->format('Y-m-d H:i:s');
+        } catch (Throwable $e) {
+            return date('Y-m-d H:i:s');
+        }
     }
 }

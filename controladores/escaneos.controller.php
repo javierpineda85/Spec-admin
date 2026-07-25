@@ -13,22 +13,36 @@ class EscaneosController
     public static function registrar()
     {
         //Auth::check('escaneos', 'registrar');
-        header('Content-Type: text/html; charset=utf-8');
+        $jsonResponse = ($_GET['format'] ?? '') === 'json';
+        header('Content-Type: ' . ($jsonResponse ? 'application/json' : 'text/html') . '; charset=utf-8');
 
         $rondaId     = intval($_GET['ronda_id']     ?? 0);
         $sectorId    = intval($_GET['sector_id']    ?? 0);
-        $vigiladorId = intval($_GET['vigilador_id'] ?? 0);
+        $vigiladorId = intval($_SESSION['idUsuario'] ?? 0);
+        $operacionId = trim((string)($_SERVER['HTTP_X_SPEC_OPERATION_ID'] ?? ($_GET['operacion_id'] ?? '')));
+        $fechaEvento = self::normalizarFechaEvento($_GET['fecha_evento'] ?? null);
+        if ($operacionId === '') {
+            $operacionId = bin2hex(random_bytes(16));
+        }
 
         if (!$rondaId || !$sectorId || !$vigiladorId) {
             http_response_code(400);
             exit('Parámetros incompletos');
         }
 
+        if (!preg_match('/^[a-zA-Z0-9-]{16,64}$/', $operacionId)) {
+            http_response_code(400);
+            exit($jsonResponse
+                ? json_encode(['success' => false, 'error' => 'Identificador de operación inválido'])
+                : 'Identificador de operación inválido');
+        }
+
         $data = [
             'ronda_id'     => $rondaId,
             'sector_id'    => $sectorId,
             'vigilador_id' => $vigiladorId,
-            'fecha_hora'   => date('Y-m-d H:i:s')
+            'fecha_hora'   => $fechaEvento,
+            'operacion_id' => $operacionId
         ];
 
         $res = ModeloEscaneos::mdlGuardarEscaneo('escaneos', $data);
@@ -45,8 +59,27 @@ class EscaneosController
             ToastifyController::error("<h3>Error al registrar:</h3><pre>" . htmlspecialchars($res) . "</pre>");
         }
 
+        if ($jsonResponse) {
+            echo json_encode([
+                'success' => $res === 'ok',
+                'error' => $res === 'ok' ? null : $res
+            ], JSON_UNESCAPED_UNICODE);
+            exit;
+        }
+
         header('Location: ?r=escaneo_feedback');
         exit;
+    }
+
+    private static function normalizarFechaEvento($fecha): string
+    {
+        try {
+            $date = $fecha ? new DateTime((string)$fecha) : new DateTime();
+            $date->setTimezone(new DateTimeZone(date_default_timezone_get()));
+            return $date->format('Y-m-d H:i:s');
+        } catch (Throwable $e) {
+            return date('Y-m-d H:i:s');
+        }
     }
 
     public static function feedback()

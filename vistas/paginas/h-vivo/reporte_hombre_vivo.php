@@ -168,15 +168,27 @@ $turnoHV = $_SESSION['hVivo_turno'] ?? 'diurno';
         const sign = demoraMs < 0 ? '-' : '';
         const demora = sign + fmt(Math.abs(demoraMs));
 
-        const base = 'index.php';
-        const url = `${base}?r=registrar_reporte&objetivo_id=${objetivoId}&id_usuario=${usuarioId}&demora=${encodeURIComponent(demora)}`;
+        const fechaEvento = new Date().toISOString();
+        const url = `index.php?r=registrar_reporte&objetivo_id=${objetivoId}&demora=${encodeURIComponent(demora)}&fecha_evento=${encodeURIComponent(fechaEvento)}&format=json`;
 
-        fetch(url)
-          .then(res => res.json())
+        SpecOffline.send({
+          url,
+          method: 'GET',
+          type: 'hombre_vivo',
+          createdAt: fechaEvento
+        })
+          .then(async result => {
+            if (result.queued) {
+              return { success: true, queued: true };
+            }
+            return result.response.json();
+          })
           .then(json => {
             if (json.success) {
-              status.textContent = 'Reporte registrado correctamente.';
-              status.style.color = '';
+              status.textContent = json.queued
+                ? 'Reporte guardado en el teléfono. Se enviará al recuperar señal.'
+                : 'Reporte registrado correctamente.';
+              status.style.color = json.queued ? '#b77900' : '';
               next = Date.now() + intervaloMinutos * 60 * 1000;
               localStorage.setItem(key, next);
               alertaVencimientoEnviada = false;
@@ -192,6 +204,8 @@ $turnoHV = $_SESSION['hVivo_turno'] ?? 'diurno';
           .catch(() => {
             status.textContent = 'Error en la conexión.';
             status.style.color = 'red';
+            tick();
+            iv = setInterval(tick, 1000);
           });
       });
     })();
