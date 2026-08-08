@@ -56,6 +56,45 @@
 <script src="<?= BASE_URL ?>/plugins/datatables-buttons/js/buttons.print.min.js"></script>
 <script src="<?= BASE_URL ?>/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
 
+<!-- Traducción global de DataTables -->
+<script>
+  $.extend(true, $.fn.dataTable.defaults, {
+    language: {
+      decimal: ',',
+      thousands: '.',
+      emptyTable: 'No hay datos disponibles en la tabla',
+      info: 'Mostrando registros del _START_ al _END_ de un total de _TOTAL_',
+      infoEmpty: 'Mostrando registros del 0 al 0 de un total de 0',
+      infoFiltered: '(filtrado de un total de _MAX_ registros)',
+      lengthMenu: 'Mostrar _MENU_ registros',
+      loadingRecords: 'Cargando...',
+      processing: 'Procesando...',
+      search: 'Buscar:',
+      zeroRecords: 'No se encontraron resultados',
+      paginate: {
+        first: 'Primero',
+        last: 'Último',
+        next: 'Siguiente',
+        previous: 'Anterior'
+      },
+      aria: {
+        sortAscending: ': activar para ordenar la columna de manera ascendente',
+        sortDescending: ': activar para ordenar la columna de manera descendente'
+      },
+      buttons: {
+        copy: 'Copiar',
+        copyTitle: 'Copiado al portapapeles',
+        copySuccess: {
+          1: 'Se copió una fila al portapapeles',
+          _: 'Se copiaron %d filas al portapapeles'
+        },
+        print: 'Imprimir',
+        colvis: 'Visibilidad de columnas'
+      }
+    }
+  });
+</script>
+
 <!-- Duallistbox -->
 <script src="<?= BASE_URL ?>/plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
 
