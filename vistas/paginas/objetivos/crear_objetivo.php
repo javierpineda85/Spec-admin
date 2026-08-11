@@ -18,10 +18,6 @@ $baseOperativa = $db->consultas("SELECT u.idUsuario, u.nombre, u.apellido
                                 WHERE r.categoria = 'baseOperativa' AND u.activo = 1
                                 ORDER BY u.apellido");
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  ControladorObjetivos::crtGuardarObjetivo();
-}
-
 ?>
 <style>
   #formObjetivo .select2-container--default .select2-selection--multiple {

@@ -3,6 +3,7 @@
     Auth::hasPermission('feriados', 'vistaListadoFeriados') ||
     Auth::hasPermission('art', 'vistaCrearArt') ||
     Auth::hasPermission('art', 'vistaListadoArt') ||
+    Auth::hasPermission('uniformes', 'adminItems') ||
     Auth::hasPermission('uniformes', 'vistaListadoUniformes')
 ): ?>
   <div class="col-6 col-md-6 col-lg-3">
@@ -34,6 +35,10 @@
 
                       <?php if (Auth::hasPermission('art', 'vistaListadoArt')): ?>
                           <a href="?r=listado_art" class="btn btn-block btn-warning btn-sm text-white">Listado ART</a>
+                      <?php endif; ?>
+
+                      <?php if (Auth::hasPermission('uniformes', 'adminItems')): ?>
+                          <a href="?r=admin_items_uniforme" class="btn btn-block btn-warning btn-sm text-white">Catálogo de Uniformes</a>
                       <?php endif; ?>
 
                       <?php if (Auth::hasPermission('uniformes', 'vistaListadoUniformes')): ?>

@@ -156,7 +156,8 @@ $siglas = ModeloObjetivos::mdlObtenerSiglasPorObjetivo($objetivo['idObjetivo']);
                                     name="siglas[0][descripcion]"
                                     class="form-control"
                                     value="<?= htmlspecialchars($siglas[0]['descripcion'] ?? '') ?>"
-                                    placeholder="Descripción (opcional)">
+                                    placeholder="Descripción (opcional)"
+                                    data-optional="true">
                             </div>
                         </div>
 

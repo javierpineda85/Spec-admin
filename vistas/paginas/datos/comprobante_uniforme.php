@@ -1,5 +1,10 @@
 <?php
-$usuarioEntrega = $_SESSION['nombre'] . ' ' . $_SESSION['apellido'];
+$usuarioEntrega = trim($entregas[0]['entregado_por'] ?? '');
+if ($usuarioEntrega === '') {
+    $usuarioEntrega = trim(
+        ($_SESSION['nombre'] ?? '') . ' ' . ($_SESSION['apellido'] ?? '')
+    );
+}
 //Nuevo formato de mes
 $formatter = new IntlDateFormatter(
     'es_AR',

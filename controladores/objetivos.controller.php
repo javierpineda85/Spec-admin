@@ -25,14 +25,15 @@ class ControladorObjetivos
             // Guardar objetivo principal
             $idObjetivo = ModeloObjetivos::mdlGuardarObjetivo('objetivos', $datos); // devuelve el ultimo id
 
-            // Guardar vigiladores si vienen
-            if (!empty($_POST['vigiladores']) && is_array($_POST['vigiladores'])) {
-                ModeloObjetivos::mdlGuardarVigiladoresObjetivo($idObjetivo, $_POST['vigiladores']);
-            }
             if (!$idObjetivo) {
                 $conexion->rollBack();
                 ToastifyController::error('No se pudo crear el objetivo');
                 return;
+            }
+
+            // Guardar vigiladores si vienen
+            if (!empty($_POST['vigiladores']) && is_array($_POST['vigiladores'])) {
+                ModeloObjetivos::mdlGuardarVigiladoresObjetivo($idObjetivo, $_POST['vigiladores']);
             }
             // Guardar referentes si vienen
             if (!empty($_POST['referentes']) && is_array($_POST['referentes'])) {
@@ -57,6 +58,8 @@ class ControladorObjetivos
             }
             $conexion->commit();
             ToastifyController::success('Objetivo creado exitosamente');
+            header('Location: ?r=listado_objetivos');
+            exit;
         }
     }
 

@@ -351,13 +351,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar_talles'])) {
                class="form-control" min="1" value="1">
       </div>
 
-      <!-- Entregado por -->
-      <div class="form-group col-md-3">
-        <label>Entregado por</label>
-        <input type="text" name="entregas[${contador}][entregado_por]" 
-               class="form-control entregado_por">
-      </div>
-
       <div class="form-group col-md-11">
         <label>Observaciones</label>
           <textarea name="entregas[${contador}][observaciones]" 
@@ -375,7 +368,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar_talles'])) {
 
     contenedor.appendChild(fila);
 
-    // AUTOCOMPLETAR FECHA Y ENTREGADO_POR
+    // AUTOCOMPLETAR FECHA
     autocompletarCampos(contador);
 
     // EVENTOS
@@ -392,23 +385,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar_talles'])) {
   }
 
   // ============================================================
-  // AUTOCOMPLETAR FECHA Y ENTREGADO_POR
+  // AUTOCOMPLETAR FECHA
   // ============================================================
   function autocompletarCampos(index) {
 
     const primeraFecha = document.querySelector(".fecha_entrega");
-    const primerEntregado = document.querySelector(".entregado_por");
-
     const nuevaFecha = document.querySelector(`input[name="entregas[${index}][fecha_entrega]"]`);
-    const nuevoEntregado = document.querySelector(`input[name="entregas[${index}][entregado_por]"]`);
 
     if (primeraFecha && primeraFecha.value) {
       nuevaFecha.value = primeraFecha.value;
     }
 
-    if (primerEntregado && primerEntregado.value) {
-      nuevoEntregado.value = primerEntregado.value;
-    }
   }
 
   // ============================================================

@@ -2,6 +2,7 @@
 
 require_once 'modelos/uniformes.modelo.php';
 require_once 'modelos/uniformeitems.modelo.php';
+require_once 'modelos/uniformecategorias.modelo.php';
 require_once 'modelos/uniformeentregas.modelo.php';
 require_once 'modelos/uniformedevoluciones.modelo.php';
 
@@ -76,6 +77,10 @@ class UniformesController
     {
         Auth::check('uniformes', 'vistaMiUniforme');
 
+        $entregadoPor = trim(
+            ($_SESSION['nombre'] ?? '') . ' ' . ($_SESSION['apellido'] ?? '')
+        );
+
         if (!isset($_POST['entregas']) || empty($_POST['entregas'])) {
             ToastifyController::error('No se recibieron ítems para registrar');
             header("Location: ?r=mi_uniforme");
@@ -94,7 +99,7 @@ class UniformesController
             $entrega['talle']         = $entrega['talle']         ?? null;
             $entrega['cantidad']      = $entrega['cantidad']      ?? 1;
             $entrega['observaciones'] = $entrega['observaciones'] ?? '';
-            $entrega['entregado_por'] = $entrega['entregado_por'] ?? '';
+            $entrega['entregado_por'] = $entregadoPor;
 
             // Agregar usuario_id
             $entrega['usuario_id'] = $usuario_id;
@@ -154,9 +159,7 @@ class UniformesController
         Auth::check('uniformes', 'adminItems');
 
         $items = ModeloUniformeItems::listar(false);
-
-        $db = new Conexion;
-        $categorias = $db->consultas("SELECT * FROM uniforme_categorias ORDER BY nombre");
+        $categorias = ModeloUniformeCategorias::listar();
 
         require 'vistas/paginas/admin/uniformes/items.php';
     }
@@ -166,24 +169,39 @@ class UniformesController
     {
         Auth::check('uniformes', 'adminItems');
 
-        $datos = [
-            'id'           => $_POST['id'] ?? null,
-            'categoria_id' => $_POST['categoria_id'],
-            'nombre'       => trim($_POST['nombre']),
-            'descripcion'  => trim($_POST['descripcion']),
-            'estado'       => $_POST['estado'] ?? 'activo'
-        ];
-
-        if ($datos['id']) {
-            $ok = ModeloUniformeItems::actualizar($datos);
-        } else {
-            $ok = ModeloUniformeItems::insertar($datos);
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: ?r=admin_items_uniforme');
+            exit;
         }
 
-        if ($ok) {
-            ToastifyController::success('Item guardado correctamente');
-        } else {
-            ToastifyController::error('Error al guardar el item');
+        $datos = [
+            'id'           => !empty($_POST['id']) ? (int) $_POST['id'] : null,
+            'categoria_id' => (int) ($_POST['categoria_id'] ?? 0),
+            'nombre'       => trim($_POST['nombre'] ?? ''),
+            'descripcion'  => trim($_POST['descripcion'] ?? ''),
+            'estado'       => in_array($_POST['estado'] ?? '', ['activo', 'inactivo'], true)
+                ? $_POST['estado']
+                : 'activo'
+        ];
+
+        if (!$datos['categoria_id'] || $datos['nombre'] === '' || !ModeloUniformeCategorias::buscar($datos['categoria_id'])) {
+            ToastifyController::error('Completá una categoría y un nombre válidos');
+            header('Location: ?r=admin_items_uniforme');
+            exit;
+        }
+
+        try {
+            $ok = $datos['id']
+                ? ModeloUniformeItems::actualizar($datos)
+                : ModeloUniformeItems::insertar($datos);
+
+            $ok
+                ? ToastifyController::success('Ítem guardado correctamente')
+                : ToastifyController::error('No se pudo guardar el ítem');
+        } catch (PDOException $e) {
+            ToastifyController::error($e->getCode() === '23000'
+                ? 'Ya existe un ítem con ese nombre'
+                : 'No se pudo guardar el ítem');
         }
 
         header("Location: ?r=admin_items_uniforme");
@@ -195,12 +213,86 @@ class UniformesController
     {
         Auth::check('uniformes', 'adminItems');
 
-        $id = $_GET['id'];
-        $estado = $_GET['estado'];
+        $id = (int) ($_POST['id'] ?? 0);
+        $estado = $_POST['estado'] ?? '';
 
-        ModeloUniformeItems::cambiarEstado($id, $estado);
+        if ($id && in_array($estado, ['activo', 'inactivo'], true)) {
+            ModeloUniformeItems::cambiarEstado($id, $estado);
+            ToastifyController::success('Estado del ítem actualizado');
+        } else {
+            ToastifyController::error('No se pudo actualizar el estado del ítem');
+        }
 
         header("Location: ?r=admin_items_uniforme");
+        exit;
+    }
+
+    public static function eliminarItem()
+    {
+        Auth::check('uniformes', 'adminItems');
+
+        $id = (int) ($_POST['id'] ?? 0);
+        if (!$id || !ModeloUniformeItems::buscar($id)) {
+            ToastifyController::error('El ítem indicado no existe');
+        } elseif (ModeloUniformeItems::tieneEntregas($id)) {
+            ToastifyController::error('El ítem tiene entregas registradas; podés desactivarlo, pero no eliminarlo');
+        } elseif (ModeloUniformeItems::eliminar($id)) {
+            ToastifyController::success('Ítem eliminado correctamente');
+        } else {
+            ToastifyController::error('No se pudo eliminar el ítem');
+        }
+
+        header('Location: ?r=admin_items_uniforme');
+        exit;
+    }
+
+    public static function guardarCategoria()
+    {
+        Auth::check('uniformes', 'adminItems');
+
+        $id = !empty($_POST['id']) ? (int) $_POST['id'] : null;
+        $nombre = trim($_POST['nombre'] ?? '');
+
+        if ($nombre === '') {
+            ToastifyController::error('Ingresá el nombre de la categoría');
+            header('Location: ?r=admin_items_uniforme');
+            exit;
+        }
+
+        try {
+            $ok = $id
+                ? ModeloUniformeCategorias::actualizar($id, $nombre)
+                : ModeloUniformeCategorias::insertar($nombre);
+
+            $ok
+                ? ToastifyController::success('Categoría guardada correctamente')
+                : ToastifyController::error('No se pudo guardar la categoría');
+        } catch (PDOException $e) {
+            ToastifyController::error($e->getCode() === '23000'
+                ? 'Ya existe una categoría con ese nombre'
+                : 'No se pudo guardar la categoría');
+        }
+
+        header('Location: ?r=admin_items_uniforme');
+        exit;
+    }
+
+    public static function eliminarCategoria()
+    {
+        Auth::check('uniformes', 'adminItems');
+
+        $id = (int) ($_POST['id'] ?? 0);
+        if (!$id || !ModeloUniformeCategorias::buscar($id)) {
+            ToastifyController::error('La categoría indicada no existe');
+        } elseif (ModeloUniformeCategorias::tieneItems($id)) {
+            ToastifyController::error('La categoría tiene ítems asociados y no puede eliminarse');
+        } elseif (ModeloUniformeCategorias::eliminar($id)) {
+            ToastifyController::success('Categoría eliminada correctamente');
+        } else {
+            ToastifyController::error('No se pudo eliminar la categoría');
+        }
+
+        header('Location: ?r=admin_items_uniforme');
         exit;
     }
 

@@ -17,7 +17,8 @@ class Conexion
         if (self::$link) return self::$link;
 
         try {
-            $link = new PDO("mysql:host=localhost;port=3306;dbname=argus", "root", "");
+            //$link = new PDO("mysql:host=localhost;port=3306;dbname=argus", "root", "");
+            $link = new PDO("mysql:host=localhost;port=3306;dbname=u515462975_spec1", "root", ""); //base copia de spec.mentemotion al 10/08/26
             //$link = new PDO("mysql:host=localhost;port=3306;dbname=u515462975_spec", "u515462975_root", "Q*/CyO48j");
             //$link = new PDO("mysql:host=localhost;port=3306;dbname=spec_db;charset=utf8mb4","spec_user",pLMK!6vCX%ug.Qtk78%_"); /* SERVIDOR EN PRODUCCION */
 

@@ -72,4 +72,21 @@ class ModeloUniformeItems
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         return $stmt->execute();
     }
+
+    public static function eliminar($id)
+    {
+        $stmt = Conexion::conectar()->prepare(
+            "DELETE FROM uniforme_items WHERE id = :id"
+        );
+        return $stmt->execute([':id' => (int) $id]);
+    }
+
+    public static function tieneEntregas($id)
+    {
+        $stmt = Conexion::conectar()->prepare(
+            "SELECT COUNT(*) FROM uniforme_entregas WHERE item_id = :id"
+        );
+        $stmt->execute([':id' => (int) $id]);
+        return (int) $stmt->fetchColumn() > 0;
+    }
 }

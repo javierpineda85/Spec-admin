@@ -166,7 +166,7 @@ Cada entrega incluye:
 - talle  
 - cantidad  
 - observaciones  
-- entregado_por  
+- entregado_por (usuario logueado que registra la entrega)
 - usuario_id  
 
 Flujo:

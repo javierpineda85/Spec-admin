@@ -34,6 +34,7 @@ $objetivos = $db->consultas($sql);
                             <thead>
                                 <tr>
                                     <th style="text-align: center;">Nombre</th>
+                                    <th style="text-align: center;">Domicilio</th>
                                     <th style="text-align: center;">Localidad</th>
                                     <th style="text-align: center;">tipo</th>
                                     <th style="text-align: center;">Acciones</th>
@@ -43,6 +44,7 @@ $objetivos = $db->consultas($sql);
                                 <?php foreach ($objetivos as $campo => $valor) : ?>
                                     <tr>
                                         <td> <?= $valor['nombre'] ?></td>
+                                        <td> <?= $valor['domicilio'] ?></td>
                                         <td> <?= $valor['localidad'] ?></td>
                                         <td> <?= $valor['tipo'] ?></td>
                                         <td>
@@ -64,6 +66,7 @@ $objetivos = $db->consultas($sql);
                             <tfoot>
                                 <tr>
                                     <th style="text-align: center;">Nombre</th>
+                                    <th style="text-align: center;">Domicilio</th>
                                     <th style="text-align: center;">Localidad</th>
                                     <th style="text-align: center;">tipo</th>
                                     <th style="text-align: center;">Acciones</th>
