@@ -45,6 +45,7 @@ class RutasController
         require_once __DIR__ . '/../rutas/rutas_login.php';
         require_once __DIR__ . '/../rutas/rutas_marcaciones.php';
         require_once __DIR__ . '/../rutas/rutas_mensajes.php';
+        require_once __DIR__ . '/../rutas/rutas_noticias.php';
         require_once __DIR__ . '/../rutas/rutas_novedades.php';
         require_once __DIR__ . '/../rutas/rutas_objetivos.php';
         require_once __DIR__ . '/../rutas/rutas_permisos.php';
