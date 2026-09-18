@@ -1,0 +1,3234 @@
+{
+    "capturado_en": "2026-09-18T03:20:57+00:00",
+    "alcance": "Catalogos locales actuales, no prueba de configuracion historica",
+    "objetivos": [
+        {
+            "idObjetivo": 2,
+            "nombre": "ETI Lujan",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 3,
+            "nombre": "ETI Maipu",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 4,
+            "nombre": "Hogar 8",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 5,
+            "nombre": "ETI Godoy Cruz",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 6,
+            "nombre": "El Bosque",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 7,
+            "nombre": "Hogas Los Toneles",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 8,
+            "nombre": "ETI Guaymallen",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 9,
+            "nombre": "ETI Lemos",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 10,
+            "nombre": "ETI Belgrano",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 11,
+            "nombre": "ETI Las Heras",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 12,
+            "nombre": "Hogas Matus Hoyos",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 13,
+            "nombre": "Hogar 7",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 14,
+            "nombre": "ETI Tupungato",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 15,
+            "nombre": "La Casa De Ronald McDonald",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 16,
+            "nombre": "Sala Guemes",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 17,
+            "nombre": "Sala Palmira",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 18,
+            "nombre": "Hospital Pediatrico Dr. Humberto Notti",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 19,
+            "nombre": "Hospital Victorino Tagarelli",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 20,
+            "nombre": "HOSPITAL ALFREDO METRAUX",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 21,
+            "nombre": "Hogar 18",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 22,
+            "nombre": "Hogar Ojos Color Sol",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 23,
+            "nombre": "LEONIDAS AGUIRRE",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 24,
+            "nombre": "HOSPITAL MINISTRO DR. RAMON CARRILLO",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 25,
+            "nombre": "DIRECCION DE FISCALIZACION, CONTROL Y TECNOLOGIA AGROINDUSTRIAL",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 26,
+            "nombre": "AREA DEPARTAMENTAL DE SALUD LAVALLE ",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 27,
+            "nombre": "HOSPITAL SAPORITTI",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 28,
+            "nombre": "DIRECCION DE SALUD MENTAL Y CONSUMOS PROBLEMÁTICOS OP",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 29,
+            "nombre": "HOSPITAL PERRUPATO",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 30,
+            "nombre": "ETI Armani",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 31,
+            "nombre": "Caps 86",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 32,
+            "nombre": "Parque Central",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 33,
+            "nombre": "Empresa Marsan ",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 34,
+            "nombre": "Casa Prueba",
+            "activo": 1
+        },
+        {
+            "idObjetivo": 35,
+            "nombre": "Casa Prueba",
+            "activo": 1
+        }
+    ],
+    "usuarios": [
+        {
+            "idUsuario": 1,
+            "apellido": "Argus",
+            "nombre": "Programador",
+            "activo": 1,
+            "rol": "Programador",
+            "categoria": "reservado"
+        },
+        {
+            "idUsuario": 2,
+            "apellido": "Mujica",
+            "nombre": "Gaston Ezequiel",
+            "activo": 1,
+            "rol": "GASTON MUJICA",
+            "categoria": "direccion"
+        },
+        {
+            "idUsuario": 3,
+            "apellido": "Gerencia",
+            "nombre": "Gerencia",
+            "activo": 0,
+            "rol": "GASTON MUJICA",
+            "categoria": "direccion"
+        },
+        {
+            "idUsuario": 4,
+            "apellido": "Santos",
+            "nombre": "Claudia Marisa",
+            "activo": 1,
+            "rol": "MARISA SANTOS",
+            "categoria": "direccion"
+        },
+        {
+            "idUsuario": 5,
+            "apellido": "Alonso Martinez",
+            "nombre": "Juan Manuel",
+            "activo": 1,
+            "rol": "JUAN MANUEL ALONSO",
+            "categoria": "administrativo"
+        },
+        {
+            "idUsuario": 6,
+            "apellido": "Salimeni Hidalgo",
+            "nombre": "Abel Oscar",
+            "activo": 1,
+            "rol": "ABEL SALIMENI",
+            "categoria": "administrativo"
+        },
+        {
+            "idUsuario": 7,
+            "apellido": "Alonso Martinez",
+            "nombre": "Emiliano Eduardo",
+            "activo": 1,
+            "rol": "SUPERVISION",
+            "categoria": "supervisor"
+        },
+        {
+            "idUsuario": 8,
+            "apellido": "Castillo",
+            "nombre": "Claudio Alejandro",
+            "activo": 1,
+            "rol": "SUPERVISION",
+            "categoria": "supervisor"
+        },
+        {
+            "idUsuario": 9,
+            "apellido": "Abrego",
+            "nombre": "Leandro Emanuel",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 10,
+            "apellido": "Aciar",
+            "nombre": "Lucas Daniel",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 11,
+            "apellido": "Albornoz",
+            "nombre": "Gustavo Nicolas",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 12,
+            "apellido": "Albornoz",
+            "nombre": "Miguel Alejandro",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 13,
+            "apellido": "Allende",
+            "nombre": "Fernando Mauricio",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 14,
+            "apellido": "Altamirano",
+            "nombre": "Silvia Patricia",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 15,
+            "apellido": "Alvarez Lopez",
+            "nombre": "Rodrigo David",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 16,
+            "apellido": "Alvarez",
+            "nombre": "Jessica Rita Belen",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 17,
+            "apellido": "Alvarez",
+            "nombre": "Monica Maria Sol",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 18,
+            "apellido": "Andrada",
+            "nombre": "Dario Ezequiel",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 19,
+            "apellido": "Añez",
+            "nombre": "Franco Gaston",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 20,
+            "apellido": "Arancibia",
+            "nombre": "Carina",
+            "activo": 1,
+            "rol": "REFERENTE",
+            "categoria": "referente"
+        },
+        {
+            "idUsuario": 21,
+            "apellido": "Araujo",
+            "nombre": "Hector Gonzalo",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 22,
+            "apellido": "Avila",
+            "nombre": "Analia Noemi",
+            "activo": 0,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 23,
+            "apellido": "Barrionuevo",
+            "nombre": "Lucas Nicolas",
+            "activo": 0,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 24,
+            "apellido": "Barroso",
+            "nombre": "Mario Leandro",
+            "activo": 1,
+            "rol": "REFERENTE",
+            "categoria": "referente"
+        },
+        {
+            "idUsuario": 25,
+            "apellido": "Beltrame",
+            "nombre": "Gonzalo Raul",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 26,
+            "apellido": "Berardy",
+            "nombre": "Kevin Renzo",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 27,
+            "apellido": "Bortolozzo",
+            "nombre": "Silvio Javier",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 28,
+            "apellido": "Bravo",
+            "nombre": "Sonia Irene",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 29,
+            "apellido": "Britez",
+            "nombre": "Angel Jose",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 30,
+            "apellido": "Britos",
+            "nombre": "Mariano Gabriel",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 31,
+            "apellido": "Bustos",
+            "nombre": "Oscar Alberto",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 32,
+            "apellido": "Camargo",
+            "nombre": "Hector Ariel",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 33,
+            "apellido": "Candido",
+            "nombre": "Facundo Agustin",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 34,
+            "apellido": "Cano",
+            "nombre": "Jennifer Tania",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 35,
+            "apellido": "Capadona",
+            "nombre": "Ruben Dario",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 36,
+            "apellido": "Caraballo",
+            "nombre": "Nelson Hugo",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 37,
+            "apellido": "Carral",
+            "nombre": "Alberto",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 38,
+            "apellido": "Castillo",
+            "nombre": "Lucas Ezequiel",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 39,
+            "apellido": "Castillo",
+            "nombre": "Franco Nahuel",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 40,
+            "apellido": "Castro",
+            "nombre": "Adrian Esteban",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 41,
+            "apellido": "Cornejo",
+            "nombre": "Alan Ezequiel",
+            "activo": 0,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 42,
+            "apellido": "Daza Hernandez",
+            "nombre": "Jose Yovanny",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 43,
+            "apellido": "Duscio",
+            "nombre": "Fabricio Martin",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 44,
+            "apellido": "Escobar",
+            "nombre": "Domingo Alberto",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 45,
+            "apellido": "Farias",
+            "nombre": "Emiliano Gaston",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 46,
+            "apellido": "Fernandez",
+            "nombre": "Sergio Walter",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 47,
+            "apellido": "Ferreyra",
+            "nombre": "Francisco Gabriel",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 48,
+            "apellido": "Ferrigno",
+            "nombre": "Camila Luz",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 49,
+            "apellido": "Figueroa",
+            "nombre": "Carlos Alberto",
+            "activo": 1,
+            "rol": "REFERENTE",
+            "categoria": "referente"
+        },
+        {
+            "idUsuario": 50,
+            "apellido": "Fredes",
+            "nombre": "Lorena Edith",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 51,
+            "apellido": "Funes",
+            "nombre": "Daniel Nahuel",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 52,
+            "apellido": "Funes",
+            "nombre": "Diego Alberto",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 53,
+            "apellido": "Garcia",
+            "nombre": "Leonel",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 54,
+            "apellido": "Garcia",
+            "nombre": "Matias Exequiel",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 55,
+            "apellido": "Garro",
+            "nombre": "Brian Kevin",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 56,
+            "apellido": "Gnappa",
+            "nombre": "Lucas Maximiliano",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 57,
+            "apellido": "Godoy",
+            "nombre": "Gabriel Alberto",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 58,
+            "apellido": "Gomez",
+            "nombre": "Carlos Javier",
+            "activo": 1,
+            "rol": "REFERENTE",
+            "categoria": "referente"
+        },
+        {
+            "idUsuario": 59,
+            "apellido": "Gonzalez",
+            "nombre": "Juan Eduardo",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 60,
+            "apellido": "Gonzalez",
+            "nombre": "Juan Ramon",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 61,
+            "apellido": "Gonzalez",
+            "nombre": "Rodrigo",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 62,
+            "apellido": "Guardia",
+            "nombre": "Ariel Juan",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 63,
+            "apellido": "Guiñazu",
+            "nombre": "Emanuel Leonardo",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 64,
+            "apellido": "Herrera",
+            "nombre": "Daniel Alexis",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 65,
+            "apellido": "Ibañez",
+            "nombre": "Esteban Eduardo",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 66,
+            "apellido": "Iglesias",
+            "nombre": "Ana Claudia",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 67,
+            "apellido": "Jaramillo",
+            "nombre": "Jonatan Exequiel",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 68,
+            "apellido": "Lopez",
+            "nombre": "Juan Ignacio",
+            "activo": 0,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 69,
+            "apellido": "Lucero Muñoz",
+            "nombre": "Agustin Gabriel",
+            "activo": 1,
+            "rol": "REFERENTE",
+            "categoria": "referente"
+        },
+        {
+            "idUsuario": 70,
+            "apellido": "Mandiola",
+            "nombre": "Pablo Jesus",
+            "activo": 0,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 71,
+            "apellido": "Maciel Ferreyra",
+            "nombre": "Oscar Felix",
+            "activo": 1,
+            "rol": "REFERENTE",
+            "categoria": "referente"
+        },
+        {
+            "idUsuario": 72,
+            "apellido": "Mendoza",
+            "nombre": "Daniel Edgardo",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 73,
+            "apellido": "Merlo",
+            "nombre": "Mauricio David",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 74,
+            "apellido": "Miguel",
+            "nombre": "Cristian Javier",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 75,
+            "apellido": "Miguez",
+            "nombre": "Mario Ezequiel",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 76,
+            "apellido": "Morales Julia",
+            "nombre": "Emiliano Gabriel",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 77,
+            "apellido": "Morata",
+            "nombre": "Axel Leonel",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 78,
+            "apellido": "Moreno Cornejo",
+            "nombre": "Camilo Jesus",
+            "activo": 1,
+            "rol": "BASE OPERATIVA",
+            "categoria": "baseOperativa"
+        },
+        {
+            "idUsuario": 79,
+            "apellido": "Muñoz",
+            "nombre": "Monica Alejandra",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 80,
+            "apellido": "Naim",
+            "nombre": "Fernando Daniel",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 81,
+            "apellido": "Nieva",
+            "nombre": "Eliseo Tomas",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 82,
+            "apellido": "Nievas",
+            "nombre": "Christopher Joel",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 83,
+            "apellido": "Nuñez",
+            "nombre": "Oscar Federico",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 84,
+            "apellido": "Ochoa",
+            "nombre": "Alexis Nahuel",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 85,
+            "apellido": "Olguin",
+            "nombre": "Jose Maria",
+            "activo": 1,
+            "rol": "REFERENTE",
+            "categoria": "referente"
+        },
+        {
+            "idUsuario": 86,
+            "apellido": "Olmos",
+            "nombre": "Jorge Mario",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 87,
+            "apellido": "Ontivero Pezo",
+            "nombre": "Jorge Edgar",
+            "activo": 1,
+            "rol": "REFERENTE",
+            "categoria": "referente"
+        },
+        {
+            "idUsuario": 88,
+            "apellido": "Ordoñez",
+            "nombre": "Diego Fabian",
+            "activo": 1,
+            "rol": "REFERENTE",
+            "categoria": "referente"
+        },
+        {
+            "idUsuario": 89,
+            "apellido": "Orozco",
+            "nombre": "Roxana Estefania",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 90,
+            "apellido": "Ortiz",
+            "nombre": "Cristian Jesus",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 91,
+            "apellido": "Paez",
+            "nombre": "Exequiel Oscar",
+            "activo": 1,
+            "rol": "REFERENTE",
+            "categoria": "referente"
+        },
+        {
+            "idUsuario": 92,
+            "apellido": "Palleros",
+            "nombre": "Alexis Omar",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 93,
+            "apellido": "Peña",
+            "nombre": "Johana Melisa",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 94,
+            "apellido": "Ponce",
+            "nombre": "Walter Sebastian",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 95,
+            "apellido": "Puebla",
+            "nombre": "Alexis Maximiliano",
+            "activo": 1,
+            "rol": "REFERENTE",
+            "categoria": "referente"
+        },
+        {
+            "idUsuario": 96,
+            "apellido": "Quiroga",
+            "nombre": "Alejandra Mariela",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 97,
+            "apellido": "Quiroga",
+            "nombre": "Blanca Lidia",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 98,
+            "apellido": "Quiroga",
+            "nombre": "Daiana Yolanda",
+            "activo": 0,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 99,
+            "apellido": "Rafaelich",
+            "nombre": "Ruben",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 100,
+            "apellido": "Rivas",
+            "nombre": "Rafael Dario",
+            "activo": 0,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 101,
+            "apellido": "Rodriguez",
+            "nombre": "Juan Pablo",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 102,
+            "apellido": "Rodriguez Dalesio",
+            "nombre": "Florencia",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 103,
+            "apellido": "Rojas",
+            "nombre": "Tania Elizabeth",
+            "activo": 0,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 104,
+            "apellido": "Rolland",
+            "nombre": "Jorge Luis",
+            "activo": 1,
+            "rol": "BASE OPERATIVA",
+            "categoria": "baseOperativa"
+        },
+        {
+            "idUsuario": 105,
+            "apellido": "Romera Quiroga",
+            "nombre": "Maia Candela",
+            "activo": 1,
+            "rol": "REFERENTE",
+            "categoria": "referente"
+        },
+        {
+            "idUsuario": 106,
+            "apellido": "Romero",
+            "nombre": "Juan Emanuel",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 107,
+            "apellido": "Roque",
+            "nombre": "Gustavo Javier",
+            "activo": 1,
+            "rol": "REFERENTE",
+            "categoria": "referente"
+        },
+        {
+            "idUsuario": 108,
+            "apellido": "Ruiz",
+            "nombre": "Javier Fabian Martin",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 109,
+            "apellido": "Ruiz",
+            "nombre": "Marcos Sebastian",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 110,
+            "apellido": "Salinas Jover",
+            "nombre": "Alejandro Karim",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 111,
+            "apellido": "Segura Job",
+            "nombre": "Alexis Eric",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 112,
+            "apellido": "Soliz",
+            "nombre": "Jesus Damian",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 113,
+            "apellido": "Sosa Calabressi",
+            "nombre": "Agustin Jesus",
+            "activo": 1,
+            "rol": "REFERENTE",
+            "categoria": "referente"
+        },
+        {
+            "idUsuario": 114,
+            "apellido": "Toledo",
+            "nombre": "Luis Maximiliano",
+            "activo": 0,
+            "rol": "REFERENTE",
+            "categoria": "referente"
+        },
+        {
+            "idUsuario": 115,
+            "apellido": "Torralba",
+            "nombre": "Marina Andrea",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 116,
+            "apellido": "Valdez",
+            "nombre": "Felix Saturnino",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 117,
+            "apellido": "Valdez",
+            "nombre": "Leonardo Manuel",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 118,
+            "apellido": "Vardaguer Fourcade",
+            "nombre": "Sonia Laura",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 119,
+            "apellido": "Vasconcelos",
+            "nombre": "Gerardo Sergio",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 120,
+            "apellido": "Vazquez",
+            "nombre": "Agustin Emanuel",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 121,
+            "apellido": "Vegas",
+            "nombre": "Leonardo Rodrigo",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 122,
+            "apellido": "Vela Silupu",
+            "nombre": "Pablo Darwin",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 123,
+            "apellido": "Vera",
+            "nombre": "Brian Sebastian",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 124,
+            "apellido": "Videla",
+            "nombre": "Andres Nicolas",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 125,
+            "apellido": "Vila",
+            "nombre": "Gonzalo Nicolas",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 126,
+            "apellido": "Villablanca",
+            "nombre": "Federico Leandro",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 127,
+            "apellido": "Villalobos",
+            "nombre": "Jonathan Sebastian",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 128,
+            "apellido": "Vove",
+            "nombre": "Andres Placido",
+            "activo": 1,
+            "rol": "BASE OPERATIVA",
+            "categoria": "baseOperativa"
+        },
+        {
+            "idUsuario": 129,
+            "apellido": "Vove",
+            "nombre": "Marcela Johanna",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 130,
+            "apellido": "Carmona Oliver",
+            "nombre": "Mathias Rodrigo",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 131,
+            "apellido": "Salafia",
+            "nombre": "Rodrigo",
+            "activo": 0,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 132,
+            "apellido": "Frias",
+            "nombre": "Cristian Marcelo",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 133,
+            "apellido": "Barrera",
+            "nombre": "Dante Alejandro",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 134,
+            "apellido": "Bou Romero",
+            "nombre": "Enzo Agustin",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 135,
+            "apellido": "Casteluche",
+            "nombre": "David Enrique",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 136,
+            "apellido": "Cayo Cruz",
+            "nombre": "Abel Guido",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 137,
+            "apellido": "Di Marco",
+            "nombre": "Matias Javier",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 138,
+            "apellido": "Dominguez",
+            "nombre": "Horacio Eugenio",
+            "activo": 1,
+            "rol": "REFERENTE",
+            "categoria": "referente"
+        },
+        {
+            "idUsuario": 139,
+            "apellido": "Estrada",
+            "nombre": "Gregorio Luis",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 140,
+            "apellido": "Gonzalez Barberis",
+            "nombre": "Noelia Daiana",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 141,
+            "apellido": "Chaparro",
+            "nombre": "Nahuel Ivan",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 142,
+            "apellido": "Regalado",
+            "nombre": "Vanina Lourdes",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 143,
+            "apellido": "Vargas Pereira",
+            "nombre": "Alejo Agustin",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 144,
+            "apellido": "Villareal",
+            "nombre": "Andres Dario",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 145,
+            "apellido": "Vitali",
+            "nombre": "Elias Alberto",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 146,
+            "apellido": "Rojas",
+            "nombre": "Rodrigo Martin",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 147,
+            "apellido": "Blanco",
+            "nombre": "Marcelo Leonel",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 148,
+            "apellido": "Barrios",
+            "nombre": "Julio Agustin",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 149,
+            "apellido": "Escobar",
+            "nombre": "Alexander Gabriel",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 150,
+            "apellido": "Frachetti",
+            "nombre": "Roxana Lourdes",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 151,
+            "apellido": "Gonzalez Athenour",
+            "nombre": "Enrique Nicolas",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 152,
+            "apellido": "Ledesma",
+            "nombre": "Fany Esther",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 153,
+            "apellido": "Paez",
+            "nombre": "Nicole Agustina",
+            "activo": 0,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 154,
+            "apellido": "Pelayes",
+            "nombre": "Brian Esteban",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 155,
+            "apellido": "Pomilio",
+            "nombre": "Jonathan Daniel",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 156,
+            "apellido": "Puebla Sanchez",
+            "nombre": "Diego Nahuel",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 157,
+            "apellido": "Puente",
+            "nombre": "Anahi Giuliana",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 158,
+            "apellido": "Raed",
+            "nombre": "Laura Yamile",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 159,
+            "apellido": "Semenoviez Quintanilla",
+            "nombre": "Micol Alexander",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 160,
+            "apellido": "Zafate",
+            "nombre": "Yasmin Ayelen",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 161,
+            "apellido": "Rossotti",
+            "nombre": "Edgardo Alejandro",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 162,
+            "apellido": "Sanchez Silva",
+            "nombre": "Leandro Jose",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 163,
+            "apellido": "Roldan",
+            "nombre": "Roberto Adrian",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 164,
+            "apellido": "Bou Romero",
+            "nombre": "Sergio Gabriel",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 165,
+            "apellido": "Aveni",
+            "nombre": "Diego Daniel",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 166,
+            "apellido": "Hernandez",
+            "nombre": "Federico Fabian",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 169,
+            "apellido": "Urdanivia",
+            "nombre": "Angel Gabriel",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 170,
+            "apellido": "Aguilera Guareschi",
+            "nombre": "Melina Lis",
+            "activo": 0,
+            "rol": "MELINA AGUILERA",
+            "categoria": "administrativo"
+        },
+        {
+            "idUsuario": 171,
+            "apellido": "Ortiz Galiotti",
+            "nombre": "Lucas German",
+            "activo": 0,
+            "rol": "LUCAS ORTIZ",
+            "categoria": "direccion"
+        },
+        {
+            "idUsuario": 172,
+            "apellido": "Oviedo",
+            "nombre": "Gustavo Alberto",
+            "activo": 1,
+            "rol": "GUSTAVO OVIEDO",
+            "categoria": "administrativo"
+        },
+        {
+            "idUsuario": 173,
+            "apellido": "Vergara",
+            "nombre": "Nadia Mariel",
+            "activo": 1,
+            "rol": "NADIA VERGARA",
+            "categoria": "administrativo"
+        },
+        {
+            "idUsuario": 174,
+            "apellido": "Cirica",
+            "nombre": "Jorge",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 175,
+            "apellido": "Vera",
+            "nombre": "Omar",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 176,
+            "apellido": "Gimenez",
+            "nombre": "Nicolas",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 177,
+            "apellido": "Monjes",
+            "nombre": "Miqueas",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 179,
+            "apellido": "Sarabia",
+            "nombre": "Kevin",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 180,
+            "apellido": "Choque",
+            "nombre": "Alejandro",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 181,
+            "apellido": "Villegas",
+            "nombre": "Raul",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 182,
+            "apellido": "Toledano",
+            "nombre": "Tomás",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 184,
+            "apellido": "Quiroz",
+            "nombre": "Marcela Noemi",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 185,
+            "apellido": "Delgado",
+            "nombre": "Ricardo",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 186,
+            "apellido": "Pojmaevich",
+            "nombre": "Diego",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 187,
+            "apellido": "Tejada",
+            "nombre": "Silvio",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 188,
+            "apellido": "Romero",
+            "nombre": "Paola",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 189,
+            "apellido": "Gimenez",
+            "nombre": "Victor",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 190,
+            "apellido": "Honorato",
+            "nombre": "Cesar",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 191,
+            "apellido": "Martinez",
+            "nombre": "Maria",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 192,
+            "apellido": "ACEVEDO",
+            "nombre": "JUAN CARLOS",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 193,
+            "apellido": "Aguero",
+            "nombre": "Franco",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 194,
+            "apellido": "Nahuel",
+            "nombre": "Lefevre",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 195,
+            "apellido": "Gonzalez",
+            "nombre": "Gustavo",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 196,
+            "apellido": "Mercado",
+            "nombre": "Luis",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 197,
+            "apellido": "Yerdeo",
+            "nombre": "Emmanuel Luciano",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 198,
+            "apellido": "Ochoa",
+            "nombre": "Ainalen",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 199,
+            "apellido": "Setticassi",
+            "nombre": "Mario Alejandrio",
+            "activo": 1,
+            "rol": "SUPERVISION",
+            "categoria": "supervisor"
+        },
+        {
+            "idUsuario": 201,
+            "apellido": "oviedo",
+            "nombre": "Leandro",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        },
+        {
+            "idUsuario": 203,
+            "apellido": "santos",
+            "nombre": "matias",
+            "activo": 1,
+            "rol": "REFERENTE",
+            "categoria": "referente"
+        },
+        {
+            "idUsuario": 204,
+            "apellido": "perez",
+            "nombre": "juan carlos",
+            "activo": 1,
+            "rol": "VIGILADOR",
+            "categoria": "operativo"
+        }
+    ],
+    "siglas": [
+        {
+            "objetivo_id": 26,
+            "sigla": "ASL",
+            "descripcion": "",
+            "horas": "12.00",
+            "activo": 1
+        },
+        {
+            "objetivo_id": 34,
+            "sigla": "CJP",
+            "descripcion": "",
+            "horas": "12.00",
+            "activo": 1
+        },
+        {
+            "objetivo_id": 35,
+            "sigla": "CJP",
+            "descripcion": "",
+            "horas": "12.00",
+            "activo": 1
+        }
+    ],
+    "vigiladores": [
+        {
+            "objetivo_id": 1,
+            "usuario_id": 9
+        },
+        {
+            "objetivo_id": 2,
+            "usuario_id": 17
+        },
+        {
+            "objetivo_id": 3,
+            "usuario_id": 16
+        },
+        {
+            "objetivo_id": 4,
+            "usuario_id": 150
+        },
+        {
+            "objetivo_id": 4,
+            "usuario_id": 152
+        },
+        {
+            "objetivo_id": 4,
+            "usuario_id": 158
+        },
+        {
+            "objetivo_id": 5,
+            "usuario_id": 142
+        },
+        {
+            "objetivo_id": 7,
+            "usuario_id": 89
+        },
+        {
+            "objetivo_id": 7,
+            "usuario_id": 93
+        },
+        {
+            "objetivo_id": 7,
+            "usuario_id": 157
+        },
+        {
+            "objetivo_id": 8,
+            "usuario_id": 26
+        },
+        {
+            "objetivo_id": 9,
+            "usuario_id": 23
+        },
+        {
+            "objetivo_id": 10,
+            "usuario_id": 38
+        },
+        {
+            "objetivo_id": 11,
+            "usuario_id": 62
+        },
+        {
+            "objetivo_id": 14,
+            "usuario_id": 44
+        },
+        {
+            "objetivo_id": 14,
+            "usuario_id": 75
+        },
+        {
+            "objetivo_id": 14,
+            "usuario_id": 126
+        },
+        {
+            "objetivo_id": 15,
+            "usuario_id": 110
+        },
+        {
+            "objetivo_id": 15,
+            "usuario_id": 129
+        },
+        {
+            "objetivo_id": 16,
+            "usuario_id": 139
+        },
+        {
+            "objetivo_id": 16,
+            "usuario_id": 119
+        },
+        {
+            "objetivo_id": 16,
+            "usuario_id": 123
+        },
+        {
+            "objetivo_id": 17,
+            "usuario_id": 13
+        },
+        {
+            "objetivo_id": 17,
+            "usuario_id": 43
+        },
+        {
+            "objetivo_id": 17,
+            "usuario_id": 145
+        },
+        {
+            "objetivo_id": 21,
+            "usuario_id": 52
+        },
+        {
+            "objetivo_id": 21,
+            "usuario_id": 106
+        },
+        {
+            "objetivo_id": 21,
+            "usuario_id": 182
+        },
+        {
+            "objetivo_id": 22,
+            "usuario_id": 89
+        },
+        {
+            "objetivo_id": 22,
+            "usuario_id": 93
+        },
+        {
+            "objetivo_id": 22,
+            "usuario_id": 157
+        },
+        {
+            "objetivo_id": 23,
+            "usuario_id": 97
+        },
+        {
+            "objetivo_id": 28,
+            "usuario_id": 13
+        },
+        {
+            "objetivo_id": 28,
+            "usuario_id": 43
+        },
+        {
+            "objetivo_id": 28,
+            "usuario_id": 145
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 14
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 15
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 18
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 19
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 25
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 31
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 32
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 46
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 51
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 53
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 60
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 64
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 72
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 77
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 81
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 96
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 111
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 175
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 177
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 179
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 14
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 15
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 18
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 19
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 25
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 31
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 32
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 46
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 51
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 53
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 60
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 64
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 179
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 72
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 177
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 77
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 81
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 175
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 96
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 111
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 12
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 27
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 28
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 35
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 37
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 45
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 47
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 48
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 54
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 55
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 57
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 74
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 76
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 84
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 108
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 115
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 117
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 132
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 135
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 137
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 146
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 149
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 156
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 163
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 181
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 186
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 189
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 194
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 12
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 27
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 28
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 35
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 37
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 135
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 137
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 149
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 45
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 47
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 48
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 132
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 54
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 55
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 189
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 57
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 74
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 76
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 194
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 84
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 186
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 156
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 146
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 163
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 108
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 115
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 117
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 181
+        },
+        {
+            "objetivo_id": 30,
+            "usuario_id": 141
+        },
+        {
+            "objetivo_id": 30,
+            "usuario_id": 42
+        },
+        {
+            "objetivo_id": 30,
+            "usuario_id": 86
+        },
+        {
+            "objetivo_id": 30,
+            "usuario_id": 187
+        },
+        {
+            "objetivo_id": 6,
+            "usuario_id": 11
+        },
+        {
+            "objetivo_id": 6,
+            "usuario_id": 40
+        },
+        {
+            "objetivo_id": 6,
+            "usuario_id": 83
+        },
+        {
+            "objetivo_id": 6,
+            "usuario_id": 99
+        },
+        {
+            "objetivo_id": 6,
+            "usuario_id": 11
+        },
+        {
+            "objetivo_id": 6,
+            "usuario_id": 40
+        },
+        {
+            "objetivo_id": 6,
+            "usuario_id": 83
+        },
+        {
+            "objetivo_id": 6,
+            "usuario_id": 99
+        },
+        {
+            "objetivo_id": 20,
+            "usuario_id": 34
+        },
+        {
+            "objetivo_id": 20,
+            "usuario_id": 125
+        },
+        {
+            "objetivo_id": 20,
+            "usuario_id": 144
+        },
+        {
+            "objetivo_id": 20,
+            "usuario_id": 34
+        },
+        {
+            "objetivo_id": 20,
+            "usuario_id": 125
+        },
+        {
+            "objetivo_id": 20,
+            "usuario_id": 144
+        },
+        {
+            "objetivo_id": 12,
+            "usuario_id": 134
+        },
+        {
+            "objetivo_id": 12,
+            "usuario_id": 143
+        },
+        {
+            "objetivo_id": 12,
+            "usuario_id": 154
+        },
+        {
+            "objetivo_id": 12,
+            "usuario_id": 164
+        },
+        {
+            "objetivo_id": 12,
+            "usuario_id": 134
+        },
+        {
+            "objetivo_id": 12,
+            "usuario_id": 164
+        },
+        {
+            "objetivo_id": 12,
+            "usuario_id": 154
+        },
+        {
+            "objetivo_id": 12,
+            "usuario_id": 143
+        },
+        {
+            "objetivo_id": 13,
+            "usuario_id": 33
+        },
+        {
+            "objetivo_id": 13,
+            "usuario_id": 106
+        },
+        {
+            "objetivo_id": 13,
+            "usuario_id": 33
+        },
+        {
+            "objetivo_id": 13,
+            "usuario_id": 106
+        },
+        {
+            "objetivo_id": 31,
+            "usuario_id": 12
+        },
+        {
+            "objetivo_id": 31,
+            "usuario_id": 27
+        },
+        {
+            "objetivo_id": 31,
+            "usuario_id": 35
+        },
+        {
+            "objetivo_id": 31,
+            "usuario_id": 37
+        },
+        {
+            "objetivo_id": 24,
+            "usuario_id": 29
+        },
+        {
+            "objetivo_id": 24,
+            "usuario_id": 56
+        },
+        {
+            "objetivo_id": 24,
+            "usuario_id": 61
+        },
+        {
+            "objetivo_id": 24,
+            "usuario_id": 65
+        },
+        {
+            "objetivo_id": 24,
+            "usuario_id": 92
+        },
+        {
+            "objetivo_id": 24,
+            "usuario_id": 133
+        },
+        {
+            "objetivo_id": 24,
+            "usuario_id": 147
+        },
+        {
+            "objetivo_id": 24,
+            "usuario_id": 148
+        },
+        {
+            "objetivo_id": 24,
+            "usuario_id": 151
+        },
+        {
+            "objetivo_id": 24,
+            "usuario_id": 156
+        },
+        {
+            "objetivo_id": 24,
+            "usuario_id": 162
+        },
+        {
+            "objetivo_id": 24,
+            "usuario_id": 176
+        },
+        {
+            "objetivo_id": 24,
+            "usuario_id": 180
+        },
+        {
+            "objetivo_id": 24,
+            "usuario_id": 133
+        },
+        {
+            "objetivo_id": 24,
+            "usuario_id": 148
+        },
+        {
+            "objetivo_id": 24,
+            "usuario_id": 147
+        },
+        {
+            "objetivo_id": 24,
+            "usuario_id": 29
+        },
+        {
+            "objetivo_id": 24,
+            "usuario_id": 180
+        },
+        {
+            "objetivo_id": 24,
+            "usuario_id": 176
+        },
+        {
+            "objetivo_id": 24,
+            "usuario_id": 56
+        },
+        {
+            "objetivo_id": 24,
+            "usuario_id": 61
+        },
+        {
+            "objetivo_id": 24,
+            "usuario_id": 151
+        },
+        {
+            "objetivo_id": 24,
+            "usuario_id": 65
+        },
+        {
+            "objetivo_id": 24,
+            "usuario_id": 92
+        },
+        {
+            "objetivo_id": 24,
+            "usuario_id": 156
+        },
+        {
+            "objetivo_id": 24,
+            "usuario_id": 162
+        },
+        {
+            "objetivo_id": 19,
+            "usuario_id": 30
+        },
+        {
+            "objetivo_id": 19,
+            "usuario_id": 36
+        },
+        {
+            "objetivo_id": 19,
+            "usuario_id": 59
+        },
+        {
+            "objetivo_id": 19,
+            "usuario_id": 67
+        },
+        {
+            "objetivo_id": 19,
+            "usuario_id": 112
+        },
+        {
+            "objetivo_id": 19,
+            "usuario_id": 127
+        },
+        {
+            "objetivo_id": 19,
+            "usuario_id": 195
+        },
+        {
+            "objetivo_id": 19,
+            "usuario_id": 30
+        },
+        {
+            "objetivo_id": 19,
+            "usuario_id": 36
+        },
+        {
+            "objetivo_id": 19,
+            "usuario_id": 195
+        },
+        {
+            "objetivo_id": 19,
+            "usuario_id": 59
+        },
+        {
+            "objetivo_id": 19,
+            "usuario_id": 67
+        },
+        {
+            "objetivo_id": 19,
+            "usuario_id": 112
+        },
+        {
+            "objetivo_id": 19,
+            "usuario_id": 127
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 9
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 16
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 17
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 21
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 23
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 26
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 38
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 39
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 40
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 50
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 51
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 52
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 62
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 63
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 66
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 73
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 79
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 80
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 82
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 90
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 94
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 97
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 102
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 109
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 116
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 118
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 120
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 121
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 122
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 124
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 130
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 136
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 140
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 143
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 159
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 165
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 166
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 169
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 174
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 184
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 185
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 188
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 190
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 197
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 198
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 9
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 16
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 17
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 21
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 165
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 23
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 26
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 130
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 39
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 38
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 40
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 136
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 174
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 185
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 50
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 51
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 52
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 140
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 62
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 63
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 166
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 190
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 66
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 73
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 79
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 80
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 82
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 198
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 90
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 94
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 97
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 184
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 102
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 188
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 109
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 159
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 169
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 116
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 118
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 143
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 120
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 121
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 122
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 124
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 197
+        },
+        {
+            "objetivo_id": 32,
+            "usuario_id": 9
+        },
+        {
+            "objetivo_id": 32,
+            "usuario_id": 192
+        },
+        {
+            "objetivo_id": 32,
+            "usuario_id": 10
+        },
+        {
+            "objetivo_id": 25,
+            "usuario_id": 10
+        },
+        {
+            "objetivo_id": 25,
+            "usuario_id": 10
+        },
+        {
+            "objetivo_id": 33,
+            "usuario_id": 201
+        },
+        {
+            "objetivo_id": 33,
+            "usuario_id": 201
+        },
+        {
+            "objetivo_id": 34,
+            "usuario_id": 9
+        },
+        {
+            "objetivo_id": 34,
+            "usuario_id": 192
+        },
+        {
+            "objetivo_id": 34,
+            "usuario_id": 10
+        },
+        {
+            "objetivo_id": 35,
+            "usuario_id": 9
+        },
+        {
+            "objetivo_id": 35,
+            "usuario_id": 192
+        },
+        {
+            "objetivo_id": 35,
+            "usuario_id": 10
+        },
+        {
+            "objetivo_id": 26,
+            "usuario_id": 33
+        },
+        {
+            "objetivo_id": 26,
+            "usuario_id": 192
+        },
+        {
+            "objetivo_id": 26,
+            "usuario_id": 193
+        },
+        {
+            "objetivo_id": 26,
+            "usuario_id": 196
+        }
+    ],
+    "referentes": [
+        {
+            "objetivo_id": 27,
+            "usuario_id": 20
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 91
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 105
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 20
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 91
+        },
+        {
+            "objetivo_id": 27,
+            "usuario_id": 105
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 58
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 113
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 138
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 138
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 58
+        },
+        {
+            "objetivo_id": 29,
+            "usuario_id": 113
+        },
+        {
+            "objetivo_id": 24,
+            "usuario_id": 49
+        },
+        {
+            "objetivo_id": 24,
+            "usuario_id": 71
+        },
+        {
+            "objetivo_id": 24,
+            "usuario_id": 87
+        },
+        {
+            "objetivo_id": 24,
+            "usuario_id": 49
+        },
+        {
+            "objetivo_id": 24,
+            "usuario_id": 71
+        },
+        {
+            "objetivo_id": 24,
+            "usuario_id": 87
+        },
+        {
+            "objetivo_id": 19,
+            "usuario_id": 24
+        },
+        {
+            "objetivo_id": 19,
+            "usuario_id": 85
+        },
+        {
+            "objetivo_id": 19,
+            "usuario_id": 114
+        },
+        {
+            "objetivo_id": 19,
+            "usuario_id": 24
+        },
+        {
+            "objetivo_id": 19,
+            "usuario_id": 85
+        },
+        {
+            "objetivo_id": 19,
+            "usuario_id": 114
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 69
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 88
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 107
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 69
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 88
+        },
+        {
+            "objetivo_id": 18,
+            "usuario_id": 107
+        },
+        {
+            "objetivo_id": 32,
+            "usuario_id": 199
+        },
+        {
+            "objetivo_id": 33,
+            "usuario_id": 20
+        },
+        {
+            "objetivo_id": 33,
+            "usuario_id": 20
+        },
+        {
+            "objetivo_id": 34,
+            "usuario_id": 138
+        },
+        {
+            "objetivo_id": 35,
+            "usuario_id": 138
+        },
+        {
+            "objetivo_id": 26,
+            "usuario_id": 20
+        }
+    ],
+    "puestos": [
+        {
+            "idPuesto": 1,
+            "puesto": "Reloj",
+            "objetivo_id": 32,
+            "activo": 1
+        },
+        {
+            "idPuesto": 2,
+            "puesto": "puesto 1",
+            "objetivo_id": 33,
+            "activo": 1
+        },
+        {
+            "idPuesto": 3,
+            "puesto": "puesto 1",
+            "objetivo_id": 33,
+            "activo": 1
+        }
+    ],
+    "horarios": [
+        {
+            "puesto_id": 1,
+            "numero_turno": 1,
+            "hora_entrada": "07:00:00",
+            "hora_salida": "18:59:00"
+        },
+        {
+            "puesto_id": 1,
+            "numero_turno": 2,
+            "hora_entrada": "19:00:00",
+            "hora_salida": "06:59:00"
+        },
+        {
+            "puesto_id": 2,
+            "numero_turno": 1,
+            "hora_entrada": "07:00:00",
+            "hora_salida": "19:00:00"
+        },
+        {
+            "puesto_id": 2,
+            "numero_turno": 2,
+            "hora_entrada": "19:00:00",
+            "hora_salida": "07:00:00"
+        },
+        {
+            "puesto_id": 3,
+            "numero_turno": 2,
+            "hora_entrada": "19:59:00",
+            "hora_salida": "07:00:00"
+        }
+    ],
+    "rotaciones_mayo": []
+}

@@ -1,0 +1,885 @@
+{
+  "fuente": {
+    "archivo": "C:\\Users\\Usuario\\Desktop\\mayo 2025.xlsx",
+    "sha256": "9d2709509431fd038e91a9bc23e66831822a8babb7ff32bfc0247d50fb9bd3d9",
+    "hoja": "MAYO 2025 (2)",
+    "periodo": "2025-05",
+    "columnas_dias": "D:AH",
+    "columna_nombre": "C",
+    "fecha_catalogos": "2026-09-18T03:20:57+00:00",
+    "nota_catalogos": "Catalogos locales actuales, no prueba de configuracion historica",
+    "anotaciones_fuera_nomina": [
+      {
+        "celda": "C269",
+        "texto": "GONZALO RODRIGO 8H",
+        "tratamiento": "Nota sin fechas ni turnos. Conservar como pendiente, no generar asignaciones."
+      }
+    ],
+    "columnas_excluidas": {
+      "A:B": "Numeración y espacios; hay #REF! en B y empleados sin número.",
+      "AI:AQ": "Totales y liquidación histórica: no se incorporan al sistema ni se toman como resultado esperado.",
+      "AR:CR": "Fuera de la matriz diaria."
+    },
+    "reglas": [
+      "Identificadores negativos exclusivos de la muestra; nunca son IDs reales de la base.",
+      "No se corrigen grafías ni se unifican nombres parecidos sin evidencia suficiente.",
+      "Se igualan mayúsculas, tildes y espacios solo para coincidencia textual; no prueba identidad legal.",
+      "GP/D y GP/N conservan 12 horas; la disponibilidad no demuestra presencia.",
+      "No se inventan rol, tipo_turno, puesto ni horario que el Excel no identifica.",
+      "Se conservan códigos originales, incluyendo referencias. No importar todas las celdas como turnos trabajados.",
+      "No es un archivo de importación directa. Primero resolver correspondencias necesarias para cada prueba."
+    ]
+  },
+  "codigos": [
+    {
+      "codigo": "10H",
+      "cantidad": 51,
+      "categoria": "turno",
+      "horas_muestra": 10,
+      "horas_codigo_actual_sin_sigla_configurada": 10,
+      "seleccionable_actualmente": true,
+      "reconocido_validador_global_heredado": false,
+      "objetivos_muestra_sugeridos": [],
+      "objetivos_bd_sugeridos": [],
+      "estado_destino": "no_aplica",
+      "nota": "Duración indicada por el código; falta franja horaria.",
+      "ejemplos": [
+        "M66",
+        "AF66",
+        "T67",
+        "Z67"
+      ]
+    },
+    {
+      "codigo": "12H",
+      "cantidad": 67,
+      "categoria": "turno",
+      "horas_muestra": 12,
+      "horas_codigo_actual_sin_sigla_configurada": 12,
+      "seleccionable_actualmente": true,
+      "reconocido_validador_global_heredado": false,
+      "objetivos_muestra_sugeridos": [],
+      "objetivos_bd_sugeridos": [],
+      "estado_destino": "no_aplica",
+      "nota": "Duración indicada por el código; falta franja horaria.",
+      "ejemplos": [
+        "D62",
+        "R64",
+        "L66",
+        "Y66"
+      ]
+    },
+    {
+      "codigo": "13H",
+      "cantidad": 36,
+      "categoria": "turno",
+      "horas_muestra": 13,
+      "horas_codigo_actual_sin_sigla_configurada": 13,
+      "seleccionable_actualmente": true,
+      "reconocido_validador_global_heredado": true,
+      "objetivos_muestra_sugeridos": [],
+      "objetivos_bd_sugeridos": [],
+      "estado_destino": "no_aplica",
+      "nota": "Duración indicada por el código; falta franja horaria.",
+      "ejemplos": [
+        "I111",
+        "P111",
+        "W111",
+        "E112"
+      ]
+    },
+    {
+      "codigo": "6H",
+      "cantidad": 5,
+      "categoria": "turno",
+      "horas_muestra": 6,
+      "horas_codigo_actual_sin_sigla_configurada": 6,
+      "seleccionable_actualmente": true,
+      "reconocido_validador_global_heredado": true,
+      "objetivos_muestra_sugeridos": [],
+      "objetivos_bd_sugeridos": [],
+      "estado_destino": "no_aplica",
+      "nota": "Duración indicada por el código; falta franja horaria.",
+      "ejemplos": [
+        "AH149",
+        "F150",
+        "M152",
+        "AA153"
+      ]
+    },
+    {
+      "codigo": "8H",
+      "cantidad": 81,
+      "categoria": "turno",
+      "horas_muestra": 8,
+      "horas_codigo_actual_sin_sigla_configurada": 8,
+      "seleccionable_actualmente": true,
+      "reconocido_validador_global_heredado": true,
+      "objetivos_muestra_sugeridos": [],
+      "objetivos_bd_sugeridos": [],
+      "estado_destino": "no_aplica",
+      "nota": "Duración indicada por el código; falta franja horaria.",
+      "ejemplos": [
+        "AD86",
+        "AE86",
+        "J89",
+        "P90"
+      ]
+    },
+    {
+      "codigo": "9H",
+      "cantidad": 20,
+      "categoria": "turno",
+      "horas_muestra": 9,
+      "horas_codigo_actual_sin_sigla_configurada": 9,
+      "seleccionable_actualmente": true,
+      "reconocido_validador_global_heredado": true,
+      "objetivos_muestra_sugeridos": [],
+      "objetivos_bd_sugeridos": [],
+      "estado_destino": "no_aplica",
+      "nota": "Duración indicada por el código; falta franja horaria.",
+      "ejemplos": [
+        "P63",
+        "AG64",
+        "Z71",
+        "I72"
+      ]
+    },
+    {
+      "codigo": "9HEX",
+      "cantidad": 20,
+      "categoria": "turno_especial",
+      "horas_muestra": 9,
+      "horas_codigo_actual_sin_sigla_configurada": 0,
+      "seleccionable_actualmente": false,
+      "reconocido_validador_global_heredado": true,
+      "objetivos_muestra_sugeridos": [],
+      "objetivos_bd_sugeridos": [],
+      "estado_destino": "no_aplica",
+      "nota": "Duración numérica; conservar significado especial y no inventar la franja.",
+      "ejemplos": [
+        "K20",
+        "L20",
+        "J44",
+        "H50"
+      ]
+    },
+    {
+      "codigo": "9RF",
+      "cantidad": 31,
+      "categoria": "turno_especial",
+      "horas_muestra": 9,
+      "horas_codigo_actual_sin_sigla_configurada": 0,
+      "seleccionable_actualmente": false,
+      "reconocido_validador_global_heredado": true,
+      "objetivos_muestra_sugeridos": [],
+      "objetivos_bd_sugeridos": [],
+      "estado_destino": "no_aplica",
+      "nota": "Duración numérica; conservar significado especial y no inventar la franja.",
+      "ejemplos": [
+        "T6",
+        "O10",
+        "E12",
+        "AF13"
+      ]
+    },
+    {
+      "codigo": "BE",
+      "cantidad": 20,
+      "categoria": "servicio_con_destino",
+      "horas_muestra": null,
+      "horas_codigo_actual_sin_sigla_configurada": 0,
+      "seleccionable_actualmente": false,
+      "reconocido_validador_global_heredado": true,
+      "objetivos_muestra_sugeridos": [],
+      "objetivos_bd_sugeridos": [
+        10
+      ],
+      "estado_destino": "destino_sugerido_pendiente",
+      "nota": "Destino sugerido por código y catálogo actual. El cuadro DINAF-ETI agrupa destinos; falta confirmar duración y puesto históricos.",
+      "ejemplos": [
+        "H171",
+        "I171",
+        "J171",
+        "K171"
+      ]
+    },
+    {
+      "codigo": "BERM",
+      "cantidad": 29,
+      "categoria": "referencia_otro_objetivo",
+      "horas_muestra": null,
+      "horas_codigo_actual_sin_sigla_configurada": 0,
+      "seleccionable_actualmente": false,
+      "reconocido_validador_global_heredado": false,
+      "objetivos_muestra_sugeridos": [
+        -9
+      ],
+      "objetivos_bd_sugeridos": [],
+      "estado_destino": "destino_sugerido_pendiente",
+      "nota": "No contar como otro turno presencial. Verificar la asignación en el cuadro de destino.",
+      "ejemplos": [
+        "D7",
+        "G7",
+        "H7",
+        "I7"
+      ]
+    },
+    {
+      "codigo": "C/5,6",
+      "cantidad": 4,
+      "categoria": "referencia_otro_objetivo",
+      "horas_muestra": null,
+      "horas_codigo_actual_sin_sigla_configurada": 0,
+      "seleccionable_actualmente": false,
+      "reconocido_validador_global_heredado": false,
+      "objetivos_muestra_sugeridos": [
+        -12
+      ],
+      "objetivos_bd_sugeridos": [],
+      "estado_destino": "destino_sugerido_pendiente",
+      "nota": "No contar como otro turno presencial. Verificar la asignación en el cuadro de destino. Se conservan ambas grafías; la equivalencia específica aún no fue confirmada.",
+      "ejemplos": [
+        "R25",
+        "AD25",
+        "G166",
+        "E168"
+      ]
+    },
+    {
+      "codigo": "C5,6",
+      "cantidad": 14,
+      "categoria": "referencia_otro_objetivo",
+      "horas_muestra": null,
+      "horas_codigo_actual_sin_sigla_configurada": 0,
+      "seleccionable_actualmente": false,
+      "reconocido_validador_global_heredado": false,
+      "objetivos_muestra_sugeridos": [
+        -12
+      ],
+      "objetivos_bd_sugeridos": [],
+      "estado_destino": "destino_sugerido_pendiente",
+      "nota": "No contar como otro turno presencial. Verificar la asignación en el cuadro de destino. Se conservan ambas grafías; la equivalencia específica aún no fue confirmada.",
+      "ejemplos": [
+        "K25",
+        "L25",
+        "M25",
+        "N25"
+      ]
+    },
+    {
+      "codigo": "D",
+      "cantidad": 1074,
+      "categoria": "turno",
+      "horas_muestra": 12,
+      "horas_codigo_actual_sin_sigla_configurada": 12,
+      "seleccionable_actualmente": true,
+      "reconocido_validador_global_heredado": false,
+      "objetivos_muestra_sugeridos": [],
+      "objetivos_bd_sugeridos": [],
+      "estado_destino": "no_aplica",
+      "nota": "Entrada y salida dependen del puesto. No deducirlas de la duración.",
+      "ejemplos": [
+        "G6",
+        "H6",
+        "N6",
+        "O6"
+      ]
+    },
+    {
+      "codigo": "D/GC",
+      "cantidad": 20,
+      "categoria": "servicio_con_destino",
+      "horas_muestra": null,
+      "horas_codigo_actual_sin_sigla_configurada": 0,
+      "seleccionable_actualmente": false,
+      "reconocido_validador_global_heredado": true,
+      "objetivos_muestra_sugeridos": [],
+      "objetivos_bd_sugeridos": [
+        5
+      ],
+      "estado_destino": "destino_sugerido_pendiente",
+      "nota": "Destino sugerido por código y catálogo actual. El cuadro DINAF-ETI agrupa destinos; falta confirmar duración y puesto históricos.",
+      "ejemplos": [
+        "H166",
+        "I166",
+        "J166",
+        "K166"
+      ]
+    },
+    {
+      "codigo": "D/GU",
+      "cantidad": 19,
+      "categoria": "servicio_con_destino",
+      "horas_muestra": null,
+      "horas_codigo_actual_sin_sigla_configurada": 0,
+      "seleccionable_actualmente": false,
+      "reconocido_validador_global_heredado": true,
+      "objetivos_muestra_sugeridos": [],
+      "objetivos_bd_sugeridos": [
+        8
+      ],
+      "estado_destino": "destino_sugerido_pendiente",
+      "nota": "Destino sugerido por código y catálogo actual. El cuadro DINAF-ETI agrupa destinos; falta confirmar duración y puesto históricos.",
+      "ejemplos": [
+        "H168",
+        "I168",
+        "J168",
+        "K168"
+      ]
+    },
+    {
+      "codigo": "D/LEM",
+      "cantidad": 20,
+      "categoria": "servicio_con_destino",
+      "horas_muestra": null,
+      "horas_codigo_actual_sin_sigla_configurada": 0,
+      "seleccionable_actualmente": false,
+      "reconocido_validador_global_heredado": true,
+      "objetivos_muestra_sugeridos": [],
+      "objetivos_bd_sugeridos": [
+        9
+      ],
+      "estado_destino": "destino_sugerido_pendiente",
+      "nota": "Destino sugerido por código y catálogo actual. El cuadro DINAF-ETI agrupa destinos; falta confirmar duración y puesto históricos.",
+      "ejemplos": [
+        "H167",
+        "I167",
+        "J167",
+        "K167"
+      ]
+    },
+    {
+      "codigo": "D/LH",
+      "cantidad": 20,
+      "categoria": "servicio_con_destino",
+      "horas_muestra": null,
+      "horas_codigo_actual_sin_sigla_configurada": 0,
+      "seleccionable_actualmente": false,
+      "reconocido_validador_global_heredado": true,
+      "objetivos_muestra_sugeridos": [],
+      "objetivos_bd_sugeridos": [
+        11
+      ],
+      "estado_destino": "destino_sugerido_pendiente",
+      "nota": "Destino sugerido por código y catálogo actual. El cuadro DINAF-ETI agrupa destinos; falta confirmar duración y puesto históricos.",
+      "ejemplos": [
+        "H175",
+        "I175",
+        "J175",
+        "K175"
+      ]
+    },
+    {
+      "codigo": "D/LUJ",
+      "cantidad": 20,
+      "categoria": "servicio_con_destino",
+      "horas_muestra": null,
+      "horas_codigo_actual_sin_sigla_configurada": 0,
+      "seleccionable_actualmente": false,
+      "reconocido_validador_global_heredado": true,
+      "objetivos_muestra_sugeridos": [],
+      "objetivos_bd_sugeridos": [
+        2
+      ],
+      "estado_destino": "destino_sugerido_pendiente",
+      "nota": "Destino sugerido por código y catálogo actual. El cuadro DINAF-ETI agrupa destinos; falta confirmar duración y puesto históricos.",
+      "ejemplos": [
+        "V172",
+        "W172",
+        "X172",
+        "Y172"
+      ]
+    },
+    {
+      "codigo": "D/MA",
+      "cantidad": 20,
+      "categoria": "servicio_con_destino",
+      "horas_muestra": null,
+      "horas_codigo_actual_sin_sigla_configurada": 0,
+      "seleccionable_actualmente": false,
+      "reconocido_validador_global_heredado": true,
+      "objetivos_muestra_sugeridos": [],
+      "objetivos_bd_sugeridos": [
+        3
+      ],
+      "estado_destino": "destino_sugerido_pendiente",
+      "nota": "Destino sugerido por código y catálogo actual. El cuadro DINAF-ETI agrupa destinos; falta confirmar duración y puesto históricos.",
+      "ejemplos": [
+        "H176",
+        "I176",
+        "J176",
+        "K176"
+      ]
+    },
+    {
+      "codigo": "ETI",
+      "cantidad": 7,
+      "categoria": "referencia_otro_objetivo",
+      "horas_muestra": null,
+      "horas_codigo_actual_sin_sigla_configurada": 0,
+      "seleccionable_actualmente": false,
+      "reconocido_validador_global_heredado": false,
+      "objetivos_muestra_sugeridos": [
+        -5
+      ],
+      "objetivos_bd_sugeridos": [],
+      "estado_destino": "destino_sugerido_pendiente",
+      "nota": "No contar como otro turno presencial. Verificar la asignación en el cuadro de destino.",
+      "ejemplos": [
+        "E8",
+        "H11",
+        "K11",
+        "M11"
+      ]
+    },
+    {
+      "codigo": "F",
+      "cantidad": 842,
+      "categoria": "franco_o_ausencia",
+      "horas_muestra": 0,
+      "horas_codigo_actual_sin_sigla_configurada": 0,
+      "seleccionable_actualmente": true,
+      "reconocido_validador_global_heredado": true,
+      "objetivos_muestra_sugeridos": [],
+      "objetivos_bd_sugeridos": [],
+      "estado_destino": "no_aplica",
+      "nota": "Franco",
+      "ejemplos": [
+        "F6",
+        "L6",
+        "M6",
+        "R6"
+      ]
+    },
+    {
+      "codigo": "F/INJ",
+      "cantidad": 5,
+      "categoria": "franco_o_ausencia",
+      "horas_muestra": 0,
+      "horas_codigo_actual_sin_sigla_configurada": 0,
+      "seleccionable_actualmente": false,
+      "reconocido_validador_global_heredado": false,
+      "objetivos_muestra_sugeridos": [],
+      "objetivos_bd_sugeridos": [],
+      "estado_destino": "no_aplica",
+      "nota": "Falta injustificada",
+      "ejemplos": [
+        "P65",
+        "Q65",
+        "R65",
+        "S65"
+      ]
+    },
+    {
+      "codigo": "GP/D",
+      "cantidad": 118,
+      "categoria": "guardia_pasiva",
+      "horas_muestra": 12,
+      "horas_codigo_actual_sin_sigla_configurada": 12,
+      "seleccionable_actualmente": true,
+      "reconocido_validador_global_heredado": true,
+      "objetivos_muestra_sugeridos": [],
+      "objetivos_bd_sugeridos": [],
+      "estado_destino": "no_aplica",
+      "nota": "Disponibilidad sin presencia; conservar 12 h en el cálculo actual por instrucción del usuario.",
+      "ejemplos": [
+        "X6",
+        "G9",
+        "O12",
+        "AA12"
+      ]
+    },
+    {
+      "codigo": "GP/N",
+      "cantidad": 94,
+      "categoria": "guardia_pasiva",
+      "horas_muestra": 12,
+      "horas_codigo_actual_sin_sigla_configurada": 12,
+      "seleccionable_actualmente": true,
+      "reconocido_validador_global_heredado": true,
+      "objetivos_muestra_sugeridos": [],
+      "objetivos_bd_sugeridos": [],
+      "estado_destino": "no_aplica",
+      "nota": "Disponibilidad sin presencia; conservar 12 h en el cálculo actual por instrucción del usuario.",
+      "ejemplos": [
+        "S10",
+        "V16",
+        "D17",
+        "AA21"
+      ]
+    },
+    {
+      "codigo": "H/8",
+      "cantidad": 18,
+      "categoria": "referencia_otro_objetivo",
+      "horas_muestra": null,
+      "horas_codigo_actual_sin_sigla_configurada": 0,
+      "seleccionable_actualmente": false,
+      "reconocido_validador_global_heredado": false,
+      "objetivos_muestra_sugeridos": [
+        -10
+      ],
+      "objetivos_bd_sugeridos": [],
+      "estado_destino": "destino_sugerido_pendiente",
+      "nota": "No contar como otro turno presencial. Verificar la asignación en el cuadro de destino.",
+      "ejemplos": [
+        "G27",
+        "K27",
+        "L27",
+        "M27"
+      ]
+    },
+    {
+      "codigo": "METR",
+      "cantidad": 18,
+      "categoria": "referencia_otro_objetivo",
+      "horas_muestra": null,
+      "horas_codigo_actual_sin_sigla_configurada": 0,
+      "seleccionable_actualmente": false,
+      "reconocido_validador_global_heredado": false,
+      "objetivos_muestra_sugeridos": [
+        -8
+      ],
+      "objetivos_bd_sugeridos": [],
+      "estado_destino": "destino_sugerido_pendiente",
+      "nota": "No contar como otro turno presencial. Verificar la asignación en el cuadro de destino.",
+      "ejemplos": [
+        "Q79",
+        "R79",
+        "S79",
+        "T79"
+      ]
+    },
+    {
+      "codigo": "N",
+      "cantidad": 1019,
+      "categoria": "turno",
+      "horas_muestra": 12,
+      "horas_codigo_actual_sin_sigla_configurada": 12,
+      "seleccionable_actualmente": true,
+      "reconocido_validador_global_heredado": false,
+      "objetivos_muestra_sugeridos": [],
+      "objetivos_bd_sugeridos": [],
+      "estado_destino": "no_aplica",
+      "nota": "Entrada y salida dependen del puesto. No deducirlas de la duración.",
+      "ejemplos": [
+        "D6",
+        "E6",
+        "I6",
+        "J6"
+      ]
+    },
+    {
+      "codigo": "N/AR",
+      "cantidad": 62,
+      "categoria": "servicio_con_destino",
+      "horas_muestra": null,
+      "horas_codigo_actual_sin_sigla_configurada": 0,
+      "seleccionable_actualmente": false,
+      "reconocido_validador_global_heredado": false,
+      "objetivos_muestra_sugeridos": [],
+      "objetivos_bd_sugeridos": [
+        30
+      ],
+      "estado_destino": "destino_sugerido_pendiente",
+      "nota": "Destino sugerido por código y catálogo actual. El cuadro DINAF-ETI agrupa destinos; falta confirmar duración y puesto históricos.",
+      "ejemplos": [
+        "E169",
+        "T169",
+        "U169",
+        "V169"
+      ]
+    },
+    {
+      "codigo": "N15",
+      "cantidad": 26,
+      "categoria": "turno_especial",
+      "horas_muestra": 15,
+      "horas_codigo_actual_sin_sigla_configurada": 0,
+      "seleccionable_actualmente": false,
+      "reconocido_validador_global_heredado": true,
+      "objetivos_muestra_sugeridos": [],
+      "objetivos_bd_sugeridos": [],
+      "estado_destino": "no_aplica",
+      "nota": "Duración numérica; conservar significado especial y no inventar la franja.",
+      "ejemplos": [
+        "G278",
+        "I278",
+        "J278",
+        "N278"
+      ]
+    },
+    {
+      "codigo": "NOTT",
+      "cantidad": 34,
+      "categoria": "referencia_otro_objetivo",
+      "horas_muestra": null,
+      "horas_codigo_actual_sin_sigla_configurada": 0,
+      "seleccionable_actualmente": false,
+      "reconocido_validador_global_heredado": true,
+      "objetivos_muestra_sugeridos": [
+        -1
+      ],
+      "objetivos_bd_sugeridos": [],
+      "estado_destino": "destino_sugerido_pendiente",
+      "nota": "No contar como otro turno presencial. Verificar la asignación en el cuadro de destino.",
+      "ejemplos": [
+        "K83",
+        "L83",
+        "N166",
+        "M167"
+      ]
+    },
+    {
+      "codigo": "OFI",
+      "cantidad": 1,
+      "categoria": "referencia_otro_objetivo",
+      "horas_muestra": null,
+      "horas_codigo_actual_sin_sigla_configurada": 0,
+      "seleccionable_actualmente": false,
+      "reconocido_validador_global_heredado": true,
+      "objetivos_muestra_sugeridos": [],
+      "objetivos_bd_sugeridos": [],
+      "estado_destino": "destino_no_identificado",
+      "nota": "No contar como otro turno presencial. Verificar la asignación en el cuadro de destino.",
+      "ejemplos": [
+        "Y152"
+      ]
+    },
+    {
+      "codigo": "P/EN",
+      "cantidad": 28,
+      "categoria": "franco_o_ausencia",
+      "horas_muestra": 0,
+      "horas_codigo_actual_sin_sigla_configurada": 0,
+      "seleccionable_actualmente": false,
+      "reconocido_validador_global_heredado": false,
+      "objetivos_muestra_sugeridos": [],
+      "objetivos_bd_sugeridos": [],
+      "estado_destino": "no_aplica",
+      "nota": "Parte de enfermo",
+      "ejemplos": [
+        "N74",
+        "D75",
+        "E75",
+        "F75"
+      ]
+    },
+    {
+      "codigo": "PERR",
+      "cantidad": 19,
+      "categoria": "referencia_otro_objetivo",
+      "horas_muestra": null,
+      "horas_codigo_actual_sin_sigla_configurada": 0,
+      "seleccionable_actualmente": false,
+      "reconocido_validador_global_heredado": false,
+      "objetivos_muestra_sugeridos": [
+        -2
+      ],
+      "objetivos_bd_sugeridos": [],
+      "estado_destino": "destino_sugerido_pendiente",
+      "nota": "No contar como otro turno presencial. Verificar la asignación en el cuadro de destino.",
+      "ejemplos": [
+        "P114",
+        "N120",
+        "D197",
+        "H197"
+      ]
+    },
+    {
+      "codigo": "SALA",
+      "cantidad": 16,
+      "categoria": "referencia_otro_objetivo",
+      "horas_muestra": null,
+      "horas_codigo_actual_sin_sigla_configurada": 0,
+      "seleccionable_actualmente": false,
+      "reconocido_validador_global_heredado": true,
+      "objetivos_muestra_sugeridos": [
+        -6
+      ],
+      "objetivos_bd_sugeridos": [],
+      "estado_destino": "destino_sugerido_pendiente",
+      "nota": "No contar como otro turno presencial. Verificar la asignación en el cuadro de destino.",
+      "ejemplos": [
+        "F62",
+        "G62",
+        "I62",
+        "M62"
+      ]
+    },
+    {
+      "codigo": "TUP",
+      "cantidad": 15,
+      "categoria": "referencia_otro_objetivo",
+      "horas_muestra": null,
+      "horas_codigo_actual_sin_sigla_configurada": 0,
+      "seleccionable_actualmente": false,
+      "reconocido_validador_global_heredado": false,
+      "objetivos_muestra_sugeridos": [
+        -13
+      ],
+      "objetivos_bd_sugeridos": [],
+      "estado_destino": "destino_sugerido_pendiente",
+      "nota": "No contar como otro turno presencial. Verificar la asignación en el cuadro de destino.",
+      "ejemplos": [
+        "P145",
+        "M146",
+        "Q146",
+        "R146"
+      ]
+    },
+    {
+      "codigo": "VAC",
+      "cantidad": 126,
+      "categoria": "franco_o_ausencia",
+      "horas_muestra": 0,
+      "horas_codigo_actual_sin_sigla_configurada": 0,
+      "seleccionable_actualmente": false,
+      "reconocido_validador_global_heredado": false,
+      "objetivos_muestra_sugeridos": [],
+      "objetivos_bd_sugeridos": [],
+      "estado_destino": "no_aplica",
+      "nota": "Vacaciones",
+      "ejemplos": [
+        "F8",
+        "G8",
+        "H8",
+        "I8"
+      ]
+    }
+  ],
+  "nombres_pendientes": [
+    {
+      "usuario_a": -6,
+      "nombre_a": "Candido Facaundo",
+      "usuario_b": -112,
+      "nombre_b": "Candido Facundo",
+      "estado": "no_unificados_pendiente"
+    },
+    {
+      "usuario_a": -25,
+      "nombre_a": "Salinas Karin",
+      "usuario_b": -129,
+      "nombre_b": "Salinas Karim",
+      "estado": "no_unificados_pendiente"
+    }
+  ],
+  "vinculos_contrastados": [
+    {
+      "objetivo_id": -1,
+      "usuario_id": -12,
+      "celda_nombre": "C17",
+      "idUsuario_bd": 61,
+      "objetivo_id_bd": 18,
+      "usuario_activo": 1,
+      "categoria_actual": "operativo",
+      "vinculo_actual_segun_categoria": false
+    },
+    {
+      "objetivo_id": -2,
+      "usuario_id": -50,
+      "celda_nombre": "C66",
+      "idUsuario_bd": 37,
+      "objetivo_id_bd": 29,
+      "usuario_activo": 1,
+      "categoria_actual": "operativo",
+      "vinculo_actual_segun_categoria": true
+    },
+    {
+      "objetivo_id": -2,
+      "usuario_id": -62,
+      "celda_nombre": "C78",
+      "idUsuario_bd": 101,
+      "objetivo_id_bd": 29,
+      "usuario_activo": 1,
+      "categoria_actual": "operativo",
+      "vinculo_actual_segun_categoria": false
+    },
+    {
+      "objetivo_id": -3,
+      "usuario_id": -84,
+      "celda_nombre": "C115",
+      "idUsuario_bd": 20,
+      "objetivo_id_bd": 27,
+      "usuario_activo": 1,
+      "categoria_actual": "referente",
+      "vinculo_actual_segun_categoria": true
+    },
+    {
+      "objetivo_id": -3,
+      "usuario_id": -91,
+      "celda_nombre": "C124",
+      "idUsuario_bd": 53,
+      "objetivo_id_bd": 27,
+      "usuario_activo": 1,
+      "categoria_actual": "operativo",
+      "vinculo_actual_segun_categoria": true
+    },
+    {
+      "objetivo_id": -7,
+      "usuario_id": -120,
+      "celda_nombre": "C214",
+      "idUsuario_bd": 99,
+      "objetivo_id_bd": 6,
+      "usuario_activo": 1,
+      "categoria_actual": "operativo",
+      "vinculo_actual_segun_categoria": true
+    }
+  ],
+  "horarios_actuales": {
+    "puestos": [
+      {
+        "idPuesto": 1,
+        "puesto": "Reloj",
+        "objetivo_id": 32,
+        "activo": 1
+      },
+      {
+        "idPuesto": 2,
+        "puesto": "puesto 1",
+        "objetivo_id": 33,
+        "activo": 1
+      },
+      {
+        "idPuesto": 3,
+        "puesto": "puesto 1",
+        "objetivo_id": 33,
+        "activo": 1
+      }
+    ],
+    "turnos": [
+      {
+        "puesto_id": 1,
+        "numero_turno": 1,
+        "hora_entrada": "07:00:00",
+        "hora_salida": "18:59:00"
+      },
+      {
+        "puesto_id": 1,
+        "numero_turno": 2,
+        "hora_entrada": "19:00:00",
+        "hora_salida": "06:59:00"
+      },
+      {
+        "puesto_id": 2,
+        "numero_turno": 1,
+        "hora_entrada": "07:00:00",
+        "hora_salida": "19:00:00"
+      },
+      {
+        "puesto_id": 2,
+        "numero_turno": 2,
+        "hora_entrada": "19:00:00",
+        "hora_salida": "07:00:00"
+      },
+      {
+        "puesto_id": 3,
+        "numero_turno": 2,
+        "hora_entrada": "19:59:00",
+        "hora_salida": "07:00:00"
+      }
+    ],
+    "rotaciones_mayo": []
+  }
+}

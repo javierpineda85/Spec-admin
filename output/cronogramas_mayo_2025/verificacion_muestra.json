@@ -1,0 +1,15 @@
+{
+  "controles": {
+    "hash_original_intacto": true,
+    "13_cuadros": true,
+    "173_filas": true,
+    "celdas_diarias_completas_sin_duplicados": true,
+    "codigos_conteos_coinciden": true,
+    "gp_12_horas": true,
+    "nota_fuera_nomina_preservada": true,
+    "solo_campos_documentados_en_asignaciones": true
+  },
+  "celdas_con_codigo": 4019,
+  "celdas_sin_asignacion": 1344,
+  "metodo": "XML original frente a JSON extraido; sin escrituras en Excel o BD"
+}

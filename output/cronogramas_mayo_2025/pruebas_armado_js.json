@@ -1,0 +1,3311 @@
+{
+  "alcance": "Ejecución del JS original con DOM mínimo; se verifica HTML generado, filtrado de nómina, selección de códigos y cálculo unitario. No se verifican interacción real, AJAX, Select2 ni totales visuales.",
+  "sha256_js": "240ebddd22dba254563338b3fc3ec471dd82859249fa1c0d9127c14bf3e36cd7",
+  "casos": [
+    {
+      "caso": "nomina_visible_5001",
+      "esperado": [
+        10001,
+        10002,
+        10003,
+        10004,
+        10005,
+        10006,
+        10007,
+        10008,
+        10009,
+        10010,
+        10011,
+        10012,
+        10013,
+        10014,
+        10015,
+        10016,
+        10017,
+        10018,
+        10019,
+        10020,
+        10021,
+        10022,
+        10023,
+        10024,
+        10025,
+        10026,
+        10027,
+        10028,
+        10029,
+        10030,
+        10031,
+        10032,
+        10033,
+        10034,
+        10035,
+        10036,
+        10037,
+        10038,
+        10039,
+        10040,
+        10041,
+        10042,
+        10043,
+        10044,
+        10045
+      ],
+      "obtenido": [
+        10001,
+        10002,
+        10003,
+        10004,
+        10005,
+        10006,
+        10007,
+        10008,
+        10009,
+        10010,
+        10011,
+        10012,
+        10013,
+        10014,
+        10015,
+        10016,
+        10017,
+        10018,
+        10019,
+        10020,
+        10021,
+        10022,
+        10023,
+        10024,
+        10025,
+        10026,
+        10027,
+        10028,
+        10029,
+        10030,
+        10031,
+        10032,
+        10033,
+        10034,
+        10035,
+        10036,
+        10037,
+        10038,
+        10039,
+        10040,
+        10041,
+        10042,
+        10043,
+        10044,
+        10045
+      ],
+      "resultado": "correcto"
+    },
+    {
+      "caso": "codigos_visibles_en_filas_presentes_5001",
+      "esperado": 0,
+      "obtenido": 166,
+      "resultado": "fallo"
+    },
+    {
+      "caso": "dias_tabla_5001",
+      "esperado": 1395,
+      "obtenido": 1395,
+      "resultado": "correcto"
+    },
+    {
+      "caso": "nomina_visible_5002",
+      "esperado": [
+        10046,
+        10047,
+        10048,
+        10049,
+        10050,
+        10051,
+        10052,
+        10053,
+        10054,
+        10055,
+        10056,
+        10057,
+        10058,
+        10059,
+        10060,
+        10061,
+        10062,
+        10063,
+        10064,
+        10065,
+        10066,
+        10027,
+        10067,
+        10068,
+        10069,
+        10070,
+        10071,
+        10072,
+        10073,
+        10074,
+        10075,
+        10076,
+        10077,
+        10078,
+        10079,
+        10080
+      ],
+      "obtenido": [
+        10046,
+        10047,
+        10048,
+        10049,
+        10050,
+        10051,
+        10052,
+        10053,
+        10054,
+        10055,
+        10056,
+        10057,
+        10058,
+        10059,
+        10060,
+        10061,
+        10062,
+        10063,
+        10064,
+        10065,
+        10066,
+        10067,
+        10068,
+        10069,
+        10070,
+        10071,
+        10072,
+        10073,
+        10074,
+        10075,
+        10076,
+        10077,
+        10078,
+        10079,
+        10080
+      ],
+      "resultado": "fallo"
+    },
+    {
+      "caso": "codigos_visibles_en_filas_presentes_5002",
+      "esperado": 0,
+      "obtenido": 76,
+      "resultado": "fallo"
+    },
+    {
+      "caso": "dias_tabla_5002",
+      "esperado": 1085,
+      "obtenido": 1085,
+      "resultado": "correcto"
+    },
+    {
+      "caso": "nomina_visible_5003",
+      "esperado": [
+        10081,
+        10082,
+        10083,
+        10047,
+        10084,
+        10085,
+        10086,
+        10087,
+        10049,
+        10052,
+        10088,
+        10089,
+        10090,
+        10091,
+        10092,
+        10093,
+        10094,
+        10095,
+        10096,
+        10097,
+        10098,
+        10099
+      ],
+      "obtenido": [
+        10081,
+        10082,
+        10083,
+        10084,
+        10085,
+        10086,
+        10087,
+        10088,
+        10089,
+        10090,
+        10091,
+        10092,
+        10093,
+        10094,
+        10095,
+        10096,
+        10097,
+        10098,
+        10099
+      ],
+      "resultado": "fallo"
+    },
+    {
+      "caso": "codigos_visibles_en_filas_presentes_5003",
+      "esperado": 0,
+      "obtenido": 14,
+      "resultado": "fallo"
+    },
+    {
+      "caso": "dias_tabla_5003",
+      "esperado": 589,
+      "obtenido": 589,
+      "resultado": "correcto"
+    },
+    {
+      "caso": "nomina_visible_5004",
+      "esperado": [
+        10100,
+        10101,
+        10102,
+        10103,
+        10104,
+        10105,
+        10106,
+        10107,
+        10108,
+        10109,
+        10110
+      ],
+      "obtenido": [
+        10100,
+        10101,
+        10102,
+        10103,
+        10104,
+        10105,
+        10106,
+        10107,
+        10108,
+        10109,
+        10110
+      ],
+      "resultado": "correcto"
+    },
+    {
+      "caso": "codigos_visibles_en_filas_presentes_5004",
+      "esperado": 0,
+      "obtenido": 29,
+      "resultado": "fallo"
+    },
+    {
+      "caso": "dias_tabla_5004",
+      "esperado": 341,
+      "obtenido": 341,
+      "resultado": "correcto"
+    },
+    {
+      "caso": "nomina_visible_5005",
+      "esperado": [
+        10031,
+        10111,
+        10033,
+        10003,
+        10112,
+        10034,
+        10113,
+        10114,
+        10035,
+        10036,
+        10115
+      ],
+      "obtenido": [
+        10111,
+        10112,
+        10113,
+        10114,
+        10115
+      ],
+      "resultado": "fallo"
+    },
+    {
+      "caso": "codigos_visibles_en_filas_presentes_5005",
+      "esperado": 0,
+      "obtenido": 111,
+      "resultado": "fallo"
+    },
+    {
+      "caso": "dias_tabla_5005",
+      "esperado": 155,
+      "obtenido": 155,
+      "resultado": "correcto"
+    },
+    {
+      "caso": "nomina_visible_5006",
+      "esperado": [
+        10116,
+        10117,
+        10046
+      ],
+      "obtenido": [
+        10116,
+        10117
+      ],
+      "resultado": "fallo"
+    },
+    {
+      "caso": "codigos_visibles_en_filas_presentes_5006",
+      "esperado": 0,
+      "obtenido": 0,
+      "resultado": "correcto"
+    },
+    {
+      "caso": "dias_tabla_5006",
+      "esperado": 62,
+      "obtenido": 62,
+      "resultado": "correcto"
+    },
+    {
+      "caso": "nomina_visible_5007",
+      "esperado": [
+        10118,
+        10119,
+        10120
+      ],
+      "obtenido": [
+        10118,
+        10119,
+        10120
+      ],
+      "resultado": "correcto"
+    },
+    {
+      "caso": "codigos_visibles_en_filas_presentes_5007",
+      "esperado": 0,
+      "obtenido": 0,
+      "resultado": "correcto"
+    },
+    {
+      "caso": "dias_tabla_5007",
+      "esperado": 93,
+      "obtenido": 93,
+      "resultado": "correcto"
+    },
+    {
+      "caso": "nomina_visible_5008",
+      "esperado": [
+        10115,
+        10038,
+        10121,
+        10063,
+        10098,
+        10064,
+        10066,
+        10122,
+        10123,
+        10124
+      ],
+      "obtenido": [
+        10121,
+        10122,
+        10123,
+        10124
+      ],
+      "resultado": "fallo"
+    },
+    {
+      "caso": "codigos_visibles_en_filas_presentes_5008",
+      "esperado": 0,
+      "obtenido": 0,
+      "resultado": "correcto"
+    },
+    {
+      "caso": "dias_tabla_5008",
+      "esperado": 124,
+      "obtenido": 124,
+      "resultado": "correcto"
+    },
+    {
+      "caso": "nomina_visible_5009",
+      "esperado": [
+        10125,
+        10126,
+        10005,
+        10127,
+        10033,
+        10112,
+        10049,
+        10020,
+        10063,
+        10029,
+        10035
+      ],
+      "obtenido": [
+        10125,
+        10126,
+        10127
+      ],
+      "resultado": "fallo"
+    },
+    {
+      "caso": "codigos_visibles_en_filas_presentes_5009",
+      "esperado": 0,
+      "obtenido": 2,
+      "resultado": "fallo"
+    },
+    {
+      "caso": "dias_tabla_5009",
+      "esperado": 93,
+      "obtenido": 93,
+      "resultado": "correcto"
+    },
+    {
+      "caso": "nomina_visible_5010",
+      "esperado": [
+        10111,
+        10127,
+        10034,
+        10022,
+        10035,
+        10128
+      ],
+      "obtenido": [
+        10128
+      ],
+      "resultado": "fallo"
+    },
+    {
+      "caso": "codigos_visibles_en_filas_presentes_5010",
+      "esperado": 0,
+      "obtenido": 0,
+      "resultado": "correcto"
+    },
+    {
+      "caso": "dias_tabla_5010",
+      "esperado": 31,
+      "obtenido": 31,
+      "resultado": "correcto"
+    },
+    {
+      "caso": "nomina_visible_5011",
+      "esperado": [
+        10129,
+        10044
+      ],
+      "obtenido": [
+        10129
+      ],
+      "resultado": "fallo"
+    },
+    {
+      "caso": "codigos_visibles_en_filas_presentes_5011",
+      "esperado": 0,
+      "obtenido": 14,
+      "resultado": "fallo"
+    },
+    {
+      "caso": "dias_tabla_5011",
+      "esperado": 31,
+      "obtenido": 31,
+      "resultado": "correcto"
+    },
+    {
+      "caso": "nomina_visible_5012",
+      "esperado": [
+        10031,
+        10033,
+        10130,
+        10131,
+        10020,
+        10045
+      ],
+      "obtenido": [
+        10130,
+        10131
+      ],
+      "resultado": "fallo"
+    },
+    {
+      "caso": "codigos_visibles_en_filas_presentes_5012",
+      "esperado": 0,
+      "obtenido": 0,
+      "resultado": "correcto"
+    },
+    {
+      "caso": "dias_tabla_5012",
+      "esperado": 62,
+      "obtenido": 62,
+      "resultado": "correcto"
+    },
+    {
+      "caso": "nomina_visible_5013",
+      "esperado": [
+        10100,
+        10101,
+        10105,
+        10104,
+        10132,
+        10133,
+        10109
+      ],
+      "obtenido": [
+        10132,
+        10133
+      ],
+      "resultado": "fallo"
+    },
+    {
+      "caso": "codigos_visibles_en_filas_presentes_5013",
+      "esperado": 0,
+      "obtenido": 0,
+      "resultado": "correcto"
+    },
+    {
+      "caso": "dias_tabla_5013",
+      "esperado": 62,
+      "obtenido": 62,
+      "resultado": "correcto"
+    },
+    {
+      "caso": "horas_gp_d",
+      "esperado": 12,
+      "obtenido": 12,
+      "resultado": "correcto"
+    },
+    {
+      "caso": "horas_gp_n",
+      "esperado": 12,
+      "obtenido": 12,
+      "resultado": "correcto"
+    },
+    {
+      "caso": "horas_10h",
+      "esperado": 10,
+      "obtenido": 10,
+      "resultado": "correcto"
+    },
+    {
+      "caso": "horas_12h",
+      "esperado": 12,
+      "obtenido": 12,
+      "resultado": "correcto"
+    },
+    {
+      "caso": "horas_franco",
+      "esperado": 0,
+      "obtenido": 0,
+      "resultado": "correcto"
+    },
+    {
+      "caso": "sigla_configurada_se_muestra",
+      "esperado": "NOTT",
+      "obtenido": "NOTT",
+      "resultado": "correcto"
+    },
+    {
+      "caso": "tabla_referentes_objetivo_1",
+      "esperado": 45,
+      "obtenido": 45,
+      "resultado": "correcto"
+    },
+    {
+      "caso": "junio_30_dias",
+      "esperado": 1350,
+      "obtenido": 1350,
+      "resultado": "correcto"
+    }
+  ],
+  "por_objetivo": [
+    {
+      "objetivo": "HOSPITAL NOTTI",
+      "objetivo_id_muestra": -1,
+      "filas_esperadas": 45,
+      "filas_visibles": 45,
+      "usuarios_omitidos": [],
+      "celdas_omitidas_por_nomina": 0,
+      "celdas_con_codigo_perdido": 166,
+      "diferencias": [
+        {
+          "usuario_id": -1,
+          "fecha": "2025-05-17",
+          "codigo_original": "9RF",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -2,
+          "fecha": "2025-05-01",
+          "codigo_original": "BERM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -2,
+          "fecha": "2025-05-04",
+          "codigo_original": "BERM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -2,
+          "fecha": "2025-05-05",
+          "codigo_original": "BERM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -2,
+          "fecha": "2025-05-06",
+          "codigo_original": "BERM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -2,
+          "fecha": "2025-05-08",
+          "codigo_original": "BERM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -2,
+          "fecha": "2025-05-10",
+          "codigo_original": "BERM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -2,
+          "fecha": "2025-05-11",
+          "codigo_original": "BERM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -2,
+          "fecha": "2025-05-12",
+          "codigo_original": "BERM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -3,
+          "fecha": "2025-05-02",
+          "codigo_original": "ETI",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -3,
+          "fecha": "2025-05-03",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -3,
+          "fecha": "2025-05-04",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -3,
+          "fecha": "2025-05-05",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -3,
+          "fecha": "2025-05-06",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -3,
+          "fecha": "2025-05-07",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -3,
+          "fecha": "2025-05-08",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -3,
+          "fecha": "2025-05-09",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -3,
+          "fecha": "2025-05-10",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -3,
+          "fecha": "2025-05-11",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -3,
+          "fecha": "2025-05-12",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -3,
+          "fecha": "2025-05-13",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -3,
+          "fecha": "2025-05-14",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -3,
+          "fecha": "2025-05-15",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -3,
+          "fecha": "2025-05-16",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -5,
+          "fecha": "2025-05-12",
+          "codigo_original": "9RF",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -5,
+          "fecha": "2025-05-18",
+          "codigo_original": "BERM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -5,
+          "fecha": "2025-05-20",
+          "codigo_original": "BERM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -5,
+          "fecha": "2025-05-21",
+          "codigo_original": "BERM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -5,
+          "fecha": "2025-05-23",
+          "codigo_original": "BERM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -5,
+          "fecha": "2025-05-24",
+          "codigo_original": "BERM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -5,
+          "fecha": "2025-05-26",
+          "codigo_original": "BERM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -5,
+          "fecha": "2025-05-27",
+          "codigo_original": "BERM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -5,
+          "fecha": "2025-05-28",
+          "codigo_original": "BERM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -5,
+          "fecha": "2025-05-29",
+          "codigo_original": "BERM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -5,
+          "fecha": "2025-05-31",
+          "codigo_original": "BERM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -6,
+          "fecha": "2025-05-05",
+          "codigo_original": "ETI",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -6,
+          "fecha": "2025-05-06",
+          "codigo_original": "BERM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -6,
+          "fecha": "2025-05-08",
+          "codigo_original": "ETI",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -6,
+          "fecha": "2025-05-10",
+          "codigo_original": "ETI",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -6,
+          "fecha": "2025-05-14",
+          "codigo_original": "ETI",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -6,
+          "fecha": "2025-05-15",
+          "codigo_original": "BERM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -6,
+          "fecha": "2025-05-16",
+          "codigo_original": "ETI",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -6,
+          "fecha": "2025-05-17",
+          "codigo_original": "ETI",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -7,
+          "fecha": "2025-05-02",
+          "codigo_original": "9RF",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -8,
+          "fecha": "2025-05-29",
+          "codigo_original": "9RF",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -9,
+          "fecha": "2025-05-24",
+          "codigo_original": "9RF",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -10,
+          "fecha": "2025-05-03",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -10,
+          "fecha": "2025-05-04",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -10,
+          "fecha": "2025-05-05",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -10,
+          "fecha": "2025-05-06",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -10,
+          "fecha": "2025-05-07",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -10,
+          "fecha": "2025-05-08",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -10,
+          "fecha": "2025-05-09",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -10,
+          "fecha": "2025-05-10",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -10,
+          "fecha": "2025-05-11",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -10,
+          "fecha": "2025-05-12",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -10,
+          "fecha": "2025-05-13",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -10,
+          "fecha": "2025-05-14",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -10,
+          "fecha": "2025-05-15",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -10,
+          "fecha": "2025-05-16",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -10,
+          "fecha": "2025-05-22",
+          "codigo_original": "9RF",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -11,
+          "fecha": "2025-05-04",
+          "codigo_original": "9RF",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -12,
+          "fecha": "2025-05-28",
+          "codigo_original": "9RF",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -13,
+          "fecha": "2025-05-03",
+          "codigo_original": "9RF",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -13,
+          "fecha": "2025-05-16",
+          "codigo_original": "9RF",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -14,
+          "fecha": "2025-05-02",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -14,
+          "fecha": "2025-05-03",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -14,
+          "fecha": "2025-05-04",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -14,
+          "fecha": "2025-05-05",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -14,
+          "fecha": "2025-05-06",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -14,
+          "fecha": "2025-05-07",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -14,
+          "fecha": "2025-05-08",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -14,
+          "fecha": "2025-05-09",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -14,
+          "fecha": "2025-05-10",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -14,
+          "fecha": "2025-05-11",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -14,
+          "fecha": "2025-05-12",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -14,
+          "fecha": "2025-05-13",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -14,
+          "fecha": "2025-05-14",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -14,
+          "fecha": "2025-05-15",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -14,
+          "fecha": "2025-05-18",
+          "codigo_original": "9RF",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -15,
+          "fecha": "2025-05-08",
+          "codigo_original": "9HEX",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -15,
+          "fecha": "2025-05-09",
+          "codigo_original": "9HEX",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -15,
+          "fecha": "2025-05-27",
+          "codigo_original": "9RF",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -16,
+          "fecha": "2025-05-31",
+          "codigo_original": "9RF",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -17,
+          "fecha": "2025-05-26",
+          "codigo_original": "9RF",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -18,
+          "fecha": "2025-05-13",
+          "codigo_original": "9RF",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -19,
+          "fecha": "2025-05-15",
+          "codigo_original": "9RF",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -20,
+          "fecha": "2025-05-08",
+          "codigo_original": "C5,6",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -20,
+          "fecha": "2025-05-09",
+          "codigo_original": "C5,6",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -20,
+          "fecha": "2025-05-10",
+          "codigo_original": "C5,6",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -20,
+          "fecha": "2025-05-11",
+          "codigo_original": "C5,6",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -20,
+          "fecha": "2025-05-14",
+          "codigo_original": "BERM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -20,
+          "fecha": "2025-05-15",
+          "codigo_original": "C/5,6",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -20,
+          "fecha": "2025-05-16",
+          "codigo_original": "C5,6",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -20,
+          "fecha": "2025-05-17",
+          "codigo_original": "C5,6",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -20,
+          "fecha": "2025-05-18",
+          "codigo_original": "C5,6",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -20,
+          "fecha": "2025-05-21",
+          "codigo_original": "C5,6",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -20,
+          "fecha": "2025-05-22",
+          "codigo_original": "C5,6",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -20,
+          "fecha": "2025-05-23",
+          "codigo_original": "C5,6",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -20,
+          "fecha": "2025-05-27",
+          "codigo_original": "C/5,6",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -20,
+          "fecha": "2025-05-28",
+          "codigo_original": "C5,6",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -20,
+          "fecha": "2025-05-29",
+          "codigo_original": "C5,6",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -21,
+          "fecha": "2025-05-05",
+          "codigo_original": "9RF",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -22,
+          "fecha": "2025-05-04",
+          "codigo_original": "H/8",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -22,
+          "fecha": "2025-05-08",
+          "codigo_original": "H/8",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -22,
+          "fecha": "2025-05-09",
+          "codigo_original": "H/8",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -22,
+          "fecha": "2025-05-10",
+          "codigo_original": "H/8",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -22,
+          "fecha": "2025-05-11",
+          "codigo_original": "H/8",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -22,
+          "fecha": "2025-05-14",
+          "codigo_original": "H/8",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -22,
+          "fecha": "2025-05-16",
+          "codigo_original": "H/8",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -22,
+          "fecha": "2025-05-20",
+          "codigo_original": "H/8",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -22,
+          "fecha": "2025-05-21",
+          "codigo_original": "H/8",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -22,
+          "fecha": "2025-05-22",
+          "codigo_original": "H/8",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -22,
+          "fecha": "2025-05-23",
+          "codigo_original": "H/8",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -22,
+          "fecha": "2025-05-26",
+          "codigo_original": "H/8",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -22,
+          "fecha": "2025-05-28",
+          "codigo_original": "H/8",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -22,
+          "fecha": "2025-05-31",
+          "codigo_original": "H/8",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -23,
+          "fecha": "2025-05-23",
+          "codigo_original": "9RF",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -24,
+          "fecha": "2025-05-01",
+          "codigo_original": "9RF",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -24,
+          "fecha": "2025-05-30",
+          "codigo_original": "9RF",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -26,
+          "fecha": "2025-05-06",
+          "codigo_original": "9RF",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -26,
+          "fecha": "2025-05-19",
+          "codigo_original": "9RF",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -27,
+          "fecha": "2025-05-21",
+          "codigo_original": "9RF",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -28,
+          "fecha": "2025-05-20",
+          "codigo_original": "9RF",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -29,
+          "fecha": "2025-05-05",
+          "codigo_original": "BERM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -30,
+          "fecha": "2025-05-14",
+          "codigo_original": "9RF",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -31,
+          "fecha": "2025-05-11",
+          "codigo_original": "9RF",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -33,
+          "fecha": "2025-05-25",
+          "codigo_original": "9RF",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -34,
+          "fecha": "2025-05-10",
+          "codigo_original": "9RF",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -38,
+          "fecha": "2025-05-09",
+          "codigo_original": "9RF",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -39,
+          "fecha": "2025-05-07",
+          "codigo_original": "9HEX",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -40,
+          "fecha": "2025-05-07",
+          "codigo_original": "9RF",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -41,
+          "fecha": "2025-05-08",
+          "codigo_original": "9RF",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -41,
+          "fecha": "2025-05-18",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -41,
+          "fecha": "2025-05-19",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -41,
+          "fecha": "2025-05-20",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -41,
+          "fecha": "2025-05-21",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -41,
+          "fecha": "2025-05-22",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -41,
+          "fecha": "2025-05-23",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -41,
+          "fecha": "2025-05-24",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -41,
+          "fecha": "2025-05-25",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -41,
+          "fecha": "2025-05-26",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -41,
+          "fecha": "2025-05-27",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -41,
+          "fecha": "2025-05-28",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -41,
+          "fecha": "2025-05-29",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -41,
+          "fecha": "2025-05-30",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -41,
+          "fecha": "2025-05-31",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -45,
+          "fecha": "2025-05-02",
+          "codigo_original": "C5,6",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -45,
+          "fecha": "2025-05-03",
+          "codigo_original": "C5,6",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -45,
+          "fecha": "2025-05-05",
+          "codigo_original": "9HEX",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -45,
+          "fecha": "2025-05-06",
+          "codigo_original": "9HEX",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -45,
+          "fecha": "2025-05-12",
+          "codigo_original": "9HEX",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -45,
+          "fecha": "2025-05-13",
+          "codigo_original": "9HEX",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -45,
+          "fecha": "2025-05-14",
+          "codigo_original": "9HEX",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -45,
+          "fecha": "2025-05-15",
+          "codigo_original": "9HEX",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -45,
+          "fecha": "2025-05-16",
+          "codigo_original": "9HEX",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -45,
+          "fecha": "2025-05-19",
+          "codigo_original": "9HEX",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -45,
+          "fecha": "2025-05-20",
+          "codigo_original": "9HEX",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -45,
+          "fecha": "2025-05-21",
+          "codigo_original": "9HEX",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -45,
+          "fecha": "2025-05-22",
+          "codigo_original": "9HEX",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -45,
+          "fecha": "2025-05-23",
+          "codigo_original": "9HEX",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -45,
+          "fecha": "2025-05-26",
+          "codigo_original": "9HEX",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -45,
+          "fecha": "2025-05-27",
+          "codigo_original": "9HEX",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -45,
+          "fecha": "2025-05-28",
+          "codigo_original": "9HEX",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -45,
+          "fecha": "2025-05-29",
+          "codigo_original": "9HEX",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -45,
+          "fecha": "2025-05-30",
+          "codigo_original": "9HEX",
+          "codigo_visible": ""
+        }
+      ]
+    },
+    {
+      "objetivo": "HOSPITAL PERRUPATO",
+      "objetivo_id_muestra": -2,
+      "filas_esperadas": 36,
+      "filas_visibles": 35,
+      "usuarios_omitidos": [
+        -27
+      ],
+      "celdas_omitidas_por_nomina": 9,
+      "celdas_con_codigo_perdido": 76,
+      "diferencias": [
+        {
+          "usuario_id": -46,
+          "fecha": "2025-05-03",
+          "codigo_original": "SALA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -46,
+          "fecha": "2025-05-04",
+          "codigo_original": "SALA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -46,
+          "fecha": "2025-05-06",
+          "codigo_original": "SALA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -46,
+          "fecha": "2025-05-10",
+          "codigo_original": "SALA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -46,
+          "fecha": "2025-05-12",
+          "codigo_original": "SALA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -46,
+          "fecha": "2025-05-13",
+          "codigo_original": "SALA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -46,
+          "fecha": "2025-05-15",
+          "codigo_original": "SALA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -46,
+          "fecha": "2025-05-16",
+          "codigo_original": "SALA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -46,
+          "fecha": "2025-05-19",
+          "codigo_original": "SALA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -46,
+          "fecha": "2025-05-20",
+          "codigo_original": "SALA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -46,
+          "fecha": "2025-05-22",
+          "codigo_original": "SALA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -46,
+          "fecha": "2025-05-25",
+          "codigo_original": "SALA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -46,
+          "fecha": "2025-05-26",
+          "codigo_original": "SALA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -46,
+          "fecha": "2025-05-29",
+          "codigo_original": "SALA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -46,
+          "fecha": "2025-05-30",
+          "codigo_original": "SALA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -46,
+          "fecha": "2025-05-31",
+          "codigo_original": "SALA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -49,
+          "fecha": "2025-05-13",
+          "codigo_original": "F/INJ",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -49,
+          "fecha": "2025-05-14",
+          "codigo_original": "F/INJ",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -49,
+          "fecha": "2025-05-15",
+          "codigo_original": "F/INJ",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -49,
+          "fecha": "2025-05-16",
+          "codigo_original": "F/INJ",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -58,
+          "fecha": "2025-05-11",
+          "codigo_original": "P/EN",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -59,
+          "fecha": "2025-05-01",
+          "codigo_original": "P/EN",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -59,
+          "fecha": "2025-05-02",
+          "codigo_original": "P/EN",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -59,
+          "fecha": "2025-05-03",
+          "codigo_original": "P/EN",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -59,
+          "fecha": "2025-05-04",
+          "codigo_original": "P/EN",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -59,
+          "fecha": "2025-05-05",
+          "codigo_original": "P/EN",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -59,
+          "fecha": "2025-05-06",
+          "codigo_original": "P/EN",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -59,
+          "fecha": "2025-05-07",
+          "codigo_original": "P/EN",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -59,
+          "fecha": "2025-05-08",
+          "codigo_original": "P/EN",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -63,
+          "fecha": "2025-05-14",
+          "codigo_original": "METR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -63,
+          "fecha": "2025-05-15",
+          "codigo_original": "METR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -63,
+          "fecha": "2025-05-16",
+          "codigo_original": "METR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -63,
+          "fecha": "2025-05-17",
+          "codigo_original": "METR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -63,
+          "fecha": "2025-05-18",
+          "codigo_original": "METR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -63,
+          "fecha": "2025-05-23",
+          "codigo_original": "METR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -63,
+          "fecha": "2025-05-24",
+          "codigo_original": "METR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -63,
+          "fecha": "2025-05-25",
+          "codigo_original": "METR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -63,
+          "fecha": "2025-05-26",
+          "codigo_original": "METR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -63,
+          "fecha": "2025-05-27",
+          "codigo_original": "METR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -64,
+          "fecha": "2025-05-08",
+          "codigo_original": "METR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -64,
+          "fecha": "2025-05-09",
+          "codigo_original": "METR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -64,
+          "fecha": "2025-05-10",
+          "codigo_original": "METR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -64,
+          "fecha": "2025-05-13",
+          "codigo_original": "METR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -66,
+          "fecha": "2025-05-12",
+          "codigo_original": "METR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -66,
+          "fecha": "2025-05-13",
+          "codigo_original": "METR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -67,
+          "fecha": "2025-05-10",
+          "codigo_original": "P/EN",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -67,
+          "fecha": "2025-05-11",
+          "codigo_original": "P/EN",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -67,
+          "fecha": "2025-05-12",
+          "codigo_original": "P/EN",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -68,
+          "fecha": "2025-05-15",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -68,
+          "fecha": "2025-05-16",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -68,
+          "fecha": "2025-05-17",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -68,
+          "fecha": "2025-05-18",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -68,
+          "fecha": "2025-05-19",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -68,
+          "fecha": "2025-05-20",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -68,
+          "fecha": "2025-05-21",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -68,
+          "fecha": "2025-05-22",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -68,
+          "fecha": "2025-05-23",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -68,
+          "fecha": "2025-05-24",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -68,
+          "fecha": "2025-05-25",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -68,
+          "fecha": "2025-05-26",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -68,
+          "fecha": "2025-05-27",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -68,
+          "fecha": "2025-05-28",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -71,
+          "fecha": "2025-05-02",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -71,
+          "fecha": "2025-05-03",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -71,
+          "fecha": "2025-05-04",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -71,
+          "fecha": "2025-05-05",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -71,
+          "fecha": "2025-05-06",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -71,
+          "fecha": "2025-05-07",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -71,
+          "fecha": "2025-05-08",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -71,
+          "fecha": "2025-05-09",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -71,
+          "fecha": "2025-05-10",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -71,
+          "fecha": "2025-05-11",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -71,
+          "fecha": "2025-05-12",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -71,
+          "fecha": "2025-05-13",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -71,
+          "fecha": "2025-05-14",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -71,
+          "fecha": "2025-05-15",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        }
+      ]
+    },
+    {
+      "objetivo": "HOSPITAL SAPORITI",
+      "objetivo_id_muestra": -3,
+      "filas_esperadas": 22,
+      "filas_visibles": 19,
+      "usuarios_omitidos": [
+        -47,
+        -49,
+        -52
+      ],
+      "celdas_omitidas_por_nomina": 62,
+      "celdas_con_codigo_perdido": 14,
+      "diferencias": [
+        {
+          "usuario_id": -93,
+          "fecha": "2025-05-01",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -93,
+          "fecha": "2025-05-02",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -93,
+          "fecha": "2025-05-03",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -93,
+          "fecha": "2025-05-04",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -93,
+          "fecha": "2025-05-05",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -93,
+          "fecha": "2025-05-06",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -93,
+          "fecha": "2025-05-07",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -93,
+          "fecha": "2025-05-08",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -93,
+          "fecha": "2025-05-09",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -93,
+          "fecha": "2025-05-10",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -93,
+          "fecha": "2025-05-11",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -93,
+          "fecha": "2025-05-12",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -93,
+          "fecha": "2025-05-13",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -93,
+          "fecha": "2025-05-14",
+          "codigo_original": "VAC",
+          "codigo_visible": ""
+        }
+      ]
+    },
+    {
+      "objetivo": "HOPITAL TAGARELLI",
+      "objetivo_id_muestra": -4,
+      "filas_esperadas": 11,
+      "filas_visibles": 11,
+      "usuarios_omitidos": [],
+      "celdas_omitidas_por_nomina": 0,
+      "celdas_con_codigo_perdido": 29,
+      "diferencias": [
+        {
+          "usuario_id": -100,
+          "fecha": "2025-05-13",
+          "codigo_original": "TUP",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -101,
+          "fecha": "2025-05-10",
+          "codigo_original": "TUP",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -101,
+          "fecha": "2025-05-14",
+          "codigo_original": "TUP",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -101,
+          "fecha": "2025-05-15",
+          "codigo_original": "TUP",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -102,
+          "fecha": "2025-05-01",
+          "codigo_original": "P/EN",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -102,
+          "fecha": "2025-05-02",
+          "codigo_original": "P/EN",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -102,
+          "fecha": "2025-05-03",
+          "codigo_original": "P/EN",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -102,
+          "fecha": "2025-05-04",
+          "codigo_original": "P/EN",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -102,
+          "fecha": "2025-05-05",
+          "codigo_original": "P/EN",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -102,
+          "fecha": "2025-05-06",
+          "codigo_original": "P/EN",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -102,
+          "fecha": "2025-05-07",
+          "codigo_original": "P/EN",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -102,
+          "fecha": "2025-05-08",
+          "codigo_original": "P/EN",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -102,
+          "fecha": "2025-05-09",
+          "codigo_original": "P/EN",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -102,
+          "fecha": "2025-05-10",
+          "codigo_original": "P/EN",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -102,
+          "fecha": "2025-05-11",
+          "codigo_original": "P/EN",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -104,
+          "fecha": "2025-05-11",
+          "codigo_original": "TUP",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -104,
+          "fecha": "2025-05-12",
+          "codigo_original": "TUP",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -105,
+          "fecha": "2025-05-10",
+          "codigo_original": "TUP",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -105,
+          "fecha": "2025-05-20",
+          "codigo_original": "TUP",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -105,
+          "fecha": "2025-05-21",
+          "codigo_original": "TUP",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -105,
+          "fecha": "2025-05-26",
+          "codigo_original": "TUP",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -105,
+          "fecha": "2025-05-27",
+          "codigo_original": "TUP",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -107,
+          "fecha": "2025-05-19",
+          "codigo_original": "P/EN",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -107,
+          "fecha": "2025-05-20",
+          "codigo_original": "P/EN",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -107,
+          "fecha": "2025-05-22",
+          "codigo_original": "OFI",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -109,
+          "fecha": "2025-05-11",
+          "codigo_original": "TUP",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -109,
+          "fecha": "2025-05-12",
+          "codigo_original": "TUP",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -109,
+          "fecha": "2025-05-13",
+          "codigo_original": "TUP",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -109,
+          "fecha": "2025-05-14",
+          "codigo_original": "TUP",
+          "codigo_visible": ""
+        }
+      ]
+    },
+    {
+      "objetivo": "DINAF-ETI",
+      "objetivo_id_muestra": -5,
+      "filas_esperadas": 11,
+      "filas_visibles": 5,
+      "usuarios_omitidos": [
+        -31,
+        -33,
+        -3,
+        -34,
+        -35,
+        -36
+      ],
+      "celdas_omitidas_por_nomina": 185,
+      "celdas_con_codigo_perdido": 111,
+      "diferencias": [
+        {
+          "usuario_id": -111,
+          "fecha": "2025-05-01",
+          "codigo_original": "H/8",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -111,
+          "fecha": "2025-05-05",
+          "codigo_original": "D/LEM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -111,
+          "fecha": "2025-05-06",
+          "codigo_original": "D/LEM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -111,
+          "fecha": "2025-05-07",
+          "codigo_original": "D/LEM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -111,
+          "fecha": "2025-05-08",
+          "codigo_original": "D/LEM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -111,
+          "fecha": "2025-05-09",
+          "codigo_original": "D/LEM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -111,
+          "fecha": "2025-05-10",
+          "codigo_original": "NOTT",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -111,
+          "fecha": "2025-05-12",
+          "codigo_original": "D/LEM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -111,
+          "fecha": "2025-05-13",
+          "codigo_original": "D/LEM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -111,
+          "fecha": "2025-05-14",
+          "codigo_original": "D/LEM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -111,
+          "fecha": "2025-05-15",
+          "codigo_original": "D/LEM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -111,
+          "fecha": "2025-05-16",
+          "codigo_original": "D/LEM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -111,
+          "fecha": "2025-05-19",
+          "codigo_original": "D/LEM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -111,
+          "fecha": "2025-05-20",
+          "codigo_original": "D/LEM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -111,
+          "fecha": "2025-05-21",
+          "codigo_original": "D/LEM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -111,
+          "fecha": "2025-05-22",
+          "codigo_original": "D/LEM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -111,
+          "fecha": "2025-05-23",
+          "codigo_original": "D/LEM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -111,
+          "fecha": "2025-05-26",
+          "codigo_original": "D/LEM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -111,
+          "fecha": "2025-05-27",
+          "codigo_original": "D/LEM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -111,
+          "fecha": "2025-05-28",
+          "codigo_original": "D/LEM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -111,
+          "fecha": "2025-05-29",
+          "codigo_original": "D/LEM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -111,
+          "fecha": "2025-05-30",
+          "codigo_original": "D/LEM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -112,
+          "fecha": "2025-05-02",
+          "codigo_original": "NOTT",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -112,
+          "fecha": "2025-05-03",
+          "codigo_original": "NOTT",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -112,
+          "fecha": "2025-05-04",
+          "codigo_original": "NOTT",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -112,
+          "fecha": "2025-05-05",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -112,
+          "fecha": "2025-05-06",
+          "codigo_original": "BERM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -112,
+          "fecha": "2025-05-08",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -112,
+          "fecha": "2025-05-10",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -112,
+          "fecha": "2025-05-11",
+          "codigo_original": "NOTT",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -112,
+          "fecha": "2025-05-12",
+          "codigo_original": "NOTT",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -112,
+          "fecha": "2025-05-14",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -112,
+          "fecha": "2025-05-15",
+          "codigo_original": "BERM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -112,
+          "fecha": "2025-05-16",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -112,
+          "fecha": "2025-05-17",
+          "codigo_original": "BERM",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -112,
+          "fecha": "2025-05-19",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -112,
+          "fecha": "2025-05-20",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -112,
+          "fecha": "2025-05-21",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -112,
+          "fecha": "2025-05-23",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -112,
+          "fecha": "2025-05-24",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -112,
+          "fecha": "2025-05-26",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -112,
+          "fecha": "2025-05-27",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -112,
+          "fecha": "2025-05-28",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -112,
+          "fecha": "2025-05-29",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -112,
+          "fecha": "2025-05-31",
+          "codigo_original": "NOTT",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -113,
+          "fecha": "2025-05-01",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -113,
+          "fecha": "2025-05-04",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -113,
+          "fecha": "2025-05-05",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -113,
+          "fecha": "2025-05-06",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -113,
+          "fecha": "2025-05-07",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -113,
+          "fecha": "2025-05-09",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -113,
+          "fecha": "2025-05-10",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -113,
+          "fecha": "2025-05-11",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -113,
+          "fecha": "2025-05-12",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -113,
+          "fecha": "2025-05-13",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -113,
+          "fecha": "2025-05-15",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -113,
+          "fecha": "2025-05-16",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -113,
+          "fecha": "2025-05-19",
+          "codigo_original": "D/LUJ",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -113,
+          "fecha": "2025-05-20",
+          "codigo_original": "D/LUJ",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -113,
+          "fecha": "2025-05-21",
+          "codigo_original": "D/LUJ",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -113,
+          "fecha": "2025-05-22",
+          "codigo_original": "D/LUJ",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -113,
+          "fecha": "2025-05-23",
+          "codigo_original": "D/LUJ",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -113,
+          "fecha": "2025-05-26",
+          "codigo_original": "D/LUJ",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -113,
+          "fecha": "2025-05-27",
+          "codigo_original": "D/LUJ",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -113,
+          "fecha": "2025-05-28",
+          "codigo_original": "D/LUJ",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -113,
+          "fecha": "2025-05-29",
+          "codigo_original": "D/LUJ",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -113,
+          "fecha": "2025-05-30",
+          "codigo_original": "D/LUJ",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -114,
+          "fecha": "2025-05-01",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -114,
+          "fecha": "2025-05-02",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -114,
+          "fecha": "2025-05-03",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -114,
+          "fecha": "2025-05-04",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -114,
+          "fecha": "2025-05-06",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -114,
+          "fecha": "2025-05-07",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -114,
+          "fecha": "2025-05-08",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -114,
+          "fecha": "2025-05-09",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -114,
+          "fecha": "2025-05-11",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -114,
+          "fecha": "2025-05-12",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -114,
+          "fecha": "2025-05-13",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -114,
+          "fecha": "2025-05-14",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -114,
+          "fecha": "2025-05-15",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -114,
+          "fecha": "2025-05-17",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -114,
+          "fecha": "2025-05-18",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -114,
+          "fecha": "2025-05-21",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -114,
+          "fecha": "2025-05-22",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -114,
+          "fecha": "2025-05-25",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -114,
+          "fecha": "2025-05-26",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -114,
+          "fecha": "2025-05-27",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -114,
+          "fecha": "2025-05-30",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -114,
+          "fecha": "2025-05-31",
+          "codigo_original": "N/AR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -115,
+          "fecha": "2025-05-01",
+          "codigo_original": "METR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -115,
+          "fecha": "2025-05-03",
+          "codigo_original": "METR",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -115,
+          "fecha": "2025-05-05",
+          "codigo_original": "D/MA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -115,
+          "fecha": "2025-05-06",
+          "codigo_original": "D/MA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -115,
+          "fecha": "2025-05-07",
+          "codigo_original": "D/MA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -115,
+          "fecha": "2025-05-08",
+          "codigo_original": "D/MA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -115,
+          "fecha": "2025-05-09",
+          "codigo_original": "D/MA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -115,
+          "fecha": "2025-05-12",
+          "codigo_original": "D/MA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -115,
+          "fecha": "2025-05-13",
+          "codigo_original": "D/MA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -115,
+          "fecha": "2025-05-14",
+          "codigo_original": "D/MA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -115,
+          "fecha": "2025-05-15",
+          "codigo_original": "D/MA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -115,
+          "fecha": "2025-05-16",
+          "codigo_original": "D/MA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -115,
+          "fecha": "2025-05-19",
+          "codigo_original": "D/MA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -115,
+          "fecha": "2025-05-20",
+          "codigo_original": "D/MA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -115,
+          "fecha": "2025-05-21",
+          "codigo_original": "D/MA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -115,
+          "fecha": "2025-05-22",
+          "codigo_original": "D/MA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -115,
+          "fecha": "2025-05-23",
+          "codigo_original": "D/MA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -115,
+          "fecha": "2025-05-26",
+          "codigo_original": "D/MA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -115,
+          "fecha": "2025-05-27",
+          "codigo_original": "D/MA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -115,
+          "fecha": "2025-05-28",
+          "codigo_original": "D/MA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -115,
+          "fecha": "2025-05-29",
+          "codigo_original": "D/MA",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -115,
+          "fecha": "2025-05-30",
+          "codigo_original": "D/MA",
+          "codigo_visible": ""
+        }
+      ]
+    },
+    {
+      "objetivo": "SALA DE PALMIRA Y GUEMES",
+      "objetivo_id_muestra": -6,
+      "filas_esperadas": 3,
+      "filas_visibles": 2,
+      "usuarios_omitidos": [
+        -46
+      ],
+      "celdas_omitidas_por_nomina": 31,
+      "celdas_con_codigo_perdido": 0,
+      "diferencias": []
+    },
+    {
+      "objetivo": "BOSQUE",
+      "objetivo_id_muestra": -7,
+      "filas_esperadas": 3,
+      "filas_visibles": 3,
+      "usuarios_omitidos": [],
+      "celdas_omitidas_por_nomina": 0,
+      "celdas_con_codigo_perdido": 0,
+      "diferencias": []
+    },
+    {
+      "objetivo": "METRAUX",
+      "objetivo_id_muestra": -8,
+      "filas_esperadas": 10,
+      "filas_visibles": 4,
+      "usuarios_omitidos": [
+        -115,
+        -38,
+        -63,
+        -98,
+        -64,
+        -66
+      ],
+      "celdas_omitidas_por_nomina": 97,
+      "celdas_con_codigo_perdido": 0,
+      "diferencias": []
+    },
+    {
+      "objetivo": "ETI BERMEJO",
+      "objetivo_id_muestra": -9,
+      "filas_esperadas": 11,
+      "filas_visibles": 3,
+      "usuarios_omitidos": [
+        -5,
+        -33,
+        -112,
+        -49,
+        -20,
+        -63,
+        -29,
+        -35
+      ],
+      "celdas_omitidas_por_nomina": 23,
+      "celdas_con_codigo_perdido": 2,
+      "diferencias": [
+        {
+          "usuario_id": -125,
+          "fecha": "2025-05-02",
+          "codigo_original": "NOTT",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -125,
+          "fecha": "2025-05-07",
+          "codigo_original": "NOTT",
+          "codigo_visible": ""
+        }
+      ]
+    },
+    {
+      "objetivo": "HOGAR 8 MAIPU",
+      "objetivo_id_muestra": -10,
+      "filas_esperadas": 6,
+      "filas_visibles": 1,
+      "usuarios_omitidos": [
+        -111,
+        -127,
+        -34,
+        -22,
+        -35
+      ],
+      "celdas_omitidas_por_nomina": 66,
+      "celdas_con_codigo_perdido": 0,
+      "diferencias": []
+    },
+    {
+      "objetivo": "CASA MC DONALDS",
+      "objetivo_id_muestra": -11,
+      "filas_esperadas": 2,
+      "filas_visibles": 1,
+      "usuarios_omitidos": [
+        -44
+      ],
+      "celdas_omitidas_por_nomina": 31,
+      "celdas_con_codigo_perdido": 14,
+      "diferencias": [
+        {
+          "usuario_id": -129,
+          "fecha": "2025-05-04",
+          "codigo_original": "N15",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -129,
+          "fecha": "2025-05-06",
+          "codigo_original": "N15",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -129,
+          "fecha": "2025-05-07",
+          "codigo_original": "N15",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -129,
+          "fecha": "2025-05-11",
+          "codigo_original": "N15",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -129,
+          "fecha": "2025-05-14",
+          "codigo_original": "N15",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -129,
+          "fecha": "2025-05-15",
+          "codigo_original": "N15",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -129,
+          "fecha": "2025-05-19",
+          "codigo_original": "N15",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -129,
+          "fecha": "2025-05-20",
+          "codigo_original": "N15",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -129,
+          "fecha": "2025-05-23",
+          "codigo_original": "N15",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -129,
+          "fecha": "2025-05-25",
+          "codigo_original": "N15",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -129,
+          "fecha": "2025-05-27",
+          "codigo_original": "NOTT",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -129,
+          "fecha": "2025-05-28",
+          "codigo_original": "N15",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -129,
+          "fecha": "2025-05-29",
+          "codigo_original": "N15",
+          "codigo_visible": ""
+        },
+        {
+          "usuario_id": -129,
+          "fecha": "2025-05-30",
+          "codigo_original": "N15",
+          "codigo_visible": ""
+        }
+      ]
+    },
+    {
+      "objetivo": "CASA 5,6 GODOY CRUZ",
+      "objetivo_id_muestra": -12,
+      "filas_esperadas": 6,
+      "filas_visibles": 2,
+      "usuarios_omitidos": [
+        -31,
+        -33,
+        -20,
+        -45
+      ],
+      "celdas_omitidas_por_nomina": 37,
+      "celdas_con_codigo_perdido": 0,
+      "diferencias": []
+    },
+    {
+      "objetivo": "ETI TUPUNGATO",
+      "objetivo_id_muestra": -13,
+      "filas_esperadas": 7,
+      "filas_visibles": 2,
+      "usuarios_omitidos": [
+        -100,
+        -101,
+        -105,
+        -104,
+        -109
+      ],
+      "celdas_omitidas_por_nomina": 15,
+      "celdas_con_codigo_perdido": 0,
+      "diferencias": []
+    }
+  ],
+  "resumen": {
+    "casos": 47,
+    "correctos": 30,
+    "fallos": 17,
+    "filas_omitidas": 40,
+    "celdas_omitidas_por_nomina": 556,
+    "celdas_con_codigo_perdido": 412,
+    "codigos_perdidos": [
+      "9HEX",
+      "9RF",
+      "BERM",
+      "C/5,6",
+      "C5,6",
+      "D/LEM",
+      "D/LUJ",
+      "D/MA",
+      "ETI",
+      "F/INJ",
+      "H/8",
+      "METR",
+      "N/AR",
+      "N15",
+      "NOTT",
+      "OFI",
+      "P/EN",
+      "SALA",
+      "TUP",
+      "VAC"
+    ]
+  }
+}
