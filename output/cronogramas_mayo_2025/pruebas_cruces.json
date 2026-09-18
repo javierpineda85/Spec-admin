@@ -1,0 +1,4017 @@
+{
+  "alcance": "Endpoint original con conexión sustituida en memoria. Oracle de solape horario con horarios sintéticos; no prueba servidor web ni guardado.",
+  "reglas": [
+    "GP/D y GP/N siguen sumando 12 h en el sistema; disponibilidad no equivale a presencia.",
+    "Un falso positivo aquí significa que no hay solape físico. No descarta otras restricciones operativas o de licencias.",
+    "Cruces del Excel por nombres normalizados sin unir alias dudosos; coincidencia de fecha no demuestra solape.",
+    "No se evalúan descansos mínimos, desplazamientos ni obligaciones legales."
+  ],
+  "resumen": {
+    "casos_sinteticos": 18,
+    "correctos": 5,
+    "fallos": 13,
+    "coincidencias_persona_fecha": 0,
+    "personas_con_coincidencias": 0,
+    "noches_seguidas_de_otro_objetivo": 3,
+    "referencias_excluidas_como_presencia": 175,
+    "referencias_con_destino_sugerido_y_asignacion": 146,
+    "guardias_pasivas_excluidas_como_presencia": 212
+  },
+  "casos": [
+    {
+      "caso": "D_superpuesto",
+      "codigo_existente": "D",
+      "codigo_nuevo": "D",
+      "franja_existente": [
+        "2025-05-10T07:00:00",
+        "2025-05-10T19:00:00"
+      ],
+      "franja_nueva": [
+        "2025-05-10T07:00:00",
+        "2025-05-10T19:00:00"
+      ],
+      "conflicto_horario_esperado": true,
+      "respuesta_endpoint": {
+        "conflicto": false
+      },
+      "resultado": "fallo",
+      "origen": "horarios sinteticos explicitos; no corresponden al Excel"
+    },
+    {
+      "caso": "N_superpuesto",
+      "codigo_existente": "N",
+      "codigo_nuevo": "N",
+      "franja_existente": [
+        "2025-05-10T19:00:00",
+        "2025-05-11T07:00:00"
+      ],
+      "franja_nueva": [
+        "2025-05-10T19:00:00",
+        "2025-05-11T07:00:00"
+      ],
+      "conflicto_horario_esperado": true,
+      "respuesta_endpoint": {
+        "conflicto": false
+      },
+      "resultado": "fallo",
+      "origen": "horarios sinteticos explicitos; no corresponden al Excel"
+    },
+    {
+      "caso": "8H_superpuesto",
+      "codigo_existente": "8H",
+      "codigo_nuevo": "8H",
+      "franja_existente": [
+        "2025-05-10T07:00:00",
+        "2025-05-10T15:00:00"
+      ],
+      "franja_nueva": [
+        "2025-05-10T07:00:00",
+        "2025-05-10T15:00:00"
+      ],
+      "conflicto_horario_esperado": true,
+      "respuesta_endpoint": {
+        "conflicto": true,
+        "objetivo": "Objetivo B simulado",
+        "codigo_existente": "8H"
+      },
+      "resultado": "correcto",
+      "origen": "horarios sinteticos explicitos; no corresponden al Excel"
+    },
+    {
+      "caso": "10H_superpuesto",
+      "codigo_existente": "10H",
+      "codigo_nuevo": "10H",
+      "franja_existente": [
+        "2025-05-10T07:00:00",
+        "2025-05-10T17:00:00"
+      ],
+      "franja_nueva": [
+        "2025-05-10T08:00:00",
+        "2025-05-10T18:00:00"
+      ],
+      "conflicto_horario_esperado": true,
+      "respuesta_endpoint": {
+        "conflicto": false
+      },
+      "resultado": "fallo",
+      "origen": "horarios sinteticos explicitos; no corresponden al Excel"
+    },
+    {
+      "caso": "12H_superpuesto",
+      "codigo_existente": "12H",
+      "codigo_nuevo": "12H",
+      "franja_existente": [
+        "2025-05-10T07:00:00",
+        "2025-05-10T19:00:00"
+      ],
+      "franja_nueva": [
+        "2025-05-10T07:00:00",
+        "2025-05-10T19:00:00"
+      ],
+      "conflicto_horario_esperado": true,
+      "respuesta_endpoint": {
+        "conflicto": false
+      },
+      "resultado": "fallo",
+      "origen": "horarios sinteticos explicitos; no corresponden al Excel"
+    },
+    {
+      "caso": "8H_consecutivos_sin_solape",
+      "codigo_existente": "8H",
+      "codigo_nuevo": "8H",
+      "franja_existente": [
+        "2025-05-10T07:00:00",
+        "2025-05-10T15:00:00"
+      ],
+      "franja_nueva": [
+        "2025-05-10T15:00:00",
+        "2025-05-10T23:00:00"
+      ],
+      "conflicto_horario_esperado": false,
+      "respuesta_endpoint": {
+        "conflicto": true,
+        "objetivo": "Objetivo B simulado",
+        "codigo_existente": "8H"
+      },
+      "resultado": "fallo",
+      "origen": "horarios sinteticos explicitos; no corresponden al Excel"
+    },
+    {
+      "caso": "8H_separados_sin_solape",
+      "codigo_existente": "8H",
+      "codigo_nuevo": "6H",
+      "franja_existente": [
+        "2025-05-10T07:00:00",
+        "2025-05-10T15:00:00"
+      ],
+      "franja_nueva": [
+        "2025-05-10T17:00:00",
+        "2025-05-10T23:00:00"
+      ],
+      "conflicto_horario_esperado": false,
+      "respuesta_endpoint": {
+        "conflicto": true,
+        "objetivo": "Objetivo B simulado",
+        "codigo_existente": "8H"
+      },
+      "resultado": "fallo",
+      "origen": "horarios sinteticos explicitos; no corresponden al Excel"
+    },
+    {
+      "caso": "nocturno_dia_anterior_superpuesto",
+      "codigo_existente": "N",
+      "codigo_nuevo": "6H",
+      "franja_existente": [
+        "2025-05-09T19:00:00",
+        "2025-05-10T07:00:00"
+      ],
+      "franja_nueva": [
+        "2025-05-10T06:00:00",
+        "2025-05-10T12:00:00"
+      ],
+      "conflicto_horario_esperado": true,
+      "respuesta_endpoint": {
+        "conflicto": false
+      },
+      "resultado": "fallo",
+      "origen": "horarios sinteticos explicitos; no corresponden al Excel"
+    },
+    {
+      "caso": "nocturno_cambio_mes_superpuesto",
+      "codigo_existente": "N",
+      "codigo_nuevo": "6H",
+      "franja_existente": [
+        "2025-05-31T19:00:00",
+        "2025-06-01T07:00:00"
+      ],
+      "franja_nueva": [
+        "2025-06-01T06:00:00",
+        "2025-06-01T12:00:00"
+      ],
+      "conflicto_horario_esperado": true,
+      "respuesta_endpoint": {
+        "conflicto": false
+      },
+      "resultado": "fallo",
+      "origen": "horarios sinteticos explicitos; no corresponden al Excel"
+    },
+    {
+      "caso": "F_no_es_presencia",
+      "codigo_existente": "F",
+      "codigo_nuevo": "D",
+      "franja_existente": null,
+      "franja_nueva": [
+        "2025-05-10T07:00:00",
+        "2025-05-10T19:00:00"
+      ],
+      "conflicto_horario_esperado": false,
+      "respuesta_endpoint": {
+        "conflicto": true,
+        "objetivo": "Objetivo B simulado",
+        "codigo_existente": "F"
+      },
+      "resultado": "fallo",
+      "origen": "horarios sinteticos explicitos; no corresponden al Excel"
+    },
+    {
+      "caso": "GP_D_no_es_presencia",
+      "codigo_existente": "GP/D",
+      "codigo_nuevo": "D",
+      "franja_existente": null,
+      "franja_nueva": [
+        "2025-05-10T07:00:00",
+        "2025-05-10T19:00:00"
+      ],
+      "conflicto_horario_esperado": false,
+      "respuesta_endpoint": {
+        "conflicto": true,
+        "objetivo": "Objetivo B simulado",
+        "codigo_existente": "GP/D"
+      },
+      "resultado": "fallo",
+      "origen": "horarios sinteticos explicitos; no corresponden al Excel"
+    },
+    {
+      "caso": "GP_N_no_es_presencia",
+      "codigo_existente": "GP/N",
+      "codigo_nuevo": "N",
+      "franja_existente": null,
+      "franja_nueva": [
+        "2025-05-10T19:00:00",
+        "2025-05-11T07:00:00"
+      ],
+      "conflicto_horario_esperado": false,
+      "respuesta_endpoint": {
+        "conflicto": true,
+        "objetivo": "Objetivo B simulado",
+        "codigo_existente": "GP/N"
+      },
+      "resultado": "fallo",
+      "origen": "horarios sinteticos explicitos; no corresponden al Excel"
+    },
+    {
+      "caso": "referencia_NOTT_no_duplica",
+      "codigo_existente": "8H",
+      "codigo_nuevo": "NOTT",
+      "franja_existente": [
+        "2025-05-10T07:00:00",
+        "2025-05-10T15:00:00"
+      ],
+      "franja_nueva": null,
+      "conflicto_horario_esperado": false,
+      "respuesta_endpoint": {
+        "conflicto": false
+      },
+      "resultado": "correcto",
+      "origen": "horarios sinteticos explicitos; no corresponden al Excel"
+    },
+    {
+      "caso": "referencia_PERR_no_duplica",
+      "codigo_existente": "8H",
+      "codigo_nuevo": "PERR",
+      "franja_existente": [
+        "2025-05-10T07:00:00",
+        "2025-05-10T15:00:00"
+      ],
+      "franja_nueva": null,
+      "conflicto_horario_esperado": false,
+      "respuesta_endpoint": {
+        "conflicto": true,
+        "objetivo": "Objetivo B simulado",
+        "codigo_existente": "8H"
+      },
+      "resultado": "fallo",
+      "origen": "horarios sinteticos explicitos; no corresponden al Excel"
+    },
+    {
+      "caso": "referencia_BERM_no_duplica",
+      "codigo_existente": "8H",
+      "codigo_nuevo": "BERM",
+      "franja_existente": [
+        "2025-05-10T07:00:00",
+        "2025-05-10T15:00:00"
+      ],
+      "franja_nueva": null,
+      "conflicto_horario_esperado": false,
+      "respuesta_endpoint": {
+        "conflicto": true,
+        "objetivo": "Objetivo B simulado",
+        "codigo_existente": "8H"
+      },
+      "resultado": "fallo",
+      "origen": "horarios sinteticos explicitos; no corresponden al Excel"
+    },
+    {
+      "caso": "mismo_objetivo_excluido",
+      "codigo_existente": "8H",
+      "codigo_nuevo": "8H",
+      "franja_existente": [
+        "2025-05-10T07:00:00",
+        "2025-05-10T15:00:00"
+      ],
+      "franja_nueva": [
+        "2025-05-10T07:00:00",
+        "2025-05-10T15:00:00"
+      ],
+      "conflicto_horario_esperado": false,
+      "respuesta_endpoint": {
+        "conflicto": false
+      },
+      "resultado": "correcto",
+      "origen": "horarios sinteticos explicitos; no corresponden al Excel"
+    },
+    {
+      "caso": "persona_distinta_excluida",
+      "codigo_existente": "8H",
+      "codigo_nuevo": "8H",
+      "franja_existente": [
+        "2025-05-10T07:00:00",
+        "2025-05-10T15:00:00"
+      ],
+      "franja_nueva": [
+        "2025-05-10T07:00:00",
+        "2025-05-10T15:00:00"
+      ],
+      "conflicto_horario_esperado": false,
+      "respuesta_endpoint": {
+        "conflicto": false
+      },
+      "resultado": "correcto",
+      "origen": "horarios sinteticos explicitos; no corresponden al Excel"
+    },
+    {
+      "caso": "D_y_N_consecutivos",
+      "codigo_existente": "D",
+      "codigo_nuevo": "N",
+      "franja_existente": [
+        "2025-05-10T07:00:00",
+        "2025-05-10T19:00:00"
+      ],
+      "franja_nueva": [
+        "2025-05-10T19:00:00",
+        "2025-05-11T07:00:00"
+      ],
+      "conflicto_horario_esperado": false,
+      "respuesta_endpoint": {
+        "conflicto": false
+      },
+      "resultado": "correcto",
+      "origen": "horarios sinteticos explicitos; no corresponden al Excel"
+    }
+  ],
+  "coincidencias_muestra": [],
+  "noches_hacia_otro_objetivo": [
+    {
+      "usuario_id": -46,
+      "nombre": "Allende Fernando",
+      "noche": {
+        "usuario_id": -46,
+        "objetivo_id": -2,
+        "fecha": "2025-05-05",
+        "codigo_turno": "N",
+        "objetivo": "HOSPITAL PERRUPATO",
+        "celda": "H62"
+      },
+      "dia_siguiente": {
+        "usuario_id": -46,
+        "objetivo_id": -6,
+        "fecha": "2025-05-06",
+        "codigo_turno": "8H",
+        "objetivo": "SALA DE PALMIRA Y GUEMES",
+        "celda": "I197"
+      },
+      "estado": "horarios_pendientes_no_es_conflicto_confirmado"
+    },
+    {
+      "usuario_id": -46,
+      "nombre": "Allende Fernando",
+      "noche": {
+        "usuario_id": -46,
+        "objetivo_id": -2,
+        "fecha": "2025-05-11",
+        "codigo_turno": "N",
+        "objetivo": "HOSPITAL PERRUPATO",
+        "celda": "N62"
+      },
+      "dia_siguiente": {
+        "usuario_id": -46,
+        "objetivo_id": -6,
+        "fecha": "2025-05-12",
+        "codigo_turno": "8H",
+        "objetivo": "SALA DE PALMIRA Y GUEMES",
+        "celda": "O197"
+      },
+      "estado": "horarios_pendientes_no_es_conflicto_confirmado"
+    },
+    {
+      "usuario_id": -46,
+      "nombre": "Allende Fernando",
+      "noche": {
+        "usuario_id": -46,
+        "objetivo_id": -2,
+        "fecha": "2025-05-21",
+        "codigo_turno": "N",
+        "objetivo": "HOSPITAL PERRUPATO",
+        "celda": "X62"
+      },
+      "dia_siguiente": {
+        "usuario_id": -46,
+        "objetivo_id": -6,
+        "fecha": "2025-05-22",
+        "codigo_turno": "8H",
+        "objetivo": "SALA DE PALMIRA Y GUEMES",
+        "celda": "Y197"
+      },
+      "estado": "horarios_pendientes_no_es_conflicto_confirmado"
+    }
+  ],
+  "referencias_muestra": [
+    {
+      "usuario_id": -2,
+      "objetivo_id": -1,
+      "fecha": "2025-05-01",
+      "codigo_turno": "BERM",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "D7",
+      "destinos_sugeridos": [
+        -9
+      ],
+      "presencias_en_destinos_sugeridos": [],
+      "estado": "referencia_sin_correspondencia_presencial_confirmable"
+    },
+    {
+      "usuario_id": -2,
+      "objetivo_id": -1,
+      "fecha": "2025-05-04",
+      "codigo_turno": "BERM",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "G7",
+      "destinos_sugeridos": [
+        -9
+      ],
+      "presencias_en_destinos_sugeridos": [],
+      "estado": "referencia_sin_correspondencia_presencial_confirmable"
+    },
+    {
+      "usuario_id": -2,
+      "objetivo_id": -1,
+      "fecha": "2025-05-05",
+      "codigo_turno": "BERM",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "H7",
+      "destinos_sugeridos": [
+        -9
+      ],
+      "presencias_en_destinos_sugeridos": [],
+      "estado": "referencia_sin_correspondencia_presencial_confirmable"
+    },
+    {
+      "usuario_id": -2,
+      "objetivo_id": -1,
+      "fecha": "2025-05-06",
+      "codigo_turno": "BERM",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "I7",
+      "destinos_sugeridos": [
+        -9
+      ],
+      "presencias_en_destinos_sugeridos": [],
+      "estado": "referencia_sin_correspondencia_presencial_confirmable"
+    },
+    {
+      "usuario_id": -2,
+      "objetivo_id": -1,
+      "fecha": "2025-05-08",
+      "codigo_turno": "BERM",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "K7",
+      "destinos_sugeridos": [
+        -9
+      ],
+      "presencias_en_destinos_sugeridos": [],
+      "estado": "referencia_sin_correspondencia_presencial_confirmable"
+    },
+    {
+      "usuario_id": -2,
+      "objetivo_id": -1,
+      "fecha": "2025-05-10",
+      "codigo_turno": "BERM",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "M7",
+      "destinos_sugeridos": [
+        -9
+      ],
+      "presencias_en_destinos_sugeridos": [],
+      "estado": "referencia_sin_correspondencia_presencial_confirmable"
+    },
+    {
+      "usuario_id": -2,
+      "objetivo_id": -1,
+      "fecha": "2025-05-11",
+      "codigo_turno": "BERM",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "N7",
+      "destinos_sugeridos": [
+        -9
+      ],
+      "presencias_en_destinos_sugeridos": [],
+      "estado": "referencia_sin_correspondencia_presencial_confirmable"
+    },
+    {
+      "usuario_id": -2,
+      "objetivo_id": -1,
+      "fecha": "2025-05-12",
+      "codigo_turno": "BERM",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "O7",
+      "destinos_sugeridos": [
+        -9
+      ],
+      "presencias_en_destinos_sugeridos": [],
+      "estado": "referencia_sin_correspondencia_presencial_confirmable"
+    },
+    {
+      "usuario_id": -3,
+      "objetivo_id": -1,
+      "fecha": "2025-05-02",
+      "codigo_turno": "ETI",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "E8",
+      "destinos_sugeridos": [
+        -5
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -3,
+          "objetivo_id": -5,
+          "fecha": "2025-05-02",
+          "codigo_turno": "N/AR",
+          "objetivo": "DINAF-ETI",
+          "celda": "E169"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -5,
+      "objetivo_id": -1,
+      "fecha": "2025-05-18",
+      "codigo_turno": "BERM",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "U10",
+      "destinos_sugeridos": [
+        -9
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -5,
+          "objetivo_id": -9,
+          "fecha": "2025-05-18",
+          "codigo_turno": "D",
+          "objetivo": "ETI BERMEJO",
+          "celda": "U242"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -5,
+      "objetivo_id": -1,
+      "fecha": "2025-05-20",
+      "codigo_turno": "BERM",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "W10",
+      "destinos_sugeridos": [
+        -9
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -5,
+          "objetivo_id": -9,
+          "fecha": "2025-05-20",
+          "codigo_turno": "N",
+          "objetivo": "ETI BERMEJO",
+          "celda": "W242"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -5,
+      "objetivo_id": -1,
+      "fecha": "2025-05-21",
+      "codigo_turno": "BERM",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "X10",
+      "destinos_sugeridos": [
+        -9
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -5,
+          "objetivo_id": -9,
+          "fecha": "2025-05-21",
+          "codigo_turno": "N",
+          "objetivo": "ETI BERMEJO",
+          "celda": "X242"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -5,
+      "objetivo_id": -1,
+      "fecha": "2025-05-23",
+      "codigo_turno": "BERM",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "Z10",
+      "destinos_sugeridos": [
+        -9
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -5,
+          "objetivo_id": -9,
+          "fecha": "2025-05-23",
+          "codigo_turno": "D",
+          "objetivo": "ETI BERMEJO",
+          "celda": "Z242"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -5,
+      "objetivo_id": -1,
+      "fecha": "2025-05-24",
+      "codigo_turno": "BERM",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "AA10",
+      "destinos_sugeridos": [
+        -9
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -5,
+          "objetivo_id": -9,
+          "fecha": "2025-05-24",
+          "codigo_turno": "D",
+          "objetivo": "ETI BERMEJO",
+          "celda": "AA242"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -5,
+      "objetivo_id": -1,
+      "fecha": "2025-05-26",
+      "codigo_turno": "BERM",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "AC10",
+      "destinos_sugeridos": [
+        -9
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -5,
+          "objetivo_id": -9,
+          "fecha": "2025-05-26",
+          "codigo_turno": "D",
+          "objetivo": "ETI BERMEJO",
+          "celda": "AC242"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -5,
+      "objetivo_id": -1,
+      "fecha": "2025-05-27",
+      "codigo_turno": "BERM",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "AD10",
+      "destinos_sugeridos": [
+        -9
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -5,
+          "objetivo_id": -9,
+          "fecha": "2025-05-27",
+          "codigo_turno": "D",
+          "objetivo": "ETI BERMEJO",
+          "celda": "AD242"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -5,
+      "objetivo_id": -1,
+      "fecha": "2025-05-28",
+      "codigo_turno": "BERM",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "AE10",
+      "destinos_sugeridos": [
+        -9
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -5,
+          "objetivo_id": -9,
+          "fecha": "2025-05-28",
+          "codigo_turno": "N",
+          "objetivo": "ETI BERMEJO",
+          "celda": "AE242"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -5,
+      "objetivo_id": -1,
+      "fecha": "2025-05-29",
+      "codigo_turno": "BERM",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "AF10",
+      "destinos_sugeridos": [
+        -9
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -5,
+          "objetivo_id": -9,
+          "fecha": "2025-05-29",
+          "codigo_turno": "N",
+          "objetivo": "ETI BERMEJO",
+          "celda": "AF242"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -5,
+      "objetivo_id": -1,
+      "fecha": "2025-05-31",
+      "codigo_turno": "BERM",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "AH10",
+      "destinos_sugeridos": [
+        -9
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -5,
+          "objetivo_id": -9,
+          "fecha": "2025-05-31",
+          "codigo_turno": "N",
+          "objetivo": "ETI BERMEJO",
+          "celda": "AH242"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -6,
+      "objetivo_id": -1,
+      "fecha": "2025-05-05",
+      "codigo_turno": "ETI",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "H11",
+      "destinos_sugeridos": [
+        -5
+      ],
+      "presencias_en_destinos_sugeridos": [],
+      "estado": "referencia_sin_correspondencia_presencial_confirmable"
+    },
+    {
+      "usuario_id": -6,
+      "objetivo_id": -1,
+      "fecha": "2025-05-06",
+      "codigo_turno": "BERM",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "I11",
+      "destinos_sugeridos": [
+        -9
+      ],
+      "presencias_en_destinos_sugeridos": [],
+      "estado": "referencia_sin_correspondencia_presencial_confirmable"
+    },
+    {
+      "usuario_id": -6,
+      "objetivo_id": -1,
+      "fecha": "2025-05-08",
+      "codigo_turno": "ETI",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "K11",
+      "destinos_sugeridos": [
+        -5
+      ],
+      "presencias_en_destinos_sugeridos": [],
+      "estado": "referencia_sin_correspondencia_presencial_confirmable"
+    },
+    {
+      "usuario_id": -6,
+      "objetivo_id": -1,
+      "fecha": "2025-05-10",
+      "codigo_turno": "ETI",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "M11",
+      "destinos_sugeridos": [
+        -5
+      ],
+      "presencias_en_destinos_sugeridos": [],
+      "estado": "referencia_sin_correspondencia_presencial_confirmable"
+    },
+    {
+      "usuario_id": -6,
+      "objetivo_id": -1,
+      "fecha": "2025-05-14",
+      "codigo_turno": "ETI",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "Q11",
+      "destinos_sugeridos": [
+        -5
+      ],
+      "presencias_en_destinos_sugeridos": [],
+      "estado": "referencia_sin_correspondencia_presencial_confirmable"
+    },
+    {
+      "usuario_id": -6,
+      "objetivo_id": -1,
+      "fecha": "2025-05-15",
+      "codigo_turno": "BERM",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "R11",
+      "destinos_sugeridos": [
+        -9
+      ],
+      "presencias_en_destinos_sugeridos": [],
+      "estado": "referencia_sin_correspondencia_presencial_confirmable"
+    },
+    {
+      "usuario_id": -6,
+      "objetivo_id": -1,
+      "fecha": "2025-05-16",
+      "codigo_turno": "ETI",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "S11",
+      "destinos_sugeridos": [
+        -5
+      ],
+      "presencias_en_destinos_sugeridos": [],
+      "estado": "referencia_sin_correspondencia_presencial_confirmable"
+    },
+    {
+      "usuario_id": -6,
+      "objetivo_id": -1,
+      "fecha": "2025-05-17",
+      "codigo_turno": "ETI",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "T11",
+      "destinos_sugeridos": [
+        -5
+      ],
+      "presencias_en_destinos_sugeridos": [],
+      "estado": "referencia_sin_correspondencia_presencial_confirmable"
+    },
+    {
+      "usuario_id": -20,
+      "objetivo_id": -1,
+      "fecha": "2025-05-08",
+      "codigo_turno": "C5,6",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "K25",
+      "destinos_sugeridos": [
+        -12
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -20,
+          "objetivo_id": -12,
+          "fecha": "2025-05-08",
+          "codigo_turno": "D",
+          "objetivo": "CASA 5,6 GODOY CRUZ",
+          "celda": "K293"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -20,
+      "objetivo_id": -1,
+      "fecha": "2025-05-09",
+      "codigo_turno": "C5,6",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "L25",
+      "destinos_sugeridos": [
+        -12
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -20,
+          "objetivo_id": -12,
+          "fecha": "2025-05-09",
+          "codigo_turno": "D",
+          "objetivo": "CASA 5,6 GODOY CRUZ",
+          "celda": "L293"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -20,
+      "objetivo_id": -1,
+      "fecha": "2025-05-10",
+      "codigo_turno": "C5,6",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "M25",
+      "destinos_sugeridos": [
+        -12
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -20,
+          "objetivo_id": -12,
+          "fecha": "2025-05-10",
+          "codigo_turno": "D",
+          "objetivo": "CASA 5,6 GODOY CRUZ",
+          "celda": "M293"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -20,
+      "objetivo_id": -1,
+      "fecha": "2025-05-11",
+      "codigo_turno": "C5,6",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "N25",
+      "destinos_sugeridos": [
+        -12
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -20,
+          "objetivo_id": -12,
+          "fecha": "2025-05-11",
+          "codigo_turno": "D",
+          "objetivo": "CASA 5,6 GODOY CRUZ",
+          "celda": "N293"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -20,
+      "objetivo_id": -1,
+      "fecha": "2025-05-14",
+      "codigo_turno": "BERM",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "Q25",
+      "destinos_sugeridos": [
+        -9
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -20,
+          "objetivo_id": -9,
+          "fecha": "2025-05-14",
+          "codigo_turno": "N",
+          "objetivo": "ETI BERMEJO",
+          "celda": "Q247"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -20,
+      "objetivo_id": -1,
+      "fecha": "2025-05-15",
+      "codigo_turno": "C/5,6",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "R25",
+      "destinos_sugeridos": [
+        -12
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -20,
+          "objetivo_id": -12,
+          "fecha": "2025-05-15",
+          "codigo_turno": "N",
+          "objetivo": "CASA 5,6 GODOY CRUZ",
+          "celda": "R293"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -20,
+      "objetivo_id": -1,
+      "fecha": "2025-05-16",
+      "codigo_turno": "C5,6",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "S25",
+      "destinos_sugeridos": [
+        -12
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -20,
+          "objetivo_id": -12,
+          "fecha": "2025-05-16",
+          "codigo_turno": "N",
+          "objetivo": "CASA 5,6 GODOY CRUZ",
+          "celda": "S293"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -20,
+      "objetivo_id": -1,
+      "fecha": "2025-05-17",
+      "codigo_turno": "C5,6",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "T25",
+      "destinos_sugeridos": [
+        -12
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -20,
+          "objetivo_id": -12,
+          "fecha": "2025-05-17",
+          "codigo_turno": "N",
+          "objetivo": "CASA 5,6 GODOY CRUZ",
+          "celda": "T293"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -20,
+      "objetivo_id": -1,
+      "fecha": "2025-05-18",
+      "codigo_turno": "C5,6",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "U25",
+      "destinos_sugeridos": [
+        -12
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -20,
+          "objetivo_id": -12,
+          "fecha": "2025-05-18",
+          "codigo_turno": "N",
+          "objetivo": "CASA 5,6 GODOY CRUZ",
+          "celda": "U293"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -20,
+      "objetivo_id": -1,
+      "fecha": "2025-05-21",
+      "codigo_turno": "C5,6",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "X25",
+      "destinos_sugeridos": [
+        -12
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -20,
+          "objetivo_id": -12,
+          "fecha": "2025-05-21",
+          "codigo_turno": "D",
+          "objetivo": "CASA 5,6 GODOY CRUZ",
+          "celda": "X293"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -20,
+      "objetivo_id": -1,
+      "fecha": "2025-05-22",
+      "codigo_turno": "C5,6",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "Y25",
+      "destinos_sugeridos": [
+        -12
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -20,
+          "objetivo_id": -12,
+          "fecha": "2025-05-22",
+          "codigo_turno": "D",
+          "objetivo": "CASA 5,6 GODOY CRUZ",
+          "celda": "Y293"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -20,
+      "objetivo_id": -1,
+      "fecha": "2025-05-23",
+      "codigo_turno": "C5,6",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "Z25",
+      "destinos_sugeridos": [
+        -12
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -20,
+          "objetivo_id": -12,
+          "fecha": "2025-05-23",
+          "codigo_turno": "D",
+          "objetivo": "CASA 5,6 GODOY CRUZ",
+          "celda": "Z293"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -20,
+      "objetivo_id": -1,
+      "fecha": "2025-05-27",
+      "codigo_turno": "C/5,6",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "AD25",
+      "destinos_sugeridos": [
+        -12
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -20,
+          "objetivo_id": -12,
+          "fecha": "2025-05-27",
+          "codigo_turno": "D",
+          "objetivo": "CASA 5,6 GODOY CRUZ",
+          "celda": "AD293"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -20,
+      "objetivo_id": -1,
+      "fecha": "2025-05-28",
+      "codigo_turno": "C5,6",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "AE25",
+      "destinos_sugeridos": [
+        -12
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -20,
+          "objetivo_id": -12,
+          "fecha": "2025-05-28",
+          "codigo_turno": "D",
+          "objetivo": "CASA 5,6 GODOY CRUZ",
+          "celda": "AE293"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -20,
+      "objetivo_id": -1,
+      "fecha": "2025-05-29",
+      "codigo_turno": "C5,6",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "AF25",
+      "destinos_sugeridos": [
+        -12
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -20,
+          "objetivo_id": -12,
+          "fecha": "2025-05-29",
+          "codigo_turno": "N",
+          "objetivo": "CASA 5,6 GODOY CRUZ",
+          "celda": "AF293"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -22,
+      "objetivo_id": -1,
+      "fecha": "2025-05-04",
+      "codigo_turno": "H/8",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "G27",
+      "destinos_sugeridos": [
+        -10
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -22,
+          "objetivo_id": -10,
+          "fecha": "2025-05-04",
+          "codigo_turno": "D",
+          "objetivo": "HOGAR 8 MAIPU",
+          "celda": "G263"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -22,
+      "objetivo_id": -1,
+      "fecha": "2025-05-08",
+      "codigo_turno": "H/8",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "K27",
+      "destinos_sugeridos": [
+        -10
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -22,
+          "objetivo_id": -10,
+          "fecha": "2025-05-08",
+          "codigo_turno": "D",
+          "objetivo": "HOGAR 8 MAIPU",
+          "celda": "K263"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -22,
+      "objetivo_id": -1,
+      "fecha": "2025-05-09",
+      "codigo_turno": "H/8",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "L27",
+      "destinos_sugeridos": [
+        -10
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -22,
+          "objetivo_id": -10,
+          "fecha": "2025-05-09",
+          "codigo_turno": "D",
+          "objetivo": "HOGAR 8 MAIPU",
+          "celda": "L263"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -22,
+      "objetivo_id": -1,
+      "fecha": "2025-05-10",
+      "codigo_turno": "H/8",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "M27",
+      "destinos_sugeridos": [
+        -10
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -22,
+          "objetivo_id": -10,
+          "fecha": "2025-05-10",
+          "codigo_turno": "N",
+          "objetivo": "HOGAR 8 MAIPU",
+          "celda": "M263"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -22,
+      "objetivo_id": -1,
+      "fecha": "2025-05-11",
+      "codigo_turno": "H/8",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "N27",
+      "destinos_sugeridos": [
+        -10
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -22,
+          "objetivo_id": -10,
+          "fecha": "2025-05-11",
+          "codigo_turno": "N",
+          "objetivo": "HOGAR 8 MAIPU",
+          "celda": "N263"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -22,
+      "objetivo_id": -1,
+      "fecha": "2025-05-14",
+      "codigo_turno": "H/8",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "Q27",
+      "destinos_sugeridos": [
+        -10
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -22,
+          "objetivo_id": -10,
+          "fecha": "2025-05-14",
+          "codigo_turno": "D",
+          "objetivo": "HOGAR 8 MAIPU",
+          "celda": "Q263"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -22,
+      "objetivo_id": -1,
+      "fecha": "2025-05-16",
+      "codigo_turno": "H/8",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "S27",
+      "destinos_sugeridos": [
+        -10
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -22,
+          "objetivo_id": -10,
+          "fecha": "2025-05-16",
+          "codigo_turno": "N",
+          "objetivo": "HOGAR 8 MAIPU",
+          "celda": "S263"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -22,
+      "objetivo_id": -1,
+      "fecha": "2025-05-20",
+      "codigo_turno": "H/8",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "W27",
+      "destinos_sugeridos": [
+        -10
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -22,
+          "objetivo_id": -10,
+          "fecha": "2025-05-20",
+          "codigo_turno": "D",
+          "objetivo": "HOGAR 8 MAIPU",
+          "celda": "W263"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -22,
+      "objetivo_id": -1,
+      "fecha": "2025-05-21",
+      "codigo_turno": "H/8",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "X27",
+      "destinos_sugeridos": [
+        -10
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -22,
+          "objetivo_id": -10,
+          "fecha": "2025-05-21",
+          "codigo_turno": "D",
+          "objetivo": "HOGAR 8 MAIPU",
+          "celda": "X263"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -22,
+      "objetivo_id": -1,
+      "fecha": "2025-05-22",
+      "codigo_turno": "H/8",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "Y27",
+      "destinos_sugeridos": [
+        -10
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -22,
+          "objetivo_id": -10,
+          "fecha": "2025-05-22",
+          "codigo_turno": "N",
+          "objetivo": "HOGAR 8 MAIPU",
+          "celda": "Y263"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -22,
+      "objetivo_id": -1,
+      "fecha": "2025-05-23",
+      "codigo_turno": "H/8",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "Z27",
+      "destinos_sugeridos": [
+        -10
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -22,
+          "objetivo_id": -10,
+          "fecha": "2025-05-23",
+          "codigo_turno": "N",
+          "objetivo": "HOGAR 8 MAIPU",
+          "celda": "Z263"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -22,
+      "objetivo_id": -1,
+      "fecha": "2025-05-26",
+      "codigo_turno": "H/8",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "AC27",
+      "destinos_sugeridos": [
+        -10
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -22,
+          "objetivo_id": -10,
+          "fecha": "2025-05-26",
+          "codigo_turno": "D",
+          "objetivo": "HOGAR 8 MAIPU",
+          "celda": "AC263"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -22,
+      "objetivo_id": -1,
+      "fecha": "2025-05-28",
+      "codigo_turno": "H/8",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "AE27",
+      "destinos_sugeridos": [
+        -10
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -22,
+          "objetivo_id": -10,
+          "fecha": "2025-05-28",
+          "codigo_turno": "N",
+          "objetivo": "HOGAR 8 MAIPU",
+          "celda": "AE263"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -22,
+      "objetivo_id": -1,
+      "fecha": "2025-05-31",
+      "codigo_turno": "H/8",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "AH27",
+      "destinos_sugeridos": [
+        -10
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -22,
+          "objetivo_id": -10,
+          "fecha": "2025-05-31",
+          "codigo_turno": "N",
+          "objetivo": "HOGAR 8 MAIPU",
+          "celda": "AH263"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -29,
+      "objetivo_id": -1,
+      "fecha": "2025-05-05",
+      "codigo_turno": "BERM",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "H34",
+      "destinos_sugeridos": [
+        -9
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -29,
+          "objetivo_id": -9,
+          "fecha": "2025-05-05",
+          "codigo_turno": "N",
+          "objetivo": "ETI BERMEJO",
+          "celda": "H249"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -45,
+      "objetivo_id": -1,
+      "fecha": "2025-05-02",
+      "codigo_turno": "C5,6",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "E50",
+      "destinos_sugeridos": [
+        -12
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -45,
+          "objetivo_id": -12,
+          "fecha": "2025-05-02",
+          "codigo_turno": "N",
+          "objetivo": "CASA 5,6 GODOY CRUZ",
+          "celda": "E294"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -45,
+      "objetivo_id": -1,
+      "fecha": "2025-05-03",
+      "codigo_turno": "C5,6",
+      "objetivo": "HOSPITAL NOTTI",
+      "celda": "F50",
+      "destinos_sugeridos": [
+        -12
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -45,
+          "objetivo_id": -12,
+          "fecha": "2025-05-03",
+          "codigo_turno": "N",
+          "objetivo": "CASA 5,6 GODOY CRUZ",
+          "celda": "F294"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -46,
+      "objetivo_id": -2,
+      "fecha": "2025-05-03",
+      "codigo_turno": "SALA",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "F62",
+      "destinos_sugeridos": [
+        -6
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -46,
+          "objetivo_id": -6,
+          "fecha": "2025-05-03",
+          "codigo_turno": "12H",
+          "objetivo": "SALA DE PALMIRA Y GUEMES",
+          "celda": "F197"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -46,
+      "objetivo_id": -2,
+      "fecha": "2025-05-04",
+      "codigo_turno": "SALA",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "G62",
+      "destinos_sugeridos": [
+        -6
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -46,
+          "objetivo_id": -6,
+          "fecha": "2025-05-04",
+          "codigo_turno": "12H",
+          "objetivo": "SALA DE PALMIRA Y GUEMES",
+          "celda": "G197"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -46,
+      "objetivo_id": -2,
+      "fecha": "2025-05-06",
+      "codigo_turno": "SALA",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "I62",
+      "destinos_sugeridos": [
+        -6
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -46,
+          "objetivo_id": -6,
+          "fecha": "2025-05-06",
+          "codigo_turno": "8H",
+          "objetivo": "SALA DE PALMIRA Y GUEMES",
+          "celda": "I197"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -46,
+      "objetivo_id": -2,
+      "fecha": "2025-05-10",
+      "codigo_turno": "SALA",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "M62",
+      "destinos_sugeridos": [
+        -6
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -46,
+          "objetivo_id": -6,
+          "fecha": "2025-05-10",
+          "codigo_turno": "8H",
+          "objetivo": "SALA DE PALMIRA Y GUEMES",
+          "celda": "M197"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -46,
+      "objetivo_id": -2,
+      "fecha": "2025-05-12",
+      "codigo_turno": "SALA",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "O62",
+      "destinos_sugeridos": [
+        -6
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -46,
+          "objetivo_id": -6,
+          "fecha": "2025-05-12",
+          "codigo_turno": "8H",
+          "objetivo": "SALA DE PALMIRA Y GUEMES",
+          "celda": "O197"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -46,
+      "objetivo_id": -2,
+      "fecha": "2025-05-13",
+      "codigo_turno": "SALA",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "P62",
+      "destinos_sugeridos": [
+        -6
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -46,
+          "objetivo_id": -6,
+          "fecha": "2025-05-13",
+          "codigo_turno": "8H",
+          "objetivo": "SALA DE PALMIRA Y GUEMES",
+          "celda": "P197"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -46,
+      "objetivo_id": -2,
+      "fecha": "2025-05-15",
+      "codigo_turno": "SALA",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "R62",
+      "destinos_sugeridos": [
+        -6
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -46,
+          "objetivo_id": -6,
+          "fecha": "2025-05-15",
+          "codigo_turno": "12H",
+          "objetivo": "SALA DE PALMIRA Y GUEMES",
+          "celda": "R197"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -46,
+      "objetivo_id": -2,
+      "fecha": "2025-05-16",
+      "codigo_turno": "SALA",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "S62",
+      "destinos_sugeridos": [
+        -6
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -46,
+          "objetivo_id": -6,
+          "fecha": "2025-05-16",
+          "codigo_turno": "12H",
+          "objetivo": "SALA DE PALMIRA Y GUEMES",
+          "celda": "S197"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -46,
+      "objetivo_id": -2,
+      "fecha": "2025-05-19",
+      "codigo_turno": "SALA",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "V62",
+      "destinos_sugeridos": [
+        -6
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -46,
+          "objetivo_id": -6,
+          "fecha": "2025-05-19",
+          "codigo_turno": "8H",
+          "objetivo": "SALA DE PALMIRA Y GUEMES",
+          "celda": "V197"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -46,
+      "objetivo_id": -2,
+      "fecha": "2025-05-20",
+      "codigo_turno": "SALA",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "W62",
+      "destinos_sugeridos": [
+        -6
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -46,
+          "objetivo_id": -6,
+          "fecha": "2025-05-20",
+          "codigo_turno": "12H",
+          "objetivo": "SALA DE PALMIRA Y GUEMES",
+          "celda": "W197"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -46,
+      "objetivo_id": -2,
+      "fecha": "2025-05-22",
+      "codigo_turno": "SALA",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "Y62",
+      "destinos_sugeridos": [
+        -6
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -46,
+          "objetivo_id": -6,
+          "fecha": "2025-05-22",
+          "codigo_turno": "8H",
+          "objetivo": "SALA DE PALMIRA Y GUEMES",
+          "celda": "Y197"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -46,
+      "objetivo_id": -2,
+      "fecha": "2025-05-25",
+      "codigo_turno": "SALA",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "AB62",
+      "destinos_sugeridos": [
+        -6
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -46,
+          "objetivo_id": -6,
+          "fecha": "2025-05-25",
+          "codigo_turno": "12H",
+          "objetivo": "SALA DE PALMIRA Y GUEMES",
+          "celda": "AB197"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -46,
+      "objetivo_id": -2,
+      "fecha": "2025-05-26",
+      "codigo_turno": "SALA",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "AC62",
+      "destinos_sugeridos": [
+        -6
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -46,
+          "objetivo_id": -6,
+          "fecha": "2025-05-26",
+          "codigo_turno": "12H",
+          "objetivo": "SALA DE PALMIRA Y GUEMES",
+          "celda": "AC197"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -46,
+      "objetivo_id": -2,
+      "fecha": "2025-05-29",
+      "codigo_turno": "SALA",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "AF62",
+      "destinos_sugeridos": [
+        -6
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -46,
+          "objetivo_id": -6,
+          "fecha": "2025-05-29",
+          "codigo_turno": "8H",
+          "objetivo": "SALA DE PALMIRA Y GUEMES",
+          "celda": "AF197"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -46,
+      "objetivo_id": -2,
+      "fecha": "2025-05-30",
+      "codigo_turno": "SALA",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "AG62",
+      "destinos_sugeridos": [
+        -6
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -46,
+          "objetivo_id": -6,
+          "fecha": "2025-05-30",
+          "codigo_turno": "8H",
+          "objetivo": "SALA DE PALMIRA Y GUEMES",
+          "celda": "AG197"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -46,
+      "objetivo_id": -2,
+      "fecha": "2025-05-31",
+      "codigo_turno": "SALA",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "AH62",
+      "destinos_sugeridos": [
+        -6
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -46,
+          "objetivo_id": -6,
+          "fecha": "2025-05-31",
+          "codigo_turno": "8H",
+          "objetivo": "SALA DE PALMIRA Y GUEMES",
+          "celda": "AH197"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -63,
+      "objetivo_id": -2,
+      "fecha": "2025-05-14",
+      "codigo_turno": "METR",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "Q79",
+      "destinos_sugeridos": [
+        -8
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -63,
+          "objetivo_id": -8,
+          "fecha": "2025-05-14",
+          "codigo_turno": "D",
+          "objetivo": "METRAUX",
+          "celda": "Q226"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -63,
+      "objetivo_id": -2,
+      "fecha": "2025-05-15",
+      "codigo_turno": "METR",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "R79",
+      "destinos_sugeridos": [
+        -8
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -63,
+          "objetivo_id": -8,
+          "fecha": "2025-05-15",
+          "codigo_turno": "D",
+          "objetivo": "METRAUX",
+          "celda": "R226"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -63,
+      "objetivo_id": -2,
+      "fecha": "2025-05-16",
+      "codigo_turno": "METR",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "S79",
+      "destinos_sugeridos": [
+        -8
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -63,
+          "objetivo_id": -8,
+          "fecha": "2025-05-16",
+          "codigo_turno": "D",
+          "objetivo": "METRAUX",
+          "celda": "S226"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -63,
+      "objetivo_id": -2,
+      "fecha": "2025-05-17",
+      "codigo_turno": "METR",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "T79",
+      "destinos_sugeridos": [
+        -8
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -63,
+          "objetivo_id": -8,
+          "fecha": "2025-05-17",
+          "codigo_turno": "N",
+          "objetivo": "METRAUX",
+          "celda": "T226"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -63,
+      "objetivo_id": -2,
+      "fecha": "2025-05-18",
+      "codigo_turno": "METR",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "U79",
+      "destinos_sugeridos": [
+        -8
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -63,
+          "objetivo_id": -8,
+          "fecha": "2025-05-18",
+          "codigo_turno": "N",
+          "objetivo": "METRAUX",
+          "celda": "U226"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -63,
+      "objetivo_id": -2,
+      "fecha": "2025-05-23",
+      "codigo_turno": "METR",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "Z79",
+      "destinos_sugeridos": [
+        -8
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -63,
+          "objetivo_id": -8,
+          "fecha": "2025-05-23",
+          "codigo_turno": "D",
+          "objetivo": "METRAUX",
+          "celda": "Z226"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -63,
+      "objetivo_id": -2,
+      "fecha": "2025-05-24",
+      "codigo_turno": "METR",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "AA79",
+      "destinos_sugeridos": [
+        -8
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -63,
+          "objetivo_id": -8,
+          "fecha": "2025-05-24",
+          "codigo_turno": "D",
+          "objetivo": "METRAUX",
+          "celda": "AA226"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -63,
+      "objetivo_id": -2,
+      "fecha": "2025-05-25",
+      "codigo_turno": "METR",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "AB79",
+      "destinos_sugeridos": [
+        -8
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -63,
+          "objetivo_id": -8,
+          "fecha": "2025-05-25",
+          "codigo_turno": "N",
+          "objetivo": "METRAUX",
+          "celda": "AB226"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -63,
+      "objetivo_id": -2,
+      "fecha": "2025-05-26",
+      "codigo_turno": "METR",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "AC79",
+      "destinos_sugeridos": [
+        -8
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -63,
+          "objetivo_id": -8,
+          "fecha": "2025-05-26",
+          "codigo_turno": "N",
+          "objetivo": "METRAUX",
+          "celda": "AC226"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -63,
+      "objetivo_id": -2,
+      "fecha": "2025-05-27",
+      "codigo_turno": "METR",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "AD79",
+      "destinos_sugeridos": [
+        -8
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -63,
+          "objetivo_id": -8,
+          "fecha": "2025-05-27",
+          "codigo_turno": "N",
+          "objetivo": "METRAUX",
+          "celda": "AD226"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -64,
+      "objetivo_id": -2,
+      "fecha": "2025-05-08",
+      "codigo_turno": "METR",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "K80",
+      "destinos_sugeridos": [
+        -8
+      ],
+      "presencias_en_destinos_sugeridos": [],
+      "estado": "referencia_sin_correspondencia_presencial_confirmable"
+    },
+    {
+      "usuario_id": -64,
+      "objetivo_id": -2,
+      "fecha": "2025-05-09",
+      "codigo_turno": "METR",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "L80",
+      "destinos_sugeridos": [
+        -8
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -64,
+          "objetivo_id": -8,
+          "fecha": "2025-05-09",
+          "codigo_turno": "N",
+          "objetivo": "METRAUX",
+          "celda": "L228"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -64,
+      "objetivo_id": -2,
+      "fecha": "2025-05-10",
+      "codigo_turno": "METR",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "M80",
+      "destinos_sugeridos": [
+        -8
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -64,
+          "objetivo_id": -8,
+          "fecha": "2025-05-10",
+          "codigo_turno": "N",
+          "objetivo": "METRAUX",
+          "celda": "M228"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -64,
+      "objetivo_id": -2,
+      "fecha": "2025-05-13",
+      "codigo_turno": "METR",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "P80",
+      "destinos_sugeridos": [
+        -8
+      ],
+      "presencias_en_destinos_sugeridos": [],
+      "estado": "referencia_sin_correspondencia_presencial_confirmable"
+    },
+    {
+      "usuario_id": -66,
+      "objetivo_id": -2,
+      "fecha": "2025-05-12",
+      "codigo_turno": "METR",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "O82",
+      "destinos_sugeridos": [
+        -8
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -66,
+          "objetivo_id": -8,
+          "fecha": "2025-05-12",
+          "codigo_turno": "D",
+          "objetivo": "METRAUX",
+          "celda": "O229"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -66,
+      "objetivo_id": -2,
+      "fecha": "2025-05-13",
+      "codigo_turno": "METR",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "P82",
+      "destinos_sugeridos": [
+        -8
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -66,
+          "objetivo_id": -8,
+          "fecha": "2025-05-13",
+          "codigo_turno": "N",
+          "objetivo": "METRAUX",
+          "celda": "P229"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -27,
+      "objetivo_id": -2,
+      "fecha": "2025-05-08",
+      "codigo_turno": "NOTT",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "K83",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -27,
+          "objetivo_id": -1,
+          "fecha": "2025-05-08",
+          "codigo_turno": "N",
+          "objetivo": "HOSPITAL NOTTI",
+          "celda": "K32"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -27,
+      "objetivo_id": -2,
+      "fecha": "2025-05-09",
+      "codigo_turno": "NOTT",
+      "objetivo": "HOSPITAL PERRUPATO",
+      "celda": "L83",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -27,
+          "objetivo_id": -1,
+          "fecha": "2025-05-09",
+          "codigo_turno": "N",
+          "objetivo": "HOSPITAL NOTTI",
+          "celda": "L32"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -47,
+      "objetivo_id": -3,
+      "fecha": "2025-05-13",
+      "codigo_turno": "PERR",
+      "objetivo": "HOSPITAL SAPORITI",
+      "celda": "P114",
+      "destinos_sugeridos": [
+        -2
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -47,
+          "objetivo_id": -2,
+          "fecha": "2025-05-13",
+          "codigo_turno": "9H",
+          "objetivo": "HOSPITAL PERRUPATO",
+          "celda": "P63"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -52,
+      "objetivo_id": -3,
+      "fecha": "2025-05-11",
+      "codigo_turno": "PERR",
+      "objetivo": "HOSPITAL SAPORITI",
+      "celda": "N120",
+      "destinos_sugeridos": [
+        -2
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -52,
+          "objetivo_id": -2,
+          "fecha": "2025-05-11",
+          "codigo_turno": "10H",
+          "objetivo": "HOSPITAL PERRUPATO",
+          "celda": "N68"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -100,
+      "objetivo_id": -4,
+      "fecha": "2025-05-13",
+      "codigo_turno": "TUP",
+      "objetivo": "HOPITAL TAGARELLI",
+      "celda": "P145",
+      "destinos_sugeridos": [
+        -13
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -100,
+          "objetivo_id": -13,
+          "fecha": "2025-05-13",
+          "codigo_turno": "N",
+          "objetivo": "ETI TUPUNGATO",
+          "celda": "P304"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -101,
+      "objetivo_id": -4,
+      "fecha": "2025-05-10",
+      "codigo_turno": "TUP",
+      "objetivo": "HOPITAL TAGARELLI",
+      "celda": "M146",
+      "destinos_sugeridos": [
+        -13
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -101,
+          "objetivo_id": -13,
+          "fecha": "2025-05-10",
+          "codigo_turno": "N",
+          "objetivo": "ETI TUPUNGATO",
+          "celda": "M305"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -101,
+      "objetivo_id": -4,
+      "fecha": "2025-05-14",
+      "codigo_turno": "TUP",
+      "objetivo": "HOPITAL TAGARELLI",
+      "celda": "Q146",
+      "destinos_sugeridos": [
+        -13
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -101,
+          "objetivo_id": -13,
+          "fecha": "2025-05-14",
+          "codigo_turno": "N",
+          "objetivo": "ETI TUPUNGATO",
+          "celda": "Q305"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -101,
+      "objetivo_id": -4,
+      "fecha": "2025-05-15",
+      "codigo_turno": "TUP",
+      "objetivo": "HOPITAL TAGARELLI",
+      "celda": "R146",
+      "destinos_sugeridos": [
+        -13
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -101,
+          "objetivo_id": -13,
+          "fecha": "2025-05-15",
+          "codigo_turno": "N",
+          "objetivo": "ETI TUPUNGATO",
+          "celda": "R305"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -104,
+      "objetivo_id": -4,
+      "fecha": "2025-05-11",
+      "codigo_turno": "TUP",
+      "objetivo": "HOPITAL TAGARELLI",
+      "celda": "N149",
+      "destinos_sugeridos": [
+        -13
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -104,
+          "objetivo_id": -13,
+          "fecha": "2025-05-11",
+          "codigo_turno": "N",
+          "objetivo": "ETI TUPUNGATO",
+          "celda": "N307"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -104,
+      "objetivo_id": -4,
+      "fecha": "2025-05-12",
+      "codigo_turno": "TUP",
+      "objetivo": "HOPITAL TAGARELLI",
+      "celda": "O149",
+      "destinos_sugeridos": [
+        -13
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -104,
+          "objetivo_id": -13,
+          "fecha": "2025-05-12",
+          "codigo_turno": "N",
+          "objetivo": "ETI TUPUNGATO",
+          "celda": "O307"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -105,
+      "objetivo_id": -4,
+      "fecha": "2025-05-10",
+      "codigo_turno": "TUP",
+      "objetivo": "HOPITAL TAGARELLI",
+      "celda": "M150",
+      "destinos_sugeridos": [
+        -13
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -105,
+          "objetivo_id": -13,
+          "fecha": "2025-05-10",
+          "codigo_turno": "D",
+          "objetivo": "ETI TUPUNGATO",
+          "celda": "M306"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -105,
+      "objetivo_id": -4,
+      "fecha": "2025-05-20",
+      "codigo_turno": "TUP",
+      "objetivo": "HOPITAL TAGARELLI",
+      "celda": "W150",
+      "destinos_sugeridos": [
+        -13
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -105,
+          "objetivo_id": -13,
+          "fecha": "2025-05-20",
+          "codigo_turno": "N",
+          "objetivo": "ETI TUPUNGATO",
+          "celda": "W306"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -105,
+      "objetivo_id": -4,
+      "fecha": "2025-05-21",
+      "codigo_turno": "TUP",
+      "objetivo": "HOPITAL TAGARELLI",
+      "celda": "X150",
+      "destinos_sugeridos": [
+        -13
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -105,
+          "objetivo_id": -13,
+          "fecha": "2025-05-21",
+          "codigo_turno": "N",
+          "objetivo": "ETI TUPUNGATO",
+          "celda": "X306"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -105,
+      "objetivo_id": -4,
+      "fecha": "2025-05-26",
+      "codigo_turno": "TUP",
+      "objetivo": "HOPITAL TAGARELLI",
+      "celda": "AC150",
+      "destinos_sugeridos": [
+        -13
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -105,
+          "objetivo_id": -13,
+          "fecha": "2025-05-26",
+          "codigo_turno": "D",
+          "objetivo": "ETI TUPUNGATO",
+          "celda": "AC306"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -105,
+      "objetivo_id": -4,
+      "fecha": "2025-05-27",
+      "codigo_turno": "TUP",
+      "objetivo": "HOPITAL TAGARELLI",
+      "celda": "AD150",
+      "destinos_sugeridos": [
+        -13
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -105,
+          "objetivo_id": -13,
+          "fecha": "2025-05-27",
+          "codigo_turno": "D",
+          "objetivo": "ETI TUPUNGATO",
+          "celda": "AD306"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -107,
+      "objetivo_id": -4,
+      "fecha": "2025-05-22",
+      "codigo_turno": "OFI",
+      "objetivo": "HOPITAL TAGARELLI",
+      "celda": "Y152",
+      "destinos_sugeridos": [],
+      "presencias_en_destinos_sugeridos": [],
+      "estado": "referencia_sin_correspondencia_presencial_confirmable"
+    },
+    {
+      "usuario_id": -109,
+      "objetivo_id": -4,
+      "fecha": "2025-05-11",
+      "codigo_turno": "TUP",
+      "objetivo": "HOPITAL TAGARELLI",
+      "celda": "N154",
+      "destinos_sugeridos": [
+        -13
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -109,
+          "objetivo_id": -13,
+          "fecha": "2025-05-11",
+          "codigo_turno": "D",
+          "objetivo": "ETI TUPUNGATO",
+          "celda": "N310"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -109,
+      "objetivo_id": -4,
+      "fecha": "2025-05-12",
+      "codigo_turno": "TUP",
+      "objetivo": "HOPITAL TAGARELLI",
+      "celda": "O154",
+      "destinos_sugeridos": [
+        -13
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -109,
+          "objetivo_id": -13,
+          "fecha": "2025-05-12",
+          "codigo_turno": "D",
+          "objetivo": "ETI TUPUNGATO",
+          "celda": "O310"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -109,
+      "objetivo_id": -4,
+      "fecha": "2025-05-13",
+      "codigo_turno": "TUP",
+      "objetivo": "HOPITAL TAGARELLI",
+      "celda": "P154",
+      "destinos_sugeridos": [
+        -13
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -109,
+          "objetivo_id": -13,
+          "fecha": "2025-05-13",
+          "codigo_turno": "D",
+          "objetivo": "ETI TUPUNGATO",
+          "celda": "P310"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -109,
+      "objetivo_id": -4,
+      "fecha": "2025-05-14",
+      "codigo_turno": "TUP",
+      "objetivo": "HOPITAL TAGARELLI",
+      "celda": "Q154",
+      "destinos_sugeridos": [
+        -13
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -109,
+          "objetivo_id": -13,
+          "fecha": "2025-05-14",
+          "codigo_turno": "D",
+          "objetivo": "ETI TUPUNGATO",
+          "celda": "Q310"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -31,
+      "objetivo_id": -5,
+      "fecha": "2025-05-04",
+      "codigo_turno": "C/5,6",
+      "objetivo": "DINAF-ETI",
+      "celda": "G166",
+      "destinos_sugeridos": [
+        -12
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -31,
+          "objetivo_id": -12,
+          "fecha": "2025-05-04",
+          "codigo_turno": "D",
+          "objetivo": "CASA 5,6 GODOY CRUZ",
+          "celda": "G289"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -31,
+      "objetivo_id": -5,
+      "fecha": "2025-05-11",
+      "codigo_turno": "NOTT",
+      "objetivo": "DINAF-ETI",
+      "celda": "N166",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -31,
+          "objetivo_id": -1,
+          "fecha": "2025-05-11",
+          "codigo_turno": "9RF",
+          "objetivo": "HOSPITAL NOTTI",
+          "celda": "N36"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -111,
+      "objetivo_id": -5,
+      "fecha": "2025-05-01",
+      "codigo_turno": "H/8",
+      "objetivo": "DINAF-ETI",
+      "celda": "D167",
+      "destinos_sugeridos": [
+        -10
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -111,
+          "objetivo_id": -10,
+          "fecha": "2025-05-01",
+          "codigo_turno": "N",
+          "objetivo": "HOGAR 8 MAIPU",
+          "celda": "D260"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -111,
+      "objetivo_id": -5,
+      "fecha": "2025-05-10",
+      "codigo_turno": "NOTT",
+      "objetivo": "DINAF-ETI",
+      "celda": "M167",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [],
+      "estado": "referencia_sin_correspondencia_presencial_confirmable"
+    },
+    {
+      "usuario_id": -33,
+      "objetivo_id": -5,
+      "fecha": "2025-05-02",
+      "codigo_turno": "C/5,6",
+      "objetivo": "DINAF-ETI",
+      "celda": "E168",
+      "destinos_sugeridos": [
+        -12
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -33,
+          "objetivo_id": -12,
+          "fecha": "2025-05-02",
+          "codigo_turno": "D",
+          "objetivo": "CASA 5,6 GODOY CRUZ",
+          "celda": "E290"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -33,
+      "objetivo_id": -5,
+      "fecha": "2025-05-11",
+      "codigo_turno": "BERM",
+      "objetivo": "DINAF-ETI",
+      "celda": "N168",
+      "destinos_sugeridos": [
+        -9
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -33,
+          "objetivo_id": -9,
+          "fecha": "2025-05-11",
+          "codigo_turno": "D",
+          "objetivo": "ETI BERMEJO",
+          "celda": "N244"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -33,
+      "objetivo_id": -5,
+      "fecha": "2025-05-25",
+      "codigo_turno": "NOTT",
+      "objetivo": "DINAF-ETI",
+      "celda": "AB168",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -33,
+          "objetivo_id": -1,
+          "fecha": "2025-05-25",
+          "codigo_turno": "9RF",
+          "objetivo": "HOSPITAL NOTTI",
+          "celda": "AB38"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -112,
+      "objetivo_id": -5,
+      "fecha": "2025-05-02",
+      "codigo_turno": "NOTT",
+      "objetivo": "DINAF-ETI",
+      "celda": "E170",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [],
+      "estado": "referencia_sin_correspondencia_presencial_confirmable"
+    },
+    {
+      "usuario_id": -112,
+      "objetivo_id": -5,
+      "fecha": "2025-05-03",
+      "codigo_turno": "NOTT",
+      "objetivo": "DINAF-ETI",
+      "celda": "F170",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [],
+      "estado": "referencia_sin_correspondencia_presencial_confirmable"
+    },
+    {
+      "usuario_id": -112,
+      "objetivo_id": -5,
+      "fecha": "2025-05-04",
+      "codigo_turno": "NOTT",
+      "objetivo": "DINAF-ETI",
+      "celda": "G170",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [],
+      "estado": "referencia_sin_correspondencia_presencial_confirmable"
+    },
+    {
+      "usuario_id": -112,
+      "objetivo_id": -5,
+      "fecha": "2025-05-06",
+      "codigo_turno": "BERM",
+      "objetivo": "DINAF-ETI",
+      "celda": "I170",
+      "destinos_sugeridos": [
+        -9
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -112,
+          "objetivo_id": -9,
+          "fecha": "2025-05-06",
+          "codigo_turno": "N",
+          "objetivo": "ETI BERMEJO",
+          "celda": "I245"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -112,
+      "objetivo_id": -5,
+      "fecha": "2025-05-11",
+      "codigo_turno": "NOTT",
+      "objetivo": "DINAF-ETI",
+      "celda": "N170",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [],
+      "estado": "referencia_sin_correspondencia_presencial_confirmable"
+    },
+    {
+      "usuario_id": -112,
+      "objetivo_id": -5,
+      "fecha": "2025-05-12",
+      "codigo_turno": "NOTT",
+      "objetivo": "DINAF-ETI",
+      "celda": "O170",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [],
+      "estado": "referencia_sin_correspondencia_presencial_confirmable"
+    },
+    {
+      "usuario_id": -112,
+      "objetivo_id": -5,
+      "fecha": "2025-05-15",
+      "codigo_turno": "BERM",
+      "objetivo": "DINAF-ETI",
+      "celda": "R170",
+      "destinos_sugeridos": [
+        -9
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -112,
+          "objetivo_id": -9,
+          "fecha": "2025-05-15",
+          "codigo_turno": "N",
+          "objetivo": "ETI BERMEJO",
+          "celda": "R245"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -112,
+      "objetivo_id": -5,
+      "fecha": "2025-05-17",
+      "codigo_turno": "BERM",
+      "objetivo": "DINAF-ETI",
+      "celda": "T170",
+      "destinos_sugeridos": [
+        -9
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -112,
+          "objetivo_id": -9,
+          "fecha": "2025-05-17",
+          "codigo_turno": "N",
+          "objetivo": "ETI BERMEJO",
+          "celda": "T245"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -112,
+      "objetivo_id": -5,
+      "fecha": "2025-05-31",
+      "codigo_turno": "NOTT",
+      "objetivo": "DINAF-ETI",
+      "celda": "AH170",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [],
+      "estado": "referencia_sin_correspondencia_presencial_confirmable"
+    },
+    {
+      "usuario_id": -34,
+      "objetivo_id": -5,
+      "fecha": "2025-05-01",
+      "codigo_turno": "H/8",
+      "objetivo": "DINAF-ETI",
+      "celda": "D171",
+      "destinos_sugeridos": [
+        -10
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -34,
+          "objetivo_id": -10,
+          "fecha": "2025-05-01",
+          "codigo_turno": "D",
+          "objetivo": "HOGAR 8 MAIPU",
+          "celda": "D262"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -34,
+      "objetivo_id": -5,
+      "fecha": "2025-05-10",
+      "codigo_turno": "NOTT",
+      "objetivo": "DINAF-ETI",
+      "celda": "M171",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -34,
+          "objetivo_id": -1,
+          "fecha": "2025-05-10",
+          "codigo_turno": "9RF",
+          "objetivo": "HOSPITAL NOTTI",
+          "celda": "M39"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -34,
+      "objetivo_id": -5,
+      "fecha": "2025-05-24",
+      "codigo_turno": "NOTT",
+      "objetivo": "DINAF-ETI",
+      "celda": "AA171",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -34,
+          "objetivo_id": -1,
+          "fecha": "2025-05-24",
+          "codigo_turno": "D",
+          "objetivo": "HOSPITAL NOTTI",
+          "celda": "AA39"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -35,
+      "objetivo_id": -5,
+      "fecha": "2025-05-02",
+      "codigo_turno": "H/8",
+      "objetivo": "DINAF-ETI",
+      "celda": "E174",
+      "destinos_sugeridos": [
+        -10
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -35,
+          "objetivo_id": -10,
+          "fecha": "2025-05-02",
+          "codigo_turno": "D",
+          "objetivo": "HOGAR 8 MAIPU",
+          "celda": "E264"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -35,
+      "objetivo_id": -5,
+      "fecha": "2025-05-10",
+      "codigo_turno": "NOTT",
+      "objetivo": "DINAF-ETI",
+      "celda": "M174",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -35,
+          "objetivo_id": -1,
+          "fecha": "2025-05-10",
+          "codigo_turno": "N",
+          "objetivo": "HOSPITAL NOTTI",
+          "celda": "M40"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -35,
+      "objetivo_id": -5,
+      "fecha": "2025-05-31",
+      "codigo_turno": "H/8",
+      "objetivo": "DINAF-ETI",
+      "celda": "AH174",
+      "destinos_sugeridos": [
+        -10
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -35,
+          "objetivo_id": -10,
+          "fecha": "2025-05-31",
+          "codigo_turno": "D",
+          "objetivo": "HOGAR 8 MAIPU",
+          "celda": "AH264"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -36,
+      "objetivo_id": -5,
+      "fecha": "2025-05-10",
+      "codigo_turno": "NOTT",
+      "objetivo": "DINAF-ETI",
+      "celda": "M175",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -36,
+          "objetivo_id": -1,
+          "fecha": "2025-05-10",
+          "codigo_turno": "N",
+          "objetivo": "HOSPITAL NOTTI",
+          "celda": "M41"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -115,
+      "objetivo_id": -5,
+      "fecha": "2025-05-01",
+      "codigo_turno": "METR",
+      "objetivo": "DINAF-ETI",
+      "celda": "D176",
+      "destinos_sugeridos": [
+        -8
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -115,
+          "objetivo_id": -8,
+          "fecha": "2025-05-01",
+          "codigo_turno": "N",
+          "objetivo": "METRAUX",
+          "celda": "D223"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -115,
+      "objetivo_id": -5,
+      "fecha": "2025-05-03",
+      "codigo_turno": "METR",
+      "objetivo": "DINAF-ETI",
+      "celda": "F176",
+      "destinos_sugeridos": [
+        -8
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -115,
+          "objetivo_id": -8,
+          "fecha": "2025-05-03",
+          "codigo_turno": "D",
+          "objetivo": "METRAUX",
+          "celda": "F223"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -46,
+      "objetivo_id": -6,
+      "fecha": "2025-05-01",
+      "codigo_turno": "PERR",
+      "objetivo": "SALA DE PALMIRA Y GUEMES",
+      "celda": "D197",
+      "destinos_sugeridos": [
+        -2
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -46,
+          "objetivo_id": -2,
+          "fecha": "2025-05-01",
+          "codigo_turno": "12H",
+          "objetivo": "HOSPITAL PERRUPATO",
+          "celda": "D62"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -46,
+      "objetivo_id": -6,
+      "fecha": "2025-05-05",
+      "codigo_turno": "PERR",
+      "objetivo": "SALA DE PALMIRA Y GUEMES",
+      "celda": "H197",
+      "destinos_sugeridos": [
+        -2
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -46,
+          "objetivo_id": -2,
+          "fecha": "2025-05-05",
+          "codigo_turno": "N",
+          "objetivo": "HOSPITAL PERRUPATO",
+          "celda": "H62"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -46,
+      "objetivo_id": -6,
+      "fecha": "2025-05-07",
+      "codigo_turno": "PERR",
+      "objetivo": "SALA DE PALMIRA Y GUEMES",
+      "celda": "J197",
+      "destinos_sugeridos": [
+        -2
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -46,
+          "objetivo_id": -2,
+          "fecha": "2025-05-07",
+          "codigo_turno": "N",
+          "objetivo": "HOSPITAL PERRUPATO",
+          "celda": "J62"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -46,
+      "objetivo_id": -6,
+      "fecha": "2025-05-11",
+      "codigo_turno": "PERR",
+      "objetivo": "SALA DE PALMIRA Y GUEMES",
+      "celda": "N197",
+      "destinos_sugeridos": [
+        -2
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -46,
+          "objetivo_id": -2,
+          "fecha": "2025-05-11",
+          "codigo_turno": "N",
+          "objetivo": "HOSPITAL PERRUPATO",
+          "celda": "N62"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -46,
+      "objetivo_id": -6,
+      "fecha": "2025-05-17",
+      "codigo_turno": "PERR",
+      "objetivo": "SALA DE PALMIRA Y GUEMES",
+      "celda": "T197",
+      "destinos_sugeridos": [
+        -2
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -46,
+          "objetivo_id": -2,
+          "fecha": "2025-05-17",
+          "codigo_turno": "N",
+          "objetivo": "HOSPITAL PERRUPATO",
+          "celda": "T62"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -46,
+      "objetivo_id": -6,
+      "fecha": "2025-05-21",
+      "codigo_turno": "PERR",
+      "objetivo": "SALA DE PALMIRA Y GUEMES",
+      "celda": "X197",
+      "destinos_sugeridos": [
+        -2
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -46,
+          "objetivo_id": -2,
+          "fecha": "2025-05-21",
+          "codigo_turno": "N",
+          "objetivo": "HOSPITAL PERRUPATO",
+          "celda": "X62"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -46,
+      "objetivo_id": -6,
+      "fecha": "2025-05-27",
+      "codigo_turno": "PERR",
+      "objetivo": "SALA DE PALMIRA Y GUEMES",
+      "celda": "AD197",
+      "destinos_sugeridos": [
+        -2
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -46,
+          "objetivo_id": -2,
+          "fecha": "2025-05-27",
+          "codigo_turno": "N",
+          "objetivo": "HOSPITAL PERRUPATO",
+          "celda": "AD62"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -63,
+      "objetivo_id": -8,
+      "fecha": "2025-05-07",
+      "codigo_turno": "BERM",
+      "objetivo": "METRAUX",
+      "celda": "J226",
+      "destinos_sugeridos": [
+        -9
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -63,
+          "objetivo_id": -9,
+          "fecha": "2025-05-07",
+          "codigo_turno": "N",
+          "objetivo": "ETI BERMEJO",
+          "celda": "J248"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -63,
+      "objetivo_id": -8,
+      "fecha": "2025-05-20",
+      "codigo_turno": "PERR",
+      "objetivo": "METRAUX",
+      "celda": "W226",
+      "destinos_sugeridos": [
+        -2
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -63,
+          "objetivo_id": -2,
+          "fecha": "2025-05-20",
+          "codigo_turno": "N",
+          "objetivo": "HOSPITAL PERRUPATO",
+          "celda": "W79"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -63,
+      "objetivo_id": -8,
+      "fecha": "2025-05-21",
+      "codigo_turno": "PERR",
+      "objetivo": "METRAUX",
+      "celda": "X226",
+      "destinos_sugeridos": [
+        -2
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -63,
+          "objetivo_id": -2,
+          "fecha": "2025-05-21",
+          "codigo_turno": "N",
+          "objetivo": "HOSPITAL PERRUPATO",
+          "celda": "X79"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -63,
+      "objetivo_id": -8,
+      "fecha": "2025-05-30",
+      "codigo_turno": "PERR",
+      "objetivo": "METRAUX",
+      "celda": "AG226",
+      "destinos_sugeridos": [
+        -2
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -63,
+          "objetivo_id": -2,
+          "fecha": "2025-05-30",
+          "codigo_turno": "D",
+          "objetivo": "HOSPITAL PERRUPATO",
+          "celda": "AG79"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -63,
+      "objetivo_id": -8,
+      "fecha": "2025-05-31",
+      "codigo_turno": "PERR",
+      "objetivo": "METRAUX",
+      "celda": "AH226",
+      "destinos_sugeridos": [
+        -2
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -63,
+          "objetivo_id": -2,
+          "fecha": "2025-05-31",
+          "codigo_turno": "D",
+          "objetivo": "HOSPITAL PERRUPATO",
+          "celda": "AH79"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -64,
+      "objetivo_id": -8,
+      "fecha": "2025-05-03",
+      "codigo_turno": "PERR",
+      "objetivo": "METRAUX",
+      "celda": "F228",
+      "destinos_sugeridos": [
+        -2
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -64,
+          "objetivo_id": -2,
+          "fecha": "2025-05-03",
+          "codigo_turno": "D",
+          "objetivo": "HOSPITAL PERRUPATO",
+          "celda": "F80"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -64,
+      "objetivo_id": -8,
+      "fecha": "2025-05-04",
+      "codigo_turno": "PERR",
+      "objetivo": "METRAUX",
+      "celda": "G228",
+      "destinos_sugeridos": [
+        -2
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -64,
+          "objetivo_id": -2,
+          "fecha": "2025-05-04",
+          "codigo_turno": "D",
+          "objetivo": "HOSPITAL PERRUPATO",
+          "celda": "G80"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -64,
+      "objetivo_id": -8,
+      "fecha": "2025-05-05",
+      "codigo_turno": "PERR",
+      "objetivo": "METRAUX",
+      "celda": "H228",
+      "destinos_sugeridos": [
+        -2
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -64,
+          "objetivo_id": -2,
+          "fecha": "2025-05-05",
+          "codigo_turno": "D",
+          "objetivo": "HOSPITAL PERRUPATO",
+          "celda": "H80"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -64,
+      "objetivo_id": -8,
+      "fecha": "2025-05-06",
+      "codigo_turno": "PERR",
+      "objetivo": "METRAUX",
+      "celda": "I228",
+      "destinos_sugeridos": [
+        -2
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -64,
+          "objetivo_id": -2,
+          "fecha": "2025-05-06",
+          "codigo_turno": "N",
+          "objetivo": "HOSPITAL PERRUPATO",
+          "celda": "I80"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -64,
+      "objetivo_id": -8,
+      "fecha": "2025-05-11",
+      "codigo_turno": "PERR",
+      "objetivo": "METRAUX",
+      "celda": "N228",
+      "destinos_sugeridos": [
+        -2
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -64,
+          "objetivo_id": -2,
+          "fecha": "2025-05-11",
+          "codigo_turno": "N",
+          "objetivo": "HOSPITAL PERRUPATO",
+          "celda": "N80"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -66,
+      "objetivo_id": -8,
+      "fecha": "2025-05-14",
+      "codigo_turno": "PERR",
+      "objetivo": "METRAUX",
+      "celda": "Q229",
+      "destinos_sugeridos": [
+        -2
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -66,
+          "objetivo_id": -2,
+          "fecha": "2025-05-14",
+          "codigo_turno": "N",
+          "objetivo": "HOSPITAL PERRUPATO",
+          "celda": "Q82"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -125,
+      "objetivo_id": -9,
+      "fecha": "2025-05-02",
+      "codigo_turno": "NOTT",
+      "objetivo": "ETI BERMEJO",
+      "celda": "E240",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [],
+      "estado": "referencia_sin_correspondencia_presencial_confirmable"
+    },
+    {
+      "usuario_id": -125,
+      "objetivo_id": -9,
+      "fecha": "2025-05-07",
+      "codigo_turno": "NOTT",
+      "objetivo": "ETI BERMEJO",
+      "celda": "J240",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [],
+      "estado": "referencia_sin_correspondencia_presencial_confirmable"
+    },
+    {
+      "usuario_id": -127,
+      "objetivo_id": -10,
+      "fecha": "2025-05-09",
+      "codigo_turno": "BERM",
+      "objetivo": "HOGAR 8 MAIPU",
+      "celda": "L261",
+      "destinos_sugeridos": [
+        -9
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -127,
+          "objetivo_id": -9,
+          "fecha": "2025-05-09",
+          "codigo_turno": "D",
+          "objetivo": "ETI BERMEJO",
+          "celda": "L243"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -22,
+      "objetivo_id": -10,
+      "fecha": "2025-05-03",
+      "codigo_turno": "NOTT",
+      "objetivo": "HOGAR 8 MAIPU",
+      "celda": "F263",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -22,
+          "objetivo_id": -1,
+          "fecha": "2025-05-03",
+          "codigo_turno": "D",
+          "objetivo": "HOSPITAL NOTTI",
+          "celda": "F27"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -22,
+      "objetivo_id": -10,
+      "fecha": "2025-05-05",
+      "codigo_turno": "NOTT",
+      "objetivo": "HOGAR 8 MAIPU",
+      "celda": "H263",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -22,
+          "objetivo_id": -1,
+          "fecha": "2025-05-05",
+          "codigo_turno": "D",
+          "objetivo": "HOSPITAL NOTTI",
+          "celda": "H27"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -22,
+      "objetivo_id": -10,
+      "fecha": "2025-05-06",
+      "codigo_turno": "NOTT",
+      "objetivo": "HOGAR 8 MAIPU",
+      "celda": "I263",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -22,
+          "objetivo_id": -1,
+          "fecha": "2025-05-06",
+          "codigo_turno": "D",
+          "objetivo": "HOSPITAL NOTTI",
+          "celda": "I27"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -22,
+      "objetivo_id": -10,
+      "fecha": "2025-05-15",
+      "codigo_turno": "NOTT",
+      "objetivo": "HOGAR 8 MAIPU",
+      "celda": "R263",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -22,
+          "objetivo_id": -1,
+          "fecha": "2025-05-15",
+          "codigo_turno": "D",
+          "objetivo": "HOSPITAL NOTTI",
+          "celda": "R27"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -22,
+      "objetivo_id": -10,
+      "fecha": "2025-05-17",
+      "codigo_turno": "NOTT",
+      "objetivo": "HOGAR 8 MAIPU",
+      "celda": "T263",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -22,
+          "objetivo_id": -1,
+          "fecha": "2025-05-17",
+          "codigo_turno": "N",
+          "objetivo": "HOSPITAL NOTTI",
+          "celda": "T27"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -22,
+      "objetivo_id": -10,
+      "fecha": "2025-05-19",
+      "codigo_turno": "NOTT",
+      "objetivo": "HOGAR 8 MAIPU",
+      "celda": "V263",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -22,
+          "objetivo_id": -1,
+          "fecha": "2025-05-19",
+          "codigo_turno": "D",
+          "objetivo": "HOSPITAL NOTTI",
+          "celda": "V27"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -22,
+      "objetivo_id": -10,
+      "fecha": "2025-05-27",
+      "codigo_turno": "NOTT",
+      "objetivo": "HOGAR 8 MAIPU",
+      "celda": "AD263",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -22,
+          "objetivo_id": -1,
+          "fecha": "2025-05-27",
+          "codigo_turno": "D",
+          "objetivo": "HOSPITAL NOTTI",
+          "celda": "AD27"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -22,
+      "objetivo_id": -10,
+      "fecha": "2025-05-29",
+      "codigo_turno": "NOTT",
+      "objetivo": "HOGAR 8 MAIPU",
+      "celda": "AF263",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -22,
+          "objetivo_id": -1,
+          "fecha": "2025-05-29",
+          "codigo_turno": "N",
+          "objetivo": "HOSPITAL NOTTI",
+          "celda": "AF27"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -129,
+      "objetivo_id": -11,
+      "fecha": "2025-05-27",
+      "codigo_turno": "NOTT",
+      "objetivo": "CASA MC DONALDS",
+      "celda": "AD278",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [],
+      "estado": "referencia_sin_correspondencia_presencial_confirmable"
+    },
+    {
+      "usuario_id": -44,
+      "objetivo_id": -11,
+      "fecha": "2025-05-30",
+      "codigo_turno": "NOTT",
+      "objetivo": "CASA MC DONALDS",
+      "celda": "AG279",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -44,
+          "objetivo_id": -1,
+          "fecha": "2025-05-30",
+          "codigo_turno": "D",
+          "objetivo": "HOSPITAL NOTTI",
+          "celda": "AG49"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -20,
+      "objetivo_id": -12,
+      "fecha": "2025-05-02",
+      "codigo_turno": "NOTT",
+      "objetivo": "CASA 5,6 GODOY CRUZ",
+      "celda": "E293",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -20,
+          "objetivo_id": -1,
+          "fecha": "2025-05-02",
+          "codigo_turno": "D",
+          "objetivo": "HOSPITAL NOTTI",
+          "celda": "E25"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -20,
+      "objetivo_id": -12,
+      "fecha": "2025-05-03",
+      "codigo_turno": "NOTT",
+      "objetivo": "CASA 5,6 GODOY CRUZ",
+      "celda": "F293",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -20,
+          "objetivo_id": -1,
+          "fecha": "2025-05-03",
+          "codigo_turno": "D",
+          "objetivo": "HOSPITAL NOTTI",
+          "celda": "F25"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -20,
+      "objetivo_id": -12,
+      "fecha": "2025-05-04",
+      "codigo_turno": "NOTT",
+      "objetivo": "CASA 5,6 GODOY CRUZ",
+      "celda": "G293",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -20,
+          "objetivo_id": -1,
+          "fecha": "2025-05-04",
+          "codigo_turno": "N",
+          "objetivo": "HOSPITAL NOTTI",
+          "celda": "G25"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -20,
+      "objetivo_id": -12,
+      "fecha": "2025-05-05",
+      "codigo_turno": "NOTT",
+      "objetivo": "CASA 5,6 GODOY CRUZ",
+      "celda": "H293",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -20,
+          "objetivo_id": -1,
+          "fecha": "2025-05-05",
+          "codigo_turno": "N",
+          "objetivo": "HOSPITAL NOTTI",
+          "celda": "H25"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -20,
+      "objetivo_id": -12,
+      "fecha": "2025-05-07",
+      "codigo_turno": "NOTT",
+      "objetivo": "CASA 5,6 GODOY CRUZ",
+      "celda": "J293",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -20,
+          "objetivo_id": -1,
+          "fecha": "2025-05-07",
+          "codigo_turno": "D",
+          "objetivo": "HOSPITAL NOTTI",
+          "celda": "J25"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -20,
+      "objetivo_id": -12,
+      "fecha": "2025-05-14",
+      "codigo_turno": "BERM",
+      "objetivo": "CASA 5,6 GODOY CRUZ",
+      "celda": "Q293",
+      "destinos_sugeridos": [
+        -9
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -20,
+          "objetivo_id": -9,
+          "fecha": "2025-05-14",
+          "codigo_turno": "N",
+          "objetivo": "ETI BERMEJO",
+          "celda": "Q247"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -20,
+      "objetivo_id": -12,
+      "fecha": "2025-05-24",
+      "codigo_turno": "NOTT",
+      "objetivo": "CASA 5,6 GODOY CRUZ",
+      "celda": "AA293",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -20,
+          "objetivo_id": -1,
+          "fecha": "2025-05-24",
+          "codigo_turno": "N",
+          "objetivo": "HOSPITAL NOTTI",
+          "celda": "AA25"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    },
+    {
+      "usuario_id": -20,
+      "objetivo_id": -12,
+      "fecha": "2025-05-25",
+      "codigo_turno": "NOTT",
+      "objetivo": "CASA 5,6 GODOY CRUZ",
+      "celda": "AB293",
+      "destinos_sugeridos": [
+        -1
+      ],
+      "presencias_en_destinos_sugeridos": [
+        {
+          "usuario_id": -20,
+          "objetivo_id": -1,
+          "fecha": "2025-05-25",
+          "codigo_turno": "N",
+          "objetivo": "HOSPITAL NOTTI",
+          "celda": "AB25"
+        }
+      ],
+      "estado": "referencia_con_asignacion_en_destino_sugerido"
+    }
+  ]
+}
