@@ -398,8 +398,8 @@ class ControladorCronogramas
                 if ($salida <= $entrada) continue; // jornada inválida
 
                 // 🧠 Hasta acá tenemos la jornada real: entrada → salida
-                $hDiur = self::calcularHorasEnVentana($entrada, $salida, '06:00:00', '21:59:59');
-                $hNoct = self::calcularHorasEnVentana($entrada, $salida, '22:00:00', '05:59:59');
+                $hDiur = self::calcularHorasEnVentana($entrada, $salida, '06:00:00', '22:00:00');
+                $hNoct = self::calcularHorasEnVentana($entrada, $salida, '22:00:00', '06:00:00');
 
                 $sumDiur += round($hDiur, 2);
                 $sumNoct += round($hNoct, 2);
@@ -426,22 +426,20 @@ class ControladorCronogramas
         if ($start >= $end) return 0;
 
         $segundosEnVentana = 0;
-        $cursor = clone $start;
+        $cruzaMedianoche = $horaHasta <= $horaDesde;
+        $cursor = (clone $start)->setTime(0, 0);
+        if ($cruzaMedianoche) $cursor->modify('-1 day');
+        $ultimoDia = (clone $end)->setTime(0, 0);
 
-        while ($cursor < $end) {
+        while ($cursor <= $ultimoDia) {
             $fechaBase = $cursor->format('Y-m-d');
 
             $inicioVentana = new DateTime("$fechaBase $horaDesde");
             $finVentana    = new DateTime("$fechaBase $horaHasta");
 
             // Si la ventana cruza medianoche (ej: 22:00 → 05:59)
-            if ($finVentana <= $inicioVentana) {
+            if ($cruzaMedianoche) {
                 $finVentana->modify('+1 day');
-            }
-
-            // Si el fin real del rango cruzado también supera el fin total
-            if ($finVentana > $end) {
-                $finVentana = clone $end;
             }
 
             // Calcular intersección entre la jornada y la ventana
@@ -621,8 +619,8 @@ class ControladorCronogramas
                             ];
                         }
 
-                        $hDiur = self::calcularHorasEnVentana($inicio, $fin, '06:00', '21:59');
-                        $hNoct = self::calcularHorasEnVentana($inicio, $fin, '22:00', '05:59');
+                        $hDiur = self::calcularHorasEnVentana($inicio, $fin, '06:00', '22:00');
+                        $hNoct = self::calcularHorasEnVentana($inicio, $fin, '22:00', '06:00');
 
                         $diurnas += round($hDiur, 2);
                         $nocturnas += round($hNoct, 2);
@@ -635,8 +633,8 @@ class ControladorCronogramas
                     $entradaReal = new DateTime($j['entrada']);
                     $salidaReal = new DateTime($j['salida']);
 
-                    $hDiur = self::calcularHorasEnVentana($entradaReal, $salidaReal, '06:00', '21:59');
-                    $hNoct = self::calcularHorasEnVentana($entradaReal, $salidaReal, '22:00', '05:59');
+                    $hDiur = self::calcularHorasEnVentana($entradaReal, $salidaReal, '06:00', '22:00');
+                    $hNoct = self::calcularHorasEnVentana($entradaReal, $salidaReal, '22:00', '06:00');
 
                     $diurnas += round($hDiur, 2);
                     $nocturnas += round($hNoct, 2);

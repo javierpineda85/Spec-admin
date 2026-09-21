@@ -1,0 +1,48 @@
+{
+    "casos": 7,
+    "correctos": 7,
+    "detalle": [
+        {
+            "caso": "madrugada_completa",
+            "correcto": true,
+            "esperado": 6,
+            "obtenido": 6
+        },
+        {
+            "caso": "turno_nocturno_completo",
+            "correcto": true,
+            "esperado": 8,
+            "obtenido": 8
+        },
+        {
+            "caso": "turno_mixto_nocturnas",
+            "correcto": true,
+            "esperado": 1,
+            "obtenido": 1
+        },
+        {
+            "caso": "turno_mixto_diurnas",
+            "correcto": true,
+            "esperado": 1,
+            "obtenido": 1
+        },
+        {
+            "caso": "jornada_multidia_nocturnas",
+            "correcto": true,
+            "esperado": 16,
+            "obtenido": 16
+        },
+        {
+            "caso": "jornada_multidia_diurnas",
+            "correcto": true,
+            "esperado": 20,
+            "obtenido": 20
+        },
+        {
+            "caso": "rango_invalido",
+            "correcto": true,
+            "esperado": 0,
+            "obtenido": 0
+        }
+    ]
+}
