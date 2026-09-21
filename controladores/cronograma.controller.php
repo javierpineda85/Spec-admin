@@ -2,593 +2,238 @@
 
 require_once('modelos/cronograma.modelo.php');
 require_once 'modelos/turnos.modelo.php';
+require_once __DIR__ . '/../modelos/cronograma_validacion.modelo.php';
 class ControladorCronogramas
 {
     public static function ctrGuardarCronograma()
     {
-
-        //Auth::check('cronogramas', 'ctrGuardarCronograma');
         Auth::check('cronogramas', 'vistaCrearCronograma');
-
         if (!isset($_POST['guardar_cronograma'])) return;
-
-        $objetivoId = intval($_POST['objetivo'] ?? 0);
-        $mes        = $_POST['mes'] ?? '';
-
-        if (!$objetivoId || !$mes) {
-            ToastifyController::error("Faltan datos de objetivo o mes.");
-            return;
-        }
-
-        $db = Conexion::conectar();
         try {
-            if (!$db) {
-                throw new Exception("No hay conexión activa a la base de datos.");
-            }
-            $_SESSION['cronograma_post'] = $_POST; // Guardamos los datos al inicio del try
-
-            $db->beginTransaction();
-            // Eliminamos datos previos del mismo mes y objetivo
-            if (!ModeloTurnos::mdlEliminarTurnosPorMes($objetivoId, $mes)) {
-                throw new Exception("No se pudieron eliminar los datos existentes del cronograma.");
-            }
-
-            $guardiasPorDia = [];   // Para validar mínimo 3 guardias por día
-            $horasPorUsuario = [];  // Para alertar por exceso o defecto
-
-            $turnosProcesados = [];
-            $horasSiglasObjetivo = self::obtenerHorasSiglasObjetivo($objetivoId);
-
-            foreach (['vigilador', 'referente'] as $rol) {
-                if (!isset($_POST[$rol])) continue;
-
-                // ===================== VIGILADORES (1 fila por usuario) =====================
-                if (isset($_POST['vigilador']) && is_array($_POST['vigilador'])) {
-                    foreach ($_POST['vigilador'] as $usuarioId => $dias) {
-                        $usuarioId = intval($usuarioId);
-                        if (!$usuarioId) continue;
-
-                        foreach ($dias as $dia => $codigo) {
-                            if ($dia === 'usuario') continue;
-                            $codigo = trim((string)$codigo);
-                            if ($codigo === '') continue;
-
-                            $fecha = $mes . '-' . str_pad($dia, 2, '0', STR_PAD_LEFT);
-                            $codigo = strtoupper($codigo);
-                            $hsCodigo = self::horasCodigoCronograma($codigo, $horasSiglasObjetivo);
-
-                            // Para validaciones
-                            if (in_array($codigo, ['D', 'N', 'GP/D', 'GP/N'], true)) {
-                                $guardiasPorDia[$fecha][] = $codigo;
-                            }
-
-                            if ($hsCodigo > 0) {
-                                $horasPorUsuario[$usuarioId] = ($horasPorUsuario[$usuarioId] ?? 0) + $hsCodigo;
-                            }
-
-                            $tipo = self::esLicencia($codigo) ? 'Licencia' : 'Normal';
-
-                            $turnosProcesados[] = [
-                                'usuario_id'   => $usuarioId,
-                                'objetivo_id'  => $objetivoId,
-                                'fecha'        => $fecha,
-                                'rol'          => 'Vigilador',
-                                'tipo_turno'   => $tipo,
-                                'codigo_turno' => $codigo
-                            ];
-                        }
-                    }
-                }
-
-                // ===================== REFERENTES (1 fila por usuario) =====================
-                if (isset($_POST['referente']) && is_array($_POST['referente'])) {
-                    foreach ($_POST['referente'] as $usuarioId => $dias) {
-                        $usuarioId = intval($usuarioId);
-                        if (!$usuarioId) continue;
-
-                        foreach ($dias as $dia => $codigo) {
-                            if ($dia === 'usuario') continue;
-                            $codigo = trim((string)$codigo);
-                            if ($codigo === '') continue;
-
-                            $fecha = $mes . '-' . str_pad($dia, 2, '0', STR_PAD_LEFT);
-                            $codigo = strtoupper($codigo);
-                            $hsCodigo = self::horasCodigoCronograma($codigo, $horasSiglasObjetivo);
-
-                            if (in_array($codigo, ['D', 'N', 'GP/D', 'GP/N'], true)) {
-                                $guardiasPorDia[$fecha][] = $codigo;
-                            }
-
-                            if ($hsCodigo > 0) {
-                                $horasPorUsuario[$usuarioId] = ($horasPorUsuario[$usuarioId] ?? 0) + $hsCodigo;
-                            }
-
-                            $tipo = self::esLicencia($codigo) ? 'Licencia' : 'Normal';
-
-                            $turnosProcesados[] = [
-                                'usuario_id'   => $usuarioId,
-                                'objetivo_id'  => $objetivoId,
-                                'fecha'        => $fecha,
-                                'rol'          => 'Referente',
-                                'tipo_turno'   => $tipo,
-                                'codigo_turno' => $codigo
-                            ];
-                        }
-                    }
-                }
-
-                break;
-            }
-
-            // Validación 1: mínimo 3 tipos de guardia por día (D, N, Licencias)
-            foreach ($guardiasPorDia as $fecha => $guardias) {
-                // Eliminamos duplicados para contar solo los tipos únicos de guardia
-                $tiposPresentes = array_unique($guardias);
-
-                // Si hay menos de 3 tipos (por ejemplo, solo D y N), no cumple
-                if (count($tiposPresentes) < 3) {
-                    ToastifyController::warning("Advertencia: el día $fecha tiene menos de 3 tipos de guardias.");
-                }
-            }
-
-            // Validación 2: horas mensuales por usuario
-            foreach ($horasPorUsuario as $uid => $totalHs) {
-                if ($totalHs < 200 || $totalHs > 240) {
-                    $msg = $totalHs < 200 ? "menos de 200" : "más de 240";
-                    // Buscamos nombre del usuario
-                    $stmt = $db->prepare("SELECT apellido, nombre FROM usuarios WHERE idUsuario = ?");
-                    $stmt->execute([$uid]);
-                    $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
-
-                    $nombreCompleto = $usuario ? "{$usuario['apellido']}, {$usuario['nombre']}" : "ID $uid";
-                    ToastifyController::warning("El usuario $nombreCompleto tiene $msg hs de servicio ($totalHs hs).");
-                }
-            }
-
-            // Guardar turnos
-            foreach ($turnosProcesados as $t) {
-                $respuesta = ModeloTurnos::mdlGuardarTurno('turnos', $t);
-                if ($respuesta !== 'ok') {
-                    /* Buscar nombre del usuario
-                    $stmt = $db->prepare("SELECT apellido, nombre FROM usuarios WHERE idUsuario = ?");
-                    $stmt->execute([$t['usuario_id']]);
-                    $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
-
-                    $nombreCompleto = $usuario ? "{$usuario['apellido']}, {$usuario['nombre']}" : "ID {$t['usuario_id']}";
-                   throw new Exception("Turno duplicado para {$nombreCompleto}. Por favor verifica el cronograma");*/
-                    throw new Exception($respuesta);
-                }
-            }
-
-            // Guardamos las horas en sesión para mostrarlas visualmente en la vista
-            $_SESSION['horas_usuario'] = $horasPorUsuario;
-            $db->commit();
-
-            ToastifyController::success("Cronograma guardado correctamente.");
-            header("Location: " . $_SERVER['REQUEST_URI']);
-            unset($_SESSION['cronograma_post']); // Limpiamos la sesión al finalizar correctamente
-            unset($_SESSION['horas_usuario']);
-
-
-            exit;
-        } catch (Exception $e) {
-            if ($db && $db->inTransaction()) {
-                $db->rollBack();
-            }
-            if ($e->getMessage() !== 'duplicado') {
-                ToastifyController::error("Error al guardar turno del usuario " . $t['usuario_id'] . $e->getMessage());
-                $_SESSION['cronograma_error'] = $_POST; // guardar datos para repoblar
-                header('Location: ?r=crear_cronograma');
-                exit;
-            } else {
-                ToastifyController::success("Cronograma cargado exitosamente");
-                $_SESSION['cronograma_error'] = $_POST; // guardar datos para repoblar
-                header('Location: ?r=crear_cronograma');
-                exit;
-            }
-
-
-            /* Reintentamos mostrando la vista ya poblada
-            self::vistaCrearCronograma();
-            return;*/
-            /*$_SESSION['cronograma_error'] = $_POST; // guardar datos para repoblar
+            $datos = self::leerPost($_POST);
+            $_SESSION['cronograma_post'] = $datos;
+            $avisos = self::guardarDatos($datos);
+            $_SESSION['cronograma_avisos'] = $avisos;
+            unset($_SESSION['cronograma_post'], $_SESSION['cronograma_error']);
+            ToastifyController::success('Cronograma guardado correctamente.');
+            header('Location: ?r=crear_cronograma&objetivo=' . (int)$_POST['objetivo'] . '&mes=' . rawurlencode($_POST['mes']));
+        } catch (Throwable $e) {
+            ToastifyController::error($e->getMessage());
+            $_SESSION['cronograma_error'] = $datos ?? $_POST;
             header('Location: ?r=crear_cronograma');
-            exit;*/
+        }
+        exit;
+    }
+
+    private static function leerPost(array $post): array
+    {
+        if (isset($post['cronograma_json'])) {
+            $filas = json_decode($post['cronograma_json'], true, 64, JSON_THROW_ON_ERROR);
+            if (!is_array($filas)) throw new InvalidArgumentException('La tabla enviada no es válida.');
+            $post['vigilador'] = $filas['vigilador'] ?? [];
+            $post['referente'] = $filas['referente'] ?? [];
+            unset($post['cronograma_json']);
+        }
+        return $post;
+    }
+
+    /** Reemplazo atómico. Ningún error elimina el cronograma anterior. */
+    public static function guardarDatos(array $post): array
+    {
+        $post = self::leerPost($post);
+        $objetivo = filter_var($post['objetivo'] ?? null, FILTER_VALIDATE_INT);
+        $mes = (string)($post['mes'] ?? '');
+        $inicio = CronogramaReglas::mes($mes);
+        if (!$objetivo || $objetivo < 1) throw new InvalidArgumentException('Selecciona un objetivo válido.');
+        if (($post['cronograma_completo'] ?? '') !== '1'
+            || (string)($post['cronograma_objetivo'] ?? '') !== (string)$objetivo
+            || ($post['cronograma_mes'] ?? '') !== $mes) {
+            throw new InvalidArgumentException('La tabla no corresponde al objetivo y mes, o el envío está incompleto. Vuelve a cargar el cronograma.');
+        }
+        $turnos = [];
+        $usuarios = [];
+        $filas = [];
+        foreach (['vigilador' => 'Vigilador', 'referente' => 'Referente'] as $key => $rol) {
+            if (!is_array($post[$key] ?? [])) throw new InvalidArgumentException('La nómina enviada no es válida.');
+            foreach ($post[$key] ?? [] as $uid => $dias) {
+                $uid = filter_var($uid, FILTER_VALIDATE_INT);
+                if (!$uid || $uid < 1 || !is_array($dias) || (int)($dias['usuario'] ?? 0) !== $uid) throw new InvalidArgumentException('Hay una fila sin usuario válido.');
+                if (isset($filas[$uid])) throw new InvalidArgumentException('Un usuario aparece en más de una fila del objetivo.');
+                $filas[$uid] = $rol;
+                for ($dia = 1; $dia <= (int)$inicio->format('t'); $dia++) {
+                    if (!array_key_exists($dia, $dias)) throw new InvalidArgumentException('El envío está incompleto: faltan días de la tabla.');
+                }
+                foreach ($dias as $dia => $valor) {
+                    if ($dia === 'usuario') continue;
+                    if (!ctype_digit((string)$dia) || (int)$dia < 1 || (int)$dia > (int)$inicio->format('t') || !is_string($valor)) throw new InvalidArgumentException('Hay una fecha o código inválido.');
+                    $codigo = CronogramaReglas::codigo($valor);
+                    if ($codigo === '') continue;
+                    if (!preg_match('/^[A-Z0-9\/,\.]{1,5}$/D', $codigo)) throw new InvalidArgumentException('Código de turno inválido: ' . $codigo);
+                    if (preg_match('/^([0-9]+(?:[.,][0-9]+)?)H$/D', $codigo, $m) && ((float)str_replace(',', '.', $m[1]) <= 0 || (float)str_replace(',', '.', $m[1]) > 24)) throw new InvalidArgumentException('Las jornadas deben durar más de 0 y hasta 24 horas.');
+                    $turnos[] = ['usuario_id' => $uid, 'objetivo_id' => $objetivo, 'fecha' => sprintf('%s-%02d', $mes, $dia),
+                        'rol' => $rol, 'tipo_turno' => self::esLicencia($codigo) ? 'Licencia' : 'Normal', 'codigo_turno' => $codigo];
+                    $usuarios[$uid] = $uid;
+                }
+            }
+        }
+        if (!$turnos) throw new InvalidArgumentException('El cronograma está vacío. No se eliminaron los turnos existentes.');
+        if (count($filas) !== (int)($post['cronograma_filas'] ?? -1)) throw new InvalidArgumentException('La cantidad de filas enviada está incompleta.');
+        $db = Conexion::conectar();
+        if (!$db) throw new RuntimeException('No hay conexión activa a la base de datos.');
+        $engine = $db->query("SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'turnos'")->fetchColumn();
+        if (strtoupper((string)$engine) !== 'INNODB') throw new RuntimeException('La tabla de turnos necesita la migración transaccional antes de guardar.');
+        try {
+            $db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
+            $db->beginTransaction();
+            $s = $db->prepare('SELECT idObjetivo FROM objetivos WHERE idObjetivo = ? AND activo = 1 FOR UPDATE');
+            $s->execute([$objetivo]);
+            if (!$s->fetchColumn()) throw new InvalidArgumentException('El objetivo no existe o está inactivo.');
+            $previos = ModeloTurnos::mdlBuscarTurnosPorMes($objetivo, $mes);
+            foreach ($previos as $t) $usuarios[(int)$t['usuario_id']] = (int)$t['usuario_id'];
+            sort($usuarios, SORT_NUMERIC);
+            $s = $db->prepare('SELECT idUsuario FROM usuarios WHERE idUsuario IN (' . implode(',', array_fill(0, count($usuarios), '?')) . ') ORDER BY idUsuario FOR UPDATE');
+            $s->execute(array_values($usuarios));
+            $s->fetchAll(PDO::FETCH_COLUMN);
+            $permitidos = [];
+            foreach (['Vigilador' => ['objetivo_vigiladores', 'vigilador_id', 'operativo'], 'Referente' => ['objetivo_referentes', 'referente_id', 'referente']] as $rol => [$tabla, $campo, $categoria]) {
+                $s = $db->prepare("SELECT u.idUsuario FROM usuarios u JOIN roles r ON r.id = u.rol_id JOIN $tabla v ON v.$campo = u.idUsuario WHERE v.objetivo_id = ? AND u.activo = 1 AND r.categoria = ?");
+                $s->execute([$objetivo, $categoria]);
+                foreach ($s->fetchAll(PDO::FETCH_COLUMN) as $id) $permitidos[$rol][(int)$id] = true;
+            }
+            $historicos = [];
+            foreach ($previos as $t) {
+                $permitidos[$t['rol']][(int)$t['usuario_id']] = true;
+                $historicos[$t['usuario_id'] . ':' . $t['fecha']] = $t['codigo_turno'];
+                if (!isset($filas[(int)$t['usuario_id']])) throw new InvalidArgumentException('Falta una persona del cronograma guardado. Recarga la tabla para conservar su historial.');
+            }
+            $validador = new ModeloCronogramaValidacion($db);
+            $horasSiglas = self::obtenerHorasSiglasObjetivo($objetivo);
+            $horas = array_fill_keys(array_keys($filas), 0);
+            $avisos = [];
+            foreach ($turnos as $t) {
+                if (!isset($permitidos[$t['rol']][$t['usuario_id']])) throw new InvalidArgumentException('Un usuario no pertenece a la nómina del objetivo.');
+                $categoria = CronogramaReglas::categoria($t['codigo_turno'], $objetivo, $validador->siglas());
+                if ($categoria === 'desconocido' && ($historicos[$t['usuario_id'] . ':' . $t['fecha']] ?? null) !== $t['codigo_turno']) throw new InvalidArgumentException('Configura la sigla ' . $t['codigo_turno'] . ' antes de asignarla.');
+                $resultado = $validador->validar($t);
+                if ($resultado['estado'] !== 'libre') throw new InvalidArgumentException($t['fecha'] . ', usuario ' . $t['usuario_id'] . ': ' . $resultado['mensaje']);
+                $horas[$t['usuario_id']] += self::horasCodigoCronograma($t['codigo_turno'], $horasSiglas);
+            }
+            if (!ModeloTurnos::mdlEliminarTurnosPorMes($objetivo, $mes)) throw new RuntimeException('No se pudo reemplazar el cronograma.');
+            foreach ($turnos as $t) {
+                $respuesta = ModeloTurnos::mdlGuardarTurno('turnos', $t);
+                if ($respuesta !== 'ok') throw new RuntimeException($respuesta === 'duplicado' ? 'Hay un turno duplicado; se conservó el cronograma anterior.' : 'No se pudo guardar el turno. Verifica el esquema de turnos y vuelve a intentar.');
+            }
+            foreach ($horas as $uid => $total) if ($total < 200 || $total > 240) $avisos[] = "Usuario $uid: $total horas planificadas (rango de referencia: 200–240).";
+            $db->commit();
+            return $avisos;
+        } catch (Throwable $e) {
+            if ($db->inTransaction()) $db->rollBack();
+            throw $e;
         }
     }
+
+    public static function validarTurnoAjax(): void
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        if (empty($_SESSION['idUsuario']) || !Auth::hasPermission('cronogramas', 'vistaCrearCronograma')) {
+            http_response_code(403);
+            echo json_encode(['estado' => 'error', 'mensaje' => 'No tienes permiso para validar cronogramas.']);
+            return;
+        }
+        try {
+            $uid = (int)($_GET['usuario'] ?? 0);
+            $obj = (int)($_GET['objetivo_actual'] ?? 0);
+            $dia = (int)($_GET['dia'] ?? 0);
+            $mes = (int)($_GET['mes'] ?? 0);
+            $anio = (int)($_GET['anio'] ?? 0);
+            if ($uid < 1 || $obj < 1 || !checkdate($mes, $dia, $anio)) throw new InvalidArgumentException('Usuario, objetivo o fecha inválidos.');
+            $db = Conexion::conectar();
+            if (!$db) throw new RuntimeException('No se pudo consultar el horario.');
+            $resultado = (new ModeloCronogramaValidacion($db))->validar(['usuario_id' => $uid, 'objetivo_id' => $obj,
+                'fecha' => sprintf('%04d-%02d-%02d', $anio, $mes, $dia), 'codigo_turno' => CronogramaReglas::codigo((string)($_GET['codigo'] ?? ''))]);
+            echo json_encode($resultado, JSON_UNESCAPED_UNICODE);
+        } catch (Throwable $e) {
+            http_response_code(422);
+            echo json_encode(['estado' => 'error', 'mensaje' => $e->getMessage()], JSON_UNESCAPED_UNICODE);
+        }
+    }
+
     private static function obtenerHorasSiglasObjetivo(int $objetivoId): array
     {
-        try {
-            $stmt = Conexion::conectar()->prepare("SELECT sigla, horas FROM objetivo_siglas WHERE objetivo_id = ? AND activo = 1");
-            $stmt->execute([$objetivoId]);
-            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (Throwable $e) {
-            return [];
-        }
-
+        $s = Conexion::conectar()->prepare('SELECT sigla, horas FROM objetivo_siglas WHERE objetivo_id = ? AND activo = 1');
+        $s->execute([$objetivoId]);
         $horas = [];
-        foreach ($rows as $row) {
-            $sigla = strtoupper(trim((string)$row['sigla']));
-            if ($sigla !== '') {
-                $horas[$sigla] = (float)$row['horas'];
-            }
-        }
-
+        foreach ($s->fetchAll(PDO::FETCH_ASSOC) as $row) $horas[CronogramaReglas::codigo($row['sigla'])] = (float)$row['horas'];
         return $horas;
     }
 
     private static function horasCodigoCronograma(string $codigo, array $horasSiglasObjetivo): float
     {
-        $codigo = strtoupper(trim($codigo));
-
-        if ($codigo === '' || in_array($codigo, ['F', 'E', 'P', 'L', 'S'], true)) {
-            return 0.0;
-        }
-
-        if (in_array($codigo, ['D', 'N', 'GP/D', 'GP/N'], true)) {
-            return 12.0;
-        }
-
-        if (preg_match('/^(\d+(?:[.,]\d+)?)H$/', $codigo, $match)) {
-            return (float)str_replace(',', '.', $match[1]);
-        }
-
-        return $horasSiglasObjetivo[$codigo] ?? 0.0;
+        return CronogramaReglas::horas($codigo, $horasSiglasObjetivo);
     }
 
     private static function esLicencia(string $codigo): bool
     {
-        // Tratamos GP/D y GP/N como licencias “laborables” para KPI,
-        // pero acá el tipo se guarda igual como 'Licencia'
-        $licencias = ['F', 'GP/D', 'GP/N', 'E', 'P', 'L', 'S'];
-        return in_array(strtoupper($codigo), $licencias, true);
+        return in_array(CronogramaReglas::codigo($codigo), array_merge(CronogramaReglas::AUSENCIAS, CronogramaReglas::PASIVAS), true);
     }
 
-    /*Funcion para mantener la escala de 4x2 en el cronograma al cargar un nuevo mes*/
     public static function generarSimulacionVacia(int $objetivoId, string $mes): array
     {
-        $db = new Conexion;
-
-        // Vigiladores y referentes vinculados al objetivo
-        $vigiladores = $db->consultas(" SELECT u.idUsuario
-                                    FROM usuarios u
-                                    INNER JOIN roles r ON u.rol_id = r.id
-                                    INNER JOIN objetivo_vigiladores ov ON ov.vigilador_id = u.idUsuario
-                                    WHERE ov.objetivo_id = $objetivoId
-                                    AND u.activo = 1
-                                    AND r.categoria = 'operativo'
-                                ");
-
-        $referentes = $db->consultas(" SELECT u.idUsuario
-                                    FROM usuarios u
-                                    INNER JOIN roles r ON u.rol_id = r.id
-                                    INNER JOIN objetivo_referentes orf ON orf.referente_id = u.idUsuario
-                                    WHERE orf.objetivo_id = $objetivoId
-                                    AND u.activo = 1
-                                    AND r.categoria = 'referente'
-                                ");
-
-
-        $post = [
-            'objetivo'  => $objetivoId,
-            'mes'       => $mes,
-            'vigilador' => [],
-            'referente' => []
-        ];
-
-        // Patrón base 4x2
-        $patternBase = ['D', 'D', 'N', 'N', 'F', 'F'];
-
-        // Rango del mes
-        $dt = DateTime::createFromFormat('Y-m', $mes);
-        if (!$dt) return $post;
-        $daysInMonth = (int)date('t', strtotime("$mes-01"));
-
-        // Mes anterior (solo para elegir con qué bloque empezar)
-        $dtPrev = clone $dt;
-        $dtPrev->modify('-1 month');
-        $mesAnterior = $dtPrev->format('Y-m');
-        $iniPrev = $mesAnterior . '-01';
-        $finPrev = $mesAnterior . '-' . date('t', strtotime($iniPrev));
-
-        // Normalizador D/N/F
-        $norm = function (string $c): string {
-            $c = strtoupper(trim($c));
-            if ($c === 'D' || preg_match('/^D\//', $c) || in_array($c, ['6H', '7H', '8H', '9H', '9RF', '9HEX', '13H', '14H', 'BE'], true)) return 'D';
-            if ($c === 'N' || $c === 'N15' || preg_match('/^N\//', $c)) return 'N';
-            if (in_array($c, ['F', 'GP/D', 'GP/N', 'E', 'P', 'L', 'S'], true)) return 'F';
-            if (in_array($c, ['SALA', 'MIC', 'F/JUS', 'NOTT', 'GUE', 'PER', 'PAL', 'BOS', 'OFI'], true)) return 'F';
-            return 'F';
-        };
-
-        // Rotar patrón para que el PRIMER par (2 días) sea el bloque $start
-        $rotarDesde = function (array $base, string $start) {
-            // base = [D,D,N,N,F,F] → D:0, N:2, F:4
-            $map = ['D' => 0, 'N' => 2, 'F' => 4];
-            $offset = $map[$start] ?? 0;
-            return array_merge(array_slice($base, $offset), array_slice($base, 0, $offset));
-        };
-
-        // Último código del mes anterior por usuario+objetivo
-        $ultimoCodigo = function (int $usuarioId) use ($objetivoId, $iniPrev, $finPrev) {
-            $sql = "SELECT codigo_turno FROM turnos
-                WHERE objetivo_id = :obj AND usuario_id = :uid
-                  AND fecha BETWEEN :ini AND :fin
-                ORDER BY fecha DESC LIMIT 1";
-            $stmt = Conexion::conectar()->prepare($sql);
-            $stmt->execute([':obj' => $objetivoId, ':uid' => $usuarioId, ':ini' => $iniPrev, ':fin' => $finPrev]);
-            $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            return $row['codigo_turno'] ?? null;
-        };
-
-        // ===== Vigiladores: 4x2 puro =====
-        foreach ($vigiladores as $v) {
-            $uid = (int)$v['idUsuario'];
-            $post['vigilador'][$uid]['usuario'] = $uid;
-
-            $start  = $norm($ultimoCodigo($uid) ?? 'D');   // si no hay, arranca en D
-            $patron = $rotarDesde($patternBase, $start);
-
-            for ($d = 1; $d <= $daysInMonth; $d++) {
-                $post['vigilador'][$uid][$d] = $patron[($d - 1) % 6];
-            }
-        }
-
-        // ===== Referentes: 4x2 puro =====
-        foreach ($referentes as $r) {
-            $uid = (int)$r['idUsuario'];
-            $post['referente'][$uid]['usuario'] = $uid;
-
-            $start  = $norm($ultimoCodigo($uid) ?? 'D');
-            $patron = $rotarDesde($patternBase, $start);
-
-            for ($d = 1; $d <= $daysInMonth; $d++) {
-                $post['referente'][$uid][$d] = $patron[($d - 1) % 6];
-            }
-        }
-
-        return $post;
+        return self::continuar4x2DesdeTurnosAnteriores([], $objetivoId, $mes);
     }
 
-    /*Funcion para precargar cronograma del mes anterior */
-    /*MOdelo: turnos */
     public static function precargarCronogramaSiExiste($objetivoId, $mes)
     {
-        // 1) Mes actual
+        $fecha = CronogramaReglas::mes($mes);
+        if ((int)$objetivoId < 1) throw new InvalidArgumentException('Selecciona un objetivo válido.');
+        $_SESSION['cronograma_avisos'] = [];
         $actual = ModeloTurnos::mdlBuscarTurnosPorMes($objetivoId, $mes);
-        if ($actual && count($actual)) {
+        if ($actual) {
             $post = self::armarPostSimuladoDesdeTurnos($actual, $objetivoId, $mes);
-            $_SESSION['cronograma_post'] = $post; // ✅ mantener consistencia
-            return [
-                'origen'       => 'actual',
-                'turnos'       => $actual,
-                'postSimulado' => $post,
-                'mesAnterior'  => null
-            ];
+            $origen = 'actual';
+            $anterior = null;
+        } else {
+            $anterior = $fecha->modify('-1 month')->format('Y-m');
+            $turnos = ModeloTurnos::mdlBuscarTurnosPorMes($objetivoId, $anterior);
+            $post = self::continuar4x2DesdeTurnosAnteriores($turnos ?: [], $objetivoId, $mes);
+            $origen = $turnos ? 'anterior' : 'vacio';
         }
-
-        // 2) Mes anterior
-        $dt = DateTime::createFromFormat('Y-m', $mes);
-        if (!$dt) {
-            $vacio = self::generarSimulacionVacia($objetivoId, $mes);
-            $_SESSION['cronograma_post'] = $vacio;
-            return ['origen' => 'ninguno', 'turnos' => [], 'postSimulado' => $vacio];
-        }
-
-        $dt->modify('-1 month');
-        $mesAnterior = $dt->format('Y-m');
-
-        $anterior = ModeloTurnos::mdlBuscarTurnosPorMes($objetivoId, $mesAnterior);
-        if ($anterior && count($anterior)) {
-            // 👉 Continuidad 4×2 basada en el último día del mes anterior
-            $postContinuado = self::continuar4x2DesdeTurnosAnteriores($anterior, $objetivoId, $mes);
-            $_SESSION['cronograma_post'] = $postContinuado;
-
-            return [
-                'origen'       => 'anterior',
-                'turnos'       => $anterior,
-                'postSimulado' => $postContinuado,
-                'mesAnterior'  => $dt->format('F')
-            ];
-        }
-
-        // 3) Vacío
-        $vacio = self::generarSimulacionVacia($objetivoId, $mes);
-        $_SESSION['cronograma_post'] = $vacio;
-        return ['origen' => 'vacio', 'turnos' => [], 'postSimulado' => $vacio, 'mesAnterior' => null];
+        $_SESSION['cronograma_post'] = $post;
+        return ['origen' => $origen, 'turnos' => $actual ?: ($turnos ?? []), 'postSimulado' => $post, 'mesAnterior' => $anterior];
     }
 
-
-    /*Esta funcion genera la escala 4x2 respetando la correlación del mes anterior */
     private static function continuar4x2DesdeTurnosAnteriores(array $turnosPrev, int $objetivoId, string $mes): array
     {
-        $post = [
-            'objetivo'  => $objetivoId,
-            'mes'       => $mes,
-            'vigilador' => [],
-            'referente' => []
-        ];
-
-        $norm = function (string $c): string {
-            $c = strtoupper(trim($c));
-            if ($c === 'D' || preg_match('/^D\//', $c) || in_array($c, ['6H', '7H', '8H', '9H', '9RF', '9HEX', '13H', '14H', 'BE'], true)) return 'D';
-            if ($c === 'N' || $c === 'N15' || preg_match('/^N\//', $c)) return 'N';
-            if (in_array($c, ['F', 'GP/D', 'GP/N', 'E', 'P', 'L', 'S'], true)) return 'F';
-            if (in_array($c, ['SALA', 'MIC', 'F/JUS', 'NOTT', 'GUE', 'PER', 'PAL', 'BOS', 'OFI'], true)) return 'F';
-            return 'F';
-        };
-
-        $daysInMonth = (int)date('t', strtotime("$mes-01"));
-
-        // Agrupar historial por vigilador
-        $porUsuario = [];
-        foreach ($turnosPrev as $t) {
-            if (strtolower($t['rol']) !== 'vigilador') continue;
-            $uid  = (int)$t['usuario_id'];
-            $fec  = $t['fecha'];
-            $code = $norm($t['codigo_turno'] ?? '');
-            $porUsuario[$uid][] = ['fecha' => $fec, 'norm' => $code];
-        }
-        foreach ($porUsuario as &$arr) {
-            usort($arr, fn($a, $b) => strcmp($a['fecha'], $b['fecha']));
-        }
-
-        $order = ['D', 'N', 'F'];
-        $nextBlock = function (string $c) use ($order) {
-            $i = array_search($c, $order, true);
-            return $order[($i === false ? 0 : ($i + 1) % 3)];
-        };
-
-        // Vigiladores vinculados al objetivo
+        $fecha = CronogramaReglas::mes($mes);
+        $finAnterior = $fecha->modify('-1 day')->format('Y-m-d');
+        $post = ['objetivo' => $objetivoId, 'mes' => $mes, 'vigilador' => [], 'referente' => []];
         $db = new Conexion;
-        $vigiladores = $db->consultas("SELECT u.idUsuario
-                                        FROM usuarios u
-                                        INNER JOIN roles r ON u.rol_id = r.id
-                                        INNER JOIN objetivo_vigiladores ov ON ov.vigilador_id = u.idUsuario
-                                        WHERE ov.objetivo_id = $objetivoId
-                                        AND u.activo = 1
-                                        AND r.categoria = 'operativo'
-                                    ");
-
-        $uidsV = array_map(fn($r) => (int)$r['idUsuario'], $vigiladores);
-
-        foreach ($uidsV as $uid) {
-            $post['vigilador'][$uid]['usuario'] = $uid;
-
-            $hist = $porUsuario[$uid] ?? [];
-            if (!empty($hist)) {
-                $last = end($hist);
-                $c_last = $last['norm'];
-
-                // ✅ racha de cola solo con días consecutivos
-                $racha = 1;
-                $lastDate = DateTime::createFromFormat('Y-m-d', $last['fecha']);
-                for ($i = count($hist) - 2; $i >= 0 && $racha < 2; $i--) {
-                    if ($hist[$i]['norm'] !== $c_last) break;
-
-                    $currDate = DateTime::createFromFormat('Y-m-d', $hist[$i]['fecha']);
-                    $prevOfLast = clone $lastDate;
-                    $prevOfLast->modify('-1 day');
-
-                    if ($currDate->format('Y-m-d') !== $prevOfLast->format('Y-m-d')) break;
-
-                    $racha++;
-                    $lastDate = $currDate;
+        $patron = ['D', 'D', 'N', 'N', 'F', 'F'];
+        $indice = 0;
+        foreach (['vigilador' => ['objetivo_vigiladores', 'vigilador_id', 'operativo', 'ov'], 'referente' => ['objetivo_referentes', 'referente_id', 'referente', 'orf']] as $rol => [$tabla, $columna, $categoria, $alias]) {
+            $usuarios = $db->consultas("SELECT DISTINCT u.idUsuario FROM usuarios u JOIN roles r ON u.rol_id = r.id JOIN $tabla $alias ON $alias.$columna = u.idUsuario WHERE $alias.objetivo_id = $objetivoId AND u.activo = 1 AND r.categoria = '$categoria' ORDER BY u.idUsuario");
+            foreach ($usuarios as $usuario) {
+                $uid = (int)$usuario['idUsuario'];
+                $post[$rol][$uid] = ['usuario' => $uid];
+                $hist = array_values(array_filter($turnosPrev, fn($t) => (int)$t['usuario_id'] === $uid && strtolower($t['rol']) === $rol));
+                usort($hist, fn($a, $b) => strcmp($a['fecha'], $b['fecha']));
+                $offset = ($indice++ % 3) * 2;
+                $pendiente = false;
+                if ($hist) {
+                    $last = $hist[count($hist) - 1];
+                    $fase = CronogramaReglas::fase($last['codigo_turno']);
+                    if ($last['fecha'] !== $finAnterior || $fase === null) {
+                        $pendiente = true;
+                        $_SESSION['cronograma_avisos'][] = "Usuario $uid: completa el ciclo manualmente; el último registro no permite determinar la fase al cierre del mes.";
+                    } else {
+                        $prev = $hist[count($hist) - 2] ?? null;
+                        $dos = $prev && $prev['fecha'] === $fecha->modify('-2 days')->format('Y-m-d') && CronogramaReglas::fase($prev['codigo_turno']) === $fase;
+                        $offset = (['D' => 0, 'N' => 2, 'F' => 4][$fase] + ($dos ? 2 : 1)) % 6;
+                    }
                 }
-
-                // si racha==1 → completar par con c_last; si racha==2 → siguiente bloque
-                $bloque = ($racha === 1) ? $c_last : $nextBlock($c_last);
-                $posPar = ($racha === 1) ? 1 : 0;
-                $diasRest = 2 - $posPar;
-            } else {
-                // sin historial: arrancar en D y completar par normalmente
-                $bloque = 'D';
-                $diasRest = 2;
-            }
-
-
-            for ($d = 1; $d <= $daysInMonth; $d++) {
-                $post['vigilador'][$uid][$d] = $bloque;
-                if (--$diasRest === 0) {
-                    $bloque = $nextBlock($bloque);
-                    $diasRest = 2;
-                }
+                for ($dia = 1; $dia <= (int)$fecha->format('t'); $dia++) $post[$rol][$uid][$dia] = $pendiente ? '' : $patron[($offset + $dia - 1) % 6];
             }
         }
-
-        // Referentes: copiar tal cual el mismo día si existía en el mes anterior
-        $referentes = $db->consultas("SELECT u.idUsuario
-                                    FROM usuarios u
-                                    INNER JOIN roles r ON u.rol_id = r.id
-                                    INNER JOIN objetivo_referentes orf ON orf.referente_id = u.idUsuario
-                                    WHERE orf.objetivo_id = $objetivoId
-                                    AND u.activo = 1
-                                    AND r.categoria = 'referente'
-                                ");
-
-        $uidsR = array_map(fn($r) => (int)$r['idUsuario'], $referentes);
-
-        // map día => código del mes anterior
-        $mapPrevR = [];
-        foreach ($turnosPrev as $t) {
-            if (strtolower($t['rol']) !== 'referente') continue;
-            $uid = (int)$t['usuario_id'];
-            $dia = (int)substr($t['fecha'], 8, 2);
-            $mapPrevR[$uid][$dia] = $t['codigo_turno'];
-        }
-
-        // ===================== REFERENTES con continuidad 4×2 =====================
-
-        // 1) Armar historial normalizado por referente (solo mes anterior)
-        $porReferente = []; // uid => [ ['fecha'=>'YYYY-MM-DD','norm'=>'D|N|F'], ... asc ]
-        foreach ($turnosPrev as $t) {
-            if (strtolower($t['rol']) !== 'referente') continue;
-            $uid  = (int)$t['usuario_id'];
-            $fec  = $t['fecha'];
-            $code = $norm($t['codigo_turno'] ?? '');
-            $porReferente[$uid][] = ['fecha' => $fec, 'norm' => $code];
-        }
-        foreach ($porReferente as &$arrR) {
-            usort($arrR, fn($a, $b) => strcmp($a['fecha'], $b['fecha']));
-        }
-
-        // 2) Traer referentes vinculados al objetivo
-        $referentes = $db->consultas("SELECT u.idUsuario
-                                    FROM usuarios u
-                                    INNER JOIN roles r ON u.rol_id = r.id
-                                    INNER JOIN objetivo_referentes orf ON orf.referente_id = u.idUsuario
-                                    WHERE orf.objetivo_id = $objetivoId
-                                    AND u.activo = 1
-                                    AND r.categoria = 'referente'
-                                ");
-
-        $uidsR = array_map(fn($r) => (int)$r['idUsuario'], $referentes);
-
-        // 3) Generar mes con la continuidad 4×2 (D,D → N,N → F,F → ...)
-        foreach ($uidsR as $uid) {
-            $post['referente'][$uid]['usuario'] = $uid;
-
-            $hist = $porReferente[$uid] ?? [];
-            if (!empty($hist)) {
-                $last = end($hist);
-                $c_last = $last['norm'];
-
-                // racha final del mismo código SOLO si los días son consecutivos (máx 2)
-                $racha = 1;
-                $lastDate = DateTime::createFromFormat('Y-m-d', $last['fecha']);
-                for ($i = count($hist) - 2; $i >= 0 && $racha < 2; $i--) {
-                    if ($hist[$i]['norm'] !== $c_last) break;
-
-                    $currDate = DateTime::createFromFormat('Y-m-d', $hist[$i]['fecha']);
-                    $prevOfLast = clone $lastDate;
-                    $prevOfLast->modify('-1 day');
-
-                    if ($currDate->format('Y-m-d') !== $prevOfLast->format('Y-m-d')) break;
-
-                    $racha++;
-                    $lastDate = $currDate;
-                }
-
-                // racha==1 → completar par con c_last; racha==2 → pasar al siguiente bloque
-                $bloque  = ($racha === 1) ? $c_last : $nextBlock($c_last);
-                $posPar  = ($racha === 1) ? 1 : 0;
-                $diasRest = 2 - $posPar;
-            } else {
-                // sin historial → iniciar en D
-                $bloque  = 'D';
-                $diasRest = 2;
-            }
-
-            for ($d = 1; $d <= $daysInMonth; $d++) {
-                $post['referente'][$uid][$d] = $bloque;
-                if (--$diasRest === 0) {
-                    $bloque   = $nextBlock($bloque);
-                    $diasRest = 2;
-                }
-            }
-        }
-
-
         return $post;
     }
 
@@ -711,11 +356,14 @@ class ControladorCronogramas
 
                 // Evitamos horas antes del turno, pero permitimos salidas posteriores
                 // Buscar el turno para obtener la fecha de referencia
-                $sqlTurno = "SELECT codigo_turno, fecha
-                         FROM turnos
-                         WHERE usuario_id = ? AND objetivo_id = ?
-                           AND fecha BETWEEN DATE(?) AND DATE_ADD(?, INTERVAL 1 DAY)
-                         ORDER BY ABS(DATEDIFF(fecha, ?))
+                $sqlTurno = "SELECT t.codigo_turno, t.fecha, rp.puesto_id
+                         FROM turnos t
+                         LEFT JOIN rotaciones_puestos rp
+                           ON rp.usuario_id = t.usuario_id AND rp.objetivo_id = t.objetivo_id
+                          AND rp.fecha = t.fecha AND rp.codigo_turno = t.codigo_turno
+                         WHERE t.usuario_id = ? AND t.objetivo_id = ?
+                           AND t.fecha BETWEEN DATE(?) AND DATE_ADD(?, INTERVAL 1 DAY)
+                         ORDER BY ABS(DATEDIFF(t.fecha, ?))
                          LIMIT 1";
                 $turno = $db->consultas($sqlTurno, [
                     $j['vigilador_id'],
@@ -728,14 +376,16 @@ class ControladorCronogramas
                 if (!$turno) continue;
 
                 // Si tiene código de turno, lo usamos para buscar el rango (pero sin recortar)
-                $mapaTurno = ['D' => 1, 'N' => 2, 'I' => 3];
-                $numeroTurno = $mapaTurno[strtoupper($turno['codigo_turno'])] ?? 1;
+                $mapaTurno = ['D' => 1, 'N' => 2];
+                $numeroTurno = $mapaTurno[strtoupper(trim($turno['codigo_turno']))] ?? null;
 
                 $sqlHorario = "SELECT hora_entrada
                            FROM puestos_turnos
                            WHERE puesto_id = ? AND numero_turno = ?
                            LIMIT 1";
-                $horaEntradaTurno = $db->consultas($sqlHorario, [$turno['puesto_id'], $numeroTurno])[0]['hora_entrada'] ?? null;
+                $horaEntradaTurno = ($numeroTurno !== null && !empty($turno['puesto_id']))
+                    ? ($db->consultas($sqlHorario, [$turno['puesto_id'], $numeroTurno])[0]['hora_entrada'] ?? null)
+                    : null;
 
                 if ($horaEntradaTurno) {
                     $inicioTeorico = new DateTime("{$turno['fecha']} $horaEntradaTurno");
@@ -773,8 +423,6 @@ class ControladorCronogramas
      */
     static private function calcularHorasEnVentana(DateTime $start, DateTime $end, string $horaDesde, string $horaHasta): float
     {
-        Auth::check('cronogramas', 'calcularHorasEnVentana');
-
         if ($start >= $end) return 0;
 
         $segundosEnVentana = 0;
@@ -834,7 +482,7 @@ class ControladorCronogramas
                                             FROM usuarios u
                                             JOIN roles r ON u.rol_id = r.id
                                             WHERE r.nombre = 'Vigilador';");
-        $horariosTurnos = $db->consultas("SELECT  numero_turno, hora_entrada, hora_salida FROM puestos_turnos");
+        $horariosTurnos = $db->consultas("SELECT puesto_id, numero_turno, hora_entrada, hora_salida FROM puestos_turnos");
 
         $mapeoTurnos = [
             'D'     => 1,
@@ -863,10 +511,13 @@ class ControladorCronogramas
             );
 
             $turnosAsignados = $db->consultas(
-                "SELECT fecha, codigo_turno, objetivo_id
-             FROM turnos 
-             WHERE usuario_id = :id 
-               AND fecha BETWEEN :desde AND :hasta",
+                "SELECT t.fecha, t.codigo_turno, t.objetivo_id, rp.puesto_id
+             FROM turnos t
+             LEFT JOIN rotaciones_puestos rp
+               ON rp.usuario_id = t.usuario_id AND rp.objetivo_id = t.objetivo_id
+              AND rp.fecha = t.fecha AND rp.codigo_turno = t.codigo_turno
+             WHERE t.usuario_id = :id
+               AND t.fecha BETWEEN :desde AND :hasta",
                 [
                     'id' => $id,
                     'desde' => $desde,

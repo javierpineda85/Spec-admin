@@ -46,6 +46,11 @@ require_once("controladores/usuarios.controller.php");
 // ⑤ Detectamos la ruta solicitada (p.ej. ?r=login, ?r=reset-password)
 $r = $_GET['r'] ?? '';
 
+if ($r === 'validar_turno_global') {
+    ControladorCronogramas::validarTurnoAjax();
+    exit;
+}
+
 // ===== 1) RESTABLECER CONTRASEÑA =====
 // Ruta libre: muestra el formulario o procesa el POST
 if ($r === 'reset-password') {
@@ -85,6 +90,12 @@ if ($r === 'auto_rotar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
 // ===== 4) PROTECCIÓN GENERAL =====
 // A partir de aquí, cualquier otra ruta exige usuario autenticado
 Auth::requireLogin();
+
+// Procesar el guardado antes de emitir la plantilla.
+if ($r === 'crear_cronograma' && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['guardar_cronograma'])) {
+    ControladorCronogramas::ctrGuardarCronograma();
+    exit;
+}
 
 // ===== 5) APIs JSON protegidas =====
 // Deben responder antes de cargar la plantilla, porque la plantilla imprime HTML.

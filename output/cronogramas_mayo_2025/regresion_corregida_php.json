@@ -1,0 +1,392 @@
+{
+    "resumen": {
+        "casos": 54,
+        "correctos": 54,
+        "base_prueba_eliminada": "spec_test_cronogramas_5a20e1f1aa12",
+        "base_original_sin_datos_de_prueba": true
+    },
+    "casos": [
+        {
+            "caso": "cruce_D_superpuesto",
+            "correcto": true,
+            "detalle": {
+                "estado": "conflicto",
+                "conflicto": true,
+                "objetivo": "2",
+                "codigo_existente": "D",
+                "fecha_existente": "2025-05-10",
+                "mensaje": "El vigilador tiene un turno superpuesto en otro objetivo."
+            }
+        },
+        {
+            "caso": "cruce_N_superpuesto",
+            "correcto": true,
+            "detalle": {
+                "estado": "conflicto",
+                "conflicto": true,
+                "objetivo": "2",
+                "codigo_existente": "N",
+                "fecha_existente": "2025-05-10",
+                "mensaje": "El vigilador tiene un turno superpuesto en otro objetivo."
+            }
+        },
+        {
+            "caso": "cruce_8H_superpuesto",
+            "correcto": true,
+            "detalle": {
+                "estado": "conflicto",
+                "conflicto": true,
+                "objetivo": "2",
+                "codigo_existente": "8H",
+                "fecha_existente": "2025-05-10",
+                "mensaje": "El vigilador tiene un turno superpuesto en otro objetivo."
+            }
+        },
+        {
+            "caso": "cruce_10H_superpuesto",
+            "correcto": true,
+            "detalle": {
+                "estado": "conflicto",
+                "conflicto": true,
+                "objetivo": "2",
+                "codigo_existente": "10H",
+                "fecha_existente": "2025-05-10",
+                "mensaje": "El vigilador tiene un turno superpuesto en otro objetivo."
+            }
+        },
+        {
+            "caso": "cruce_12H_superpuesto",
+            "correcto": true,
+            "detalle": {
+                "estado": "conflicto",
+                "conflicto": true,
+                "objetivo": "2",
+                "codigo_existente": "12H",
+                "fecha_existente": "2025-05-10",
+                "mensaje": "El vigilador tiene un turno superpuesto en otro objetivo."
+            }
+        },
+        {
+            "caso": "cruce_8H_consecutivos_sin_solape",
+            "correcto": true,
+            "detalle": {
+                "estado": "libre",
+                "conflicto": false
+            }
+        },
+        {
+            "caso": "cruce_8H_separados_sin_solape",
+            "correcto": true,
+            "detalle": {
+                "estado": "libre",
+                "conflicto": false
+            }
+        },
+        {
+            "caso": "cruce_nocturno_dia_anterior_superpuesto",
+            "correcto": true,
+            "detalle": {
+                "estado": "conflicto",
+                "conflicto": true,
+                "objetivo": "2",
+                "codigo_existente": "N",
+                "fecha_existente": "2025-05-09",
+                "mensaje": "El vigilador tiene un turno superpuesto en otro objetivo."
+            }
+        },
+        {
+            "caso": "cruce_nocturno_cambio_mes_superpuesto",
+            "correcto": true,
+            "detalle": {
+                "estado": "conflicto",
+                "conflicto": true,
+                "objetivo": "2",
+                "codigo_existente": "N",
+                "fecha_existente": "2025-05-31",
+                "mensaje": "El vigilador tiene un turno superpuesto en otro objetivo."
+            }
+        },
+        {
+            "caso": "cruce_F_no_es_presencia",
+            "correcto": true,
+            "detalle": {
+                "estado": "libre",
+                "conflicto": false
+            }
+        },
+        {
+            "caso": "cruce_GP_D_no_es_presencia",
+            "correcto": true,
+            "detalle": {
+                "estado": "libre",
+                "conflicto": false
+            }
+        },
+        {
+            "caso": "cruce_GP_N_no_es_presencia",
+            "correcto": true,
+            "detalle": {
+                "estado": "libre",
+                "conflicto": false
+            }
+        },
+        {
+            "caso": "cruce_referencia_NOTT_no_duplica",
+            "correcto": true,
+            "detalle": {
+                "estado": "libre",
+                "conflicto": false
+            }
+        },
+        {
+            "caso": "cruce_referencia_PERR_no_duplica",
+            "correcto": true,
+            "detalle": {
+                "estado": "libre",
+                "conflicto": false
+            }
+        },
+        {
+            "caso": "cruce_referencia_BERM_no_duplica",
+            "correcto": true,
+            "detalle": {
+                "estado": "libre",
+                "conflicto": false
+            }
+        },
+        {
+            "caso": "cruce_mismo_objetivo_excluido",
+            "correcto": true,
+            "detalle": {
+                "estado": "libre",
+                "conflicto": false
+            }
+        },
+        {
+            "caso": "cruce_persona_distinta_excluida",
+            "correcto": true,
+            "detalle": {
+                "estado": "libre",
+                "conflicto": false
+            }
+        },
+        {
+            "caso": "cruce_D_y_N_consecutivos",
+            "correcto": true,
+            "detalle": {
+                "estado": "libre",
+                "conflicto": false
+            }
+        },
+        {
+            "caso": "guardar_simple",
+            "correcto": true,
+            "detalle": []
+        },
+        {
+            "caso": "horario_esperado_usa_rotacion_y_turno_correcto",
+            "correcto": true,
+            "detalle": {
+                "horario": {
+                    "hora_entrada": "07:00:00",
+                    "hora_salida": "19:00:00",
+                    "numero_turno": 1
+                }
+            }
+        },
+        {
+            "caso": "bloquear_D_superpuesto",
+            "correcto": true,
+            "detalle": {
+                "mensaje": "2025-05-10, usuario 1: El vigilador tiene un turno superpuesto en otro objetivo."
+            }
+        },
+        {
+            "caso": "permitir_turnos_consecutivos",
+            "correcto": true,
+            "detalle": []
+        },
+        {
+            "caso": "bloquear_cruce_entre_meses",
+            "correcto": true,
+            "detalle": {
+                "mensaje": "2025-06-01, usuario 1: El vigilador tiene un turno superpuesto en otro objetivo."
+            }
+        },
+        {
+            "caso": "GP_sin_presencia_y_12horas",
+            "correcto": true,
+            "detalle": []
+        },
+        {
+            "caso": "referencia_no_duplica_presencia",
+            "correcto": true,
+            "detalle": []
+        },
+        {
+            "caso": "horario_desconocido_no_se_aprueba",
+            "correcto": true,
+            "detalle": {
+                "mensaje": "2025-05-10, usuario 1: No se puede descartar un cruce: falta un horario inequívoco de puesto para este vigilador y fecha."
+            }
+        },
+        {
+            "caso": "vacio_no_borra",
+            "correcto": true,
+            "detalle": {
+                "mensaje": "El cronograma está vacío. No se eliminaron los turnos existentes."
+            }
+        },
+        {
+            "caso": "envio_truncado_no_borra",
+            "correcto": true,
+            "detalle": {
+                "mensaje": "El envío está incompleto: faltan días de la tabla."
+            }
+        },
+        {
+            "caso": "cambio_mes_sin_cargar_no_borra",
+            "correcto": true,
+            "detalle": {
+                "mensaje": "La tabla no corresponde al objetivo y mes, o el envío está incompleto. Vuelve a cargar el cronograma."
+            }
+        },
+        {
+            "caso": "falta_marcador_no_borra",
+            "correcto": true,
+            "detalle": {
+                "mensaje": "La tabla no corresponde al objetivo y mes, o el envío está incompleto. Vuelve a cargar el cronograma."
+            }
+        },
+        {
+            "caso": "usuario_doble_fila_no_borra",
+            "correcto": true,
+            "detalle": {
+                "mensaje": "Un usuario aparece en más de una fila del objetivo."
+            }
+        },
+        {
+            "caso": "usuario_fuera_de_nomina",
+            "correcto": true,
+            "detalle": {
+                "mensaje": "Falta una persona del cronograma guardado. Recarga la tabla para conservar su historial."
+            }
+        },
+        {
+            "caso": "codigo_nuevo_desconocido",
+            "correcto": true,
+            "detalle": {
+                "mensaje": "Configura la sigla ZZZ antes de asignarla."
+            }
+        },
+        {
+            "caso": "dia_invalido",
+            "correcto": true,
+            "detalle": {
+                "mensaje": "Hay una fecha o código inválido."
+            }
+        },
+        {
+            "caso": "rollback_despues_del_delete",
+            "correcto": true,
+            "detalle": {
+                "mensaje": "No se pudo guardar el turno. Verifica el esquema de turnos y vuelve a intentar."
+            }
+        },
+        {
+            "caso": "envio_json_conserva_filas",
+            "correcto": true,
+            "detalle": []
+        },
+        {
+            "caso": "codigo_historico_no_desaparece",
+            "correcto": true,
+            "detalle": []
+        },
+        {
+            "caso": "calendario_2025-02",
+            "correcto": true,
+            "detalle": []
+        },
+        {
+            "caso": "escalonar_2025-02",
+            "correcto": true,
+            "detalle": []
+        },
+        {
+            "caso": "calendario_2028-02",
+            "correcto": true,
+            "detalle": []
+        },
+        {
+            "caso": "escalonar_2028-02",
+            "correcto": true,
+            "detalle": []
+        },
+        {
+            "caso": "calendario_2025-04",
+            "correcto": true,
+            "detalle": []
+        },
+        {
+            "caso": "escalonar_2025-04",
+            "correcto": true,
+            "detalle": []
+        },
+        {
+            "caso": "calendario_2025-05",
+            "correcto": true,
+            "detalle": []
+        },
+        {
+            "caso": "escalonar_2025-05",
+            "correcto": true,
+            "detalle": []
+        },
+        {
+            "caso": "continuidad_D1",
+            "correcto": true,
+            "detalle": []
+        },
+        {
+            "caso": "continuidad_D2",
+            "correcto": true,
+            "detalle": []
+        },
+        {
+            "caso": "continuidad_N1",
+            "correcto": true,
+            "detalle": []
+        },
+        {
+            "caso": "continuidad_N2",
+            "correcto": true,
+            "detalle": []
+        },
+        {
+            "caso": "continuidad_F1",
+            "correcto": true,
+            "detalle": []
+        },
+        {
+            "caso": "continuidad_F2",
+            "correcto": true,
+            "detalle": []
+        },
+        {
+            "caso": "historial_incompleto_sin_fase_inventada",
+            "correcto": true,
+            "detalle": []
+        },
+        {
+            "caso": "12H_no_se_convierte_en_franco",
+            "correcto": true,
+            "detalle": []
+        },
+        {
+            "caso": "mes_invalido_rechazado",
+            "correcto": true,
+            "detalle": []
+        }
+    ]
+}

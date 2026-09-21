@@ -6,7 +6,22 @@ class ModeloTurnos
     {
         $db = Conexion::conectar();
 
+        foreach (['usuario_id', 'objetivo_id', 'fecha', 'rol', 'tipo_turno', 'codigo_turno'] as $campo) {
+            if (!isset($datos[$campo])) return 'Falta el campo de turno ' . $campo;
+        }
+        $propia = !$db->inTransaction();
+
         try {
+            require_once __DIR__ . '/cronograma_validacion.modelo.php';
+            if ($propia) {
+                $db->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
+                $db->beginTransaction();
+            }
+            $lock = $db->prepare('SELECT idUsuario FROM usuarios WHERE idUsuario = ? FOR UPDATE');
+            $lock->execute([$datos['usuario_id']]);
+            if (!$lock->fetchColumn()) throw new RuntimeException('Usuario inexistente.');
+            $validacion = (new ModeloCronogramaValidacion($db))->validar($datos);
+            if ($validacion['estado'] !== 'libre') throw new RuntimeException($validacion['mensaje']);
             // Verificar si ya existe
             $check = $db->prepare("SELECT COUNT(*) FROM $tabla 
                                WHERE usuario_id = :usuario_id 
@@ -21,6 +36,7 @@ class ModeloTurnos
             if ($check->fetchColumn() > 0) {
                 // Ya existe, no insertamos
                 error_log("⚠ Turno duplicado detectado y omitido: usuario {$datos['usuario_id']} fecha {$datos['fecha']}");
+                if ($propia) $db->rollBack();
                 return "duplicado";
             }
 
@@ -39,8 +55,11 @@ class ModeloTurnos
             $stmt->bindParam(":codigo_turno", $datos["codigo_turno"], PDO::PARAM_STR);
             $stmt->execute();
 
+            if ($propia) $db->commit();
+
             return "ok";
-        } catch (PDOException $e) {
+        } catch (Throwable $e) {
+            if ($propia && $db->inTransaction()) $db->rollBack();
             return $e->getMessage();
         } finally {
             if (isset($stmt)) $stmt->closeCursor();
@@ -66,10 +85,11 @@ class ModeloTurnos
                     ON t.objetivo_id = o.idObjetivo
                 JOIN usuarios AS u 
                     ON t.usuario_id = u.idUsuario
-                LEFT JOIN rotaciones_puestos AS rp
-                    ON rp.objetivo_id  = t.objetivo_id
+            LEFT JOIN rotaciones_puestos AS rp
+                ON rp.objetivo_id  = t.objetivo_id
                 AND rp.fecha        = t.fecha
                 AND rp.codigo_turno = t.codigo_turno
+                AND rp.usuario_id   = t.usuario_id
                 LEFT JOIN puestos AS p
                     ON rp.puesto_id = p.idPuesto
                 LEFT JOIN usuarios AS ur
@@ -219,11 +239,16 @@ class ModeloTurnos
         $conexion = Conexion::conectar();
 
         // 1. Buscar el turno asignado
-        $sqlTurno = "SELECT codigo_turno 
-                 FROM turnos 
-                 WHERE usuario_id = :usuario_id 
-                   AND objetivo_id = :objetivo_id 
-                   AND fecha = :fecha
+        $sqlTurno = "SELECT t.codigo_turno, rp.puesto_id
+                 FROM turnos t
+                 LEFT JOIN rotaciones_puestos rp
+                   ON rp.usuario_id = t.usuario_id
+                  AND rp.objetivo_id = t.objetivo_id
+                  AND rp.fecha = t.fecha
+                  AND rp.codigo_turno = t.codigo_turno
+                 WHERE t.usuario_id = :usuario_id
+                   AND t.objetivo_id = :objetivo_id
+                   AND t.fecha = :fecha
                  LIMIT 1";
 
         $stmt = $conexion->prepare($sqlTurno);
@@ -235,15 +260,10 @@ class ModeloTurnos
         $turno = $stmt->fetch(PDO::FETCH_ASSOC);
         if (!$turno) return null;
 
-        // 2. Buscar el número de turno asociado (D = 1, N = 2, etc.)
-        // Adaptable a tu codificación interna si usás D, N, M...
-        $mapaCodigos = [
-            'D' => 1,
-            'M' => 2,
-            'N' => 3
-        ];
-
-        $numeroTurno = $mapaCodigos[$turno['codigo_turno']] ?? 1;
+        if (empty($turno['puesto_id'])) return null;
+        $mapaCodigos = ['D' => 1, 'N' => 2];
+        $numeroTurno = $mapaCodigos[strtoupper(trim($turno['codigo_turno']))] ?? null;
+        if ($numeroTurno === null) return null;
 
         // 3. Buscar el horario esperado en puestos_turnos
         $sqlHorario = "SELECT hora_entrada, hora_salida
@@ -252,8 +272,8 @@ class ModeloTurnos
                    LIMIT 1";
 
         $stmt2 = $conexion->prepare($sqlHorario);
-        $stmt2->bindParam(':puesto_id', $turno['puesto_id'], PDO::PARAM_INT);
-        $stmt2->bindParam(':numero_turno', $numeroTurno, PDO::PARAM_INT);
+        $stmt2->bindValue(':puesto_id', (int)$turno['puesto_id'], PDO::PARAM_INT);
+        $stmt2->bindValue(':numero_turno', $numeroTurno, PDO::PARAM_INT);
         $stmt2->execute();
 
         $horario = $stmt2->fetch(PDO::FETCH_ASSOC);

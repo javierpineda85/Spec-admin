@@ -1,81 +1,42 @@
 <?php
-$_SESSION['cronograma_post'] = [];
-//Guardar datos en la BD
-if (isset($_POST['guardar_cronograma']) && empty($_SESSION['cronograma_post'])) {
-  ControladorCronogramas::ctrGuardarCronograma();
-}
-
-//Vaciar el cronograma
-// Primero verificamos si hay datos previos (guardados por el controlador al fallar o precargar)
-$datosPrevios = $_SESSION['cronograma_post'] ?? [];
-// Siempre limpiamos los datos previos si se está intentando cargar un cronograma nuevo
-if (isset($_POST['cargar'])) {
-  unset($_SESSION['cronograma_post']);
+$datosPrevios = $_SESSION['cronograma_error'] ?? $_SESSION['cronograma_post'] ?? [];
+unset($_SESSION['cronograma_error']);
+$avisos = $_SESSION['cronograma_avisos'] ?? [];
+$objetivoReq = (int)($_POST['objetivo'] ?? $_GET['objetivo'] ?? $datosPrevios['objetivo'] ?? 0);
+$mesSeleccionado = (string)($_POST['mes'] ?? $_GET['mes'] ?? $datosPrevios['mes'] ?? date('Y-m'));
+try {
+  CronogramaReglas::mes($mesSeleccionado);
+  if (isset($_POST['cargar']) || (isset($_GET['objetivo'], $_GET['mes']) && !isset($_SESSION['cronograma_error']))) {
+    $info = ControladorCronogramas::precargarCronogramaSiExiste($objetivoReq, $mesSeleccionado);
+    $datosPrevios = $info['postSimulado'];
+    $avisos = array_merge($avisos, $_SESSION['cronograma_avisos'] ?? []);
+    if ($info['origen'] === 'anterior') $avisos[] = 'Continuidad desde ' . $info['mesAnterior'] . '. Revisa las filas que requieren completar el ciclo.';
+  }
+} catch (Throwable $e) {
+  $avisos[] = $e->getMessage();
   $datosPrevios = [];
 }
-
-//traemos los datos del mes que hayan cargados
-if (isset($_POST['cargar']) && empty($datosPrevios)) {
-  $objetivoReq = (int)($_POST['objetivo'] ?? 0);
-  $mesReq      = $_POST['mes'] ?? date('Y-m');
-
-  $info = ControladorCronogramas::precargarCronogramaSiExiste($objetivoReq, $mesReq);
-
-  if (($info['origen'] ?? null) === 'anterior' && !empty($info['mesAnterior'])) {
-    ToastifyController::info("Precargando datos del mes anterior ({$info['mesAnterior']}) con continuidad 4×2");
-  }
-
-  // ✅ Usar SIEMPRE el postSimulado armado por el controlador
-  $datosPrevios = $info['postSimulado'] ?? [];
-
-  // fallback extremo (no debería ocurrir, pero por las dudas)
-  if (empty($datosPrevios)) {
-    $datosPrevios = ControladorCronogramas::generarSimulacionVacia($objetivoReq, $mesReq);
-  }
-
-  $_SESSION['cronograma_post']       = $datosPrevios;
-  $_SESSION['cronograma_origen']     = $info['origen'] ?? null;
-  $_SESSION['cronograma_mes_anterior'] = $info['mesAnterior'] ?? null;
-}
-
-
-// Al final del archivo PHP (después de usarse en el HTML):
-if (empty($datosPrevios)) {
-  $datosPrevios = $_SESSION['cronograma_post'] ?? [];
-}
-//unset($_SESSION['cronograma_post']); // Limpiamos solo después de traer los datos
-
-// ===================== CARGAS INICIALES =====================
+unset($_SESSION['cronograma_avisos']);
 $db = new Conexion;
-$objetivos  = $db->consultas("SELECT * FROM objetivos WHERE activo = 1 ORDER BY nombre ");
-$puestos    = $db->consultas("SELECT idPuesto, puesto, objetivo_id FROM puestos WHERE activo = 1");
-$vigiladores = $db->consultas("SELECT DISTINCT u.idUsuario, u.nombre, u.apellido, ov.objetivo_id
-                                    FROM usuarios u
-                                    JOIN roles r ON u.rol_id = r.id
-                                    JOIN objetivo_vigiladores ov ON u.idUsuario = ov.vigilador_id
-                                    WHERE r.categoria = 'operativo' AND u.activo = 1
-                                    ORDER BY u.apellido, u.nombre
-  ");
-
-$referentes = $db->consultas("SELECT DISTINCT u.idUsuario, u.nombre, u.apellido, orf.objetivo_id
-                                        FROM usuarios u
-                                        JOIN roles r ON u.rol_id = r.id
-                                        JOIN objetivo_referentes orf ON u.idUsuario = orf.referente_id
-                                        WHERE r.categoria = 'referente' AND u.activo = 1
-                                        ORDER BY u.apellido, u.nombre
-                                    ");
-
-// ===================== FERIADOS DEL MES =====================
-//Para la tabla
-$anioActual = date('Y');
-$feriados = $db->consultas("SELECT fecha, motivo, tipo_feriado 
-                            FROM feriados 
-                            WHERE YEAR(fecha) = $anioActual");
-//Para el div
-$mesSeleccionado = $_POST['mes'] ?? date('Y-m');
-$feriadosDelMes = array_filter($feriados, function ($f) use ($mesSeleccionado) {
-  return strpos($f['fecha'], $mesSeleccionado) === 0;
-});
+$objetivos = $db->consultas('SELECT idObjetivo, nombre FROM objetivos WHERE activo = 1 ORDER BY nombre');
+$puestos = $db->consultas('SELECT idPuesto, puesto, objetivo_id FROM puestos WHERE activo = 1');
+$vigiladores = $db->consultas("SELECT DISTINCT u.idUsuario, u.nombre, u.apellido, ov.objetivo_id FROM usuarios u JOIN roles r ON r.id = u.rol_id JOIN objetivo_vigiladores ov ON ov.vigilador_id = u.idUsuario WHERE r.categoria = 'operativo' AND u.activo = 1 ORDER BY u.apellido, u.nombre");
+$referentes = $db->consultas("SELECT DISTINCT u.idUsuario, u.nombre, u.apellido, orf.objetivo_id FROM usuarios u JOIN roles r ON r.id = u.rol_id JOIN objetivo_referentes orf ON orf.referente_id = u.idUsuario WHERE r.categoria = 'referente' AND u.activo = 1 ORDER BY u.apellido, u.nombre");
+// Conservar personas históricas aunque ahora no estén activas o vinculadas.
+foreach (['vigilador' => &$vigiladores, 'referente' => &$referentes] as $rol => &$lista) {
+  $ids = array_map('intval', array_keys($datosPrevios[$rol] ?? []));
+  foreach ($ids as $id) {
+    $presente = false;
+    foreach ($lista as $u) if ((int)$u['idUsuario'] === $id && (int)$u['objetivo_id'] === $objetivoReq) $presente = true;
+    if (!$presente) {
+      $usuarios = $db->consultas('SELECT idUsuario, nombre, apellido FROM usuarios WHERE idUsuario = ?', [$id]);
+      if ($usuarios) $lista[] = $usuarios[0] + ['objetivo_id' => $objetivoReq];
+    }
+  }
+}
+unset($lista);
+$anioSeleccionado = (int)substr($mesSeleccionado, 0, 4);
+$feriados = $db->consultas('SELECT fecha, motivo, tipo_feriado FROM feriados WHERE YEAR(fecha) = ?', [$anioSeleccionado]);
 ?>
 <style>
   /*ESTILOS PARA LA TABLA DE CREAR CRONOGRAMAS*/
@@ -234,7 +195,11 @@ $feriadosDelMes = array_filter($feriados, function ($f) use ($mesSeleccionado) {
     <h3 class="card-title">Crear Cronograma Mensual</h3>
   </div>
   <div class="card-body">
+    <?php if ($avisos): ?>
+      <div class="alert alert-warning"><ul class="mb-0"><?php foreach (array_unique($avisos) as $aviso): ?><li><?= htmlspecialchars($aviso, ENT_QUOTES, 'UTF-8') ?></li><?php endforeach; ?></ul></div>
+    <?php endif; ?>
     <form id="frmCronograma" method="POST" class="mb-4">
+      <div id="cronogramaEstado" class="alert alert-warning d-none" role="status"></div>
       <div id="feriadosMesInfo" class="alert alert-secondary small d-none">
         <strong>Feriados del mes:</strong>
         <ul id="feriadosMesLista" class="mb-0"></ul>
@@ -243,7 +208,7 @@ $feriadosDelMes = array_filter($feriados, function ($f) use ($mesSeleccionado) {
       <div class="form-row">
         <div class="form-group col-md-4">
           <label>Objetivo</label>
-          <?php $valueSelected = $_POST['objetivo'] ?? ''; ?>
+          <?php $valueSelected = $objetivoReq; ?>
           <select name="objetivo" id="objetivo" class="form-control select2">
             <?php foreach ($objetivos as $o): ?>
               <option value="<?= $o['idObjetivo'] ?>" <?= ($o['idObjetivo'] == $valueSelected ? 'selected' : '') ?>>
@@ -254,7 +219,7 @@ $feriadosDelMes = array_filter($feriados, function ($f) use ($mesSeleccionado) {
         </div>
         <div class="form-group col-md-2">
           <label>Mes</label>
-          <?php $mes = $_POST['mes'] ?? ($datosPrevios['mes'] ?? date('Y-m')); ?>
+          <?php $mes = $mesSeleccionado; ?>
           <input type="month" class="form-control" name="mes" id="mes" value="<?= htmlspecialchars($mes) ?>">
         </div>
         <div class="form-group col-md-2 align-self-end">
@@ -276,28 +241,34 @@ $feriadosDelMes = array_filter($feriados, function ($f) use ($mesSeleccionado) {
       <div id="tablaCronogramaContainer" class="mt-4"></div>
 
       <div class="form-group mt-3">
-        <button type="submit" name="guardar_cronograma" class="btn btn-success">Guardar Cronograma</button>
+        <button type="submit" name="guardar_cronograma" id="btnGuardarCronograma" class="btn btn-success" disabled>Guardar Cronograma</button>
         <?php if (!empty($datosPrevios)): ?>
           <button type="button" id="btnVaciarCronograma" class="btn btn-outline-danger">Vaciar Cronograma</button>
 
         <?php endif; ?>
 
       </div>
+      <input type="hidden" id="cronogramaObjetivo" name="cronograma_objetivo" value="">
+      <input type="hidden" id="cronogramaMes" name="cronograma_mes" value="">
+      <input type="hidden" id="cronogramaFilas" name="cronograma_filas" value="0">
+      <input type="hidden" name="cronograma_completo" value="1">
     </form>
   </div>
 </div>
 <script>
+    const API_VALIDAR_URL = <?= json_encode(BASE_URL . '/index.php?r=validar_turno_global', JSON_HEX_TAG | JSON_HEX_AMP) ?>;
     const API_SIGLAS_URL = new URL(<?= json_encode(BASE_URL . '/index.php?r=api_siglas', JSON_UNESCAPED_SLASHES) ?>, window.location.origin).toString();
 </script>
 
 <script>
   window.CRONOGRAMA_BOOT = {
+    catalogo: <?= json_encode(['ausencias' => CronogramaReglas::AUSENCIAS, 'pasivas' => CronogramaReglas::PASIVAS, 'referencias' => CronogramaReglas::REFERENCIAS, 'especiales' => CronogramaReglas::ESPECIALES], JSON_HEX_TAG | JSON_HEX_AMP) ?>,
     puestos: <?= json_encode($puestos, JSON_UNESCAPED_UNICODE) ?>,
-    vigiladores: <?= json_encode($vigiladores, JSON_UNESCAPED_UNICODE) ?>,
-    referentes: <?= json_encode($referentes, JSON_UNESCAPED_UNICODE) ?>,
-    todosFeriados: <?= json_encode($feriados, JSON_UNESCAPED_UNICODE) ?>,
-    datosPrevios: <?= json_encode($datosPrevios, JSON_UNESCAPED_UNICODE) ?>,
-    horasPorUsuario: <?= json_encode($_SESSION['horas_usuario'] ?? new stdClass(), JSON_UNESCAPED_UNICODE) ?>
+    vigiladores: <?= json_encode($vigiladores, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>,
+    referentes: <?= json_encode($referentes, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>,
+    todosFeriados: <?= json_encode($feriados, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>,
+    datosPrevios: <?= json_encode($datosPrevios, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>,
+    horasPorUsuario: <?= json_encode($_SESSION['horas_usuario'] ?? new stdClass(), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>
   };
 </script>
 <?php

@@ -1,0 +1,20 @@
+{
+  "muestra": {
+    "objetivos": 13,
+    "casos": 27,
+    "correctos": 27,
+    "filas": 173,
+    "celdas": 5363
+  },
+  "validacion_interactiva": {
+    "conflicto_bloquea_guardado": true,
+    "resolver_conflicto_habilita_guardado": true
+  },
+  "envio_grande": {
+    "filas": 45,
+    "celdas": 1395,
+    "variables_post": 7,
+    "max_input_vars": 2500,
+    "truncado": false
+  }
+}

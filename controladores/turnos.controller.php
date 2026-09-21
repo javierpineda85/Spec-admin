@@ -18,22 +18,15 @@ class ControladorTurnos
                 }
 
                 foreach ($_SESSION['turnos'] as $t) {
-                    // Ajuste de tipo: guardia → guardia_pasiva
-                    $tipo = strtolower($t['tipo_jornada']);
-                    if ($tipo === 'guardia') {
-                        $tipo = 'guardia pasiva';
-                    }
-
+                    $codigo = strtoupper(trim((string)$t['turno']));
+                    $esLicencia = in_array($codigo, ['F','E','P','L','S','S.','VAC','P/EN','F/INJ','F/JUS','GP/D','GP/N'], true);
                     $datos = [
-                        "objetivo_id"   => $t['objetivo'],
-                        "fecha"         => $t['fecha'],
-                        "turno"         => $t['turno'],
-                        "vigilador_id"  => $t['vigilador'],
-                        "tipo_jornada"  => $t['tipo_jornada'],
-                        'is_referente'  => (!empty($_POST['is_referente'])) ? 1 : 0,
-                        "entrada"       => $t['entrada'],
-                        "salida"        => $t['salida'],
-                        "color"         => $t['color'],
+                        'usuario_id'  => (int)$t['vigilador'],
+                        'objetivo_id' => (int)$t['objetivo'],
+                        'fecha'       => $t['fecha'],
+                        'rol'         => !empty($_POST['is_referente']) ? 'Referente' : 'Vigilador',
+                        'tipo_turno'  => $esLicencia ? 'Licencia' : 'Normal',
+                        'codigo_turno'=> $codigo,
                     ];
 
                     $respuesta = ModeloTurnos::mdlGuardarTurno("turnos", $datos);
@@ -51,8 +44,8 @@ class ControladorTurnos
                 // Redirigir a la misma página o a donde quieras
                 header("Location: " . $_SERVER['REQUEST_URI']);
                 exit;
-            } catch (Exception $e) {
-                $db->rollBack();
+            } catch (Throwable $e) {
+                if (isset($db) && $db->inTransaction()) $db->rollBack();
                 ToastifyController::error('Error: ' . $e->getMessage());
             }
         }
